@@ -2734,6 +2734,14 @@ subroutine om_scan(ik)
                  endif
               enddo
               if (mod(it,scan(ik)%n_res)==0) then
+                 !KGK: 200522
+                 !Calculate eigenfunctions and heating
+                 if ((scan(ik)%eigen_s).or.((scan(ik)%heat_s))) then
+                    !call calc_eigen
+                    !assign omega
+                    
+                 endif
+                 
                  open(unit=scan_unit(in),file=trim(scanName(in)),status='old',position='append')
                  write(scan_unit(in),'(4es14.4)') &
                       kperp,kpar,wroots(in)
