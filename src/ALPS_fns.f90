@@ -3525,7 +3525,7 @@ do is = 1,nspec
 	max_procs = max_procs + nmax(is)
 enddo
 
-ideal_ns_per_proc = max_procs/(nproc-1)
+ideal_ns_per_proc = ceiling((1.*max_procs)/(1.*nproc-1.))
 
 used_procs = 0
 rest_sum = 0
@@ -3543,8 +3543,9 @@ do is = 1, nspec
 	  ! The last one will get the rest.
   	  !  Do we have processes left?
 	used_procs = used_procs + proc_per_spec(is)
- rest_sum = rest_sum + splitting_rest(is)
+  rest_sum = rest_sum + splitting_rest(is)
 enddo
+
 
 if (proc0.AND.writeOut) then
 	if(modulo((max_procs + rest_sum + 1),2).EQ.0) then
@@ -3569,7 +3570,7 @@ enddo
 
 ! the rest of our processes will go to species largest_spec
  proc_per_spec(largest_spec) = proc_per_spec(largest_spec) + ((nproc-1)-used_procs)
- ideal_splitting(largest_spec) = ((nmax(largest_spec)+1)/proc_per_spec(largest_spec))
+ ideal_splitting(largest_spec) = nint((1.*nmax(largest_spec)+1.)/(1.*proc_per_spec(largest_spec)))
 
 
 proc_count = 0
@@ -3580,13 +3581,12 @@ do is = 1,nspec
 		if ((iproc.LE.proc_count).AND.(iproc.GT.prev_proc_count)) then
 			sproc = is
 			local_iproc = (iproc - prev_proc_count)
-   !nlim(1) = (local_iproc - 1) * (ideal_splitting(is) + 1)
+
 			nlim(1) = (local_iproc - 1) * (ideal_splitting(is))
-			if (local_iproc/proc_per_spec(is).LT.1) then ! if this is not the rest
-				nlim(2) = nlim(1) + ideal_splitting(is)-1
-			else
-				nlim(2) = nmax(is)
-			endif
+      nlim(2) = nlim(1) + ideal_splitting(is)-1
+
+      if ((local_iproc.EQ.proc_per_spec(is)).AND.(nlim(1).LE.nmax(is))) nlim(2)=nmax(is)
+
 
 		endif
 	prev_proc_count = proc_count
