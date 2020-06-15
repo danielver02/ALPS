@@ -12,15 +12,15 @@ integer :: i,j,io_error,status_read,i_coarse
 character(LEN=256) :: filename,argument,output_file
 logical :: skip_next,out_to_file,do_normalize
 
-nperp=-1		
-npar=-1			
-smoothing=-1.d0 
-mode=1			
+nperp=-1
+npar=-1
+smoothing=-1.d0
+mode=1
 pperp_max_set=-9999.d0
 ppar_max_set=-9999.d0
 pperp_min_set=-9999.d0
 ppar_min_set=-9999.d0
-filename=" " 
+filename=" "
 out_to_file=.FALSE.
 do_normalize=.FALSE.
 threshold=0.d0
@@ -28,7 +28,7 @@ mult_pperp=1.d0
 mult_ppar=1.d0
 mult_f=1.d0
 
-narg=command_argument_count() 
+narg=command_argument_count()
 if (narg.EQ.0) then
 	write (*,*) "Specify argument. Use --help or -h for help."
 	stop
@@ -39,7 +39,7 @@ skip_next=.FALSE.
  do run_arg=1,narg
   if (skip_next.EQV..FALSE.) then
   call get_command_argument(run_arg,argument)
-   
+
 	select case(adjustl(argument))
 	case("--help","-h")
 		call write_help
@@ -52,7 +52,7 @@ skip_next=.FALSE.
 		call get_command_argument(run_arg+1,argument)
 		output_file=adjustl(argument)
 		skip_next=.TRUE.
-		out_to_file=.TRUE.		
+		out_to_file=.TRUE.
 	case("-s","-S")
 		call get_command_argument(run_arg+1,argument)
 		read (argument,*) smoothing
@@ -64,43 +64,43 @@ skip_next=.FALSE.
 	case("-npar")
 		call get_command_argument(run_arg+1,argument)
 		read (argument,*) npar
-		skip_next=.TRUE.	
+		skip_next=.TRUE.
 	case("-ppar_min")
 		call get_command_argument(run_arg+1,argument)
 		read (argument,*) ppar_min_set
-		skip_next=.TRUE.	
+		skip_next=.TRUE.
 	case("-ppar_max")
 		call get_command_argument(run_arg+1,argument)
 		read (argument,*) ppar_max_set
-		skip_next=.TRUE.	
+		skip_next=.TRUE.
 	case("-pperp_min")
 		call get_command_argument(run_arg+1,argument)
 		read (argument,*) pperp_min_set
-		skip_next=.TRUE.	
+		skip_next=.TRUE.
 	case("-pperp_max")
 		call get_command_argument(run_arg+1,argument)
 		read (argument,*) pperp_max_set
-		skip_next=.TRUE.	
+		skip_next=.TRUE.
 	case("-m")
 		call get_command_argument(run_arg+1,argument)
 		read (argument,*) mode
-		skip_next=.TRUE.	
+		skip_next=.TRUE.
 	case("-thr")
 		call get_command_argument(run_arg+1,argument)
 		read (argument,*) threshold
-		skip_next=.TRUE.	
+		skip_next=.TRUE.
 	case("-mult_pperp")
 		call get_command_argument(run_arg+1,argument)
 		read (argument,*) mult_pperp
-		skip_next=.TRUE.	
+		skip_next=.TRUE.
 	case("-mult_ppar")
 		call get_command_argument(run_arg+1,argument)
 		read (argument,*) mult_ppar
-		skip_next=.TRUE.	
+		skip_next=.TRUE.
 	case("-mult_f")
 		call get_command_argument(run_arg+1,argument)
 		read (argument,*) mult_f
-		skip_next=.TRUE.	
+		skip_next=.TRUE.
 	case("-n","-N")
 		do_normalize=.TRUE.
 	case default
@@ -108,12 +108,12 @@ skip_next=.FALSE.
 	end select
  else
  	skip_next=.FALSE.
- endif	
+ endif
 end do
- 
- 
- 
- 
+
+
+
+
  if (len_trim(filename).EQ.0) then
  	write (*,*) "No filename selected."
  	stop
@@ -123,12 +123,12 @@ end do
  	write (*,*) "# Using standard smoothing parameter: 0.1"
  	smoothing=0.1d0
  endif
- 
+
   if (nperp.LT.0) then
  	write (*,*) "# Using standard nperp: 50"
  	nperp=50
  endif
- 
+
 if (npar.LT.0) then
  	write (*,*) "# Using standard nperp: 50"
  	npar=50
@@ -161,10 +161,10 @@ pperp_max=-999999.d0
 pperp_min=999999.d0
 ppar_max=-999999.d0
 ppar_min=999999.d0
-open(unit=10,file=filename,status='old',action='read',iostat=io_error) 
+open(unit=10,file=filename,status='old',action='read',iostat=io_error)
    do
-   	  if (mode.EQ.1) read (10,*,iostat=status_read) r_pperp,r_ppar,r_f 
-   	  if (mode.EQ.2) read (10,*,iostat=status_read) r_ppar,r_pperp,r_f 
+   	  if (mode.EQ.1) read (10,*,iostat=status_read) r_pperp,r_ppar,r_f
+   	  if (mode.EQ.2) read (10,*,iostat=status_read) r_ppar,r_pperp,r_f
 	 if (r_f.GT.threshold) then
 	     if (status_read.LT.0) exit
     	pperp_max=max(pperp_max,r_pperp)
@@ -211,19 +211,19 @@ allocate(ppar(0:nperp,0:npar))
 
 ! Read in file:
 i_coarse=1
-open(unit=10,file=filename,status='old',action='read',iostat=io_error) 
+open(unit=10,file=filename,status='old',action='read',iostat=io_error)
    do
-   	  if (mode.EQ.1) read (10,*,iostat=status_read) r_pperp,r_ppar,r_f 
-   	  if (mode.EQ.2) read (10,*,iostat=status_read) r_ppar,r_pperp,r_f 
+   	  if (mode.EQ.1) read (10,*,iostat=status_read) r_pperp,r_ppar,r_f
+   	  if (mode.EQ.2) read (10,*,iostat=status_read) r_ppar,r_pperp,r_f
       if (status_read.LT.0) exit
 
       if (r_f.GT.threshold) then
 		pperp_coarse(i_coarse)=r_pperp
 		ppar_coarse(i_coarse)=r_ppar
-		grid_coarse(i_coarse)=r_f
-       i_coarse=i_coarse+1      
+		grid_coarse(i_coarse)=log(r_f)
+       i_coarse=i_coarse+1
       endif
-      
+
 	enddo
 close(10)
 
@@ -245,21 +245,20 @@ call polyharmonic_spline(grid_coarse,pperp_coarse,ppar_coarse,n_coarse,pperp,ppa
 
 if (do_normalize) call normalize (pperp,ppar,grid_fine,nperp,npar)
 
-grid_fine=grid_fine*mult_f
 
 ! Output:
 if (out_to_file) then
-	open(unit=20,file=output_file,status='unknown',action='write',iostat=io_error) 
+	open(unit=20,file=output_file,status='unknown',action='write',iostat=io_error)
 	do i=0,nperp
 	do j=0,npar
-		write (20,*) pperp(i,j),ppar(i,j),grid_fine(i,j)
+		write (20,*) pperp(i,j),ppar(i,j),mult_f*exp(grid_fine(i,j))
 	enddo
 	enddo
 	close(20)
 else
 	do i=0,nperp
 	do j=0,npar
-		write (*,*) pperp(i,j),ppar(i,j),grid_fine(i,j)
+		write (*,*) pperp(i,j),ppar(i,j),mult_f*exp(grid_fine(i,j))
 	enddo
 	enddo
 endif
@@ -277,13 +276,13 @@ implicit none
 
 write(*,*) "This is the interpolation auxiliary program for ALPS."
 write (*,*) " "
-write (*,*) " " 
+write (*,*) " "
 write (*,*) "Command line options:"
 write (*,*) " "
 write (*,*) "   -f, -F <file>         Specify file that contains the coarse grid."
 write (*,*) "   -o, -O <file>         Output file for the fine grid."
 write (*,*) "   -s, -S <arg>          Set smoothing parameter to <arg>. If not selected, smoothing = 0.1"
-write (*,*) " " 
+write (*,*) " "
 write (*,*) "   -nperp <arg>          Set the number of steps in nperp for the fine grid. Standard: 50"
 write (*,*) "   -npar <arg>           Set the number of steps in npar for the fine grid. Standard: 50"
 write (*,*) " "
@@ -295,14 +294,14 @@ write (*,*) "   -ppar_min <arg>       Set the minium value of ppar for the fine 
 write (*,*) "                         the minimum value of the fine grid is used."
 write (*,*) "   -ppar_max <arg>       Set the maximum value of ppar for the fine grid. If not selected, "
 write (*,*) "                         the maximum value of the fine grid is used."
-write (*,*) " " 
+write (*,*) " "
 write (*,*) "   -thr <arg>            Set a threshold on f0. Every data point with f0 below this"
 write (*,*) "                         threshold is ignored (Standard: 0)."
-write (*,*) " " 
+write (*,*) " "
 write (*,*) "   -m <arg>              Set the mode for the input file (Standard: 1):"
 write (*,*) "                            1:    column 1: pperp, column 2: ppar,  column 3: f0"
 write (*,*) "                            2:    column 1: ppar,  column 2: pperp, column 3: f0"
-write (*,*) " " 
+write (*,*) " "
 write (*,*) "   -n, -N                Normalize the output to unity in cylindrical coordinates."
 write (*,*) " "
 write (*,*) "   -mult_pperp <arg>     Multiply every value of pperp in the grid with a constant factor <arg>."
@@ -330,13 +329,12 @@ integral=0.d0
 ! Integrate over the full grid:
 do i=0,nperp
 do j=0,npar
-	integral=integral+grid_fine(i,j)*pperp(i,j)
+	integral=integral+exp(grid_fine(i,j))*pperp(i,j)
 enddo
 enddo
 integral=integral*dpperp*dppar
 
-grid_fine=grid_fine/(integral*2.d0*M_PI)
-
+grid_fine=grid_fine-log(integral*2.d0*M_PI)
 end subroutine
 
 
@@ -351,7 +349,7 @@ subroutine polyharmonic_spline(grid_coarse,pperp_coarse,ppar_coarse,n_coarse,ppe
 ! grid_coarse is a vector of length n_coarse that includes the values of f at each point i
 ! pperp_coarse is a vector of length n_coarse that includes the values of pperp at each point i
 ! ppar_coarse is a vector of length n_coarse that includes the values of ppar at each point i
-! n_coarse is the total number of points in the coarse grid (nperp_coarse * npar_coarse) 
+! n_coarse is the total number of points in the coarse grid (nperp_coarse * npar_coarse)
 !
 ! pperp is the value of pperp in the fine grid. It is a field of rank (nperp, npar)
 ! ppar is the value of ppar in the fine grid. It is a field of rank (nperp, npar)
@@ -392,7 +390,7 @@ enddo
 fullmatrix=0.d0
 do i=1,n_coarse
 	do j=1,n_coarse
-	
+
 		! Do the K-matrix part first:
 		r=sqrt((pperp_coarse(i)-pperp_coarse(j))**2+(ppar_coarse(i)-ppar_coarse(j))**2)
 		if(r.GE.1.d0) then
@@ -402,9 +400,9 @@ do i=1,n_coarse
 		endif
 
 	enddo
-	
+
 	fullmatrix(i,i)=fullmatrix(i,i)+smoothing
-	
+
 	! Now the P-matrix parts:
 	fullmatrix(i,n_coarse+1)=1.d0
 	fullmatrix(i,n_coarse+2)=pperp_coarse(i)
@@ -433,9 +431,9 @@ do j=0,npar
 	else
 		grid_fine(i,j)=grid_fine(i,j)+weight_param(k)*r*log(r**r)
 	endif
- enddo	
- 
- 
+ enddo
+
+
  grid_fine(i,j)=grid_fine(i,j)+weight_param(n_coarse+1)+weight_param(n_coarse+2)*pperp(i,j)+&
  weight_param(n_coarse+3)*ppar(i,j)
 
@@ -463,7 +461,7 @@ end subroutine
 !* "Numerical Recipes By W.H. Press, B. P. Flannery,   *
 !*  S.A. Teukolsky and W.T. Vetterling, Cambridge      *
 !*  University Press, 1986" [BIBLI 08].                *
-!*                                                     * 
+!*                                                     *
 !*******************************************************
 
 
@@ -479,12 +477,12 @@ end subroutine
 !  ***************************************************************
 subroutine LUDCMP(a,n,indx,d,code)
 implicit none
- 
+
 integer, parameter :: nmax=10000
 double precision, parameter :: tiny=1.5d-16
 double precision :: amax, dum, sum, a(n,n), vv(nmax)
 integer :: n, indx(n), code, d, i, j, k, imax
- 
+
 
  d=1; code=0
 
@@ -505,7 +503,7 @@ integer :: n, indx(n), code, d, i, j, k, imax
    do i=1,j-1
      sum = a(i,j)
      do k=1,i-1
-       sum = sum - a(i,k)*A(k,j) 
+       sum = sum - a(i,k)*A(k,j)
      enddo ! k loop
      a(i,j) = sum
    enddo ! i loop
@@ -513,7 +511,7 @@ integer :: n, indx(n), code, d, i, j, k, imax
    do i=j,n
      sum = a(i,j)
      do k=1,j-1
-       sum = sum - a(i,k)*a(k,j) 
+       sum = sum - a(i,k)*a(k,j)
      enddo ! k loop
      a(i,j) = sum
      dum = vv(i)*dabs(sum)
@@ -521,8 +519,8 @@ integer :: n, indx(n), code, d, i, j, k, imax
        imax = i
        amax = dum
      endif
-   enddo ! i loop  
-   
+   enddo ! i loop
+
    if(j.NE.imax) then
      do k=1,n
        dum = a(imax,k)
@@ -541,7 +539,7 @@ integer :: n, indx(n), code, d, i, j, k, imax
      do i=j+1,n
        a(i,j) = a(i,j)*dum
      enddo ! i loop
-   endif 
+   endif
  enddo ! j loop
 
  return
@@ -561,7 +559,7 @@ integer :: n, indx(n), code, d, i, j, k, imax
 subroutine LUBKSB(a,n,indx,b)
 implicit none
 
-integer :: n, indx(n), ii, i, ll, j 
+integer :: n, indx(n), ii, i, ll, j
 double precision :: sum, a(n,n),b(n)
 
 
@@ -593,4 +591,3 @@ ii = 0
 
  return
  end subroutine LUBKSB
-
