@@ -134,6 +134,7 @@ module alps_var
   !Wave Equation Tensor
   !wave(1:3, 1:3)
   double complex, dimension(:,:), allocatable :: wave
+  double complex, dimension(:,:,:), allocatable :: chi0
   
   ! Array of Bessel functions:
   ! bessel_array(nlim(1):nlim(2)+1,0:nperp)
@@ -199,7 +200,7 @@ module alps_var
   public :: kperp, kpar, nspec, use_map, wroots
   public :: loggridw, loggridg, omi, omf, gami, gamf
   public :: arrayName, nperp, npar, f0, pp, df0, bessel_array
-  public :: nmax, nlim, wave, numiter, D_threshold, D_prec, D_gap
+  public :: nmax, nlim, wave, numiter, D_threshold, D_prec, D_gap, chi0
   public :: ns, qs, ms, vA, pi, Bessel_zero,sproc
   public :: ni, nr, positions_principal, Tlim
   public :: n_fits, maxsteps_fit,  lambda_initial_fit, lambdafac_fit, epsilon_fit

@@ -585,7 +585,7 @@ end subroutine LUBKSB
 !-=-=-=-=-=-=
  double complex function disp(om)
     use alps_var, only : nlim, proc0, nspec, ierror, sproc, relativistic
-    use alps_var, only : wave, kperp, kpar, ns, qs, vA
+    use alps_var, only : wave, kperp, kpar, ns, qs, vA, chi0
     implicit none
     include 'mpif.h' !Include MPI library variables
     !Passed
@@ -599,6 +599,7 @@ end subroutine LUBKSB
     logical :: found_res_plus,found_res_minus
 
     chi=cmplx(0.d0,0.d0,kind(1.d0))
+    if (proc0) chi0=cmplx(0.d0,0.d0,kind(1.d0))
     schi=cmplx(0.d0,0.d0,kind(1.d0))
 
     if (proc0)  then
@@ -608,11 +609,16 @@ end subroutine LUBKSB
        !-=-=-=-=-=-
 
        !Indices of refraction for the dispersion relation
-       !  we need to choose a normalization...
 
-        enx2=((kperp/(om))**2)
-    	enz2=((kpar/(om))**2)
-        enxnz=(kperp*kpar/(om**2))
+       !NHDS normalization
+       enx2=((kperp/(om))**2)
+       enz2=((kpar/(om))**2)
+       enxnz=(kperp*kpar/(om**2))
+
+       !PLUME normalization
+       !enx2=((kperp/(om*vA))**2)
+       !enz2=((kpar/(om*vA))**2)
+       !enxnz=(kperp*kpar/(om*vA)**2)
 
     else
        !integrate
@@ -710,12 +716,12 @@ end subroutine LUBKSB
        endif
        !-=-=-=-=-=-
 
-       !PLUME normalization
-       !norm(sproc) = ns(sproc) * qs(sproc)/(om*vA**2)
-
        !NHDS normalization
        norm(sproc) = ns(sproc) * qs(sproc) / om
 
+       !PLUME normalization
+       !norm(sproc) = ns(sproc) * qs(sproc)/(om*vA**2)
+       
        !-=-=-=-=-=-
        !Multiply chi_s by the desired normalization
        !-=-=-=-=-=-
@@ -747,6 +753,19 @@ end subroutine LUBKSB
        !       (0 1 0) + SUM_s ( chi_yx  chi_yy  chi_yz )
        !       (0 0 1)         ( chi_zx  chi_zy  chi_zz )|s
 
+       !The global variable 'chi0' is used
+       !for heating & eigenfunction calculation
+
+       !NHDS normalization
+       chi0=chi/(vA*vA)
+                    
+       !PLUME normalization
+       !chi0=chi
+
+       chi0(:,2,1)=-chi0(:,1,2)
+       chi0(:,3,1)=-chi0(:,1,3)
+       chi0(:,3,2)=-chi0(:,2,3)
+       
     	wave=cmplx(0.d0,0.d0,kind(1.d0))
         eps=cmplx(0.d0,0.d0,kind(1.d0))
 
@@ -775,13 +794,13 @@ end subroutine LUBKSB
        !-=-=-=-=-=-=-=-=-=
        !Add the unit tensor-
        !-=-=-=-=-=-=-=-=-=
+
+       !NHDS normalization
        eps(1,1) = eps(1,1) + vA**2
        eps(2,2) = eps(2,2) + vA**2
        eps(3,3) = eps(3,3) + vA**2
 
-       !NORM
-
-       !PLUME
+       !PLUME normalization
        !eps(1,1) = eps(1,1) + 1.d0
        !eps(2,2) = eps(2,2) + 1.d0
        !eps(3,3) = eps(3,3) + 1.d0
@@ -2568,7 +2587,7 @@ end subroutine secant
 subroutine om_scan(ik)
   use ALPS_var, only : proc0, nroots, runname, ierror, wroots, scan, sproc
   use ALPS_var, only : kperp,kpar,kperp_last,kpar_last, D_prec, D_gap
-  use ALPS_var, only : use_secant, ierror
+  use ALPS_var, only : use_secant, nspec
   use ALPS_io,  only : get_unused_unit, isnancheck, alps_error
   implicit none
   include 'mpif.h'      !Include MPI library variables
@@ -2579,6 +2598,8 @@ subroutine om_scan(ik)
   integer :: it, nt !step of scan, number of scans
   integer :: in !number of roots
   character(100), dimension(:), allocatable :: scanName  !Output file name
+  character(100), dimension(:), allocatable :: heatName  !Output file name
+  character(100), dimension(:), allocatable :: eigenName  !Output file name
   character(6) :: scan_ID
   double precision :: theta_0, theta_1, k_0
 
@@ -2587,11 +2608,20 @@ subroutine om_scan(ik)
   double complex :: om1, om2 !Bounding frequencies for secant search
   integer :: iflag                           !Flag for Root search
   integer, dimension(:), allocatable :: scan_unit
+  integer, dimension(:), allocatable :: heat_unit  ! file for outputting damping rates
+  integer, dimension(:), allocatable :: eigen_unit ! file for outputting eigenfn values
   integer :: imm
   logical, dimension(:),allocatable :: jump
   logical :: alljump
   double complex :: tmp
 
+      !Eigenfunctions
+  double complex, dimension(1:3)       :: ef, bf !E, B
+  double complex, dimension(1:nspec)     :: ds     !density
+  double complex, dimension(1:3,1:nspec) :: Us     !Velocity
+  !Heating
+  double precision, dimension(1:nspec) :: Ps !Power into/out of species
+  character (50) :: fmt_eigen, fmt_heat   !Output format
 
   allocate(jump(1:nroots));jump=.true.
 
@@ -2610,6 +2640,16 @@ subroutine om_scan(ik)
      case (4) !kpar scan
         write(scan_ID,'(a)')'kpara_'
      end select
+          if (scan(ik)%eigen_s) then
+        write(fmt_eigen,'(a,i0,a)') '(4es14.4,12es14.4,',nspec*8,'es14.4)'
+        allocate(eigen_unit(nroots))
+        allocate(eigenName(nroots))
+     endif
+     if (scan(ik)%heat_s) then
+        write(fmt_heat,'(a,i0,a)') '(4es14.4,',nspec,'es14.4)'
+        allocate(heat_unit(nroots))
+        allocate(heatName(nroots))
+     endif
      do in=1,nroots
         write(scanName(in),'(4a,i0,a,i0)')&
              'solution/',trim(runname),'.scan_',scan_ID,ik,'.root_',in
@@ -2622,6 +2662,48 @@ subroutine om_scan(ik)
      enddo
   endif
 
+  if ((scan(ik)%eigen_s).or.(scan(ik)%heat_s)) then
+
+     do in=1,nroots
+        omega=wroots(in)
+        tmp = disp(omega)
+
+        call calc_eigen(omega,ef,bf,Us,ds,Ps,scan(ik)%eigen_s,scan(ik)%heat_s)
+        
+        !reassign omega
+        omega=wroots(in)
+        !this is necessary, as calc_eigen evaluates
+        !the wave tensor at several different values of omega
+        
+        call mpi_barrier(mpi_comm_world,ierror)
+
+        if (proc0) then
+           if (scan(ik)%eigen_s) then
+              write(eigenName(in),'(4a,i0,a,i0)')&
+                   'solution/',trim(runname),'.eigen_',scan_ID,ik,'.root_',in
+              write(*,'(2a)')' => ',trim(eigenName(in))
+              call get_unused_unit(eigen_unit(in))
+              open(unit=eigen_unit(in),file=trim(eigenName(in)),status='replace')
+              write(eigen_unit(in),trim(fmt_eigen)) &
+                   kperp,kpar,wroots(in),ef,bf,Us,ds
+              close(eigen_unit(in))
+           endif
+
+           if (scan(ik)%heat_s) then
+              write(heatName(in),'(4a,i0,a,i0)')&
+                   'solution/',trim(runname),'.heat_',scan_ID,ik,'.root_',in
+              write(*,'(2a)')' => ',trim(heatName(in))
+              call get_unused_unit(heat_unit(in))              
+              open(unit=heat_unit(in),file=trim(heatName(in)),status='replace')
+              write(heat_unit(in),trim(fmt_heat)) &
+                   kperp,kpar,wroots(in),Ps
+              close(heat_unit(in))
+           endif
+           
+        endif        
+     enddo
+  endif
+  
   nt = scan(ik)%n_out*scan(ik)%n_res
 
   kperp_last=kperp;kpar_last=kpar
@@ -2716,6 +2798,30 @@ subroutine om_scan(ik)
 
            call mpi_barrier(mpi_comm_world,ierror)
 
+                      !Calculate eigenfunctions and heating rates
+           !KGK: 200526
+
+           !only call on wavevector steps that will be output
+           if (mod(it,scan(ik)%n_res)==0) then
+
+              if ((scan(ik)%eigen_s).or.((scan(ik)%heat_s))) then
+                 !the susceptability tensor, chi0
+                 !and wave tensor, wave
+                 !are set by the
+                 !tmp = disp(omega)
+                 !call above mpi_barrier
+
+                 call calc_eigen(omega,ef,bf,Us,ds,Ps,scan(ik)%eigen_s,scan(ik)%heat_s)
+
+                 !reassign omega
+                 omega=wroots(in)
+                 !this is necessary, as calc_eigen evaluates
+                 !the wave tensor at several different values of omega
+                 
+              endif
+           endif
+           call mpi_barrier(mpi_comm_world,ierror)
+
            !Output and check for root jumps and NaNs
            if (proc0) then
               !NaN Check
@@ -2741,6 +2847,21 @@ subroutine om_scan(ik)
                  write(scan_unit(in),'(4es14.4)') &
                       kperp,kpar,wroots(in)
                  close(scan_unit(in))
+
+                 if (scan(ik)%eigen_s) then
+                    open(unit=eigen_unit(in),file=trim(eigenName(in)),status='old',position='append')
+                    write(eigen_unit(in),trim(fmt_eigen)) &
+                         kperp,kpar,wroots(in),ef,bf,Us,ds
+                    close(eigen_unit(in))
+                 endif
+
+                 if (scan(ik)%heat_s) then
+                    open(unit=heat_unit(in),file=trim(heatName(in)),status='old',position='append')
+                    write(heat_unit(in),trim(fmt_heat)) &
+                         kperp,kpar,wroots(in),Ps
+                    close(heat_unit(in))
+                 endif
+                 
               endif
            endif
            call mpi_bcast(jump(in),1,MPI_LOGICAL,0,MPI_COMM_WORLD, ierror)
@@ -2757,6 +2878,159 @@ subroutine om_scan(ik)
   endif
 
 end subroutine om_scan
+
+!-=-=-=-=-=-=
+!  Calculates the electric and magnetic fields as well as species
+!     velocities and density fluctuations for (omega,gamma)
+!     and particle heating/cooling from a given wave
+!-=-=-=-=-=-=
+!KGK: 200522
+!Based upon calc_eigen routine by Greg Howes and Kris Klein
+!found in the PLUME linear dispersion solver
+subroutine calc_eigen(omega,electric,magnetic,vmean,ds,Ps,eigen_L,heat_L)
+  use ALPS_var, only : proc0, nspec, ns, qs, wave, chi0, kperp, kpar, vA
+
+  implicit none
+  !Passed
+  !Frequency
+  double complex :: omega
+  !Electromagnetic Eigenfns
+  double complex, dimension(1:3), intent(out)       :: electric, magnetic !E, B
+  double complex, dimension(1:nspec), intent(out)     :: ds     !density fluctuation
+  double complex, dimension(1:3,1:nspec), intent(out) :: vmean     !Velocity fluctiation
+
+  !Heating
+  double precision, dimension(1:nspec), intent(out) :: Ps   !Power into/out of species
+  logical :: eigen_L, heat_L !Logical for calculating eigenvalues, heating
+
+  !Local
+  integer :: ii,j,jj
+  double complex :: temp1
+  double complex, dimension(nspec,3,3) :: chia
+  double complex, dimension(3,3) :: chih,chihold,dchih
+  double complex, dimension(nspec,3) :: term
+  double complex, dimension(3) :: term1
+  double precision :: ewave
+
+  if (proc0) then
+
+     !Note that the electric and magnetic fields are needed for the heating
+     !rate calculation; thus, we calculate them for both the eigen and heating
+     !logical flags
+        !CALCULATE FIELDS FLUCTUATIONS==========================================
+        !Calculate Electric Fields, normalized to E_x
+        electric(1) = cmplx(1.d0,0.d0,kind(1.d0))
+        electric(3)=-electric(1)*(wave(2,1)*wave(3,2)-wave(3,1)*wave(2,2))
+        electric(3)= electric(3)/(wave(2,3)*wave(3,2)-wave(3,3)*wave(2,2))
+        electric(2) = -electric(3)*wave(3,3) - electric(1)*wave(3,1)
+        electric(2) = electric(2)/wave(3,2)
+        
+        !Calculate Magnetic Fields, normalized to E_x
+        magnetic(1) = -1.d0* kpar*electric(2)/(omega*vA)
+        magnetic(2) = -1.d0* (kperp*electric(3) - kpar*electric(1))/(omega*vA)
+        magnetic(3) = kperp*electric(2)/(omega*vA)
+        
+        !KGK: The magnetic field normalization factors are different from PLUME,
+        !as spatial scales are normalized to d_ref, rather than rho_ref.
+        !thus, w_perp, ref/c in PLUME becomes v_A/c here.
+
+        if (eigen_L) then
+        
+        !CALCULATE VELOCITY FLUCTUATIONS========================================
+        !vmean is the velocity perturbutation due to the wave for each species
+        !vmean = (delta V_s/v_A)(B_0/E_x)(v_A/c)
+        vmean(:,:)=0.d0
+        do j=1,3!x,y,z
+           do jj = 1,nspec !Species velocity fluctuations
+              vmean(j,jj) = -(vA**2.d0/(qs(jj)*ns(jj)))*&
+                   cmplx(0.d0,1.d0,kind(1.d0))*&
+                   omega*sum(electric(:)*chi0(jj,j,:))
+                   
+           enddo
+        enddo
+        
+        !CALCULATE DENSITY FLUCTUATIONS========================================
+        ! This is (ns/ns0)(B_0/E_x)(v_A/c)
+        do jj=1,nspec
+           !ds(jj) = (vmean(1,jj)*kperp+vmean(3,jj)*kpar)/&
+           !     (omega-kpar * spec(jj)%vv_s)
+
+           !TO-DO:
+           !add in correct effects of drift on density fluctuation
+           !e.g. omega-kpar V_0
+           !with a physically meaningful V_0 used.
+           ds(jj) = 0.d0
+           !ds(jj) = (vmean(1,jj)*kperp+vmean(3,jj)*kpar)/&
+           !     (omega)
+        enddo
+
+        !EndIf (scan(is)%eigen_s) loop
+     endif
+  endif
+     
+!If (scan(is)%heat_s) loop
+!Greg Howes, 2006; Kristopher Klein, 2015
+if (heat_L) then
+   !CALCULATE COMPONENT HEATING======================================
+   !evaulate at omega_r=real(omega), gamma=0
+   temp1 = cmplx(real(omega),0.d0,kind(1.d0)) 
+   !temp1 = omega
+   temp1 = disp(temp1)
+   
+   if (proc0) then
+      
+      do ii = 1, 3 !tensor index
+         do j = 1, 3 !tensor index
+            do jj = 1, nspec !species index
+               chia(jj,ii,j) = -0.5d0*cmplx(0.d0,1.d0)* &
+                    (chi0(jj,ii,j) - conjg(chi0(jj,j,ii)))
+            enddo
+            chihold(ii,j) = 0.5*(sum(chi0(:,ii,j)) + &
+                 sum(conjg(chi0(:,j,ii))))
+         enddo
+      enddo
+            
+      term(:,:)=0.d0
+      term1(:)=0.d0
+      do ii = 1, 3
+         do jj = 1, nspec
+            term(jj,ii) = sum(conjg(electric(:))*chia(jj,:,ii))     
+         enddo
+      enddo
+      
+      Ps = 0.d0
+      do jj = 1, nspec
+         Ps(jj) = sum(term(jj,:)*electric(:))
+      enddo
+
+   endif
+
+   !recall that disp requires /all/ processors  
+   temp1 = disp(cmplx(real(omega*1.000001d0),0.d0,kind(1.d0)))
+   !but only proc0 'knows' the correct value of chi0
+
+   if (proc0) then
+      do ii = 1, 3
+         do j = 1, 3
+            chih(ii,j) = 0.5d0*(sum(chi0(:,ii,j)) + &
+                 sum(conjg(chi0(:,j,ii))))
+            dchih(ii,j)=(1.000001d0*chih(ii,j)-chihold(ii,j))/0.000001d0
+         enddo
+      enddo
+
+      ewave = 0.d0
+      do ii = 1, 3
+         term1(ii) = sum(conjg(electric(:))*dchih(:,ii))
+      enddo
+      
+      ewave = sum(term1(:)*electric(:)) + sum(magnetic(:)*conjg(magnetic(:)))
+
+      Ps = Ps/ewave
+   endif
+   
+endif    !EndIf (scan(is)%heat_s) loop
+  
+end subroutine calc_eigen
 
 !-=-=-=-=-=-=
 !Routine for scanning along a perscribed plane in wavevector space
