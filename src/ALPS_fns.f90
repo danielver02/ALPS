@@ -213,7 +213,7 @@ subroutine derivative_f0_rel(is,is_rel)
 			gamma_coarse(counter) = sqrt(1.d0+(pp(is,iperp,ipar,1)**2+pp(is,iperp,ipar,2)**2)*&
 					vA*vA/(ms(is)*ms(is)))
 			pparbar_coarse(counter) = pp(is,iperp,ipar,2)*vA/ms(is)
-  			grid_coarse(counter) = f0(is,iperp,ipar)
+  			grid_coarse(counter) = log(f0(is,iperp,ipar))
 		enddo
 	enddo
 
@@ -243,6 +243,9 @@ subroutine derivative_f0_rel(is,is_rel)
 	! Stay within the subluminal cone
 	do igamma=0,ngamma
 	 do ipparbar=0,npparbar
+
+     f0_rel(is_rel,igamma,ipparbar)=exp(f0_rel(is_rel,igamma,ipparbar))
+     
 		if ((gamma_rel(is_rel,igamma,ipparbar)**2-1.d0).LT.(pparbar_rel(is_rel,igamma,ipparbar)**2))&
 			 f0_rel(is_rel,igamma,ipparbar)=-1.d0
 	 enddo
