@@ -27,9 +27,9 @@ module alps_var
   logical :: use_map          !Choice of
     !T: searching for roots over a map in complex frequency space
     !OR
-    !F: input (nroots) guesses for solutions 
-  logical :: writeOut         !Write or Spress output to screen
-    
+    !F: input (nroots) guesses for solutions
+  logical :: writeOut =.true.   !Write or Spress output to screen
+
   integer :: unit_error
 
   !MPI variables
@@ -40,11 +40,11 @@ module alps_var
 
   !Plasma Parameters
   !Wave vector normalized by inverse reference inertial length
-  double precision :: kperp  !Perpendicular Wave number; 
+  double precision :: kperp  !Perpendicular Wave number;
   double precision :: kpar   !Parallel Wave number;
 
   double precision :: vA     !reference Alfven Velocity /c
-  double precision :: Bessel_zero	! Use Bessel functions until 
+  double precision :: Bessel_zero=1.d-45	! Use Bessel functions until
   					! the maximum is less than this value
   !The proton typically serves as the reference species.
 
@@ -56,34 +56,34 @@ module alps_var
   !maximum # of roots
   integer :: numroots = 100
   !Limits on (real, imaginary) map search
-  double precision :: omi,omf, gami,gamf     
+  double precision :: omi,omf, gami,gamf
   !T: log spacing for complex frequency map search
   !F: linear spacing for complex frequency map search
   logical :: loggridw,loggridg
   !number of points in (real, imaginary) frequency space grid
   integer :: ni=128, nr=128
-  
+
   !Number of Momentum Space Grid Points
   integer :: nperp, npar
   integer :: ngamma=100, npparbar=200
-  
+
   ! How many points in ipar should be used to calculate the principal value integral?
   integer :: positions_principal=5
-  
+
   ! Threshold for analytical principal-value integration
   double precision :: Tlim=0.01d0
-  
+
   ! The species number on which this process is working
   integer :: sproc
-  
+
   ! Maximum number of iterations in secant method
-  integer :: numiter
-  
+  integer :: numiter=50
+
   ! Value of "zero" for secant method
-  double precision :: D_threshold 
+  double precision :: D_threshold=1.d-5
 
   ! size of bounding region for secant method
-  double precision :: D_prec 
+  double precision :: D_prec=1.d-5
 
   ! size of allowable difference between roots
   double precision :: D_gap =1.d-5
@@ -91,27 +91,27 @@ module alps_var
   !pi
   double precision :: pi
 
-  !Name of input files for distributions 
+  !Name of input files for distributions
   character (75) :: arrayName
 
   !Background Distribution Function Array
   !f0(1:nspec,0:nperp,0:npar)
-  double precision, dimension(:,:,:), allocatable :: f0 
-  double precision, dimension(:,:,:), allocatable :: f0_rel 
+  double precision, dimension(:,:,:), allocatable :: f0
+  double precision, dimension(:,:,:), allocatable :: f0_rel
 
   !Perpendicular and parallel Derivatives of f0
   !df0(1:nspec,0:nperp,0:npar,1:2)
   !with index 1-> dvperp
   !     index 2-> dvpar
-  double precision, dimension(:,:,:,:), allocatable :: df0 
-  double precision, dimension(:,:,:,:), allocatable :: df0_rel 
+  double precision, dimension(:,:,:,:), allocatable :: df0
+  double precision, dimension(:,:,:,:), allocatable :: df0_rel
 
   !Momentum Space Array for f0
   !pp(1:nspec,0:nperp,0:npar,1:2)
   !with index 1->vperp
   !     index 2->vpar
   double precision, dimension(:,:,:,:), allocatable :: pp
-  
+
   double precision, dimension(:,:,:), allocatable :: gamma_rel,pparbar_rel
 
   !number of n values to sum over
@@ -135,7 +135,7 @@ module alps_var
   !wave(1:3, 1:3)
   double complex, dimension(:,:), allocatable :: wave
   double complex, dimension(:,:,:), allocatable :: chi0
-  
+
   ! Array of Bessel functions:
   ! bessel_array(nlim(1):nlim(2)+1,0:nperp)
   double precision, dimension(:,:), allocatable :: bessel_array
@@ -155,19 +155,19 @@ module alps_var
   logical :: fit_check=.true. !T-> output fitted functions to ASCII file for each species
 
   logical :: determine_minima=.true. ! after map search, determine minima and refine?
-  integer :: n_resonance_interval=200 ! how many steps should be used to integrate around the resonance
+  integer :: n_resonance_interval=100 ! how many steps should be used to integrate around the resonance
 
-  integer :: scan_option=1 !select case for scans. 
+  integer :: scan_option=1 !select case for scans.
   !1: consecutive scans along input paths in wavevector space
   !2: double scans of two selected parameters
-  
+
   integer :: n_scan=0 !number of wavevector scans.
   !must be set to 2 for scan_option=2
   !must be 1 or larger for scan_option=1
   !n_scan=0 turns off wavevector scans
 
-  logical :: use_secant !use secant or rtsec methods
-  
+  logical :: use_secant=.true. !use secant or rtsec methods
+
 
 
   public :: scanner
@@ -184,12 +184,12 @@ module alps_var
      end type scanner
      !-=-=-=-=-=-=-=-=-
      !Defines nature of parameter scans:
-     !     Type: 0 k_0-> k_1           
+     !     Type: 0 k_0-> k_1
      !           1 theta_0 -> theta_1
      !           2 k_fixed angle
      !     Type: 3 kperp
      !           4 kpar
-     !-=-=-=-=-=-=-=-=-    
+     !-=-=-=-=-=-=-=-=-
   type (scanner), dimension (:), allocatable :: scan
 
   double precision :: kperp_last, kpar_last
