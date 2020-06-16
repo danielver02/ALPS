@@ -26,7 +26,7 @@ subroutine pass_instructions
   use alps_var, only : proc0, ierror, nroots, n_fits, param_fit, fit_type, perp_correction
   use alps_var, only : writeOut, nperp, npar, nmax, nlim, nspec, numroots, ngamma,npparbar
   use alps_var, only : ns, qs, ms, wroots, kperp, kpar, bessel_zero, D_prec
-  use alps_var, only : wave, pp, df0, vA, pi, numiter, D_threshold, D_gap
+  use alps_var, only : wave, chi0, pp, df0, vA, pi, numiter, D_threshold, D_gap
   use alps_var, only : use_map
   use alps_var, only : ni, nr, omi, omf, gami, gamf, loggridg, loggridw
   use alps_var, only : determine_minima, n_resonance_interval, positions_principal, Tlim
@@ -146,6 +146,8 @@ subroutine pass_instructions
   !  Only needed on proc0
   if (proc0) then
      allocate(wave(1:3,1:3))
+     !KGK: added chi0 as global character
+     allocate(chi0(nspec,1:3,1:3))
      wave=cmplx(0.d0,0.d0,kind(1.d0))
   endif
   
