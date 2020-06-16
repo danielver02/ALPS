@@ -1,9 +1,9 @@
 !===============================================
-!  sample.in  Sample input file
+!  guess_scan.in  Sample input file
 !  ALPS SAMPLE INPUT FILE
 !
 !  Kristopher Klein, Daniel Verscharen
-!  2016 SEPT 16
+!  2020 JUNE 16
 !===============================================
 ! REQUIRED NAMELISTS
 !===============================================
@@ -29,6 +29,9 @@ writeOut=.true.
 !Velocity Space Resolution of f0
 nperp=200
 npar=400
+!Velocity Space Resolution for relativistic calculation
+ngamma=100
+npparbar=200
 !Proton Alfven Velocity / c
 vA=1.d-4
 !Name of input array-
@@ -39,7 +42,7 @@ Bessel_zero = 1.d-45
 numiter = 50
 D_threshold = 1.d-5
 D_prec = 1.d-5
-positions_principal=3
+positions_principal=5
 n_resonance_interval=100
 Tlim=0.01d0
 maxsteps_fit=500
