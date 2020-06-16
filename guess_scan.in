@@ -42,6 +42,7 @@ Bessel_zero = 1.d-45
 numiter = 50
 D_threshold = 1.d-5
 D_prec = 1.d-5
+D_gap=1.d-5
 positions_principal=5
 n_resonance_interval=100
 Tlim=0.01d0
