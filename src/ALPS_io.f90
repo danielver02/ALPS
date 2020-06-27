@@ -721,7 +721,7 @@ double precision :: input
 
 isnancheck=.FALSE.
 if (abs(input).GE.huge(1.d0)) isnancheck=.TRUE.
-if ((input+1.d0).EQ.input) isnancheck=.TRUE.
+!if ((input+1.d0).EQ.input) isnancheck=.TRUE.
 if (input.NE.input) isnancheck=.TRUE.
 
 end function isnancheck
