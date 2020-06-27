@@ -90,8 +90,8 @@ program generate_distribution
 !		pperp_max = sqrt(maxP*maxP*tau(is) + (tau(is)-ms(is)*ms(is))/(vA*vA)) * sqrt(alph(is))
 !     	ppar_max  = sqrt(maxP*maxP*tau(is) + (tau(is)-ms(is)*ms(is))/(vA*vA))
 
-	   	pperp_max = maxP * sqrt(tau(is) * alph(is))
-	  	ppar_max = maxP * sqrt(tau(is))
+	   	pperp_max = 0.1d0 * maxP * sqrt(tau(is) * alph(is))
+	  	ppar_max = 0.1d0 * maxP * sqrt(tau(is))
 
       ! These are the ideal fitting parameters for this configuration:
       ifit_1=norm
