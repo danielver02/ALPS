@@ -2837,11 +2837,20 @@ subroutine om_scan(ik)
 !                 omega=cmplx(0.d0,0.d0);jump(in)=.false.
 !              endif
               !compare to previous roots
+	      !KGK: 200811: Updated to separately compare real and imaginary components of roots
+	      !previous version would reject all roots except the first solution for scans of 
+	      !relatvely small wavevectors
               do imm=1,in-1
-                 if ((abs(wroots(in))-abs(wroots(imm))).lt.D_gap) then
+                 if ( ((real(wroots(in))-real(wroots(imm))).lt.D_gap) .and. &
+                      ((aimag(wroots(in))-aimag(wroots(imm))).lt.D_gap) ) then
+                    write(*,'(a,6es14.4)')'Root too close!',&
+                         wroots(in),wroots(imm),&
+                         real(wroots(in))-real(wroots(imm)), &
+                         aimag(wroots(in))-aimag(wroots(imm))
                     wroots(in)=cmplx(0.d0,0.d0);jump(in)=.false.
                  endif
               enddo
+
               if (mod(it,scan(ik)%n_res)==0) then
                  open(unit=scan_unit(in),file=trim(scanName(in)),status='old',position='append')
                  write(scan_unit(in),'(4es14.4)') &
