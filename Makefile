@@ -36,7 +36,7 @@ ifeq ($(ALPS_SYSTEM),wub)
 	STDCOMPOPTS := -fcheck=all -fbacktrace -fbounds-check -Wconversion -Wsurprising -ffixed-line-length-none -ffree-line-length-none -Wunused -g -fbacktrace -lm -I./include/	
 	#FLAGS= -O3 -DDOUBLE
 	#COMPOPTS := -fcheck=all -fbacktrace -fbounds-check -Wconversion -Wsurprising -ffixed-line-length-none -ffree-line-length-none -Wunused -lm -I./include/	
-	COMPOPTS := -fbounds-check -ffast-math -Wunused -funroll-loops -g -fbacktrace -lm -I./include/
+	COMPOPTS := -O3 -g -fbounds-check -ffast-math -Wunused -funroll-loops -g -fbacktrace -lm -I./include/
 	#FLAGS= -DDOUBLE	
 	ifeq ($(PROFILE),true)
 		FLAGS += -g
