@@ -245,7 +245,7 @@ subroutine derivative_f0_rel(is,is_rel)
 	 do ipparbar=0,npparbar
 
      f0_rel(is_rel,igamma,ipparbar)=exp(f0_rel(is_rel,igamma,ipparbar))
-     
+
 		if ((gamma_rel(is_rel,igamma,ipparbar)**2-1.d0).LT.(pparbar_rel(is_rel,igamma,ipparbar)**2))&
 			 f0_rel(is_rel,igamma,ipparbar)=-1.d0
 	 enddo
@@ -286,29 +286,43 @@ subroutine derivative_f0_rel(is,is_rel)
 	 close(unit_f)
 
 
-	if(writeOut) write (*,'(a)') 'Determining relativistic derivatives...'
+   if(writeOut) write (*,'(a)') 'Determining relativistic derivatives...'
 
-       do igamma = 1, ngamma-1
-          do ipparbar = 1, npparbar-1
-             !index 1-> gamma derivative
-             if (f0_rel(is_rel,igamma-1,ipparbar).GT.-1.d0) then
-               df0_rel(is_rel,igamma,ipparbar,1) = &
-                  (f0_rel(is_rel,igamma+1,ipparbar) - f0_rel(is_rel,igamma-1,ipparbar))/&
-                  (gamma_rel(is_rel,igamma+1,ipparbar) - gamma_rel(is_rel,igamma-1,ipparbar))
-            else
-               df0_rel(is_rel,igamma,ipparbar,1) = 0.d0
-            endif
+        do igamma = 1, ngamma-1
+           do ipparbar = 1, npparbar-1
 
-             !index 2-> pparbar derivative
-             if ((f0_rel(is_rel,igamma,ipparbar+1).GT.-1.d0).AND.(f0_rel(is_rel,igamma,ipparbar-1).GT.-1.d0)) then
-               df0_rel(is_rel,igamma,ipparbar,2) = &
-                  (f0_rel(is_rel,igamma,ipparbar+1) - f0_rel(is_rel,igamma,ipparbar-1))/&
-                  (pparbar_rel(is_rel,igamma,ipparbar+1) - pparbar_rel(is_rel,igamma,ipparbar-1))
-             else
-               df0_rel(is_rel,igamma,ipparbar,2) = 0.d0
+              !index 1-> gamma derivative
+              df0_rel(is_rel,igamma,ipparbar,1) = 0.d0
+
+              if ((f0_rel(is_rel,igamma-1,ipparbar).GT.0.d0).AND.(f0_rel(is_rel,igamma+1,ipparbar).GT.0.d0)) then
+                df0_rel(is_rel,igamma,ipparbar,1) = &
+                   (f0_rel(is_rel,igamma+1,ipparbar) - f0_rel(is_rel,igamma-1,ipparbar))/&
+                   (gamma_rel(is_rel,igamma+1,ipparbar) - gamma_rel(is_rel,igamma-1,ipparbar))
              endif
-          enddo
-       enddo
+
+              !index 2-> pparbar derivative
+              df0_rel(is_rel,igamma,ipparbar,2) = 0.d0
+
+              if ((f0_rel(is_rel,igamma,ipparbar+1).GT.0.d0).AND.(f0_rel(is_rel,igamma,ipparbar-1).GT.0.d0)) then
+                   df0_rel(is_rel,igamma,ipparbar,2) = &
+                     (f0_rel(is_rel,igamma,ipparbar+1) - f0_rel(is_rel,igamma,ipparbar-1))/&
+                     (pparbar_rel(is_rel,igamma,ipparbar+1) - pparbar_rel(is_rel,igamma,ipparbar-1))
+              endif
+
+              if (f0_rel(is_rel,igamma,ipparbar).GE.0.d0) then
+                if ((f0_rel(is_rel,igamma,ipparbar+1).LE.0.d0).AND.(f0_rel(is_rel,igamma,ipparbar-1).GT.0.d0)) then
+                  df0_rel(is_rel,igamma,ipparbar,2) = &
+                   (f0_rel(is_rel,igamma,ipparbar) - f0_rel(is_rel,igamma,ipparbar-1))/&
+                   (pparbar_rel(is_rel,igamma,ipparbar) - pparbar_rel(is_rel,igamma,ipparbar-1))
+                 endif
+                 if ((f0_rel(is_rel,igamma,ipparbar+1).GT.0.d0).AND.(f0_rel(is_rel,igamma,ipparbar-1).LE.0.d0)) then
+                      df0_rel(is_rel,igamma,ipparbar,2) = &
+                        (f0_rel(is_rel,igamma,ipparbar+1) - f0_rel(is_rel,igamma,ipparbar))/&
+                        (pparbar_rel(is_rel,igamma,ipparbar+1) - pparbar_rel(is_rel,igamma,ipparbar))
+                 endif
+              endif
+           enddo
+        enddo
 
 	if(writeOut) write (*,'(a)') 'Writing relativistic derivatives to file...'
 
@@ -721,7 +735,7 @@ end subroutine LUBKSB
 
        !PLUME normalization
        !norm(sproc) = ns(sproc) * qs(sproc)/(om*vA**2)
-       
+
        !-=-=-=-=-=-
        !Multiply chi_s by the desired normalization
        !-=-=-=-=-=-
@@ -758,14 +772,14 @@ end subroutine LUBKSB
 
        !NHDS normalization
        chi0=chi/(vA*vA)
-                    
+
        !PLUME normalization
        !chi0=chi
 
        chi0(:,2,1)=-chi0(:,1,2)
        chi0(:,3,1)=-chi0(:,1,3)
        chi0(:,3,2)=-chi0(:,2,3)
-       
+
     	wave=cmplx(0.d0,0.d0,kind(1.d0))
         eps=cmplx(0.d0,0.d0,kind(1.d0))
 
@@ -1523,15 +1537,17 @@ double complex function integrate_resU_rel(sproc_rel,om,nn,mode,igamma)
 
 	pparbar_res = (gamma_rel(sproc_rel,igamma,1)*om-(1.d0*nn)*qs(sproc)/ms(sproc))*vA/kpar
 
-	do while ((ipparbar.LT.(npparbar-2)).AND.(.NOT.found_res))
-		 ipparbar = ipparbar + 1
+  if ((real(pparbar_res)**2).LE.(gamma_rel(sproc_rel,igamma,1)**2-1.d0)) then
+	   do while ((ipparbar.LT.(npparbar-2)).AND.(.NOT.found_res))
+		     ipparbar = ipparbar + 1
 
-		 if ((pparbar_rel(sproc_rel,2,ipparbar+1).GT.real(pparbar_res)).and.&
-			  (pparbar_rel(sproc_rel,2,ipparbar).LE.real(pparbar_res))) then
-				ipparbar_res=ipparbar
-				found_res = .TRUE.
-		 endif
-	enddo
+		       if ((pparbar_rel(sproc_rel,2,ipparbar+1).GT.real(pparbar_res)).and.&
+			        (pparbar_rel(sproc_rel,2,ipparbar).LE.real(pparbar_res))) then
+				          ipparbar_res=ipparbar
+				          found_res = .TRUE.
+		       endif
+	    enddo
+  endif
 
 	! Handle resonances that are right outside the integration domain:
 
@@ -1578,6 +1594,10 @@ double complex function integrate_resU_rel(sproc_rel,om,nn,mode,igamma)
 		lowerlimit = ipparbar_res - positions_principal
 		upperlimit = ipparbar_res + positions_principal + 1
 
+    if ((ipparbar_res.GE.0).and.(ipparbar_res.LE.npparbar)) then
+			if(abs(real(pparbar_res)-pparbar_rel(sproc_rel,2,ipparbar_res)).GT.(0.5d0*dpparbar)) upperlimit = upperlimit + 1
+		endif
+
 		! But there are special circumstances:
 		if ((lowerlimit.LE.int_start).AND.(upperlimit.GE.int_end)) then
 			call alps_error(8)
@@ -1595,9 +1615,7 @@ double complex function integrate_resU_rel(sproc_rel,om,nn,mode,igamma)
 			endif
 		endif
 
-		if ((ipparbar_res.GE.0).and.(ipparbar_res.LE.npparbar)) then
-			if(abs(real(pparbar_res)-pparbar_rel(sproc_rel,2,ipparbar_res)).LT.(0.5d0*dpparbar)) upperlimit = upperlimit + 1
-		endif
+
 
 	else ! no resonance (only integrate from int_start to lowerlimit)
 		int_start = ipparbar_lower
@@ -2669,12 +2687,12 @@ subroutine om_scan(ik)
         tmp = disp(omega)
 
         call calc_eigen(omega,ef,bf,Us,ds,Ps,scan(ik)%eigen_s,scan(ik)%heat_s)
-        
+
         !reassign omega
         omega=wroots(in)
         !this is necessary, as calc_eigen evaluates
         !the wave tensor at several different values of omega
-        
+
         call mpi_barrier(mpi_comm_world,ierror)
 
         if (proc0) then
@@ -2693,17 +2711,17 @@ subroutine om_scan(ik)
               write(heatName(in),'(4a,i0,a,i0)')&
                    'solution/',trim(runname),'.heat_',scan_ID,ik,'.root_',in
               write(*,'(2a)')' => ',trim(heatName(in))
-              call get_unused_unit(heat_unit(in))              
+              call get_unused_unit(heat_unit(in))
               open(unit=heat_unit(in),file=trim(heatName(in)),status='replace')
               write(heat_unit(in),trim(fmt_heat)) &
                    kperp,kpar,wroots(in),Ps
               close(heat_unit(in))
            endif
-           
-        endif        
+
+        endif
      enddo
   endif
-  
+
   nt = scan(ik)%n_out*scan(ik)%n_res
 
   kperp_last=kperp;kpar_last=kpar
@@ -2817,7 +2835,7 @@ subroutine om_scan(ik)
                  omega=wroots(in)
                  !this is necessary, as calc_eigen evaluates
                  !the wave tensor at several different values of omega
-                 
+
               endif
            endif
            call mpi_barrier(mpi_comm_world,ierror)
@@ -2838,7 +2856,7 @@ subroutine om_scan(ik)
 !              endif
               !compare to previous roots
 	      !KGK: 200811: Updated to separately compare real and imaginary components of roots
-	      !previous version would reject all roots except the first solution for scans of 
+	      !previous version would reject all roots except the first solution for scans of
 	      !relatvely small wavevectors
               do imm=1,in-1
                  if ( (abs(real(wroots(in))-real(wroots(imm))).lt.D_gap) .and. &
@@ -2870,7 +2888,7 @@ subroutine om_scan(ik)
                          kperp,kpar,wroots(in),Ps
                     close(heat_unit(in))
                  endif
-                 
+
               endif
            endif
            call mpi_bcast(jump(in),1,MPI_LOGICAL,0,MPI_COMM_WORLD, ierror)
@@ -2933,18 +2951,18 @@ subroutine calc_eigen(omega,electric,magnetic,vmean,ds,Ps,eigen_L,heat_L)
         electric(3)= electric(3)/(wave(2,3)*wave(3,2)-wave(3,3)*wave(2,2))
         electric(2) = -electric(3)*wave(3,3) - electric(1)*wave(3,1)
         electric(2) = electric(2)/wave(3,2)
-        
+
         !Calculate Magnetic Fields, normalized to E_x
         magnetic(1) = -1.d0* kpar*electric(2)/(omega*vA)
         magnetic(2) = -1.d0* (kperp*electric(3) - kpar*electric(1))/(omega*vA)
         magnetic(3) = kperp*electric(2)/(omega*vA)
-        
+
         !KGK: The magnetic field normalization factors are different from PLUME,
         !as spatial scales are normalized to d_ref, rather than rho_ref.
         !thus, w_perp, ref/c in PLUME becomes v_A/c here.
 
         if (eigen_L) then
-        
+
         !CALCULATE VELOCITY FLUCTUATIONS========================================
         !vmean is the velocity perturbutation due to the wave for each species
         !vmean = (delta V_s/v_A)(B_0/E_x)(v_A/c)
@@ -2954,10 +2972,10 @@ subroutine calc_eigen(omega,electric,magnetic,vmean,ds,Ps,eigen_L,heat_L)
               vmean(j,jj) = -(vA**2.d0/(qs(jj)*ns(jj)))*&
                    cmplx(0.d0,1.d0,kind(1.d0))*&
                    omega*sum(electric(:)*chi0(jj,j,:))
-                   
+
            enddo
         enddo
-        
+
         !CALCULATE DENSITY FLUCTUATIONS========================================
         ! This is (ns/ns0)(B_0/E_x)(v_A/c)
         do jj=1,nspec
@@ -2976,18 +2994,18 @@ subroutine calc_eigen(omega,electric,magnetic,vmean,ds,Ps,eigen_L,heat_L)
         !EndIf (scan(is)%eigen_s) loop
      endif
   endif
-     
+
 !If (scan(is)%heat_s) loop
 !Greg Howes, 2006; Kristopher Klein, 2015
 if (heat_L) then
    !CALCULATE COMPONENT HEATING======================================
    !evaulate at omega_r=real(omega), gamma=0
-   temp1 = cmplx(real(omega),0.d0,kind(1.d0)) 
+   temp1 = cmplx(real(omega),0.d0,kind(1.d0))
    !temp1 = omega
    temp1 = disp(temp1)
-   
+
    if (proc0) then
-      
+
       do ii = 1, 3 !tensor index
          do j = 1, 3 !tensor index
             do jj = 1, nspec !species index
@@ -2998,15 +3016,15 @@ if (heat_L) then
                  sum(conjg(chi0(:,j,ii))))
          enddo
       enddo
-            
+
       term(:,:)=0.d0
       term1(:)=0.d0
       do ii = 1, 3
          do jj = 1, nspec
-            term(jj,ii) = sum(conjg(electric(:))*chia(jj,:,ii))     
+            term(jj,ii) = sum(conjg(electric(:))*chia(jj,:,ii))
          enddo
       enddo
-      
+
       Ps = 0.d0
       do jj = 1, nspec
          Ps(jj) = sum(term(jj,:)*electric(:))
@@ -3014,7 +3032,7 @@ if (heat_L) then
 
    endif
 
-   !recall that disp requires /all/ processors  
+   !recall that disp requires /all/ processors
    temp1 = disp(cmplx(real(omega*1.000001d0),0.d0,kind(1.d0)))
    !but only proc0 'knows' the correct value of chi0
 
@@ -3031,14 +3049,14 @@ if (heat_L) then
       do ii = 1, 3
          term1(ii) = sum(conjg(electric(:))*dchih(:,ii))
       enddo
-      
+
       ewave = sum(term1(:)*electric(:)) + sum(magnetic(:)*conjg(magnetic(:)))
 
       Ps = Ps/ewave
    endif
-   
+
 endif    !EndIf (scan(is)%heat_s) loop
-  
+
 end subroutine calc_eigen
 
 !-=-=-=-=-=-=
@@ -3309,7 +3327,7 @@ subroutine om_double_scan
                !  endif
               !enddo
 	      	      	!KGK: 200811: Updated to separately compare real and imaginary components of roots
-	      !previous version would reject all roots except the first solution for scans of 
+	      !previous version would reject all roots except the first solution for scans of
 	      !relatvely small wavevectors
               do imm=1,in-1
                  if ( (abs(real(wroots(in))-real(wroots(imm))).lt.D_gap) .and. &
