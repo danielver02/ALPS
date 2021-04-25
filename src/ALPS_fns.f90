@@ -1598,22 +1598,20 @@ double complex function integrate_resU_rel(sproc_rel,om,nn,mode,igamma)
 			if(abs(real(pparbar_res)-pparbar_rel(sproc_rel,2,ipparbar_res)).GT.(0.5d0*dpparbar)) upperlimit = upperlimit + 1
 		endif
 
-		! But there are special circumstances:
-		if ((lowerlimit.LE.int_start).AND.(upperlimit.GE.int_end)) then
-			call alps_error(8)
-		else
-			if (lowerlimit.LE.int_start) then	! resonance outside or near the left end of the subluminal cone
+    ! But there are special circumstances:
+		if ((lowerlimit.LT.ipparbar_lower).AND.(upperlimit.GT.ipparbar_upper)) then
+      call alps_error(8)
+		elseif (lowerlimit.LE.ipparbar_lower) then	! resonance outside or near the left end of the subluminal cone
 				int_start = 1
 				lowerlimit = 0
-				upperlimit = max(ipparbar_res + positions_principal + 1, ipparbar_lower)
-			endif
-
-			if (upperlimit.GE.int_end) then ! resonance outside or near the right end of the subluminal cone
-				lowerlimit = min(ipparbar_res - positions_principal, ipparbar_upper)
+				!upperlimit = max(upperlimit, ipparbar_lower)
+        upperlimit = ipparbar_lower
+			elseif (upperlimit.GE.ipparbar_upper) then ! resonance outside or near the right end of the subluminal cone
+				!lowerlimit = min(lowerlimit, ipparbar_upper)
+        lowerlimit = ipparbar_upper
 				upperlimit = npparbar
 				int_end = npparbar - 1
 			endif
-		endif
 
 
 
