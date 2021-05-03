@@ -650,8 +650,8 @@ end subroutine read_f0
 !    if (proc0) then
        select case(error_id)
        case(0) !seen by all processors
-          write(*,'(a,i6)')'ERROR: Number of processors must be even: nproc= ',nproc
-          write(unit_error,'(a,i6)')'ERROR: Number of processors must be even: nproc= ',nproc
+          write(*,'(a,i6)')'ERROR: Number of processors must be even and greater than 2: nproc= ',nproc
+          write(unit_error,'(a,i6)')'ERROR: Number of processors must be even and greater than 2: nproc= ',nproc
        case(1) !seen by proc0
           write(*,'(2a)') "get_indexed_namelist: required input namelist not found "
           write(unit_error,'(2a)') "get_indexed_namelist: required input namelist not found "
