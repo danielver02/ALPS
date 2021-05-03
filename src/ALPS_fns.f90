@@ -1958,7 +1958,6 @@ double complex function landau_integrate_rel(om, nn, mode)
 	double precision :: h
 	double complex :: ii
 	double complex :: dfgamma_C,dfpparbar_C,pparbar_res
-	double complex :: pparbar_res_minus,pparbar_res_plus
 
 	ii = cmplx(0.d0,1.d0,kind(1.d0))
 
@@ -1976,28 +1975,27 @@ double complex function landau_integrate_rel(om, nn, mode)
 
 		pparbar_res = gamma_rel(sproc_rel,igamma,1)*om*vA/kpar - (1.d0*nn)*qs(sproc)*vA/(kpar*ms(sproc))
 
+
 		if ((real(pparbar_res)**2).LE.(gamma_rel(sproc_rel,igamma,1)**2-1.d0)) then
 
-			! determine h:
-			pparbar_res_minus=gamma_rel(sproc_rel,igamma-1,1)*om*vA/kpar - (1.d0*nn)*qs(sproc)*vA/(kpar*ms(sproc))
-			pparbar_res_plus=gamma_rel(sproc_rel,igamma+1,1)*om*vA/kpar - (1.d0*nn)*qs(sproc)*vA/(kpar*ms(sproc))
-
 			h=1.d0
-			if ((real(pparbar_res_minus)**2).GT.(gamma_rel(sproc_rel,igamma-1,1)**2-1.d0)) h = 0.5d0
-			if ((real(pparbar_res_plus)**2).GT.(gamma_rel(sproc_rel,igamma+1,1)**2-1.d0)) h = 0.5d0
 
       ! At igamma=1, we are already missing the part from igamma=0, where we should actually start.
       ! Therefore, we use 4 instead of 2 in the trapezoid integration:
-      if ((igamma.EQ.0).OR.(igamma.EQ.(ngamma-1))) h = 0.5d0
+      if (igamma.EQ.(ngamma-1)) h = 0.5d0
 
+      if (igamma.EQ.1) then
+        dfgamma_C=(eval_fit(sproc,igamma+1,pparbar_res)-eval_fit(sproc,igamma,pparbar_res))/dgamma
+      else
+          dfgamma_C=(eval_fit(sproc,igamma+1,pparbar_res)-eval_fit(sproc,igamma-1,pparbar_res))/(2.d0*dgamma)
+      endif
 
-			dfgamma_C=(eval_fit(sproc,igamma+1,pparbar_res)-eval_fit(sproc,igamma-1,pparbar_res))/(2.d0*dgamma)
-			dfpparbar_C=(eval_fit(sproc,igamma,pparbar_res+dpparbar)-eval_fit(sproc,igamma,pparbar_res-dpparbar))/(2.d0*dpparbar)
+      dfpparbar_C=(eval_fit(sproc,igamma,pparbar_res+dpparbar)-eval_fit(sproc,igamma,pparbar_res-dpparbar))/(2.d0*dpparbar)
 
 			landau_integrate_rel = landau_integrate_rel - h * ( &
 				dfgamma_C+(kpar/(om*vA))*dfpparbar_C) * int_T_res_rel(sproc_rel,nn, igamma,pparbar_res, mode)
 
-		endif
+      endif
 
 	enddo
 
