@@ -873,11 +873,11 @@ end function disp
 ! Determine if there are resonances
 !-=-=-=-=-=-=
 subroutine determine_resonances(om,nn,found_res_plus,found_res_minus)
-	use alps_var, only : npar, nperp, pp, vA, ms, qs, sproc, kpar
+	use alps_var, only : npar, nperp, pp, vA, ms, qs, sproc, kpar, gamma_rel,ngamma
 	use alps_var, only : positions_principal, relativistic
 	use alps_io, only  : alps_error
 	implicit none
-	integer :: nn, ipar, iperp
+	integer :: nn, ipar, iperp, igamma, sproc_rel
 	logical :: found_res_plus,found_res_minus
 	double precision :: dppar, gamma, ppar
 	double complex :: p_res, om
@@ -888,62 +888,17 @@ subroutine determine_resonances(om,nn,found_res_plus,found_res_minus)
 
 	if (relativistic(sproc)) then
 
-	  do iperp = 0, nperp
+	do igamma=0,ngamma
+	  ! Note that this is pparbar in reality, but it does not make a difference for this section:
+	  p_res = gamma_rel(sproc_rel,igamma,1)*om*vA/kpar - (1.d0*nn)*qs(sproc)*vA/(kpar*ms(sproc))
+	  if ((real(p_res)**2).LE.(gamma_rel(sproc_rel,igamma,1)**2-1.d0)) found_res_plus = .TRUE.
 
-	! positive n
-	  ipar = 0
-
-	  do while ((ipar.LE.(npar-2)).AND.(.NOT.found_res_plus))
-		 ipar = ipar + 1
-		 gamma = sqrt((pp(sproc, iperp, ipar, 1)**2 + pp(sproc, iperp, ipar, 2)**2) * vA**2/ms(sproc)**2 +1.d0)
-		 p_res = (ms(sproc) * om * gamma - 1.d0 * nn * qs(sproc))/kpar
-
-		 if ((pp(sproc,2,ipar,2).LE.real(p_res)).and.&
-			  (pp(sproc,2,ipar+1,2).GT.real(p_res))) found_res_plus = .TRUE.
-
-	  enddo
-
-	! negative n:
-	ipar = 0
-	
-	  do while ((ipar.LE.(npar-2)).AND.(.NOT.found_res_minus))
-		 ipar = ipar + 1
-		 gamma = sqrt((pp(sproc, iperp, ipar, 1)**2 + pp(sproc, iperp, ipar, 2)**2) * vA**2/ms(sproc)**2 +1.d0)
-		 p_res = (ms(sproc) * om * gamma + 1.d0 * nn * qs(sproc))/kpar
-
-		 if ((pp(sproc,2,ipar,2).LE.real(p_res)).and.&
-			  (pp(sproc,2,ipar+1,2).GT.real(p_res))) found_res_minus = .TRUE.
-
-	  enddo
-
-	  ! Check if there is a resonance right outside the integration domain:
-	  do ipar=1,positions_principal
-		ppar=pp(sproc,iperp,1,2) - 1.d0 * ipar * dppar
-		gamma = sqrt((pp(sproc, iperp, ipar, 1)**2 + ppar**2) * vA**2/ms(sproc)**2 +1.d0)
-		p_res = (ms(sproc) * (om) * gamma - 1.d0*nn * qs(sproc))/kpar
-
-		if ((ppar.LE.real(p_res)).and.&
-			  ((ppar+dppar).GT.real(p_res))) found_res_plus = .TRUE.
-
-		p_res = (ms(sproc) * om * gamma + 1.d0*nn * qs(sproc))/kpar
-		if ((ppar.LE.real(p_res)).and.&
-			  ((ppar+dppar).GT.real(p_res))) found_res_minus = .TRUE.
-
-
-		ppar=pp(sproc,iperp,npar-2,2) + 1.d0 * ipar * dppar
-		gamma = sqrt((pp(sproc, iperp, ipar, 1)**2 + ppar**2) * vA**2/ms(sproc)**2 +1.d0)
-
-		p_res = (ms(sproc) * (om) * gamma - 1.d0*nn * qs(sproc))/kpar
-		if ((ppar.LE.real(p_res)).and.&
-			  ((ppar+dppar).GT.real(p_res))) found_res_plus = .TRUE.
-
-		p_res = (ms(sproc) * om * gamma + 1.d0*nn * qs(sproc))/kpar
-		if ((ppar.LE.real(p_res)).and.&
-			  ((ppar+dppar).GT.real(p_res))) found_res_minus = .TRUE.
-
-	 enddo
+	  p_res = gamma_rel(sproc_rel,igamma,1)*om*vA/kpar + (1.d0*nn)*qs(sproc)*vA/(kpar*ms(sproc))
+	  if ((real(p_res)**2).LE.(gamma_rel(sproc_rel,igamma,1)**2-1.d0)) found_res_minus = .TRUE.
 
 	enddo
+
+
 
 	else ! non-relativistic case:
 
