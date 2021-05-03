@@ -52,8 +52,8 @@ program alps
   call mpi_barrier(mpi_comm_world,ierror)
   if (proc0) write(*,'(a)') 'All processes are up and running.'	
 
-  !Check to be sure nproc is even, otherwise shutdown
-  if (mod(nproc,2) .ne. 0) call alps_error(0)
+  !Check to be sure nproc is even and greater than 2, otherwise shutdown
+  if ((mod(nproc,2) .ne. 0).or.(nproc .le. 2)) call alps_error(0)
 
   !Read parameters------------------------------------------------------------
   if (proc0) call init_param !alps_io
