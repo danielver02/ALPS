@@ -873,13 +873,13 @@ end function disp
 ! Determine if there are resonances
 !-=-=-=-=-=-=
 subroutine determine_resonances(om,nn,found_res_plus,found_res_minus)
-	use alps_var, only : npar, nperp, pp, vA, ms, qs, sproc, kpar, gamma_rel,ngamma
+	use alps_var, only : npar, pp, vA, ms, qs, sproc, kpar, gamma_rel,ngamma
 	use alps_var, only : positions_principal, relativistic
 	use alps_io, only  : alps_error
 	implicit none
-	integer :: nn, ipar, iperp, igamma, sproc_rel
+	integer :: nn, ipar, igamma, sproc_rel
 	logical :: found_res_plus,found_res_minus
-	double precision :: dppar, gamma, ppar
+	double precision :: dppar
 	double complex :: p_res, om
 
 	 dppar = pp(sproc,2,2,2)-pp(sproc,2,1,2)
