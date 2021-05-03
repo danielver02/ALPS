@@ -1329,10 +1329,11 @@ double complex function integrate_res(om,nn,mode)
 	! pp(sproc,2,upperlimit,2). We split this interval into steps of roughly size smdelta:
 	ntiny=int((pp(sproc,2,upperlimit,2)-real(p_res)-capDelta)/smdelta)
 
-	! Correct for the fact that smdelta is not exactly the step width in the tiny-rest integration:
-	correction=((pp(sproc,2,upperlimit,2)-real(p_res)-capDelta)/(1.d0*ntiny))/smdelta
 
 	if (ntiny.GT.0) then
+
+		! Correct for the fact that smdelta is not exactly the step width in the tiny-rest integration:
+		correction=((pp(sproc,2,upperlimit,2)-real(p_res)-capDelta)/(1.d0*ntiny))/smdelta
 
 		ppar=real(p_res)+capDelta
 
@@ -1791,10 +1792,12 @@ double complex function principal_integral_rel(sproc_rel,om,nn,mode,igamma,ippar
 
 	ntiny=int((pparbar_rel(sproc_rel,igamma,upperlimit)-real(pparbar_res)-capDelta)/smdelta)
 
-	! Correct for the fact that smdelta is not exactly the step width in the tiny-rest integration:
-	correction=((pparbar_rel(sproc_rel,igamma,upperlimit)-real(pparbar_res)-capDelta)/(1.d0*ntiny))/smdelta
 
 	if (ntiny.GT.0) then
+
+		! Correct for the fact that smdelta is not exactly the step width in the tiny-rest integration:
+		correction=((pparbar_rel(sproc_rel,igamma,upperlimit)-real(pparbar_res)-capDelta)/(1.d0*ntiny))/smdelta
+
 
 		pparbar=real(pparbar_res)+capDelta
 
