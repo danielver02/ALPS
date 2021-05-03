@@ -904,7 +904,8 @@ subroutine determine_resonances(om,nn,found_res_plus,found_res_minus)
 	  enddo
 
 	! negative n:
-
+	ipar = 0
+	
 	  do while ((ipar.LE.(npar-2)).AND.(.NOT.found_res_minus))
 		 ipar = ipar + 1
 		 gamma = sqrt((pp(sproc, iperp, ipar, 1)**2 + pp(sproc, iperp, ipar, 2)**2) * vA**2/ms(sproc)**2 +1.d0)
