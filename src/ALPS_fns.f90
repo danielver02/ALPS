@@ -888,7 +888,9 @@ subroutine determine_resonances(om,nn,found_res_plus,found_res_minus)
 
 	if (relativistic(sproc)) then
 
-	do igamma=0,ngamma
+  call determine_sproc_rel(sproc_rel)
+
+  do igamma=0,ngamma
 	  ! Note that this is pparbar in reality, but it does not make a difference for this section:
 	  p_res = gamma_rel(sproc_rel,igamma,1)*om*vA/kpar - (1.d0*nn)*qs(sproc)*vA/(kpar*ms(sproc))
 	  if ((real(p_res)**2).LE.(gamma_rel(sproc_rel,igamma,1)**2-1.d0)) found_res_plus = .TRUE.
@@ -967,9 +969,9 @@ double complex function full_integrate(om, nn, mode, found_res)
        	 	if (aimag(om).GT.0.d0) then
 	    		full_integrate = integrate_res_rel(om,nn,mode)
        	 	elseif (aimag(om).LT.0.d0) then
-      	 		full_integrate = integrate_res_rel(om,nn,mode) + 2.d0 * landau_integrate_rel(om, nn, mode)
+      	 		full_integrate = integrate_res_rel(om,nn,mode)! + 2.d0 * landau_integrate_rel(om, nn, mode)
        	 	elseif (aimag(om).EQ.0.d0) then
-	       	 	full_integrate = integrate_res_rel(om,nn,mode) + landau_integrate_rel(om, nn, mode)
+	       	 	full_integrate = integrate_res_rel(om,nn,mode) !+ landau_integrate_rel(om, nn, mode)
       	 	endif
   elseif ((found_res).and.(aimag(om).GT.0.d0)) then
      !Brute force integrate
