@@ -3478,7 +3478,7 @@ subroutine map_search
     call mpi_bcast(nroots, 1, MPI_INTEGER, 0, MPI_COMM_WORLD, ierror)
     call mpi_bcast(wroots(:), size(wroots(:)), MPI_DOUBLE_COMPLEX, 0, MPI_COMM_WORLD, ierror)
 
-    if (proc0) call refine_guess
+    call refine_guess
 
     call mpi_bcast(nroots, 1, MPI_INTEGER, 0, MPI_COMM_WORLD, ierror)
     call mpi_bcast(wroots(:), size(wroots(:)), MPI_DOUBLE_COMPLEX, 0, MPI_COMM_WORLD, ierror)
