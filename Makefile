@@ -5,13 +5,13 @@
 #   VERSION 0.0
 #
 #   Kristopher Klein and Daniel Verscharen
-#  
+#
 #   Version notes:
 #
 #  LAST UPDATE:  2016/05/20
 ###############################################################################
 # SET VARIABLES FOR SYSTEM, and PROFILING
-# SYSTEM options:ubik,trillian,mercer 
+# SYSTEM options:ubik,trillian,mercer
 ALPS_SYSTEM=wub
 PROFILE= false
 ###############################################################################
@@ -33,11 +33,11 @@ PACK = Makefile \
 ifeq ($(ALPS_SYSTEM),wub)
 	COMP= mpifort
 	STDCOMP:= gfortran
-	STDCOMPOPTS := -fcheck=all -fbacktrace -fbounds-check -Wconversion -Wsurprising -ffixed-line-length-none -ffree-line-length-none -Wunused -g -fbacktrace -lm -I./include/	
+	STDCOMPOPTS := -fcheck=all -fbacktrace -fbounds-check -ffpe-trap=zero,overflow -Wconversion -Wsurprising -ffixed-line-length-none -ffree-line-length-none -Wunused -g -fbacktrace -lm -I./include/
 	#FLAGS= -O3 -DDOUBLE
-	#COMPOPTS := -fcheck=all -fbacktrace -fbounds-check -Wconversion -Wsurprising -ffixed-line-length-none -ffree-line-length-none -Wunused -lm -I./include/	
-	COMPOPTS := -O3 -g -fbounds-check -ffast-math -Wunused -funroll-loops -g -fbacktrace -lm -I./include/
-	#FLAGS= -DDOUBLE	
+	#COMPOPTS := -fcheck=all -fbacktrace -fbounds-check -Wconversion -Wsurprising -ffixed-line-length-none -ffree-line-length-none -Wunused -lm -I./include/
+	COMPOPTS := -O3 -g -fbounds-check -ffpe-trap=zero,overflow -ffast-math -Wunused -funroll-loops -g -fbacktrace -lm -I./include/
+	#FLAGS= -DDOUBLE
 	ifeq ($(PROFILE),true)
 		FLAGS += -g
 	endif
@@ -49,12 +49,12 @@ ifeq ($(ALPS_SYSTEM),trillian)
 	#COMP= ifort
 	COMP= ftn
 	STDCOMP:= gfortran
-	STDCOMPOPTS := -fcheck=all -fbacktrace -fbounds-check -Wconversion -Wsurprising -ffixed-line-length-none -ffree-line-length-none -Wunused -g -fbacktrace -lm -I./include/	
-	FLAGS= -O3 -DDOUBLE	
+	STDCOMPOPTS := -fcheck=all -fbacktrace -fbounds-check -Wconversion -Wsurprising -ffixed-line-length-none -ffree-line-length-none -Wunused -g -fbacktrace -lm -I./include/
+	FLAGS= -O3 -DDOUBLE
 	# This are good options for cray-ftn:
 	# COMPOPTS := -e m -lm -I./include/
 	# This are good options for GFortran:
-	 COMPOPTS := -ffast-math -funroll-loops -lm -I./include/	
+	 COMPOPTS := -ffast-math -funroll-loops -lm -I./include/
 	# These are good options for PG Fortran:
 	# COMPOPTS :=  -fast -Mipa=fast -Mfprelaxed -lm -I./include/
 	# These are good options for Intel Fortran:
@@ -91,32 +91,32 @@ ALPS: $(OBJS) | solution
 
 tidyup:	| include
 	if ls *.mod 1> /dev/null 2>&1; then mv *.mod include/; fi
-	
+
 
 clean:
-	rm -f obj/*.o 
+	rm -f obj/*.o
 	rm -f include/*.mod
 	rm -f ALPS*.e
 	rm -f distribution/generate_distribution.e
 	rm -f interpolation/interpolation.e
-	
+
 
 interpolation:interpolation/interpolation.e
 
 generate_distribution:distribution/generate_distribution.e
 
-tar: 
+tar:
 	mkdir pack_ALPS_`date +'%y%m%d'`
 	rsync -R $(PACK) pack_ALPS_`date +'%y%m%d'`
 	tar -cvf  pack_ALPS_`date +'%y%m%d'`.tar pack_ALPS_`date +'%y%m%d'`
 	rm -r pack_ALPS_`date +'%y%m%d'`
 #	tar -cvf  pack_ALPS_`date +'%y%m%d'`.tar $(PACK)
 
-map: 
+map:
 #	mpirun -np 8 ./ALPS.e map.in
 	mpirun -np 8 ./ALPS.e map_max_C.in
 
-guess: 
+guess:
 	mpirun -np 4 ./ALPS.e guess.in
 
 run:
@@ -147,7 +147,7 @@ $(OBJS): | obj
 
 obj: | include
 	mkdir obj
-	
+
 include:
 	mkdir include
 
