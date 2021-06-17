@@ -625,9 +625,14 @@ end subroutine LUBKSB
        !Indices of refraction for the dispersion relation
 
        !NHDS normalization
-       enx2=((kperp/(om))**2)
-       enz2=((kpar/(om))**2)
-       enxnz=(kperp*kpar/(om**2))
+       !enx2=((kperp/(om))**2)
+       !enz2=((kpar/(om))**2)
+       !enxnz=(kperp*kpar/(om**2))
+
+       !NHDS normalization multiplied with om**2
+       enx2=kperp**2
+       enz2=kpar**2
+       enxnz=kperp*kpar
 
        !PLUME normalization
        !enx2=((kperp/(om*vA))**2)
@@ -731,7 +736,10 @@ end subroutine LUBKSB
        !-=-=-=-=-=-
 
        !NHDS normalization
-       norm(sproc) = ns(sproc) * qs(sproc) / om
+       !norm(sproc) = ns(sproc) * qs(sproc) / om
+
+       !NHDS normalization multiplied with om**2
+       norm(sproc) = ns(sproc) * qs(sproc) * om
 
        !PLUME normalization
        !norm(sproc) = ns(sproc) * qs(sproc)/(om*vA**2)
@@ -770,8 +778,12 @@ end subroutine LUBKSB
        !The global variable 'chi0' is used
        !for heating & eigenfunction calculation
 
+
        !NHDS normalization
-       chi0=chi/(vA*vA)
+       !chi0=chi/(vA*vA)
+
+       !NHDS normalization multiplied with om**2
+       chi0=chi/(om*om*vA*vA)
 
        !PLUME normalization
        !chi0=chi
@@ -781,7 +793,7 @@ end subroutine LUBKSB
        chi0(:,3,2)=-chi0(:,2,3)
 
     	wave=cmplx(0.d0,0.d0,kind(1.d0))
-        eps=cmplx(0.d0,0.d0,kind(1.d0))
+      eps=cmplx(0.d0,0.d0,kind(1.d0))
 
 
        !Sum over species!
@@ -810,9 +822,14 @@ end subroutine LUBKSB
        !-=-=-=-=-=-=-=-=-=
 
        !NHDS normalization
-       eps(1,1) = eps(1,1) + vA**2
-       eps(2,2) = eps(2,2) + vA**2
-       eps(3,3) = eps(3,3) + vA**2
+       !eps(1,1) = eps(1,1) + vA**2
+       !eps(2,2) = eps(2,2) + vA**2
+       !eps(3,3) = eps(3,3) + vA**2
+
+       !NHDS normalization multiplied with om**2
+       eps(1,1) = eps(1,1) + (om*vA)**2
+       eps(2,2) = eps(2,2) + (om*vA)**2
+       eps(3,3) = eps(3,3) + (om*vA)**2
 
        !PLUME normalization
        !eps(1,1) = eps(1,1) + 1.d0
@@ -873,13 +890,13 @@ end function disp
 ! Determine if there are resonances
 !-=-=-=-=-=-=
 subroutine determine_resonances(om,nn,found_res_plus,found_res_minus)
-	use alps_var, only : npar, pp, vA, ms, qs, sproc, kpar, gamma_rel,ngamma
+	use alps_var, only : npar, pp, vA, ms, qs, sproc, kpar, nperp
 	use alps_var, only : positions_principal, relativistic
 	use alps_io, only  : alps_error
 	implicit none
-	integer :: nn, ipar, igamma, sproc_rel
+	integer :: nn, ipar, iperp
 	logical :: found_res_plus,found_res_minus
-	double precision :: dppar
+	double precision :: dppar, gamma
 	double complex :: p_res, om
 
 	 dppar = pp(sproc,2,2,2)-pp(sproc,2,1,2)
@@ -888,18 +905,40 @@ subroutine determine_resonances(om,nn,found_res_plus,found_res_minus)
 
 	if (relativistic(sproc)) then
 
-  call determine_sproc_rel(sproc_rel)
+  !call determine_sproc_rel(sproc_rel)
 
-  do igamma=0,ngamma
+  !do igamma=0,ngamma
 	  ! Note that this is pparbar in reality, but it does not make a difference for this section:
-	  p_res = gamma_rel(sproc_rel,igamma,1)*om*vA/kpar - (1.d0*nn)*qs(sproc)*vA/(kpar*ms(sproc))
-	  if ((real(p_res)**2).LE.(gamma_rel(sproc_rel,igamma,1)**2-1.d0)) found_res_plus = .TRUE.
+    ! positive n:
+    !p_res = gamma_rel(sproc_rel,igamma,1)*om*vA/kpar - (1.d0*nn)*qs(sproc)*vA/(kpar*ms(sproc))
+    !if ((real(p_res)**2).LE.(gamma_rel(sproc_rel,igamma,1)**2-1.d0)) found_res_plus = .TRUE.
 
-	  p_res = gamma_rel(sproc_rel,igamma,1)*om*vA/kpar + (1.d0*nn)*qs(sproc)*vA/(kpar*ms(sproc))
-	  if ((real(p_res)**2).LE.(gamma_rel(sproc_rel,igamma,1)**2-1.d0)) found_res_minus = .TRUE.
+    ! negative n:
+	  !p_res = gamma_rel(sproc_rel,igamma,1)*om*vA/kpar + (1.d0*nn)*qs(sproc)*vA/(kpar*ms(sproc))
+	  !if ((real(p_res)**2).LE.(gamma_rel(sproc_rel,igamma,1)**2-1.d0)) found_res_minus = .TRUE.
+!	enddo
 
-	enddo
+! The following checks for resonances in (pperp,ppar)-space rather than in (Gamma,pparbar)-space:
+  do iperp=0,nperp
+    do ipar=0,npar-1
 
+     gamma = sqrt((pp(sproc, iperp, ipar, 1)**2 + &
+        pp(sproc, iperp, ipar, 2)**2) * vA**2/ms(sproc)**2 +1.d0)
+
+     ! positive n:
+     p_res=(gamma*ms(sproc) * om - 1.d0 * nn * qs(sproc))/kpar
+
+     if ((pp(sproc,2,ipar,2).LE.real(p_res)).and.&
+			  (pp(sproc,2,ipar+1,2).GT.real(p_res))) found_res_plus = .TRUE.
+
+
+    ! negative n:
+    p_res=(gamma*ms(sproc) * om + 1.d0 * nn * qs(sproc))/kpar
+
+        if ((pp(sproc,2,ipar,2).LE.real(p_res)).and.&
+   			  (pp(sproc,2,ipar+1,2).GT.real(p_res))) found_res_minus = .TRUE.
+	  enddo
+  enddo
 
 
 	else ! non-relativistic case:
@@ -969,9 +1008,9 @@ double complex function full_integrate(om, nn, mode, found_res)
        	 	if (aimag(om).GT.0.d0) then
 	    		full_integrate = integrate_res_rel(om,nn,mode)
        	 	elseif (aimag(om).LT.0.d0) then
-      	 		full_integrate = integrate_res_rel(om,nn,mode)! + 2.d0 * landau_integrate_rel(om, nn, mode)
+      	 		full_integrate = integrate_res_rel(om,nn,mode) + 2.d0 * landau_integrate_rel(om, nn, mode)
        	 	elseif (aimag(om).EQ.0.d0) then
-	       	 	full_integrate = integrate_res_rel(om,nn,mode) !+ landau_integrate_rel(om, nn, mode)
+	       	 	full_integrate = integrate_res_rel(om,nn,mode) + landau_integrate_rel(om, nn, mode)
       	 	endif
   elseif ((found_res).and.(aimag(om).GT.0.d0)) then
      !Brute force integrate
