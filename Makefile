@@ -138,10 +138,11 @@ distribution/generate_distribution.e:distribution/generate_distribution.f90
 #########Dependencies
 obj/ALPS_var.o:
 obj/ALPS_io.o:     obj/ALPS_var.o
-obj/ALPS_fns.o:    obj/ALPS_var.o obj/ALPS_analyt.o
+obj/ALPS_fns_rel.o:    obj/ALPS_var.o obj/ALPS_analyt.o
+obj/ALPS_fns.o:    obj/ALPS_var.o obj/ALPS_analyt.o obj/ALPS_fns_rel.o
 obj/ALPS_com.o:    obj/ALPS_var.o
 obj/ALPS_analyt.o: obj/ALPS_var.o obj/ALPS_io.o
-obj/ALPS.o:	obj/ALPS_var.o obj/ALPS_io.o obj/ALPS_fns.o obj/ALPS_com.o obj/ALPS_analyt.o
+obj/ALPS.o:	obj/ALPS_var.o obj/ALPS_io.o obj/ALPS_fns_rel.o obj/ALPS_fns.o obj/ALPS_com.o obj/ALPS_analyt.o
 
 $(OBJS): | obj
 
