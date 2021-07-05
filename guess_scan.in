@@ -11,7 +11,7 @@
 &system
 !Perpendicular and Parallel Wavenumbers
 kperp=1.d-3
-kpar=1.d-3
+kpar=0.1d0
 !Number of Plasma Species
 nspec=2
 !System Option (see README file)
@@ -40,10 +40,10 @@ arrayName='gauss'
 !Maximum amplitude of Bessel function to determine nmax
 Bessel_zero = 1.d-45
 numiter = 50
-D_threshold = 1.d-5
+D_threshold = 1.d-13
 D_prec = 1.d-5
 D_gap=1.d-5
-positions_principal=5
+positions_principal=3
 n_resonance_interval=100
 Tlim=0.01d0
 maxsteps_fit=500
@@ -58,7 +58,7 @@ use_secant=T
 /
 
 &guess_1
-g_om=0.9d-3
+g_om=0.095d0
 g_gam=-0.00001d0
 /
 
@@ -146,9 +146,9 @@ perpcorr=1.d0
 &scan_input_1
 scan_type=4
 swi=0.001d0
-swf=50.d0
+swf=2.d0
 swlog=.false.
-ns=40
+ns=100
 nres=1
 heating=.true.
 eigen=.true.
