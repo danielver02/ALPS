@@ -34,14 +34,24 @@ ifeq ($(ALPS_SYSTEM),wub)
 	COMP= mpifort
 	STDCOMP:= gfortran
 	STDCOMPOPTS := -fcheck=all -fbacktrace -fbounds-check -ffpe-trap=zero,overflow -Wconversion -Wsurprising -ffixed-line-length-none -ffree-line-length-none -Wunused -g -fbacktrace -lm -I./include/
-	#FLAGS= -O3 -DDOUBLE
-	#COMPOPTS := -fcheck=all -fbacktrace -fbounds-check -Wconversion -Wsurprising -ffixed-line-length-none -ffree-line-length-none -Wunused -lm -I./include/
 	COMPOPTS := -O3 -g -fbounds-check -ffpe-trap=zero,overflow -ffast-math -Wunused -funroll-loops -g -fbacktrace -lm -I./include/
 	#FLAGS= -DDOUBLE
 	ifeq ($(PROFILE),true)
 		FLAGS += -g
 	endif
 endif
+
+ifeq ($(ALPS_SYSTEM),Mac10)
+COMP= mpifort-openmpi-gcc10
+STDCOMP:= gfortran
+STDCOMPOPTS := -fcheck=all -fbacktrace -fbounds-check -Wconversion -Wsurprising -ffixed-line-length-none -ffree-line-length-none -Wunused -g -fbacktrace -lm -I./include/
+COMPOPTS := -fbounds-check -fallow-argument-mismatch -ffast-math -Wunused -funroll-loops -g -fbacktrace -lm -I./include/
+#FLAGS= -DDOUBLE
+ifeq ($(PROFILE),true)
+	FLAGS += -g
+endif
+endif
+
 
 #SET FLAGS FOR Trillian
 #MPI compiled with ifort (I assume?)
