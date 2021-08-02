@@ -174,11 +174,11 @@ double complex function fit_function(is,n_params,params,pperp_val,ppar_val)
 		endif
 
 		if (fit_type(is,ifit).EQ.6) then	! Bi-Moyal
-			fit_function=fit_function+params(ifit+par_ind+0)*exp(0.5*(params(ifit+par_ind+1)* &
-					perp_correction(is,ifit)*pperp_val**2 + params(ifit+par_ind+2)* &
-					(ppar_val-params(ifit+par_ind+3))**2 - &
-					exp(params(ifit+par_ind+1)*perp_correction(is,ifit)*pperp_val**2 + &
-					params(ifit+par_ind+2)*(ppar_val-params(ifit+par_ind+3))**2) ))
+			fit_function=fit_function+params(ifit+par_ind+0)*exp(0.5*(params(ifit+par_ind+3)* &
+					perp_correction(is,ifit)*pperp_val**2 + params(ifit+par_ind+1)* &
+					(ppar_val-params(ifit+par_ind+2))**2 - &
+					exp(params(ifit+par_ind+3)*perp_correction(is,ifit)*pperp_val**2 + &
+					params(ifit+par_ind+1)*(ppar_val-params(ifit+par_ind+2))**2) ))
 			par_ind=par_ind+3
 		endif
 
@@ -606,25 +606,25 @@ subroutine determine_JT(is,n_params,JT,params,iperp,upper_limit,ipparbar_lower)
 
 			if (fit_type(is,ifit).EQ.6) then	! bi-Moyal
 
-			expterm=exp(0.5*(params(ifit+par_ind+1)*perp_correction(is,ifit)*pperp_val**2 + &
-					params(ifit+par_ind+2)*(ppar_val-params(ifit+par_ind+3))**2 -&
-					exp(params(ifit+par_ind+1)*perp_correction(is,ifit)*pperp_val**2 + &
-					params(ifit+par_ind+2)*(ppar_val-params(ifit+par_ind+3))**2) ))
+			expterm=exp(0.5*(params(ifit+par_ind+3)*perp_correction(is,ifit)*pperp_val**2 + &
+					params(ifit+par_ind+1)*(ppar_val-params(ifit+par_ind+2))**2 -&
+					exp(params(ifit+par_ind+3)*perp_correction(is,ifit)*pperp_val**2 + &
+					params(ifit+par_ind+1)*(ppar_val-params(ifit+par_ind+2))**2) ))
 
 				JT(ifit+par_ind+0,ipar)=expterm
 
-				JT(ifit+par_ind+1,ipar)=params(ifit+par_ind+0)*expterm*(perp_correction(is,ifit)*pperp_val**2 * &
-				(0.5d0 - exp(params(ifit+par_ind+1)*perp_correction(is,ifit)*pperp_val**2 + params(ifit+par_ind+2)* &
-				(ppar_val-params(ifit+par_ind+3))**2)  ))
+				JT(ifit+par_ind+1,ipar)=params(ifit+par_ind+0)*expterm*(ppar_val-params(ifit+par_ind+2))**2 * &
+				(0.5d0 - exp(params(ifit+par_ind+3)*perp_correction(is,ifit)*pperp_val**2 + params(ifit+par_ind+1)* &
+				(ppar_val-params(ifit+par_ind+2)**2)  ))
 
-				JT(ifit+par_ind+2,ipar)=params(ifit+par_ind+0)*expterm*((ppar_val-params(ifit+par_ind+3))**2 * &
-				(0.5d0 - exp(params(ifit+par_ind+1)*perp_correction(is,ifit)*pperp_val**2 + params(ifit+par_ind+2)* &
-				(ppar_val-params(ifit+par_ind+3))**2)  ))
+				JT(ifit+par_ind+2,ipar)=params(ifit+par_ind+0)*expterm*(2.d0*params(ifit+par_ind+1)*&
+				(params(ifit+par_ind+2)-ppar_val)* &
+				(0.5d0-exp(params(ifit+par_ind+3)*perp_correction(is,ifit)*pperp_val**2 + &
+				 params(ifit+par_ind+1)* (ppar_val-params(ifit+par_ind+2))**2) ))
 
-				JT(ifit+par_ind+3,ipar)=params(ifit+par_ind+0)*expterm*(2.d0*params(ifit+par_ind+2)*&
-				(params(ifit+par_ind+3)-ppar_val)* &
-				(0.5d0-exp(params(ifit+par_ind+1)*perp_correction(is,ifit)*pperp_val**2 + &
-				 params(ifit+par_ind+2)* (ppar_val-params(ifit+par_ind+3))**2) ))
+				 JT(ifit+par_ind+3,ipar)=params(ifit+par_ind+0)*expterm*(perp_correction(is,ifit)*pperp_val**2 * &
+ 				(0.5d0 - exp(params(ifit+par_ind+3)*perp_correction(is,ifit)*pperp_val**2 + params(ifit+par_ind+1)* &
+ 				(ppar_val-params(ifit+par_ind+2))**2)  ))
 
 				par_ind=par_ind+3
 			endif
