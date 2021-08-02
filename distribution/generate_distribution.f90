@@ -114,6 +114,7 @@ program generate_distribution
       ifit_5=(1.d0-tau(is))/( 2.d0*beta * ms(is))
       ifit_3=p_drift(is)
       ifit_4=0.d0
+      ifit_5=0.d0
       iperpcorr=(2.d0*ms(is)/(vA*vA*beta*tau(is)*alph(is)))
 
 
@@ -129,9 +130,12 @@ program generate_distribution
       endif
 
       ! These are the ideal fitting parameters for this configuration:
+
       ifit_1=1.d0
       ifit_2=1.d0/( beta * ms(is) * tau(is))
       ifit_3=p_drift(is)
+      ifit_4=1.d0
+      ifit_5=0.d0
       iperpcorr=1.d0/( tau(is) *beta * ms(is) * alph(is))
 
 	end select
@@ -184,7 +188,7 @@ program generate_distribution
      ! Numerically re-normalise the Moyal distribution:
      if (distribution(is).EQ.4) then
        norm = 1.d0/integrate
-
+       ifit_1=norm
        integrate=0.d0
        do iperp=0,nperp
           pperp = real(iperp)*dpperp
