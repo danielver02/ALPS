@@ -36,10 +36,11 @@ double complex function eval_fit(is,iperp,ppar_valC)
 	n_params=0	! total number of fit_parameters
 	do ifit=1,n_fits(is)
 		if (fit_type(is,ifit).EQ.1) n_params=n_params+3	! Maxwell
-		if (fit_type(is,ifit).EQ.2) n_params=n_params+4	! kappa
+		if (fit_type(is,ifit).EQ.2) n_params=n_params+5	! kappa
 		if (fit_type(is,ifit).EQ.3) n_params=n_params+3	! Juettner with pperp and ppar
 		if (fit_type(is,ifit).EQ.4) n_params=n_params+1	! Juettner with gamma and pparbar, constant in pparbar
 		if (fit_type(is,ifit).EQ.5) n_params=n_params+3	! Juettner with gamma and pparbar with pparbar-dependence
+		if (fit_type(is,ifit).EQ.6) n_params=n_params+4	! Bi-Moyal distribution
 	enddo
 
 	allocate (params(n_params))
@@ -61,7 +62,8 @@ double complex function eval_fit(is,iperp,ppar_valC)
 			params(ifit+par_ind+1)=param_fit(is,iperp,2,ifit)
 			params(ifit+par_ind+2)=param_fit(is,iperp,3,ifit)
 			params(ifit+par_ind+3)=param_fit(is,iperp,4,ifit)
-			par_ind=par_ind+3
+			params(ifit+par_ind+4)=param_fit(is,iperp,5,ifit)
+			par_ind=par_ind+4
 		endif
 
 		if (fit_type(is,ifit).EQ.3) then	! Juettner in pperp and ppar
@@ -101,6 +103,17 @@ double complex function eval_fit(is,iperp,ppar_valC)
 			params(ifit+par_ind+2)=param_fit(is,iperp,3,ifit)
 			par_ind=par_ind+2
 		endif
+
+		if (fit_type(is,ifit).EQ.6) then	! Bi-Moyal
+			pperp_val=pp(is,iperp,1,1)
+			params(ifit+par_ind+0)=param_fit(is,iperp,1,ifit)
+			params(ifit+par_ind+1)=param_fit(is,iperp,2,ifit)
+			params(ifit+par_ind+2)=param_fit(is,iperp,3,ifit)
+			params(ifit+par_ind+3)=param_fit(is,iperp,4,ifit)
+			par_ind=par_ind+3
+		endif
+
+
 	enddo
 
 	eval_fit=fit_function(is,n_params,params,pperp_val,ppar_valC)
@@ -138,9 +151,9 @@ double complex function fit_function(is,n_params,params,pperp_val,ppar_val)
 
 		if (fit_type(is,ifit).EQ.2) then	! kappa
 			kappapart=1.d0+params(ifit+par_ind+1)*(ppar_val-params(ifit+par_ind+2))**2&
-				+ perp_correction(is,ifit)*pperp_val**2
-			fit_function=fit_function+params(ifit+par_ind+0)*kappapart**params(ifit+par_ind+3)
-			par_ind=par_ind+3
+				+ perp_correction(is,ifit)*params(ifit+par_ind+3)*pperp_val**2
+			fit_function=fit_function+params(ifit+par_ind+0)*kappapart**params(ifit+par_ind+4)
+			par_ind=par_ind+4
 		endif
 
 		if (fit_type(is,ifit).EQ.3) then	! Juettner in pperp and ppar
@@ -159,6 +172,16 @@ double complex function fit_function(is,n_params,params,pperp_val,ppar_val)
 				exp(-params(ifit+par_ind+1)*(ppar_val-params(ifit+par_ind+2))**2)
 			par_ind=par_ind+2
 		endif
+
+		if (fit_type(is,ifit).EQ.6) then	! Bi-Moyal
+			fit_function=fit_function+params(ifit+par_ind+0)*exp(0.5*(params(ifit+par_ind+1)* &
+					perp_correction(is,ifit)*pperp_val**2 + params(ifit+par_ind+2)* &
+					(ppar_val-params(ifit+par_ind+3))**2 - &
+					exp(params(ifit+par_ind+1)*perp_correction(is,ifit)*pperp_val**2 + &
+					params(ifit+par_ind+2)*(ppar_val-params(ifit+par_ind+3))**2) ))
+			par_ind=par_ind+3
+		endif
+
 	enddo
 	return
 end function
@@ -190,10 +213,11 @@ subroutine determine_param_fit
 		n_params=0	! total number of fit_parameters
 		do ifit=1,n_fits(is)
 			if (fit_type(is,ifit).EQ.1) n_params=n_params+3	! Maxwell
-			if (fit_type(is,ifit).EQ.2) n_params=n_params+4	! kappa
+			if (fit_type(is,ifit).EQ.2) n_params=n_params+5	! kappa
 			if (fit_type(is,ifit).EQ.3) n_params=n_params+3	! Juettner with pperp and ppar
 			if (fit_type(is,ifit).EQ.4) n_params=n_params+1	! Juettner with gamma and pparbar, constant in pparbar
 			if (fit_type(is,ifit).EQ.5) n_params=n_params+3	! Juettner with gamma and pparbar with pparbar-dependence
+			if (fit_type(is,ifit).EQ.6) n_params=n_params+4	! Bi-Moyal
 		enddo
 
 
@@ -223,7 +247,8 @@ subroutine determine_param_fit
 					params(ifit+par_ind+1)=param_fit(is,iperp,2,ifit)
 					params(ifit+par_ind+2)=param_fit(is,iperp,3,ifit)
 					params(ifit+par_ind+3)=param_fit(is,iperp,4,ifit)
-					par_ind=par_ind+3
+					params(ifit+par_ind+4)=param_fit(is,iperp,5,ifit)
+					par_ind=par_ind+4
 				endif
 
 				if (fit_type(is,ifit).EQ.3) then	! Juettner in pperp and ppar
@@ -244,6 +269,15 @@ subroutine determine_param_fit
 					params(ifit+par_ind+2)=param_fit(is,iperp,3,ifit)
 					par_ind=par_ind+2
 				endif
+
+				if (fit_type(is,ifit).EQ.6) then	! Bi-Moyal
+					params(ifit+par_ind+0)=param_fit(is,iperp,1,ifit)
+					params(ifit+par_ind+1)=param_fit(is,iperp,2,ifit)
+					params(ifit+par_ind+2)=param_fit(is,iperp,3,ifit)
+					params(ifit+par_ind+3)=param_fit(is,iperp,4,ifit)
+					par_ind=par_ind+3
+				endif
+
 			enddo
 
 			! Fit and return everything in one array "params":
@@ -320,7 +354,8 @@ subroutine determine_param_fit
 					param_fit(is,iperp,2,ifit)=params(ifit+par_ind+1)
 					param_fit(is,iperp,3,ifit)=params(ifit+par_ind+2)
 					param_fit(is,iperp,4,ifit)=params(ifit+par_ind+3)
-					par_ind=par_ind+3
+					param_fit(is,iperp,5,ifit)=params(ifit+par_ind+4)
+					par_ind=par_ind+4
 				endif
 
 				if (fit_type(is,ifit).EQ.3) then	! Juettner in pperp and ppar
@@ -340,6 +375,14 @@ subroutine determine_param_fit
 					param_fit(is,iperp,2,ifit)=params(ifit+par_ind+1)
 					param_fit(is,iperp,3,ifit)=params(ifit+par_ind+2)
 					par_ind=par_ind+2
+				endif
+
+				if (fit_type(is,ifit).EQ.6) then	! Bi-Moyal
+					param_fit(is,iperp,1,ifit)=params(ifit+par_ind+0)
+					param_fit(is,iperp,2,ifit)=params(ifit+par_ind+1)
+					param_fit(is,iperp,3,ifit)=params(ifit+par_ind+2)
+					param_fit(is,iperp,4,ifit)=params(ifit+par_ind+3)
+					par_ind=par_ind+3
 				endif
 
 			enddo
@@ -374,10 +417,11 @@ subroutine output_fit(qualitytotal)
 	do is=1,nspec
 		do ifit=1,n_fits(is)
 			if(fit_type(is,ifit).EQ.1) n_params=3
-			if(fit_type(is,ifit).EQ.2) n_params=4
+			if(fit_type(is,ifit).EQ.2) n_params=5
 			if(fit_type(is,ifit).EQ.3) n_params=3
 			if(fit_type(is,ifit).EQ.4) n_params=1
 			if(fit_type(is,ifit).EQ.5) n_params=3
+			if(fit_type(is,ifit).EQ.6) n_params=4
 
 			do iparam=1,n_params
 				write (*,'(a,i2,a,i2,a,i2,a,2es14.4)') ' param_fit(',is,', 1,',iparam,',',ifit,') = ',param_fit(is,1,iparam,ifit)
@@ -507,19 +551,22 @@ subroutine determine_JT(is,n_params,JT,params,iperp,upper_limit,ipparbar_lower)
 
 			if (fit_type(is,ifit).EQ.2) then	! kappa
 				kappapart=1.d0+params(ifit+par_ind+1)*(ppar_val-params(ifit+par_ind+2))**2 &
-						+ perp_correction(is,ifit)*pperp_val**2
+						+ perp_correction(is,ifit)*params(ifit+par_ind+3)*pperp_val**2
 
-				JT(ifit+par_ind+0,ipar)=kappapart**params(ifit+par_ind+3)
+				JT(ifit+par_ind+0,ipar)=kappapart**params(ifit+par_ind+4)
 
-				JT(ifit+par_ind+1,ipar)=params(ifit+par_ind+0)*params(ifit+par_ind+3)*kappapart**(params(ifit+par_ind+3)-1.d0)
+				JT(ifit+par_ind+1,ipar)=params(ifit+par_ind+0)*params(ifit+par_ind+4)*kappapart**(params(ifit+par_ind+4)-1.d0)
 				JT(ifit+par_ind+1,ipar)=JT(ifit+par_ind+1,ipar)*(ppar_val-params(ifit+par_ind+2))**2
 
-				JT(ifit+par_ind+2,ipar)=params(ifit+par_ind+0)*params(ifit+par_ind+3)*kappapart**(params(ifit+par_ind+3)-1.d0)
+				JT(ifit+par_ind+2,ipar)=params(ifit+par_ind+0)*params(ifit+par_ind+4)*kappapart**(params(ifit+par_ind+4)-1.d0)
 				JT(ifit+par_ind+2,ipar)=JT(ifit+par_ind+2,ipar)*2.d0*params(ifit+par_ind+1)*(params(ifit+par_ind+2)-ppar_val)
 
-				JT(ifit+par_ind+3,ipar)=log(kappapart)*params(ifit+par_ind+0)*kappapart**params(ifit+par_ind+3)
+				JT(ifit+par_ind+3,ipar)=params(ifit+par_ind+0)*params(ifit+par_ind+4)*kappapart**(params(ifit+par_ind+4)-1.d0)
+				JT(ifit+par_ind+3,ipar)=JT(ifit+par_ind+3,ipar)* perp_correction(is,ifit)*pperp_val**2
 
-				par_ind=par_ind+3
+				JT(ifit+par_ind+4,ipar)=log(kappapart)*params(ifit+par_ind+0)*kappapart**params(ifit+par_ind+4)
+
+				par_ind=par_ind+4
 			endif
 
 			if (fit_type(is,ifit).EQ.3) then	! Juettner with pperp and ppar
@@ -542,7 +589,8 @@ subroutine determine_JT(is,n_params,JT,params,iperp,upper_limit,ipparbar_lower)
 			endif
 
 			if (fit_type(is,ifit).EQ.5) then ! Juettner with gamma and pparbar with pparbar-dependence
-				expterm=exp(-params(ifit+par_ind+1)*(ppar_val-params(ifit+par_ind+2))**2)*exp(-perp_correction(is,ifit)*pperp_val)
+				expterm=exp(-params(ifit+par_ind+1)*(ppar_val-params(ifit+par_ind+2))**2)* &
+				exp(-perp_correction(is,ifit)*pperp_val)
 
 				JT(ifit+par_ind+0,ipar)=expterm
 
@@ -554,6 +602,33 @@ subroutine determine_JT(is,n_params,JT,params,iperp,upper_limit,ipparbar_lower)
 
 				par_ind=par_ind+2
 			endif
+
+
+			if (fit_type(is,ifit).EQ.6) then	! bi-Moyal
+
+			expterm=exp(0.5*(params(ifit+par_ind+1)*perp_correction(is,ifit)*pperp_val**2 + &
+					params(ifit+par_ind+2)*(ppar_val-params(ifit+par_ind+3))**2 -&
+					exp(params(ifit+par_ind+1)*perp_correction(is,ifit)*pperp_val**2 + &
+					params(ifit+par_ind+2)*(ppar_val-params(ifit+par_ind+3))**2) ))
+
+				JT(ifit+par_ind+0,ipar)=expterm
+
+				JT(ifit+par_ind+1,ipar)=params(ifit+par_ind+0)*expterm*(perp_correction(is,ifit)*pperp_val**2 * &
+				(0.5d0 - exp(params(ifit+par_ind+1)*perp_correction(is,ifit)*pperp_val**2 + params(ifit+par_ind+2)* &
+				(ppar_val-params(ifit+par_ind+3))**2)  ))
+
+				JT(ifit+par_ind+2,ipar)=params(ifit+par_ind+0)*expterm*((ppar_val-params(ifit+par_ind+3))**2 * &
+				(0.5d0 - exp(params(ifit+par_ind+1)*perp_correction(is,ifit)*pperp_val**2 + params(ifit+par_ind+2)* &
+				(ppar_val-params(ifit+par_ind+3))**2)  ))
+
+				JT(ifit+par_ind+3,ipar)=params(ifit+par_ind+0)*expterm*(2.d0*params(ifit+par_ind+2)*&
+				(params(ifit+par_ind+3)-ppar_val)* &
+				(0.5d0-exp(params(ifit+par_ind+1)*perp_correction(is,ifit)*pperp_val**2 + &
+				 params(ifit+par_ind+2)* (ppar_val-params(ifit+par_ind+3))**2) ))
+
+				par_ind=par_ind+3
+			endif
+
 
 		enddo
 	enddo

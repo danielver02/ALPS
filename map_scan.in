@@ -82,7 +82,8 @@ fit_type_in=1
 fit_1=1.8d-1
 fit_2=1.d0
 fit_3=0.d0
-fit_4=-9.d0
+fit_4=1.d0
+fit_5=-9.d0
 perpcorr=1.d0
 /
 
@@ -91,6 +92,8 @@ fit_type_in=1
 fit_1=1.d0
 fit_2=1.d0
 fit_3=1.d0
+fit_4=1.d0
+fit_5=-9.d0
 perpcorr=1.d0
 /
 
@@ -99,6 +102,8 @@ fit_type_in=1
 fit_1=1.d0
 fit_2=1.d0
 fit_3=1.d0
+fit_4=1.d0
+fit_5=-9.d0
 perpcorr=1.d0
 /
 
@@ -115,7 +120,8 @@ fit_type_in=1
 fit_1=1.4d4
 fit_2=1.8d3
 fit_3=0.d0
-fit_4=-9.d0
+fit_4=1.d0
+fit_5=-9.d0
 perpcorr=1.8d3
 /
 
@@ -124,6 +130,8 @@ fit_type_in=1
 fit_1=1.d0
 fit_2=1.d0
 fit_3=1.d0
+fit_4=1.d0
+fit_5=-9.d0
 perpcorr=1.d0
 /
 
@@ -132,6 +140,8 @@ fit_type_in=1
 fit_1=1.d0
 fit_2=1.d0
 fit_3=1.d0
+fit_4=1.d0
+fit_5=-9.d0
 perpcorr=1.d0
 /
 

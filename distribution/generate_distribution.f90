@@ -18,7 +18,8 @@ program generate_distribution
   double precision :: iperpcorr,ifit_1,ifit_2,ifit_3,ifit_4,ifit_5
   double precision :: ppar, pperp
   double precision :: f0
-  double precision, dimension(:), allocatable :: ms, tau, alph, p_drift, kappa
+  double precision, dimension(:), allocatable :: ms, tau, alph, p_drift, kappa, maxPperp, maxPpar
+  logical, dimension (:), allocatable :: autoscale
   integer, dimension(:), allocatable :: distribution
   double precision :: beta
   double precision :: vA
@@ -27,6 +28,7 @@ program generate_distribution
   double precision :: integrate
   double precision :: norm, a
   double precision :: BESSK
+
 
   !I/O values for namelist
   integer :: unit
@@ -57,8 +59,13 @@ program generate_distribution
 	  case (1) ! bi-Maxwellian
 	  	norm = pi**(-1.5d0) /((ms(is) * beta * tau(is))**(3.d0/2.d0)*alph(is) )
 
-		  pperp_max = maxP*sqrt(ms(is) * tau(is) * alph(is))
-     	ppar_max  = maxP*sqrt(ms(is) * tau(is))
+      if (autoscale(is)) then
+		      pperp_max = maxP*sqrt(ms(is) * tau(is) * alph(is))
+     	    ppar_max  = maxP*sqrt(ms(is) * tau(is))
+        else
+          pperp_max = maxPperp(is)
+          ppar_max = maxPpar(is)
+      endif
 
       ! These are the ideal fitting parameters for this configuration:
       ifit_1=norm
@@ -72,14 +79,20 @@ program generate_distribution
 	    norm = 1.d0/((ms(is) * beta * tau(is) * pi * kappa(is))**(3.d0/2.d0)*alph(is) )
 	    norm = norm*dgamma(kappa(is)+1.d0)/(dgamma(kappa(is)-0.5d0)*a**3)
 
-		  pperp_max = maxP*sqrt(ms(is) * tau(is) * alph(is)) * sqrt((kappa(is)-1.5d0)/(kappa(1)-1.5d0))
-     	ppar_max  = maxP*sqrt(ms(is) * tau(is)) * sqrt((kappa(is)-1.5d0)/(kappa(1)-1.5d0))
+      if (autoscale(is)) then
+		      pperp_max = maxP*sqrt(ms(is) * tau(is) * alph(is)) * sqrt((kappa(is)-1.5d0)/(kappa(1)-1.5d0))
+     	    ppar_max  = maxP*sqrt(ms(is) * tau(is)) * sqrt((kappa(is)-1.5d0)/(kappa(1)-1.5d0))
+        else
+          pperp_max = maxPperp(is)
+          ppar_max = maxPpar(is)
+      endif
 
       ! These are the ideal fitting parameters for this configuration:
       ifit_1=norm
       ifit_2=1.d0/(beta * ms(is) * kappa(is) * a * a * tau(is))
       ifit_3=p_drift(is)
-      ifit_4=(-1.d0-kappa(is))
+      ifit_4=1.d0
+      ifit_5=(-1.d0-kappa(is))
       iperpcorr=1.d0/( tau(is) *beta * ms(is) * kappa(is) * a * a * alph(is))
 
 
@@ -87,11 +100,13 @@ program generate_distribution
 	    norm = vA/(2.d0*pi*sqrt(alph(is))*ms(is)**2 * beta * tau(is) )
 	    norm = norm / BESSK(2,2.d0 * ms(is)/(vA*vA*alph(is)*beta*tau(is)))
 
-!		pperp_max = sqrt(maxP*maxP*tau(is) + (tau(is)-ms(is)*ms(is))/(vA*vA)) * sqrt(alph(is))
-!     	ppar_max  = sqrt(maxP*maxP*tau(is) + (tau(is)-ms(is)*ms(is))/(vA*vA))
-
-	   	pperp_max = 0.1d0 * maxP * sqrt(tau(is) * alph(is))
-	  	ppar_max = 0.1d0 * maxP * sqrt(tau(is))
+      if (autoscale(is)) then
+        	pperp_max = sqrt(maxP*maxP*tau(is) + (tau(is)-ms(is)*ms(is))/(vA*vA)) * sqrt(alph(is))
+         	ppar_max  = sqrt(maxP*maxP*tau(is) + (tau(is)-ms(is)*ms(is))/(vA*vA))
+       else
+         pperp_max = maxPperp(is)
+         ppar_max = maxPpar(is)
+      endif
 
       ! These are the ideal fitting parameters for this configuration:
       ifit_1=norm
@@ -101,6 +116,23 @@ program generate_distribution
       ifit_4=0.d0
       iperpcorr=(2.d0*ms(is)/(vA*vA*beta*tau(is)*alph(is)))
 
+
+    case (4) ! bi-Moyal
+      norm = 1.d0
+
+      if (autoscale(is)) then
+		      pperp_max = maxP*sqrt(ms(is) * tau(is) * alph(is))
+     	    ppar_max  = maxP*sqrt(ms(is) * tau(is))
+        else
+          pperp_max = maxPperp(is)
+          ppar_max = maxPpar(is)
+      endif
+
+      ! These are the ideal fitting parameters for this configuration:
+      ifit_1=1.d0
+      ifit_2=1.d0/( beta * ms(is) * tau(is))
+      ifit_3=p_drift(is)
+      iperpcorr=1.d0/( tau(is) *beta * ms(is) * alph(is))
 
 	end select
 
@@ -113,8 +145,8 @@ program generate_distribution
            ppar = real(ipar)*dppar - ppar_max + p_drift(is)
 
           select case(distribution(is))
-	        case (1) ! bi-Maxwellian
 
+	        case (1) ! bi-Maxwellian
         	   f0 =  exp( -(( (ppar-p_drift(is))**2.d0)/&
                 	( beta * ms(is) * tau(is))&
              	   + (pperp**2.d0)/( tau(is) *beta * ms(is) * alph(is)) ) )
@@ -129,14 +161,54 @@ program generate_distribution
   			   		sqrt(1.d0+pperp**2*vA*vA/(ms(is)*ms(is))&
   			   		     +(ppar-p_drift(is))**2*vA*vA*alph(is)/(ms(is)*ms(is))))
 
+        case (4) ! bi-Moyal
+          f0 = exp(0.5d0*((( (ppar-p_drift(is))**2.d0)/&
+               ( beta * ms(is) * tau(is))&
+              + (pperp**2.d0)/( tau(is) *beta * ms(is) * alph(is)) ) - &
+               exp( (( (ppar-p_drift(is))**2.d0)/&
+               ( beta * ms(is) * tau(is))&
+              + (pperp**2.d0)/( tau(is) *beta * ms(is) * alph(is)) ) ) ))
+
     	  end select
 
     	    f0 = f0 * norm
            integrate = integrate + dpperp*dppar*2.d0*pi*pperp*f0
-           write(unit_out(is),*)&
-                pperp, ppar, f0
+
+           if (distribution(is).NE.4) then
+             write(unit_out(is),*)  pperp, ppar, f0
+           endif
+
         enddo
      enddo
+
+     ! Numerically re-normalise the Moyal distribution:
+     if (distribution(is).EQ.4) then
+       norm = 1.d0/integrate
+
+       integrate=0.d0
+       do iperp=0,nperp
+          pperp = real(iperp)*dpperp
+          do ipar=0,npar
+             ppar = real(ipar)*dppar - ppar_max + p_drift(is)
+
+             f0 = norm*exp(0.5d0*((( (ppar-p_drift(is))**2.d0)/&
+                  ( beta * ms(is) * tau(is))&
+                 + (pperp**2.d0)/( tau(is) *beta * ms(is) * alph(is)) ) - &
+                  exp( (( (ppar-p_drift(is))**2.d0)/&
+                  ( beta * ms(is) * tau(is))&
+                 + (pperp**2.d0)/( tau(is) *beta * ms(is) * alph(is)) ) ) ))
+
+            integrate = integrate + dpperp*dppar*2.d0*pi*pperp*f0
+
+            write(unit_out(is),*)  pperp, ppar, f0
+
+           enddo
+        enddo
+     endif
+
+
+
+
 
      write (*,'(a,i3)')   "Species", is
      write (*,'(a,es14.4)') " Integration:   ", integrate
@@ -157,6 +229,7 @@ program generate_distribution
                 write (*,'(a,es14.4)') " ideal fit_2:   ", ifit_2
                 write (*,'(a,es14.4)') " ideal fit_3:   ", ifit_3
                 write (*,'(a,es14.4)') " ideal fit_4:   ", ifit_4
+                write (*,'(a,es14.4)') " ideal fit_5:   ", ifit_5
                 write (*,'(a,es14.4)') " ideal perpcorr:", iperpcorr
       case (3)
                 write (*,*) "Fit types:         3, 4, or 5"
@@ -172,6 +245,12 @@ program generate_distribution
                 write (*,*) "If fit type 5 (gamma and pparbar):"
                 write (*,'(a,es14.4)') " ideal fit_1:   ", ifit_1
                 write (*,'(a,es14.4)') " ideal fit_2:   ", ifit_5
+                write (*,'(a,es14.4)') " ideal fit_3:   ", ifit_3
+                write (*,'(a,es14.4)') " ideal perpcorr:", iperpcorr
+      case (4)
+                write (*,*) "Fit type:          6"
+                write (*,'(a,es14.4)') " ideal fit_1:   ", ifit_1
+                write (*,'(a,es14.4)') " ideal fit_2:   ", ifit_2
                 write (*,'(a,es14.4)') " ideal fit_3:   ", ifit_3
                 write (*,'(a,es14.4)') " ideal perpcorr:", iperpcorr
      end select
@@ -209,6 +288,10 @@ contains
     allocate(p_drift(1:nspec));   p_drift = 0.d0
     allocate(distribution(1:nspec));   distribution = 0
     allocate(kappa(1:nspec));   kappa = 0.d0
+    allocate(autoscale(1:nspec));  autoscale=.TRUE.
+    allocate(maxPperp(1:nspec)); maxPperp = 0.d0
+    allocate(maxPpar(1:nspec)); maxPpar = 0.d0
+
 
     !Read in species parameters
     !This is a bit of FORTRAN black magic borrowed from AGK.
@@ -229,11 +312,12 @@ subroutine spec_read(is)
   !Passed
   integer :: is !solution index
   !Local
-  double precision :: tauS,mS_read,alphS,pS,kappaS
+  double precision :: tauS,mS_read,alphS,pS,kappaS,maxPperpS,maxPparS
   integer :: distributionS
+  logical :: autoscaleS
 
   nameList /spec/ &
-       mS_read, tauS, alphS, pS, kappaS, distributionS
+       mS_read, tauS, alphS, pS, kappaS, distributionS, autoscaleS, maxPperpS, maxPparS
 
   read (unit=unit,nml=spec)
   tau(is)=tauS
@@ -242,6 +326,9 @@ subroutine spec_read(is)
   p_drift(is)=pS
   kappa(is)=kappaS
   distribution(is)=distributionS
+  autoscale(is)=autoscaleS
+  maxPperp(is)=maxPperpS
+  maxPpar(is)=maxPparS
 
 end subroutine spec_read
 

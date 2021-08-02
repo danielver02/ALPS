@@ -106,7 +106,7 @@ contains
     allocate(ns(1:nspec)); ns = 0.d0
     allocate(qs(1:nspec)); qs = 0.d0
     allocate(ms(1:nspec)); ms = 0.d0
-    allocate(n_fits(1:nspec)); n_fits = 3
+    allocate(n_fits(1:nspec)); n_fits = 1
     allocate(relativistic(1:nspec)); relativistic=.FALSE.
 
     do is = 1, nspec
@@ -130,7 +130,7 @@ contains
     !I assume that n_fits for any species won't be more than 10 smaller
     !than the n_fits(ref). KGK -------> If we do it here, we don't have to assume that. DV 2016-05-18
     !Quite right. A much cleaner solution. KGK- 2016-05-18
-    allocate(param_fit(1:nspec,0:max(nperp,ngamma),4,maxval(n_fits)))
+    allocate(param_fit(1:nspec,0:max(nperp,ngamma),5,maxval(n_fits)))
     allocate(fit_type(1:nspec,maxval(n_fits)))
     allocate(perp_correction(1:nspec,maxval(n_fits)))
 
@@ -156,13 +156,16 @@ contains
           case(5)
              write(*,'(a,i2,a,i2,a)')&
                   'Species ',is,', function ',ifit,', Juettner fit (gamma and pparbar): '
+          case(6)
+             write(*,'(a,i2,a,i2,a)')&
+                  'Species ',is,', function ',ifit,', bi-Moyal fit: '
           case default
              write(*,'(a)')&
                   'Function fit undefined'
              stop
           end select
 
-          do ip = 1, 4
+          do ip = 1, 5
              write(*,'(a,i2,a,es14.4)')&
                   ' Initial fit parameter ',ip,' = ',param_fit(is,0,ip,ifit)
           enddo
@@ -353,18 +356,21 @@ subroutine fit_read(is,ifit)
   !Passed
   integer :: is, ifit !species,  index
   !Local
-  double precision :: fit_1, fit_2, fit_3, fit_4    ! Read in values for fit functions
+  double precision :: fit_1, fit_2, fit_3, fit_4, fit_5    ! Read in values for fit functions
   double precision :: perpcorr
   integer :: fit_type_in !read in value for type of analytic function
 
   nameList /ffit/ &
-       fit_type_in, fit_1, fit_2, fit_3, fit_4, perpcorr
+       fit_type_in, fit_1, fit_2, fit_3, fit_4, fit_5, perpcorr
 
-  fit_1=0.d0;fit_2=0.d0;fit_3=0.d0;fit_4=0.d0;perpcorr=0.d0
+  fit_1=0.d0;fit_2=0.d0;fit_3=0.d0;fit_4=0.d0;fit_5=0.d0;perpcorr=0.d0
   read (unit=unit,nml=ffit)
   fit_type(is,ifit)=fit_type_in
-  param_fit(is,0,1,ifit)=fit_1;param_fit(is,0,2,ifit)=fit_2
-  param_fit(is,0,3,ifit)=fit_3;param_fit(is,0,4,ifit)=fit_4
+  param_fit(is,0,1,ifit)=fit_1
+  param_fit(is,0,2,ifit)=fit_2
+  param_fit(is,0,3,ifit)=fit_3
+  param_fit(is,0,4,ifit)=fit_4
+  param_fit(is,0,5,ifit)=fit_5
   perp_correction(is,ifit)=perpcorr
 
 end subroutine fit_read
@@ -397,16 +403,13 @@ end subroutine fit_read
 !-=-=-=-=-
 subroutine read_f0
   use alps_var, only : nperp, npar, arrayName, f0, pp, nspec
-  use alps_var, only : writeOut, ms
+  use alps_var, only : writeOut
   implicit none
   !Local
   integer :: iperp,ipar !parallel and perpendicular indices
   integer :: is         !species index
   character (100) :: readname
-  logical :: read_array=.true.
-  double precision :: dpperp,dppar,pperp_max,ppar_max
 
-  if (read_array) then
 
      if (writeOut) &
           write(*,'(2a)')&
@@ -430,34 +433,6 @@ subroutine read_f0
         enddo
         close(unit)
      enddo
-
-  else
-     if (writeOut) &
-          write(*,'(a)')&
-          'Calculating f0 array locally...'
-
-     do is = 1, nspec
-
-        pperp_max = 10.d0 * ms(is)**(0.5d0)
-        ppar_max  = 10.d0 * ms(is)**(0.5d0)
-
-        dpperp = pperp_max/(nperp * 1.d0)
-        dppar  = 2.d0*ppar_max/(npar * 1.d0)
-
-        do iperp=0,nperp
-           do ipar=0,npar
-              pp(is,iperp,ipar,1)=(iperp * 1.d0)*dpperp
-              pp(is,iperp,ipar,2)=(ipar *  1.d0)*dppar - ppar_max
-              f0(is,iperp,ipar) =  &
-                   exp(-pp(is,iperp,ipar,2)**2.d0/ms(is))* &
-                   exp(-pp(is,iperp,ipar,1)**2.d0/ms(is))/(ms(is)**(1.5d0))!&
-           enddo
-        enddo
-
-     enddo
-
-
-  endif
 
 end subroutine read_f0
 !-=-=-=-=-
