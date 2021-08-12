@@ -170,7 +170,7 @@ contains
                   ' Initial fit parameter ',ip,' = ',param_fit(is,0,ip,ifit)
           enddo
            write(*,'(a,es14.4)')&
-                  ' Perpendicular correction: ',perp_correction(is,ifit)
+                  ' Perpendicular correction:  ',perp_correction(is,ifit)
           close(unit)
        enddo
     enddo

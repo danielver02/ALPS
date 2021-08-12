@@ -44,8 +44,8 @@ endif
 ifeq ($(ALPS_SYSTEM),Mac10)
 COMP= mpifort-openmpi-gcc10
 STDCOMP:= gfortran
-STDCOMPOPTS := -fcheck=all -fbacktrace -fbounds-check -Wconversion -Wsurprising -ffixed-line-length-none -ffree-line-length-none -Wunused -g -fbacktrace -lm -I./include/
-COMPOPTS := -fbounds-check -fallow-argument-mismatch -ffast-math -Wunused -funroll-loops -g -fbacktrace -lm -I./include/
+STDCOMPOPTS := -fcheck=all -ffpe-trap=invalid,zero,overflow -fbacktrace -fbounds-check -Wconversion -Wsurprising -ffixed-line-length-none -ffree-line-length-none -Wunused -g -fbacktrace -lm -I./include/
+COMPOPTS := -fbounds-check -ffpe-trap=invalid,zero,overflow -fallow-argument-mismatch -ffast-math -Wunused -funroll-loops -g -fbacktrace -lm -I./include/
 #FLAGS= -DDOUBLE
 ifeq ($(PROFILE),true)
 	FLAGS += -g

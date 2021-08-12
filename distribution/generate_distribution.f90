@@ -91,8 +91,8 @@ program generate_distribution
       ifit_1=norm
       ifit_2=1.d0/(beta * ms(is) * kappa(is) * a * a * tau(is))
       ifit_3=p_drift(is)
-      ifit_4=1.d0
-      ifit_5=(-1.d0-kappa(is))
+      ifit_4=(-1.d0-kappa(is))
+      ifit_5=1.d0
       iperpcorr=1.d0/( tau(is) *beta * ms(is) * kappa(is) * a * a * alph(is))
 
 
@@ -256,7 +256,10 @@ program generate_distribution
                 write (*,'(a,es14.4)') " ideal fit_1:   ", ifit_1
                 write (*,'(a,es14.4)') " ideal fit_2:   ", ifit_2
                 write (*,'(a,es14.4)') " ideal fit_3:   ", ifit_3
+                write (*,'(a,es14.4)') " ideal fit_4:   ", ifit_4
                 write (*,'(a,es14.4)') " ideal perpcorr:", iperpcorr
+                write (*,'(a,es14.4)') " WARNING: The Moyal distribution is always normalised to 1."
+                write (*,'(a,es14.4)') "          Do not use Integration as a measure for P-range."
      end select
      write (*,'(a,es14.4)') "============================"
 

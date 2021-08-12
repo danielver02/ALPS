@@ -87,7 +87,7 @@ relat=F
 
 &ffit_1_1
 fit_type_in=1
-fit_1=1.8d-1
+fit_1=2.d-1
 fit_2=1.d0
 fit_3=0.d0
 fit_4=1.d0
@@ -126,11 +126,11 @@ relat=F
 &ffit_2_1
 fit_type_in=1
 fit_1=1.4d4
-fit_2=1.8d3
+fit_2=2.d3
 fit_3=0.d0
-fit_4=1.d0
-fit_5=-9.d0
-perpcorr=1.8d3
+fit_4=-5.d0
+fit_5=1.d0
+perpcorr=2.d3
 /
 
 &ffit_2_2

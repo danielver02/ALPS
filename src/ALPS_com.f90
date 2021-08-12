@@ -13,9 +13,9 @@
 
 module alps_com
   implicit none
-  
+
   public :: pass_instructions
-  public :: pass_distribution  
+  public :: pass_distribution
 
 contains
 
@@ -60,7 +60,7 @@ subroutine pass_instructions
   call mpi_bcast(n_scan, 1, MPI_INTEGER, 0, MPI_COMM_WORLD, ierror)
   call mpi_bcast(scan_option, 1, MPI_INTEGER, 0, MPI_COMM_WORLD, ierror)
   call mpi_bcast(use_secant,    1, MPI_LOGICAL, 0, MPI_COMM_WORLD, ierror)
-  
+
   if (use_map) then
      call mpi_bcast(omi,1, MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierror)
      call mpi_bcast(omf,1, MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierror)
@@ -72,7 +72,7 @@ subroutine pass_instructions
 
      call mpi_bcast(ni,  1, MPI_INTEGER, 0, MPI_COMM_WORLD, ierror)
      call mpi_bcast(nr,  1, MPI_INTEGER, 0, MPI_COMM_WORLD, ierror)
-     
+
      call mpi_bcast(determine_minima, 1, MPI_LOGICAL, 0, MPI_COMM_WORLD, ierror)
 
   endif
@@ -121,27 +121,27 @@ subroutine pass_instructions
   !and only has to be called once.
   if (n_scan.gt.0) then
      do is=1,n_scan
-        call mpi_bcast(scan(is)%range_i,1, MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierror)        
-        call mpi_bcast(scan(is)%range_f,1, MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierror)        
-        call mpi_bcast(scan(is)%diff,   1, MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierror)        
-        call mpi_bcast(scan(is)%diff2,   1, MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierror)        
-        call mpi_bcast(scan(is)%log_scan, 1, MPI_LOGICAL, 0, MPI_COMM_WORLD, ierror)        
-        call mpi_bcast(scan(is)%eigen_s,  1, MPI_LOGICAL, 0, MPI_COMM_WORLD, ierror)        
-        call mpi_bcast(scan(is)%heat_s,   1, MPI_LOGICAL, 0, MPI_COMM_WORLD, ierror)        
+        call mpi_bcast(scan(is)%range_i,1, MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierror)
+        call mpi_bcast(scan(is)%range_f,1, MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierror)
+        call mpi_bcast(scan(is)%diff,   1, MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierror)
+        call mpi_bcast(scan(is)%diff2,   1, MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierror)
+        call mpi_bcast(scan(is)%log_scan, 1, MPI_LOGICAL, 0, MPI_COMM_WORLD, ierror)
+        call mpi_bcast(scan(is)%eigen_s,  1, MPI_LOGICAL, 0, MPI_COMM_WORLD, ierror)
+        call mpi_bcast(scan(is)%heat_s,   1, MPI_LOGICAL, 0, MPI_COMM_WORLD, ierror)
         call mpi_bcast(scan(is)%type_s,  1, MPI_INTEGER, 0, MPI_COMM_WORLD, ierror)
         call mpi_bcast(scan(is)%n_out,   1, MPI_INTEGER, 0, MPI_COMM_WORLD, ierror)
         call mpi_bcast(scan(is)%n_res,   1, MPI_INTEGER, 0, MPI_COMM_WORLD, ierror)
-     enddo     
+     enddo
   endif
 
   !Allocation of Arrays:
 
   if (.true..neqv.proc0) then
-     allocate(param_fit(1:nspec,0:(max(nperp,ngamma)),4,maxval(n_fits)))
-     allocate(fit_type(1:nspec,maxval(n_fits))) 
+     allocate(param_fit(1:nspec,0:(max(nperp,ngamma)),5,maxval(n_fits)))
+     allocate(fit_type(1:nspec,maxval(n_fits)))
      allocate(perp_correction(1:nspec,maxval(n_fits)))
   endif
-  
+
   !Allocate Wave Equation Tensor
   !  Only needed on proc0
   if (proc0) then
@@ -150,16 +150,16 @@ subroutine pass_instructions
      allocate(chi0(nspec,1:3,1:3))
      wave=cmplx(0.d0,0.d0,kind(1.d0))
   endif
-  
+
   !Allocate derivative of f0
   allocate(df0(1:nspec,1:nperp-1,1:npar-1,1:2)); df0=0.d0
-  
+
   !Allocate fit parameters
-  
-   
+
+
   !Allocate velocity grid
   allocate(pp(1:nspec,0:nperp,0:npar,1:2)); pp=0.d0
-    
+
 end subroutine pass_instructions
 !-=-=-=-=-=-=-=-=-=
 !Routine for passing distribution function parameters
@@ -198,7 +198,7 @@ subroutine pass_distribution
 			 allocate(df0_rel(nspec_rel,0:ngamma,0:npparbar,2))
 			 allocate(f0_rel(nspec_rel,0:ngamma,0:npparbar))
 		endif
-	
+
 		call mpi_bcast(f0_rel(:,:,:), size(f0_rel(:,:,:)),&
 		   MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierror)
 		call mpi_bcast(df0_rel(:,:,:,:), size(df0_rel(:,:,:,:)),&
@@ -206,7 +206,7 @@ subroutine pass_distribution
 		call mpi_bcast(gamma_rel(:,:,:),  size(gamma_rel(:,:,:)),&
 		   MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierror)
 		call mpi_bcast(pparbar_rel(:,:,:),  size(pparbar_rel(:,:,:)),&
-		   MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierror)       
+		   MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierror)
 	endif
 
 	  call mpi_bcast(df0(:,:,:,:), size(df0(:,:,:,:)),&
@@ -219,10 +219,11 @@ subroutine pass_distribution
 		   MPI_INTEGER, 0, MPI_COMM_WORLD, ierror)
 	  call mpi_bcast(perp_correction(:,:),  size(perp_correction(:,:)),&
 		   MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierror)
-	
+
+
 	  if (writeOut.and.proc0)&
 		   write(*,'(a)')' df0/dp received'
-       
+
 end subroutine pass_distribution
 
 end module alps_com
