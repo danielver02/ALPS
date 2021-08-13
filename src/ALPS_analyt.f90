@@ -200,6 +200,7 @@ subroutine determine_param_fit
 	integer :: ipparbar,ipparbar_lower,ipparbar_upper,upperlimit
 	logical :: found_lower, found_upper
 	double precision :: quality,qualitytotal
+	logical, allocatable, dimension (:) :: param_mask
 	double precision,allocatable,dimension (:) :: g
 	double precision,allocatable,dimension(:) :: params
 
@@ -225,6 +226,8 @@ subroutine determine_param_fit
 					enddo
 
 			allocate (params(n_params))
+			allocate (param_mask(n_params))
+
 
 		if (relativistic(is)) then
 			upperlimit=ngamma
@@ -235,12 +238,13 @@ subroutine determine_param_fit
 
 		do iperp=0,upperlimit
 
-
 			! Every step that is not iperp = 0 should use the previous result as a start value:
 			if (iperp.NE.0) param_fit(is,iperp,:,:)=param_fit(is,iperp-1,:,:)
 
 			par_ind=0
 			nJT=0
+			param_mask = .TRUE.
+
 			do ifit=1,n_fits(is)
 				if (fit_type(is,ifit).EQ.1) then	! Maxwell
 					params(ifit+par_ind+0)=param_fit(is,iperp,1,ifit)
@@ -255,8 +259,11 @@ subroutine determine_param_fit
 					params(ifit+par_ind+2)=param_fit(is,iperp,3,ifit)
 					params(ifit+par_ind+3)=param_fit(is,iperp,4,ifit)
 					params(ifit+par_ind+4)=param_fit(is,iperp,5,ifit)
+					if (iperp.EQ.0) then
+							nJT=nJT-1
+							param_mask(ifit+par_ind+4)=.FALSE.
+					endif
 					par_ind=par_ind+4
-					if (iperp.EQ.0) nJT=nJT-1
 				endif
 
 				if (fit_type(is,ifit).EQ.3) then	! Juettner in pperp and ppar
@@ -283,8 +290,11 @@ subroutine determine_param_fit
 					params(ifit+par_ind+1)=param_fit(is,iperp,2,ifit)
 					params(ifit+par_ind+2)=param_fit(is,iperp,3,ifit)
 					params(ifit+par_ind+3)=param_fit(is,iperp,4,ifit)
+					if (iperp.EQ.0) then
+							nJT=nJT-1
+							param_mask(ifit+par_ind+3)=.FALSE.
+					endif
 					par_ind=par_ind+3
-					if (iperp.EQ.0) nJT=nJT-1
 				endif
 
 			enddo
@@ -324,7 +334,8 @@ subroutine determine_param_fit
 
 					allocate(g(0:ipparbar_upper-ipparbar_lower))
 					g=f0_rel(sproc_rel,iperp,ipparbar_lower:ipparbar_upper)
-					call LM_nonlinear_fit(is,g,n_params,nJT,params,iperp,(ipparbar_upper-ipparbar_lower),ipparbar_lower,quality)
+					call LM_nonlinear_fit(is,g,n_params,nJT,params,param_mask,iperp,&
+											(ipparbar_upper-ipparbar_lower),ipparbar_lower,quality)
 					deallocate(g)
 
 				else
@@ -346,7 +357,7 @@ subroutine determine_param_fit
 
 				allocate(g(0:npar))
 				g=f0(is,iperp,:)
-				call LM_nonlinear_fit(is,g,n_params,nJT,params,iperp,npar,0,quality)
+				call LM_nonlinear_fit(is,g,n_params,nJT,params,param_mask,iperp,npar,0,quality)
 				deallocate(g)
 
 			endif
@@ -405,6 +416,7 @@ subroutine determine_param_fit
 		enddo	! End loop over iperp
 
 		deallocate (params)
+		deallocate (param_mask)
 	enddo	! End loop over is
 	if(writeOut) then
 		call output_fit(qualitytotal)
@@ -645,6 +657,7 @@ subroutine determine_JT(is,n_params,nJT,JT,params,iperp,upper_limit,ipparbar_low
 				(1.d0-exp(params(ifit+par_ind+3)*perp_correction(is,ifit)*pperp_val**2 + &
 				 params(ifit+par_ind+1) * (ppar_val-params(ifit+par_ind+2))**2) )
 
+
 				 if (iperp.EQ.0) then
 					 	par_ind=par_ind+2
 					else
@@ -673,15 +686,15 @@ end subroutine
 ! the one-dimensional array params at a given iperp.
 ! quality is the sum of the squares of all residuals.
 !-=-=-=-=-=-=
-subroutine LM_nonlinear_fit(is,g,n_params,nJT,params,iperp,npar,ipparbar_lower,quality)
+subroutine LM_nonlinear_fit(is,g,n_params,nJT,params,param_mask,iperp,npar,ipparbar_lower,quality)
 	use alps_var, only : lambda_initial_fit, pp, lambdafac_fit
 	use alps_var, only : epsilon_fit, maxsteps_fit
 	use alps_var, only : gamma_rel,pparbar_rel,relativistic,nspec
 	use alps_io, only : alps_error
 	implicit none
 	include "mpif.h"
-	logical :: converged
-	integer :: ipar,k,counter,is,n_params,nJT,iperp,npar,is_rel,is_run,sproc_rel,ipparbar_lower
+	logical :: converged,param_mask(n_params)
+	integer :: ipar,k,counter,is,n_params,nJT,iperp,npar,is_rel,is_run,sproc_rel,ipparbar_lower,l
 	double precision :: LSQ,LSQnew,lambda_fit,quality,pperp_val,ppar_val
 	double precision :: g(0:npar),params(n_params)
 	double precision :: residuals(0:npar),deltaparam_fit(nJT)
@@ -744,9 +757,12 @@ subroutine LM_nonlinear_fit(is,g,n_params,nJT,params,iperp,npar,ipparbar_lower,q
 	call inverse(Amat,Bmat,nJT)
 	deltaparam_fit=matmul(Bmat,matmul(JT,residuals))
 
-
-	do k=1,nJT
-		params(k)=params(k)+deltaparam_fit(k)
+	l=0
+	do k=1,n_params
+		if (param_mask(k)) then
+			l=l+1
+			params(k)=params(k)+deltaparam_fit(l)
+		endif
 	enddo
 
 	! With the new param_fit, what is the new mean square error:
@@ -770,8 +786,12 @@ subroutine LM_nonlinear_fit(is,g,n_params,nJT,params,iperp,npar,ipparbar_lower,q
 
 
 	if (LSQnew.GT.LSQ) then
-		do k=1,nJT
-			params(k)=params(k)-deltaparam_fit(k)
+		l=0
+		do k=1,n_params
+			if (param_mask(k)) then
+				l=l+1
+				params(k)=params(k)-deltaparam_fit(l)
+			endif
 		enddo
 		lambda_fit=lambda_fit*lambdafac_fit
 	else
