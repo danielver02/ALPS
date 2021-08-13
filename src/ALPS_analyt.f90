@@ -539,7 +539,7 @@ subroutine determine_JT(is,n_params,nJT,JT,params,iperp,upper_limit,ipparbar_low
 	use alps_var, only : fit_type, n_fits, pp, ms, vA, perp_correction
 	use alps_var, only : gamma_rel,pparbar_rel,nspec,relativistic
 	implicit none
-	integer :: n_params,ifit,par_ind,iperp,ipar,is,upper_limit,is_rel,sproc_rel,is_run,ipparbar_lower,nJT
+	integer :: n_params,ifit,par_ind,iperp,ipar,is,upper_limit,is_rel,sproc_rel,is_run,ipparbar_lower,nJT,JT_ind
 	double precision :: ppar_val,pperp_val,params(n_params)
 	double precision :: sqrtpart,expterm,kappapart, JT(nJT,0:upper_limit)
 
@@ -565,77 +565,84 @@ subroutine determine_JT(is,n_params,nJT,JT,params,iperp,upper_limit,ipparbar_low
 		endif
 
 		par_ind=0
+		JT_ind=0
 		do ifit=1,n_fits(is)
 			if (fit_type(is,ifit).EQ.1) then	! Maxwell
 				expterm=exp(-params(ifit+par_ind+1)*(ppar_val-params(ifit+par_ind+2))**2)
 
-				JT(ifit+par_ind+0,ipar)=expterm*exp(-perp_correction(is,ifit)*pperp_val**2)
+				JT(ifit+JT_ind+0,ipar)=expterm*exp(-perp_correction(is,ifit)*pperp_val**2)
 
-				JT(ifit+par_ind+1,ipar)=-((ppar_val-params(ifit+par_ind+2))**2)*params(ifit+par_ind+0)*expterm
+				JT(ifit+JT_ind+1,ipar)=-((ppar_val-params(ifit+par_ind+2))**2)*params(ifit+par_ind+0)*expterm
 
-				JT(ifit+par_ind+2,ipar)=2.d0*params(ifit+par_ind+1)*(ppar_val-params(ifit+par_ind+2))*params(ifit+par_ind+0)*expterm
+				JT(ifit+JT_ind+2,ipar)=2.d0*params(ifit+par_ind+1)*(ppar_val-params(ifit+par_ind+2))*params(ifit+par_ind+0)*expterm
 
 				par_ind=par_ind+2
+				JT_ind=JT_ind+2
 			endif
 
 			if (fit_type(is,ifit).EQ.2) then	! kappa
 				kappapart=1.d0+params(ifit+par_ind+1)*(ppar_val-params(ifit+par_ind+2))**2 &
 						+ perp_correction(is,ifit)*params(ifit+par_ind+4)*pperp_val**2
 
-				JT(ifit+par_ind+0,ipar)=kappapart**params(ifit+par_ind+3)
+				JT(ifit+JT_ind+0,ipar)=kappapart**params(ifit+par_ind+3)
 
-				JT(ifit+par_ind+1,ipar)=params(ifit+par_ind+0)*params(ifit+par_ind+3)*kappapart**(params(ifit+par_ind+3)-1.d0)
-				JT(ifit+par_ind+1,ipar)=JT(ifit+par_ind+1,ipar)*(ppar_val-params(ifit+par_ind+2))**2
+				JT(ifit+JT_ind+1,ipar)=params(ifit+par_ind+0)*params(ifit+par_ind+3)*kappapart**(params(ifit+par_ind+3)-1.d0)
+				JT(ifit+JT_ind+1,ipar)=JT(ifit+JT_ind+1,ipar)*(ppar_val-params(ifit+par_ind+2))**2
 
-				JT(ifit+par_ind+2,ipar)=params(ifit+par_ind+0)*params(ifit+par_ind+3)*kappapart**(params(ifit+par_ind+3)-1.d0)
-				JT(ifit+par_ind+2,ipar)=JT(ifit+par_ind+2,ipar)*2.d0*params(ifit+par_ind+1)*(params(ifit+par_ind+2)-ppar_val)
+				JT(ifit+JT_ind+2,ipar)=params(ifit+par_ind+0)*params(ifit+par_ind+3)*kappapart**(params(ifit+par_ind+3)-1.d0)
+				JT(ifit+JT_ind+2,ipar)=JT(ifit+JT_ind+2,ipar)*2.d0*params(ifit+par_ind+1)*(params(ifit+par_ind+2)-ppar_val)
 
-				JT(ifit+par_ind+3,ipar)=log(kappapart)*params(ifit+par_ind+0)*kappapart**params(ifit+par_ind+3)
+				JT(ifit+JT_ind+3,ipar)=log(kappapart)*params(ifit+par_ind+0)*kappapart**params(ifit+par_ind+3)
 
 				if (iperp.EQ.0) then
-					par_ind=par_ind+3
+					JT_ind=JT_ind+3
 				else
-					JT(ifit+par_ind+4,ipar)=params(ifit+par_ind+0)*params(ifit+par_ind+3)*&
+					JT(ifit+JT_ind+4,ipar)=params(ifit+par_ind+0)*params(ifit+par_ind+3)*&
 									kappapart**(params(ifit+par_ind+3)-1.d0)
-					JT(ifit+par_ind+4,ipar)=JT(ifit+par_ind+4,ipar)* perp_correction(is,ifit)*pperp_val**2
+					JT(ifit+JT_ind+4,ipar)=JT(ifit+JT_ind+4,ipar)* perp_correction(is,ifit)*pperp_val**2
 
-					par_ind=par_ind+4
+					JT_ind=JT_ind+4
 				endif
+
+				par_ind=par_ind+4
 
 			endif
 
 			if (fit_type(is,ifit).EQ.3) then	! Juettner with pperp and ppar
 				sqrtpart=sqrt(1.d0+(pperp_val**2+(ppar_val-params(ifit+par_ind+2))**2)*vA*vA/(ms(is)*ms(is)))
 
-				JT(ifit+par_ind+0,ipar)=exp(-params(ifit+par_ind+1)*sqrtpart)
+				JT(ifit+JT_ind+0,ipar)=exp(-params(ifit+par_ind+1)*sqrtpart)
 
-				JT(ifit+par_ind+1,ipar)=-params(ifit+par_ind+0)*exp(-params(ifit+par_ind+1)*sqrtpart)*sqrtpart
+				JT(ifit+JT_ind+1,ipar)=-params(ifit+par_ind+0)*exp(-params(ifit+par_ind+1)*sqrtpart)*sqrtpart
 
-				JT(ifit+par_ind+2,ipar)=params(ifit+par_ind+0)*exp(-params(ifit+par_ind+1)*sqrtpart)*(params(ifit+par_ind+1)/sqrtpart)
-				JT(ifit+par_ind+2,ipar)=JT(ifit+par_ind+2,ipar)*(ppar_val-params(ifit+par_ind+2))*vA*vA/(ms(is)*ms(is))
+				JT(ifit+JT_ind+2,ipar)=params(ifit+par_ind+0)*exp(-params(ifit+par_ind+1)*sqrtpart)*(params(ifit+par_ind+1)/sqrtpart)
+				JT(ifit+JT_ind+2,ipar)=JT(ifit+JT_ind+2,ipar)*(ppar_val-params(ifit+par_ind+2))*vA*vA/(ms(is)*ms(is))
 
 				par_ind=par_ind+2
+				JT_ind=JT_ind+2
 			endif
 
 			if (fit_type(is,ifit).EQ.4) then ! Juettner with gamma and pparbar, constant in pparbar
-				JT(ifit+par_ind+0,ipar)=exp(-perp_correction(is,ifit)*pperp_val)
+				JT(ifit+JT_ind+0,ipar)=exp(-perp_correction(is,ifit)*pperp_val)
 
 				par_ind=par_ind+0
+				JT_ind=JT_ind+0
 			endif
 
 			if (fit_type(is,ifit).EQ.5) then ! Juettner with gamma and pparbar with pparbar-dependence
 				expterm=exp(-params(ifit+par_ind+1)*(ppar_val-params(ifit+par_ind+2))**2)* &
 				exp(-perp_correction(is,ifit)*pperp_val)
 
-				JT(ifit+par_ind+0,ipar)=expterm
+				JT(ifit+JT_ind+0,ipar)=expterm
 
-				JT(ifit+par_ind+1,ipar)=-params(ifit+par_ind+0)*expterm
-				JT(ifit+par_ind+1,ipar)=JT(ifit+par_ind+1,ipar)*(ppar_val-params(ifit+par_ind+2))**2
+				JT(ifit+JT_ind+1,ipar)=-params(ifit+par_ind+0)*expterm
+				JT(ifit+JT_ind+1,ipar)=JT(ifit+JT_ind+1,ipar)*(ppar_val-params(ifit+par_ind+2))**2
 
-				JT(ifit+par_ind+2,ipar)=2.d0*params(ifit+par_ind+0)*(ppar_val-params(ifit+par_ind+2))
-				JT(ifit+par_ind+2,ipar)=JT(ifit+par_ind+2,ipar)*params(ifit+par_ind+1)*expterm
+				JT(ifit+JT_ind+2,ipar)=2.d0*params(ifit+par_ind+0)*(ppar_val-params(ifit+par_ind+2))
+				JT(ifit+JT_ind+2,ipar)=JT(ifit+JT_ind+2,ipar)*params(ifit+par_ind+1)*expterm
 
 				par_ind=par_ind+2
+				JT_ind=JT_ind+2
 			endif
 
 
@@ -646,27 +653,28 @@ subroutine determine_JT(is,n_params,nJT,JT,params,iperp,upper_limit,ipparbar_low
 					exp(params(ifit+par_ind+3)*perp_correction(is,ifit)*pperp_val**2 + &
 					params(ifit+par_ind+1)*(ppar_val-params(ifit+par_ind+2))**2) ))
 
-				JT(ifit+par_ind+0,ipar)=expterm
+				JT(ifit+JT_ind+0,ipar)=expterm
 
-				JT(ifit+par_ind+1,ipar)=params(ifit+par_ind+0)*expterm*0.5d0*(ppar_val-params(ifit+par_ind+2))**2 * &
+				JT(ifit+JT_ind+1,ipar)=params(ifit+par_ind+0)*expterm*0.5d0*(ppar_val-params(ifit+par_ind+2))**2 * &
 				(1.d0 - exp(params(ifit+par_ind+3)*perp_correction(is,ifit)*pperp_val**2 + &
 				params(ifit+par_ind+1) * (ppar_val-params(ifit+par_ind+2))**2) )
 
-				JT(ifit+par_ind+2,ipar)=params(ifit+par_ind+0)*expterm*params(ifit+par_ind+1)*&
+				JT(ifit+JT_ind+2,ipar)=params(ifit+par_ind+0)*expterm*params(ifit+par_ind+1)*&
 				(params(ifit+par_ind+2)-ppar_val)* &
 				(1.d0-exp(params(ifit+par_ind+3)*perp_correction(is,ifit)*pperp_val**2 + &
 				 params(ifit+par_ind+1) * (ppar_val-params(ifit+par_ind+2))**2) )
 
 
 				 if (iperp.EQ.0) then
-					 	par_ind=par_ind+2
+						JT_ind=JT_ind+2
 					else
-				 	JT(ifit+par_ind+3,ipar)=params(ifit+par_ind+0)*expterm*0.5d0*perp_correction(is,ifit)*pperp_val**2 * &
+				 	JT(ifit+JT_ind+3,ipar)=params(ifit+par_ind+0)*expterm*0.5d0*perp_correction(is,ifit)*pperp_val**2 * &
  					(1.d0 - exp(params(ifit+par_ind+3)*perp_correction(is,ifit)*pperp_val**2 + &
 					params(ifit+par_ind+1) * (ppar_val-params(ifit+par_ind+2))**2)  )
 
-					par_ind=par_ind+3
+					JT_ind=JT_ind+3
 				endif
+				par_ind=par_ind+3
 
 			endif
 
