@@ -112,8 +112,6 @@ double complex function eval_fit(is,iperp,ppar_valC)
 			params(ifit+par_ind+3)=param_fit(is,iperp,4,ifit)
 			par_ind=par_ind+3
 		endif
-
-
 	enddo
 
 	eval_fit=fit_function(is,n_params,params,pperp_val,ppar_valC)
@@ -579,9 +577,12 @@ subroutine determine_JT(is,n_params,nJT,JT,params,iperp,upper_limit,ipparbar_low
 			ppar_val=pp(is,iperp,ipar,2)
 		endif
 
+
 		par_ind=0
 		JT_ind=0
+
 		do ifit=1,n_fits(is)
+
 			if (fit_type(is,ifit).EQ.1) then	! Maxwell
 				expterm=exp(-params(ifit+par_ind+1)*(ppar_val-params(ifit+par_ind+2))**2 &
 							-perp_correction(is,ifit)*pperp_val**2)
@@ -590,9 +591,8 @@ subroutine determine_JT(is,n_params,nJT,JT,params,iperp,upper_limit,ipparbar_low
 
 				JT(ifit+JT_ind+1,ipar)=-((ppar_val-params(ifit+par_ind+2))**2)*params(ifit+par_ind+0)*expterm
 
-				JT(ifit+JT_ind+2,ipar)=2.d0*params(ifit+par_ind+1)*(ppar_val-params(ifit+par_ind+2))*params(ifit+par_ind+0)*expterm
-
-				par_ind=par_ind+3
+				JT(ifit+JT_ind+2,ipar)=2.d0*params(ifit+par_ind+1)*(ppar_val-params(ifit+par_ind+2))*&
+							params(ifit+par_ind+0)*expterm
 
 				par_ind=par_ind+2
 				JT_ind=JT_ind+2
@@ -604,11 +604,11 @@ subroutine determine_JT(is,n_params,nJT,JT,params,iperp,upper_limit,ipparbar_low
 
 				JT(ifit+JT_ind+0,ipar)=kappapart**params(ifit+par_ind+3)
 
-				JT(ifit+JT_ind+1,ipar)=params(ifit+par_ind+0)*params(ifit+par_ind+3)*kappapart**(params(ifit+par_ind+3)-1.d0)
-				JT(ifit+JT_ind+1,ipar)=JT(ifit+JT_ind+1,ipar)*(ppar_val-params(ifit+par_ind+2))**2
+				JT(ifit+JT_ind+1,ipar)=params(ifit+par_ind+0)*params(ifit+par_ind+3)*kappapart**(params(ifit+par_ind+3)-1.d0)*&
+							(ppar_val-params(ifit+par_ind+2))**2
 
-				JT(ifit+JT_ind+2,ipar)=params(ifit+par_ind+0)*params(ifit+par_ind+3)*kappapart**(params(ifit+par_ind+3)-1.d0)
-				JT(ifit+JT_ind+2,ipar)=JT(ifit+JT_ind+2,ipar)*2.d0*params(ifit+par_ind+1)*(params(ifit+par_ind+2)-ppar_val)
+				JT(ifit+JT_ind+2,ipar)=params(ifit+par_ind+0)*params(ifit+par_ind+3)*kappapart**(params(ifit+par_ind+3)-1.d0)*&
+							2.d0*params(ifit+par_ind+1)*(params(ifit+par_ind+2)-ppar_val)
 
 				JT(ifit+JT_ind+3,ipar)=log(kappapart)*params(ifit+par_ind+0)*kappapart**params(ifit+par_ind+3)
 
@@ -616,8 +616,7 @@ subroutine determine_JT(is,n_params,nJT,JT,params,iperp,upper_limit,ipparbar_low
 					JT_ind=JT_ind+3
 				else
 					JT(ifit+JT_ind+4,ipar)=params(ifit+par_ind+0)*params(ifit+par_ind+3)*&
-									kappapart**(params(ifit+par_ind+3)-1.d0)
-					JT(ifit+JT_ind+4,ipar)=JT(ifit+JT_ind+4,ipar)* perp_correction(is,ifit)*pperp_val**2
+									kappapart**(params(ifit+par_ind+3)-1.d0) *perp_correction(is,ifit)*pperp_val**2
 
 					JT_ind=JT_ind+4
 				endif
@@ -633,8 +632,8 @@ subroutine determine_JT(is,n_params,nJT,JT,params,iperp,upper_limit,ipparbar_low
 
 				JT(ifit+JT_ind+1,ipar)=-params(ifit+par_ind+0)*exp(-params(ifit+par_ind+1)*sqrtpart)*sqrtpart
 
-				JT(ifit+JT_ind+2,ipar)=params(ifit+par_ind+0)*exp(-params(ifit+par_ind+1)*sqrtpart)*(params(ifit+par_ind+1)/sqrtpart)
-				JT(ifit+JT_ind+2,ipar)=JT(ifit+JT_ind+2,ipar)*(ppar_val-params(ifit+par_ind+2))*vA*vA/(ms(is)*ms(is))
+				JT(ifit+JT_ind+2,ipar)=params(ifit+par_ind+0)*exp(-params(ifit+par_ind+1)*sqrtpart)*&
+							(params(ifit+par_ind+1)/sqrtpart)*(ppar_val-params(ifit+par_ind+2))*vA*vA/(ms(is)*ms(is))
 
 				par_ind=par_ind+2
 				JT_ind=JT_ind+2
@@ -653,11 +652,10 @@ subroutine determine_JT(is,n_params,nJT,JT,params,iperp,upper_limit,ipparbar_low
 
 				JT(ifit+JT_ind+0,ipar)=expterm
 
-				JT(ifit+JT_ind+1,ipar)=-params(ifit+par_ind+0)*expterm
-				JT(ifit+JT_ind+1,ipar)=JT(ifit+JT_ind+1,ipar)*(ppar_val-params(ifit+par_ind+2))**2
+				JT(ifit+JT_ind+1,ipar)=-params(ifit+par_ind+0)*expterm*(ppar_val-params(ifit+par_ind+2))**2
 
-				JT(ifit+JT_ind+2,ipar)=2.d0*params(ifit+par_ind+0)*(ppar_val-params(ifit+par_ind+2))
-				JT(ifit+JT_ind+2,ipar)=JT(ifit+JT_ind+2,ipar)*params(ifit+par_ind+1)*expterm
+				JT(ifit+JT_ind+2,ipar)=2.d0*params(ifit+par_ind+0)*(ppar_val-params(ifit+par_ind+2))*&
+								params(ifit+par_ind+1)*expterm
 
 				par_ind=par_ind+2
 				JT_ind=JT_ind+2
@@ -673,28 +671,25 @@ subroutine determine_JT(is,n_params,nJT,JT,params,iperp,upper_limit,ipparbar_low
 				JT(ifit+JT_ind+0,ipar)=expterm
 
 				JT(ifit+JT_ind+1,ipar)=params(ifit+par_ind+0)*expterm*0.5d0*(ppar_val-params(ifit+par_ind+2))**2 * &
-				(1.d0 - exp(params(ifit+par_ind+3)*perp_correction(is,ifit)*pperp_val**2 + &
-				params(ifit+par_ind+1) * (ppar_val-params(ifit+par_ind+2))**2) )
+							(1.d0 - exp(params(ifit+par_ind+3)*perp_correction(is,ifit)*pperp_val**2 + &
+							params(ifit+par_ind+1) * (ppar_val-params(ifit+par_ind+2))**2) )
 
 				JT(ifit+JT_ind+2,ipar)=params(ifit+par_ind+0)*expterm*params(ifit+par_ind+1)*&
-				(params(ifit+par_ind+2)-ppar_val)* &
-				(1.d0-exp(params(ifit+par_ind+3)*perp_correction(is,ifit)*pperp_val**2 + &
-				 params(ifit+par_ind+1) * (ppar_val-params(ifit+par_ind+2))**2) )
+							(params(ifit+par_ind+2)-ppar_val)* &
+							(1.d0-exp(params(ifit+par_ind+3)*perp_correction(is,ifit)*pperp_val**2 + &
+				 			params(ifit+par_ind+1) * (ppar_val-params(ifit+par_ind+2))**2) )
 
-
-				 if (iperp.EQ.0) then
+			 if (iperp.EQ.0) then
 						JT_ind=JT_ind+2
-
 					else
-
-				 	JT(ifit+JT_ind+3,ipar)=params(ifit+par_ind+0)*expterm*0.5d0*perp_correction(is,ifit)*pperp_val**2 * &
- 					(1.d0 - exp(params(ifit+par_ind+3)*perp_correction(is,ifit)*pperp_val**2 + &
-					params(ifit+par_ind+1) * (ppar_val-params(ifit+par_ind+2))**2)  )
+				 		JT(ifit+JT_ind+3,ipar)=params(ifit+par_ind+0)*expterm*0.5d0*perp_correction(is,ifit)*pperp_val**2 * &
+ 								(1.d0 - exp(params(ifit+par_ind+3)*perp_correction(is,ifit)*pperp_val**2 + &
+									params(ifit+par_ind+1) * (ppar_val-params(ifit+par_ind+2))**2)  )
 
 					JT_ind=JT_ind+3
 				endif
 
-
+				par_ind=par_ind+3
 			endif
 
 		enddo
@@ -778,8 +773,6 @@ subroutine LM_nonlinear_fit(is,g,n_params,nJT,params,param_mask,iperp,npar,ippar
 			residuals(ipar)=g(ipar)-real(fit_function(is,n_params,params,pperp_val,cmplx(ppar_val,0.d0,kind(1.d0))))
 		endif
 
-
-
 		! Least squares:
 		LSQ=LSQ+residuals(ipar)*residuals(ipar)
 	enddo
@@ -825,8 +818,6 @@ subroutine LM_nonlinear_fit(is,g,n_params,nJT,params,param_mask,iperp,npar,ippar
 			residuals(ipar)=g(ipar)-real(fit_function(is,n_params,params,pperp_val,cmplx(ppar_val,0.d0,kind(1.d0))))
 		endif
 
-
-
 		! Least squares:
 		LSQnew=LSQnew+residuals(ipar)*residuals(ipar)
 	enddo
@@ -856,8 +847,6 @@ subroutine LM_nonlinear_fit(is,g,n_params,nJT,params,param_mask,iperp,npar,ippar
 	quality=LSQ
 
 end subroutine
-
-
 
 
 
