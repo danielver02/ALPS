@@ -195,12 +195,13 @@ subroutine determine_param_fit
 	use alps_var, only : relativistic,npparbar,f0_rel,ngamma, perp_correction, gamma_rel
 	implicit none
 	integer :: ifit,n_params,par_ind,iperp,is,is_run,is_rel,sproc_rel,nJT
-	integer :: ipparbar,ipparbar_lower,ipparbar_upper,upperlimit
+	integer :: ipparbar,ipparbar_lower,ipparbar_upper,upperlimit,unit_spec
 	logical :: found_lower, found_upper
 	double precision :: quality,qualitytotal
 	logical, allocatable, dimension (:) :: param_mask
 	double precision,allocatable,dimension (:) :: g
 	double precision,allocatable,dimension(:) :: params
+	character (10) :: specwrite
 
 	if (writeOut) then
 		write (*,'(a)') 'Determine fit parameters for hybrid analytic continuation...'
@@ -232,6 +233,12 @@ subroutine determine_param_fit
 		else
 			upperlimit=nperp
 		endif
+
+
+	  unit_spec=2500+is
+	  write(specwrite,'(i0)') is
+	  open(unit = unit_spec,file = 'solution/fit_parameters.'//trim(specwrite)//'.out', status = 'replace')
+
 
 
 		do iperp=0,upperlimit
@@ -375,6 +382,10 @@ subroutine determine_param_fit
 
 			qualitytotal=qualitytotal+quality
 
+			! Write  Fit parameters to output files
+			write (unit_spec,*) iperp,params
+
+
 			! Fill it back into the param_fit field:
 			par_ind=0
 			do ifit=1,n_fits(is)
@@ -424,6 +435,8 @@ subroutine determine_param_fit
 			enddo
 
 		enddo	! End loop over iperp
+
+		close (unit_spec)
 
 		deallocate (params)
 		deallocate (param_mask)
