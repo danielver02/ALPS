@@ -168,7 +168,7 @@ module alps_var
 
   logical :: use_secant=.true. !use secant or rtsec methods
 
-
+  logical, dimension(:), allocatable :: logfit ! Use logarithmic fitting?
 
   public :: scanner
      type :: scanner
@@ -209,7 +209,7 @@ module alps_var
   public :: determine_minima, n_resonance_interval
   public :: unit_error, scan_option, n_scan, scan
   public :: kperp_last, kpar_last, kperp_0, kpar_0
-  public :: use_secant, relativistic
+  public :: use_secant, relativistic, logfit
   public :: f0_rel,df0_rel,nspec_rel,gamma_rel,pparbar_rel,ngamma,npparbar
 
  end module alps_var

@@ -193,7 +193,7 @@ end function
 ! the full field param_fit.
 !-=-=-=-=-=-=
 subroutine determine_param_fit
-	use alps_var, only : writeOut, fit_type, param_fit, n_fits, nspec, f0, nperp, npar
+	use alps_var, only : writeOut, fit_type, param_fit, n_fits, nspec, f0, nperp, npar, logfit
 	use alps_var, only : relativistic,npparbar,f0_rel,ngamma, perp_correction, gamma_rel
 	implicit none
 	integer :: ifit,n_params,par_ind,iperp,is,is_run,is_rel,sproc_rel,nJT
@@ -209,8 +209,8 @@ subroutine determine_param_fit
 	endif
 
 	qualitytotal=0.d0
-	do is=1,nspec
 
+	do is=1,nspec
 
 		! For all fit types that include a fit parameter for the perpendicular momentum (kappa and Moyal),
 		! we must not fit this parameter when pperp=0. Otherwise, the LM matrix is singular:
@@ -302,7 +302,6 @@ subroutine determine_param_fit
 
 			nJT=nJT+n_params
 
-
 			! Fit and return everything in one array "params":
 			if (relativistic(is)) then
 				 ! Determine your sproc_rel:
@@ -333,7 +332,14 @@ subroutine determine_param_fit
 				if ((ipparbar_upper-ipparbar_lower).GT.2) then
 
 					allocate(g(0:ipparbar_upper-ipparbar_lower))
-					g=f0_rel(sproc_rel,iperp,ipparbar_lower:ipparbar_upper)
+
+					if (logfit(is)) then
+						g=log(f0_rel(sproc_rel,iperp,ipparbar_lower:ipparbar_upper))
+					else
+						g=f0_rel(sproc_rel,iperp,ipparbar_lower:ipparbar_upper)
+					endif
+
+
 					call LM_nonlinear_fit(is,g,n_params,nJT,params,param_mask,iperp,&
 											(ipparbar_upper-ipparbar_lower),ipparbar_lower,quality)
 					deallocate(g)
@@ -356,7 +362,13 @@ subroutine determine_param_fit
 			else	! non-relativistic
 
 				allocate(g(0:npar))
-				g=f0(is,iperp,:)
+
+				if (logfit(is)) then
+					g=log(f0(is,iperp,:))
+				else
+					g=f0(is,iperp,:)
+				endif
+
 				call LM_nonlinear_fit(is,g,n_params,nJT,params,param_mask,iperp,npar,0,quality)
 				deallocate(g)
 
@@ -496,10 +508,12 @@ subroutine output_fit(qualitytotal)
 				write (unit_spec,*) gamma_rel(sproc_rel,igamma,ipparbar),pparbar_rel(sproc_rel,igamma,ipparbar),&
 					"-1.0",	abs(-1.d0-f0_rel(sproc_rel,igamma,ipparbar))
 			else
+
 				write (unit_spec,*) gamma_rel(sproc_rel,igamma,ipparbar),pparbar_rel(sproc_rel,igamma,ipparbar),&
 					real(eval_fit(is,igamma,ppar_comp)),&
-						abs(real(eval_fit(is,igamma,ppar_comp))-f0_rel(sproc_rel,igamma,ipparbar))
-                integrate = integrate + &
+						abs(real(eval_fit(is,igamma,ppar_comp))-f0_rel(sproc_rel,igamma,ipparbar))/f0_rel(sproc_rel,igamma,ipparbar)
+
+						  integrate = integrate + &
                      gamma_rel(is_rel,igamma,ipparbar) * real(eval_fit(is,igamma,ppar_comp)) * &
                      2.d0 * pi * dgamma * dpparbar * (ms(is) / vA)**3
 			endif
@@ -515,8 +529,8 @@ subroutine output_fit(qualitytotal)
 			do ipar=0,npar
 				ppar_comp=pp(is,iperp,ipar,2)
 				write (unit_spec,*) pp(is,iperp,ipar,1), pp(is,iperp,ipar,2), real(eval_fit(is,iperp,ppar_comp)), &
-						abs(real(eval_fit(is,iperp,ppar_comp))-f0(is,iperp,ipar))
-                integrate = integrate + pp(is,iperp,ipar,1) * real(eval_fit(is,iperp,ppar_comp)) * &
+						abs(real(eval_fit(is,iperp,ppar_comp))-f0(is,iperp,ipar))/f0(is,iperp,ipar)
+			     integrate = integrate + pp(is,iperp,ipar,1) * real(eval_fit(is,iperp,ppar_comp)) * &
                      2.d0 * pi * dpperp * dppar
 			enddo
 		enddo
@@ -543,6 +557,7 @@ subroutine determine_JT(is,n_params,nJT,JT,params,iperp,upper_limit,ipparbar_low
 	double precision :: ppar_val,pperp_val,params(n_params)
 	double precision :: sqrtpart,expterm,kappapart, JT(nJT,0:upper_limit)
 
+
 	if (relativistic(is)) then
 		 ! Determine your sproc_rel:
 		 is_rel=0
@@ -568,13 +583,16 @@ subroutine determine_JT(is,n_params,nJT,JT,params,iperp,upper_limit,ipparbar_low
 		JT_ind=0
 		do ifit=1,n_fits(is)
 			if (fit_type(is,ifit).EQ.1) then	! Maxwell
-				expterm=exp(-params(ifit+par_ind+1)*(ppar_val-params(ifit+par_ind+2))**2)
+				expterm=exp(-params(ifit+par_ind+1)*(ppar_val-params(ifit+par_ind+2))**2 &
+							-perp_correction(is,ifit)*pperp_val**2)
 
-				JT(ifit+JT_ind+0,ipar)=expterm*exp(-perp_correction(is,ifit)*pperp_val**2)
+				JT(ifit+JT_ind+0,ipar)=expterm
 
 				JT(ifit+JT_ind+1,ipar)=-((ppar_val-params(ifit+par_ind+2))**2)*params(ifit+par_ind+0)*expterm
 
 				JT(ifit+JT_ind+2,ipar)=2.d0*params(ifit+par_ind+1)*(ppar_val-params(ifit+par_ind+2))*params(ifit+par_ind+0)*expterm
+
+				par_ind=par_ind+3
 
 				par_ind=par_ind+2
 				JT_ind=JT_ind+2
@@ -647,9 +665,8 @@ subroutine determine_JT(is,n_params,nJT,JT,params,iperp,upper_limit,ipparbar_low
 
 
 			if (fit_type(is,ifit).EQ.6) then	! bi-Moyal
-
 			expterm=exp(0.5d0*(params(ifit+par_ind+3)*perp_correction(is,ifit)*pperp_val**2 + &
-					params(ifit+par_ind+1)*(ppar_val-params(ifit+par_ind+2))**2 -&
+					params(ifit+par_ind+1)*(ppar_val-params(ifit+par_ind+2))**2 - &
 					exp(params(ifit+par_ind+3)*perp_correction(is,ifit)*pperp_val**2 + &
 					params(ifit+par_ind+1)*(ppar_val-params(ifit+par_ind+2))**2) ))
 
@@ -667,23 +684,23 @@ subroutine determine_JT(is,n_params,nJT,JT,params,iperp,upper_limit,ipparbar_low
 
 				 if (iperp.EQ.0) then
 						JT_ind=JT_ind+2
+
 					else
+
 				 	JT(ifit+JT_ind+3,ipar)=params(ifit+par_ind+0)*expterm*0.5d0*perp_correction(is,ifit)*pperp_val**2 * &
  					(1.d0 - exp(params(ifit+par_ind+3)*perp_correction(is,ifit)*pperp_val**2 + &
 					params(ifit+par_ind+1) * (ppar_val-params(ifit+par_ind+2))**2)  )
 
 					JT_ind=JT_ind+3
 				endif
-				par_ind=par_ind+3
+
 
 			endif
-
 
 		enddo
 	enddo
 
 end subroutine
-
 
 
 
@@ -695,7 +712,7 @@ end subroutine
 ! quality is the sum of the squares of all residuals.
 !-=-=-=-=-=-=
 subroutine LM_nonlinear_fit(is,g,n_params,nJT,params,param_mask,iperp,npar,ipparbar_lower,quality)
-	use alps_var, only : lambda_initial_fit, pp, lambdafac_fit
+	use alps_var, only : lambda_initial_fit, pp, lambdafac_fit, logfit
 	use alps_var, only : epsilon_fit, maxsteps_fit
 	use alps_var, only : gamma_rel,pparbar_rel,relativistic,nspec
 	use alps_io, only : alps_error
@@ -733,7 +750,10 @@ subroutine LM_nonlinear_fit(is,g,n_params,nJT,params,param_mask,iperp,npar,ippar
 	LSQ=0.d0
 
 	! Determine the transposed Jacobian and the residuals:
+
 	call determine_JT(is,n_params,nJT,JT,params,iperp,npar,ipparbar_lower)
+
+
 
 	do ipar=0,npar
 
@@ -745,7 +765,20 @@ subroutine LM_nonlinear_fit(is,g,n_params,nJT,params,param_mask,iperp,npar,ippar
 			ppar_val=pp(is,iperp,ipar,2)
 		endif
 
-		residuals(ipar)=g(ipar)-real(fit_function(is,n_params,params,pperp_val,cmplx(ppar_val,0.d0,kind(1.d0))))
+
+
+		if (logfit(is)) then
+
+			do k=1,nJT
+					JT(k,ipar)=JT(k,ipar)/fit_function(is,n_params,params,pperp_val,cmplx(ppar_val,0.d0,kind(1.d0)))
+			enddo
+
+			residuals(ipar)=g(ipar)-log(real(fit_function(is,n_params,params,pperp_val,cmplx(ppar_val,0.d0,kind(1.d0)))))
+		else
+			residuals(ipar)=g(ipar)-real(fit_function(is,n_params,params,pperp_val,cmplx(ppar_val,0.d0,kind(1.d0))))
+		endif
+
+
 
 		! Least squares:
 		LSQ=LSQ+residuals(ipar)*residuals(ipar)
@@ -786,7 +819,13 @@ subroutine LM_nonlinear_fit(is,g,n_params,nJT,params,param_mask,iperp,npar,ippar
 		endif
 
 
-		residuals(ipar)=g(ipar)-real(fit_function(is,n_params,params,pperp_val,cmplx(ppar_val,0.d0,kind(1.d0))))
+		if (logfit(is)) then
+			residuals(ipar)=g(ipar)-log(real(fit_function(is,n_params,params,pperp_val,cmplx(ppar_val,0.d0,kind(1.d0)))))
+		else
+			residuals(ipar)=g(ipar)-real(fit_function(is,n_params,params,pperp_val,cmplx(ppar_val,0.d0,kind(1.d0))))
+		endif
+
+
 
 		! Least squares:
 		LSQnew=LSQnew+residuals(ipar)*residuals(ipar)
@@ -794,6 +833,7 @@ subroutine LM_nonlinear_fit(is,g,n_params,nJT,params,param_mask,iperp,npar,ippar
 
 
 	if (LSQnew.GT.LSQ) then
+
 		l=0
 		do k=1,n_params
 			if (param_mask(k)) then
@@ -801,6 +841,7 @@ subroutine LM_nonlinear_fit(is,g,n_params,nJT,params,param_mask,iperp,npar,ippar
 				params(k)=params(k)-deltaparam_fit(l)
 			endif
 		enddo
+
 		lambda_fit=lambda_fit*lambdafac_fit
 	else
 		lambda_fit=lambda_fit/lambdafac_fit

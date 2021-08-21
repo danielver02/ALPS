@@ -38,7 +38,7 @@ contains
     use alps_var, only : nperp, npar, arrayName, fit_check, param_fit, fit_type, perp_correction
     use alps_var, only : ns, qs, ms, vA, Bessel_zero, numiter, D_threshold,positions_principal
     use alps_var, only : determine_minima, n_resonance_interval, ngamma, npparbar, Tlim
-    use alps_var, only : scan_option, n_scan, scan, use_secant, relativistic
+    use alps_var, only : scan_option, n_scan, scan, use_secant, relativistic, logfit
     use alps_var, only : maxsteps_fit, n_fits, lambda_initial_fit, lambdafac_fit, epsilon_fit
     implicit none
 
@@ -108,6 +108,7 @@ contains
     allocate(ms(1:nspec)); ms = 0.d0
     allocate(n_fits(1:nspec)); n_fits = 1
     allocate(relativistic(1:nspec)); relativistic=.FALSE.
+    allocate(logfit(1:nspec)); logfit=.TRUE.
 
     do is = 1, nspec
        !READ IN SPECIES PARAMETERS
@@ -232,19 +233,19 @@ end subroutine solution_read
 !Subroutine for reading in species parameters
 !-=-=-=-=-
 subroutine spec_read(is)
-  use alps_var, only : ns, qs, ms, n_fits, relativistic
+  use alps_var, only : ns, qs, ms, n_fits, relativistic, logfit
   implicit none
   !Passed
   integer :: is !species index
   !Local
   double precision :: nn,qq,mm    ! Read in values for ns, qs, ms
   integer :: ff !read in value for number of fitted functions for species
-  logical :: relat
+  logical :: relat, log_fit
 
   nameList /spec/ &
-       nn,qq,mm,ff,relat
+       nn,qq,mm,ff,relat,log_fit
   read (unit=unit,nml=spec)
-  ns(is) = nn; qs(is) = qq; ms(is) = mm; n_fits(is)=ff; relativistic(is)=relat
+  ns(is) = nn; qs(is) = qq; ms(is) = mm; n_fits(is)=ff; relativistic(is)=relat; logfit(is)=log_fit
 end subroutine spec_read
 !-=-=-=-=-
 !-=-=-=-=-
