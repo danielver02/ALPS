@@ -83,6 +83,7 @@ qq=1.d0
 mm=1.d0
 ff=1
 relat=F
+log_fit=T
 /
 
 &ffit_1_1
@@ -121,6 +122,7 @@ qq=-1.d0
 mm=5.4466d-4
 ff=1
 relat=F
+log_fit=T
 /
 
 &ffit_2_1
