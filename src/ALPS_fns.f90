@@ -2372,7 +2372,7 @@ subroutine refine_guess
      wroots(iw)=omega
 
      tmpDisp=disp(wroots(iw))
-     if (proc0) then
+     if (proc0.and.(abs(tmpDisp).NE.0.d0)) then       
         write(unit_refine,'(i4,5es14.4)') iw,wroots(iw),log10(abs(tmpDisp)),tmpDisp
         write(*,'(i4,5es14.4)') iw,wroots(iw),log10(abs(tmpDisp)),tmpDisp
  !       if (writeOut) write(*,'(a,2es14.4,a,2es14.4)')'D(',wroots(iw),')= ',tmpDisp
