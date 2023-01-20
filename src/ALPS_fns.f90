@@ -684,7 +684,7 @@ double complex function integrate_res(om,nn,mode)
 
 
 	! Handle resonances that are right outside the integration domain:
-	p_res = (ms(sproc) * om - 1.d0*nn * qs(sproc))/kpar
+	p_res = (ms(sproc) * om - (1.d0*nn) * qs(sproc))/kpar
 
 	do ipar=0,positions_principal
 
@@ -832,10 +832,16 @@ double complex function integrate_res(om,nn,mode)
 		gprimetr = (funct_g(denomR+dppar,nperp-1,om,nn,mode)-funct_g(denomR-dppar,nperp-1,om,nn,mode))/(2.d0*dppar)
 		integrate_res = integrate_res + 2.d0*gprimetr*(ppar-denomR)**2 / ((ppar-denomR)**2+denomI**2)
 
-		if (denomI.NE.0.d0) then ! the factor 2 is for the trapezoidal rule
-			integrate_res = integrate_res + 2.d0 * 2.d0 * ii * pi * funct_g(denomR,1,om,nn,mode)*denomI/(abs(denomI)*smdelta)
-			integrate_res = integrate_res + 2.d0 * ii * pi * funct_g(denomR,nperp-1,om,nn,mode)*denomI/(abs(denomI)*smdelta)
-		endif
+    ! The following lines account for Eq. (3.7) in the paper:
+    if (denomI.GT.0.d0) then
+      integrate_res = integrate_res + 2.d0 * 2.d0 * ii * pi * funct_g(denomR,1,om,nn,mode)/smdelta
+			integrate_res = integrate_res + 2.d0 * ii * pi * funct_g(denomR,nperp-1,om,nn,mode)/smdelta
+    else if (denomI.LT.0.d0) then
+      integrate_res = integrate_res - 2.d0 * 2.d0 * ii * pi * funct_g(denomR,1,om,nn,mode)/smdelta
+      integrate_res = integrate_res - 2.d0 * ii * pi * funct_g(denomR,nperp-1,om,nn,mode)/smdelta
+    else if (denomI.EQ.0.d0) then
+      integrate_res = integrate_res+0.d0
+    endif
 		! end of edges.
 
 		do iperp = 2, nperp-2
@@ -847,22 +853,29 @@ double complex function integrate_res(om,nn,mode)
 				integrate_res = integrate_res + 4.d0 * 2.d0 * gprimetr * (ppar-denomR)**2 / ((ppar-denomR)**2+denomI**2)
 			enddo
 
-			if (denomI.NE.0.d0) then
-				integrate_res = integrate_res + 4.d0 * ii * pi * funct_g(denomR,iperp,om,nn,mode)*denomI/(abs(denomI)*smdelta)
-			endif
-
 			ppar=real(p_res)
+      ! In this case, ppar is equal to denomR, so: no integration needed
 
-			gprimetr = (funct_g(denomR+dppar,iperp,om,nn,mode)-funct_g(denomR-dppar,iperp,om,nn,mode))/(2.d0*dppar)
-			if (denomI.NE.0.d0) then
-				integrate_res = integrate_res + 2.d0 * 2.d0 * gprimetr * (ppar-denomR)**2 / ((ppar-denomR)**2+denomI**2)
-			else
-				integrate_res = integrate_res + 2.d0 * 2.d0 * gprimetr
-			endif
+	!		gprimetr = (funct_g(denomR+dppar,iperp,om,nn,mode)-funct_g(denomR-dppar,iperp,om,nn,mode))/(2.d0*dppar)
+	!		if (denomI.NE.0.d0) then
+	!			integrate_res = integrate_res + 2.d0 * 2.d0 * gprimetr * (ppar-denomR)**2 / ((ppar-denomR)**2+denomI**2)
+	!		else
+	!			integrate_res = integrate_res + 2.d0 * 2.d0 * gprimetr
+	!		endif
 
 			ppar=real(p_res)+capDelta
 			gprimetr = (funct_g(denomR+dppar,iperp,om,nn,mode)-funct_g(denomR-dppar,iperp,om,nn,mode))/(2.d0*dppar)
 			integrate_res = integrate_res + 2.d0*2.d0*gprimetr*(ppar-denomR)**2 / ((ppar-denomR)**2+denomI**2)
+
+
+      ! The following lines account for Eq. (3.7) in the paper:
+      if (denomI.GT.0.d0) then
+        integrate_res = integrate_res + 4.d0 * ii * pi * funct_g(denomR,iperp,om,nn,mode)/smdelta
+      else if (denomI.LT.0.d0) then
+        integrate_res = integrate_res - 4.d0 * ii * pi * funct_g(denomR,iperp,om,nn,mode)/smdelta
+      else if (denomI.EQ.0.d0) then
+        integrate_res = integrate_res+0.d0
+      endif
 
 		enddo
 
@@ -2372,7 +2385,7 @@ subroutine refine_guess
      wroots(iw)=omega
 
      tmpDisp=disp(wroots(iw))
-     if (proc0.and.(abs(tmpDisp).NE.0.d0)) then       
+     if (proc0.and.(abs(tmpDisp).NE.0.d0)) then
         write(unit_refine,'(i4,5es14.4)') iw,wroots(iw),log10(abs(tmpDisp)),tmpDisp
         write(*,'(i4,5es14.4)') iw,wroots(iw),log10(abs(tmpDisp)),tmpDisp
  !       if (writeOut) write(*,'(a,2es14.4,a,2es14.4)')'D(',wroots(iw),')= ',tmpDisp
