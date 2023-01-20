@@ -771,22 +771,20 @@ double complex function principal_integral_rel(sproc_rel,om,nn,mode,igamma,ippar
 
 		! Integrate the edges:
 		pparbar=real(pparbar_res)
-		if (denomI.NE.0.d0) then
-			principal_integral_rel=principal_integral_rel &
-				+ 2.d0 * gprimetr*(pparbar-denomR)**2 / ((pparbar-denomR)**2+denomI**2)
-		else
-			principal_integral_rel=principal_integral_rel + 2.d0 * gprimetr
-		endif
+    ! This case is when pparbar=denomR, so no contribution is needed.
+		!if (denomI.NE.0.d0) then
+		!	principal_integral_rel=principal_integral_rel &
+		!		+ 2.d0 * gprimetr*(pparbar-denomR)**2 / ((pparbar-denomR)**2+denomI**2)
+		!else
+		!	principal_integral_rel=principal_integral_rel + 2.d0 * gprimetr
+		!endif
 
 
 		pparbar=real(pparbar_res)+capDelta
 		principal_integral_rel=principal_integral_rel &
 			+ 2.d0 * gprimetr*(pparbar-denomR)**2 / ((pparbar-denomR)**2+denomI**2)
 
-		if (denomI.NE.0.d0) then ! the factor 2 is for normalization reasons in the trapezoidal rule
-			principal_integral_rel=principal_integral_rel &
-				+ 2.d0 * ii * pi * funct_g_rel(sproc_rel,denomR,igamma,om,nn,mode) * denomI/(abs(denomI)*smdelta)
-		endif
+
 		! end of edges.
 
 		do ipparbar = 1, n_resonance_interval-1
@@ -796,6 +794,18 @@ double complex function principal_integral_rel(sproc_rel,om,nn,mode,igamma,ippar
 				+ 2.d0 * 2.d0 * gprimetr*(pparbar-denomR)**2 / ((pparbar-denomR)**2+denomI**2)
 
 		enddo
+
+    ! The following lines account for Eq. (3.7) in the paper:
+		! the factor 2 is for normalization reasons in the trapezoidal rule
+    if (denomI.GT.0.d0) then
+      principal_integral_rel=principal_integral_rel &
+				+ 2.d0 * ii * pi * funct_g_rel(sproc_rel,denomR,igamma,om,nn,mode)/smdelta
+    else if (denomI.LT.0.d0) then
+      principal_integral_rel=principal_integral_rel &
+				- 2.d0 * ii * pi * funct_g_rel(sproc_rel,denomR,igamma,om,nn,mode)/smdelta
+    else if (denomI.EQ.0.d0) then
+      principal_integral_rel=principal_integral_rel + 0.d0
+    endif
 
 	endif
 
