@@ -26,4 +26,4 @@ AC_LANG([Fortran])
 #AM_CONDITIONAL(WITH_HDF5, test x$WITH_HDF5 = xyes)
 
 
-AC_OUTPUT(Makefile src/Makefile)
+AC_OUTPUT(Makefile src/Makefile interpolation/Makefile distribution/Makefile)
