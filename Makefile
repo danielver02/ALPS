@@ -130,10 +130,10 @@ guess:
 	mpirun -np 4 ./ALPS.e guess.in
 
 run:
-#	mpirun -np 8 ./ALPS.e guess_scan.in
+	mpirun -np 8 ./ALPS.e guess_scan.in
 #	mpirun -np 8 ./ALPS.e guess_double_scan.in
-	mpirun -np 8 ./ALPS.e guess_max.in
-#	mpirun -np 4 ./ALPS.e map_scan2.in
+#	mpirun -np 8 ./ALPS.e guess_max.in
+#	mpirun -np 4 ./ALPS.e map_scan.in
 
 #########Rules
 obj/%.o:src/%.f90
