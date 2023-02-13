@@ -18,5 +18,6 @@ jobs:
 
     - name: Build ALPS
       run: |
+        autoreconf
         ./configure
         make
