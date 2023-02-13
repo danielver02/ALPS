@@ -157,8 +157,9 @@ end subroutine derivative_f0
     use alps_var, only : nlim, proc0, nspec, ierror, sproc, relativistic
     use alps_var, only : wave, kperp, kpar, ns, qs, vA, chi0
     use alps_fns_rel, only : int_ee_rel
+    use mpi
     implicit none
-    include 'mpif.h' !Include MPI library variables
+
     !Passed
     double complex :: om     !frequency for dispersion solution
     !Local
@@ -1352,8 +1353,9 @@ end function int_T_res
 !-=-=-=-=-=-=
 subroutine secant(om)
 	use ALPS_var, only : numiter, D_threshold, ierror, proc0, writeOut, D_prec
+   use mpi
 	implicit none
-	include 'mpif.h'
+
 	double complex :: om, prevom, ii, D, Dprev, jump, minom, minD
 	integer :: iter
 	logical :: go_for_secant
@@ -1417,8 +1419,9 @@ subroutine om_scan(ik)
   use ALPS_var, only : kperp,kpar,kperp_last,kpar_last, D_prec, D_gap
   use ALPS_var, only : use_secant, nspec
   use ALPS_io,  only : get_unused_unit, isnancheck, alps_error
+  use mpi
   implicit none
-  include 'mpif.h'      !Include MPI library variables
+
   !Passed
   integer :: ik !Scan Number
 
@@ -1879,9 +1882,8 @@ subroutine om_double_scan
   use ALPS_var, only : kperp,kpar,kperp_last,kpar_last, D_prec, D_gap
   use ALPS_var, only : use_secant, ierror
   use ALPS_io,  only : get_unused_unit, alps_error
-
+  use mpi
   implicit none
-  include 'mpif.h'      !Include MPI library variables
 
   !Local
   integer :: it, it2, nt, nt2 !step of scan, number of scans
@@ -2196,8 +2198,9 @@ subroutine map_search
   use ALPS_var, only : ni, nr, proc0, ms, ns, qs, runname, nspec
   use ALPS_var, only : writeOut, kperp, kpar, wroots, numroots, nroots, nroots_max
   use ALPS_io,  only : get_unused_unit
+  use mpi
   implicit none
- include 'mpif.h' !Include MPI library variables
+
   double precision :: dr, di                         !Spacing
   double precision :: wr, wi                         !Real,imaginary omega
   double precision, dimension(:,:), pointer :: val   !Value of Dispersion relation
@@ -2347,8 +2350,9 @@ subroutine refine_guess
   use alps_var, only : ierror,runname, D_prec
   use ALPS_var, only : use_secant
   use alps_io,  only : get_unused_unit
+  use mpi
   implicit none
-  include 'mpif.h'
+
   double complex :: omega    !Complex Frequency
   double complex :: om1, om2 !Bounding frequencies for secant search
   integer :: iflag                           !Flag for Root search
@@ -2560,8 +2564,9 @@ subroutine determine_nmax()
 use ALPS_var, only : pp, kperp, qs, Bessel_zero, nmax, ierror
 use ALPS_var, only : proc0, nperp, nspec, writeOut, nproc
 use ALPS_fns_rel, only : BESSJ
+use mpi
 implicit none
-include 'mpif.h' !Include MPI library variables
+
 integer :: is 				! Species index
 integer :: nn				! Bessel n
 double precision :: bessel, besselprev, besselmax

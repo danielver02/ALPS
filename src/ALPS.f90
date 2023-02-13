@@ -26,12 +26,12 @@ program alps
   use alps_fns,    only : om_scan, om_double_scan
   use alps_com,    only : pass_instructions, pass_distribution
   use alps_analyt, only : determine_param_fit
-
+  use mpi
   implicit none
-  include 'mpif.h'      !Include MPI library variables
+
   !Local
   integer :: ik
-  
+
   !Initialize MPI message passing---------------------------------------------
   call mpi_init (ierror)
   call mpi_comm_size (mpi_comm_world, nproc, ierror)
@@ -42,27 +42,27 @@ program alps
 
   if (proc0) then
      call alps_error_init
-     write(*,'(a)')'Starting ALPS===================================' 
+     write(*,'(a)')'Starting ALPS==================================='
      write(*,'(a)') "Time:"
      call output_time
-     write(*,'(a)')'================================================' 
+     write(*,'(a)')'================================================'
      call display_credits
   endif
-  	
+
   call mpi_barrier(mpi_comm_world,ierror)
-  if (proc0) write(*,'(a)') 'All processes are up and running.'	
+  if (proc0) write(*,'(a)') 'All processes are up and running.'
 
   !Check to be sure nproc is even and greater than 2, otherwise shutdown
   if ((mod(nproc,2) .ne. 0).or.(nproc .le. 2)) call alps_error(0)
 
   !Read parameters------------------------------------------------------------
   if (proc0) call init_param !alps_io
-       
+
   !Split Problem Amongst Processors
   !Pass relevant information from readin
   call pass_instructions !alps_com
 
-  if (proc0) then     
+  if (proc0) then
 
      !Allocate background distribution function f0
      allocate(f0(1:nspec,0:nperp,0:npar)); f0=0.d0
@@ -74,7 +74,7 @@ program alps
      call derivative_f0 !alps_fns
 
      call determine_param_fit
-     
+
      !f0 not needed for dispersion calculation
      !Deallocate to save space.
      deallocate(f0)
@@ -90,22 +90,22 @@ program alps
 
   ! All processes determine their Bessel function array:
   if(.NOT.(sproc.EQ.0)) call determine_bessel_array
-  
+
   call mpi_barrier(mpi_comm_world,ierror)
-  
+
   !Either:
-  !use_map=.true.  : 
+  !use_map=.true.  :
   !    use a scan over (omega,gamma) to local dispersion solutions
   !OR
-  !use_map=.false. : 
+  !use_map=.false. :
   !    use user input roots as initial guesses for dispersion solutions
   if (use_map) then
      if (writeOut.and.proc0) &
-          write(*,'(a)')'Map Search'           
-     call map_search     
-  else       
+          write(*,'(a)')'Map Search'
+     call map_search
+  else
      if (writeOut.and.proc0) &
-          write(*,'(a)') 'Starting Secant Method'     
+          write(*,'(a)') 'Starting Secant Method'
      call refine_guess
   endif
 
@@ -130,10 +130,10 @@ program alps
   !Finalize MPI message passing
   call mpi_finalize (ierror)
   if (proc0) then
-     write(*,'(a)')'Finishing ALPS===================================' 
+     write(*,'(a)')'Finishing ALPS==================================='
      write(*,'(a)') "Time:"
      call output_time
-     write(*,'(a)')'================================================' 
+     write(*,'(a)')'================================================'
      write(unit_error,'(a)')'Run completed without fatal error.'
      close(unit_error)
   endif
