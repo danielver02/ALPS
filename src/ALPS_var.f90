@@ -11,8 +11,9 @@
 !=============================================================================!
 !
 module alps_var
+  use mpi
   implicit none
-  include 'mpif.h'
+
 
   private
 

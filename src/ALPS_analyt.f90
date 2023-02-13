@@ -724,8 +724,9 @@ subroutine LM_nonlinear_fit(is,g,n_params,nJT,params,param_mask,iperp,npar,ippar
 	use alps_var, only : epsilon_fit, maxsteps_fit
 	use alps_var, only : gamma_rel,pparbar_rel,relativistic,nspec
 	use alps_io, only : alps_error
+	use mpi
 	implicit none
-	include "mpif.h"
+
 	logical :: converged,param_mask(n_params)
 	integer :: ipar,k,counter,is,n_params,nJT,iperp,npar,is_rel,is_run,sproc_rel,ipparbar_lower,l
 	double precision :: LSQ,LSQnew,lambda_fit,quality,pperp_val,ppar_val

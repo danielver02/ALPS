@@ -619,9 +619,10 @@ end subroutine read_f0
 !Error catching subroutine
   subroutine alps_error(error_id)
     use alps_var, only : ierror,unit_error,nproc,scan_option
+    use mpi
+
     implicit none
     integer :: error_id
-    include 'mpif.h'
 
 !    if (proc0) then
        select case(error_id)

@@ -31,8 +31,9 @@ subroutine pass_instructions
   use alps_var, only : ni, nr, omi, omf, gami, gamf, loggridg, loggridw
   use alps_var, only : determine_minima, n_resonance_interval, positions_principal, Tlim
   use alps_var, only : n_scan, scan, scan_option, use_secant, relativistic
+  use mpi
   implicit none
-  include 'mpif.h' !Include MPI library variables
+
   !Local
   integer :: is
 
@@ -168,8 +169,9 @@ subroutine pass_distribution
 	use alps_var,    only : df0, pp, param_fit, fit_type, perp_correction,proc0, writeOut, ierror
 	use alps_var,    only : df0_rel, gamma_rel, pparbar_rel, f0_rel
 	use alps_var,    only : relativistic, nspec, ngamma, npparbar
+   use mpi
 	implicit none
-	include 'mpif.h' !Include MPI library variables
+
 	integer :: is_rel, is, nspec_rel
 	logical :: any_relativistic
 
