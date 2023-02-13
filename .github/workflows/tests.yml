@@ -23,7 +23,11 @@ jobs:
 
     - name: Install FORTRAN and MPI on macOS
       if: ${{ matrix.os == 'macos-latest' }}
-      run: brew install gcc openmpi
+      run: |
+        brew install gcc openmpi
+        brew link gcc
+        ln -s /usr/local/bin/gfortran-12 /usr/local/bin/gfortran
+        which gfortran
 
     - name: Build ALPS
       run: |
