@@ -2,4 +2,4 @@ AM_FCFLAGS = -fcheck=all -fbacktrace -fbounds-check -ffpe-trap=zero,overflow -Wc
 
 bin_PROGRAMS = generate_distribution
 
-generate_distribution_SOURCES = generate_distributions.f90
+generate_distribution_SOURCES = generate_distribution.f90
