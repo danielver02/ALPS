@@ -24,7 +24,7 @@ jobs:
     - name: Install FORTRAN and MPI on macOS
       if: ${{ matrix.os == 'macos-latest' }}
       run: |
-        brew install gcc openmpi
+        brew install gcc openmpi automake
         # For some reason GitHub actions can't find gfortran unless
         # we explicitly link it
         brew link gcc
@@ -32,5 +32,8 @@ jobs:
 
     - name: Build ALPS
       run: |
-        make clean
-        make all
+        aclocal
+        autoconf
+        automake --add-missing
+        ./configure
+        make
