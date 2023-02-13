@@ -1,4 +1,4 @@
-AM_FCFLAGS = -O3 -g -fbounds-check -ffpe-trap=zero,overflow -ffast-math -Wunused -funroll-loops -g -fbacktrace -lm -I./include/
+AM_FCFLAGS = -O3 -g -fbounds-check -ffpe-trap=zero,overflow -ffast-math -Wunused -funroll-loops -g -fbacktrace -lm 
 
 bin_PROGRAMS = ALPS
 
