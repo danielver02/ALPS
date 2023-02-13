@@ -8,13 +8,27 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
 
     steps:
     - uses: actions/checkout@v3
 
-    - name: Install MPI
+    - name: Install MPI on Ubuntu
+      if: ${{ matrix.os == 'ubuntu-latest' }}
       run: sudo apt-get install -y libopenmpi-dev
+
+    - name: Install FORTRAN and MPI on macOS
+      if: ${{ matrix.os == 'macos-latest' }}
+      run: |
+        brew install gcc openmpi
+        # For some reason GitHub actions can't find gfortran unless
+        # we explicitly link it
+        brew link gcc
+        ln -s /usr/local/bin/gfortran-12 /usr/local/bin/gfortran
 
     - name: Build ALPS
       run: |
