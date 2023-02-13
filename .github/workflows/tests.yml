@@ -32,5 +32,8 @@ jobs:
 
     - name: Build ALPS
       run: |
-        make clean
-        make all
+        aclocal
+        autoconf
+        automake --add-missing
+        ./configure
+        make
