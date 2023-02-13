@@ -240,7 +240,8 @@ subroutine spec_read(is)
   !Local
   double precision :: nn,qq,mm    ! Read in values for ns, qs, ms
   integer :: ff !read in value for number of fitted functions for species
-  logical :: relat, log_fit
+  logical :: relat=.false.
+  logical :: log_fit=.true.
 
   nameList /spec/ &
        nn,qq,mm,ff,relat,log_fit
