@@ -7,3 +7,6 @@
 *.log
 # Ignore FORTRAN I/O temporary files
 *.scratch
+# autoconf files
+Makefile
+config.status
