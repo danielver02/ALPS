@@ -30,8 +30,14 @@ jobs:
         brew link gcc
         ln -s /usr/local/bin/gfortran-12 /usr/local/bin/gfortran
 
+    - name: Print FORTRAN details on windows
+      if: ${{ matrix.os == 'windows-latest' }}
+      shell: pwsh
+      run: |
+        gfortran --version
+        which mpifort
+
     - name: Build ALPS
-      shell: bash
       run: |
         make clean
         make all
