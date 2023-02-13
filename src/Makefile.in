@@ -98,9 +98,9 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_ALPS_OBJECTS = ALPS.$(OBJEXT) ALPS_var.$(OBJEXT) ALPS_io.$(OBJEXT) \
+am_ALPS_OBJECTS = ALPS_var.$(OBJEXT) ALPS_io.$(OBJEXT) \
 	ALPS_com.$(OBJEXT) ALPS_analyt.$(OBJEXT) \
-	ALPS_fns_rel.$(OBJEXT) ALPS_fns.$(OBJEXT)
+	ALPS_fns_rel.$(OBJEXT) ALPS_fns.$(OBJEXT) ALPS.$(OBJEXT)
 ALPS_OBJECTS = $(am_ALPS_OBJECTS)
 ALPS_LDADD = $(LDADD)
 AM_V_P = $(am__v_P_@AM_V@)
@@ -243,9 +243,9 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-AM_FCFLAGS = -O3 -g -fbounds-check -ffpe-trap=zero,overflow -ffast-math -Wunused -funroll-loops -g -fbacktrace -lm -I./include/
-ALPS_SOURCES = ALPS.f90 ALPS_var.f90 ALPS_io.f90 ALPS_com.f90 \
-	ALPS_analyt.f90 ALPS_fns_rel.f90 ALPS_fns.f90
+AM_FCFLAGS = -O3 -g -fbounds-check -ffpe-trap=zero,overflow -ffast-math -Wunused -funroll-loops -g -fbacktrace -lm
+ALPS_SOURCES = ALPS_var.f90 ALPS_io.f90 ALPS_com.f90 ALPS_analyt.f90 \
+	ALPS_fns_rel.f90 ALPS_fns.f90 ALPS.f90
 all: all-am
 
 .SUFFIXES:
