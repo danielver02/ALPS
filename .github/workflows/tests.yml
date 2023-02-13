@@ -18,6 +18,8 @@ jobs:
 
     - name: Build ALPS
       run: |
-        autoreconf
+        aclocal
+        autoconf
+        automake --add-missing
         ./configure
         make
