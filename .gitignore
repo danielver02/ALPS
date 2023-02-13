@@ -3,3 +3,7 @@
 *.o
 *.e
 *.dSYM
+# Ignore log files
+*.log
+# Ignore FORTRAN I/O temporary files
+*.scratch
