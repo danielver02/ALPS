@@ -34,3 +34,4 @@ jobs:
       run: |
         ./configure
         make
+	bash ./run_test.sh
