@@ -6,14 +6,21 @@ AC_INIT(ALPS, 1.0, d.verscharen@ucl.ac.uk)
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR(src/)
 
+#AC_CONFIG_MACRO_DIRS([m4])
+
+: ${FCFLAGS=""}
 
 # Checks for programs.
 AC_PROG_CC([gcc])
 AC_PROG_FC([mpifort mpif90 f90 fort gfortran])
 AC_LANG([Fortran])
 
-
 # Checks for libraries.
+
+
+AC_SEARCH_LIBS(dgesv,blas)
+AC_SEARCH_LIBS(dgesv,openblas)
+AC_SEARCH_LIBS(dgesv,lapack)
 
 # Checks for header files.
 
