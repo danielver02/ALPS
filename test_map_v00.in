@@ -1,20 +1,20 @@
 !===============================================
 !  ALPS INPUT FILE
-!  Isotropic Maxwellian C4
+!  Isotropic Maxwellian D5
 !  120 x 240 resolution
 !  6 v_ts spread
-!  Alfven scan over kperp
+!  Scan over kperp
 !
 !  Kristopher Klein, Daniel Verscharen
-!  2023, Feb 14
+!  2017 JAN 02
 !===============================================
 ! REQUIRED NAMELISTS
 !===============================================
 ! SYSTEM AND PLASMA PARAMETERS
 &system
 !Perpendicular and Parallel Wavenumbers
-kperp=1.d-2
-kpar=1.d-3
+kperp=1.d-3
+kpar=1.d-2
 !Number of Plasma Species
 nspec=2
 !System Option (see README file)
@@ -26,7 +26,7 @@ nroots=1
     !   in complex frequency space
     !OR
     !F: use input guesses for solutions 
-use_map=.false.
+use_map=.true.
 !Write or Supress output to screen:
 writeOut=.true.
 !Velocity Space Resolution of f0
@@ -36,15 +36,16 @@ npar=240
 vA=1.d-4
 !Name of input array- 
 !Located in 'distribution' folder
-arrayName='test_kperp_v00'
+arrayName='test_map'
 !Maximum amplitude of Bessel function to determine nmax
 Bessel_zero = 1.d-50
-numiter = 500
+numiter = 50
 D_threshold = 1.d-13
 D_prec = 1.d-5
 D_gap=1.D-5
 positions_principal=3
 n_resonance_interval=100
+Tlim=0.01d0
 maxsteps_fit=500
 lambda_initial_fit=1.d0
 lambdafac_fit=10.d0
@@ -52,13 +53,24 @@ epsilon_fit=1.d-8
 fit_check=T
 determine_minima=T
 scan_option=1 !1: consecutive scans, 2: double scan
-n_scan=1 !number of wavevector scans
+n_scan=0 !number of wavevector scans
 use_secant=T
 /
 
+&maps_1
+loggridw=.false.	
+loggridg=.false.
+omi     =-3.d-2
+omf     = 3.d-2
+gami    = -1.d-3
+gamf    = 3.d-4
+ni      = 64
+nr      = 64
+/
+
 &guess_1
-g_om=9.9d-4
-g_gam=-5.5d-10
+g_om=9.96d-3
+g_gam=-1.39d-5
 /
 
 &spec_1
@@ -92,11 +104,11 @@ perpcorr=1.836D+3
 /
 
 &scan_input_1
-scan_type=3 !kperp scan
+scan_type=4 !kpar scan
 swi=0.01d0
-swf=3.d0 
+swf=10.d0 
 swlog=.true.
-ns=100
+ns=256
 nres=1
 heating=.false.
 eigen=.false.

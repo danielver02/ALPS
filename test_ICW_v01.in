@@ -1,20 +1,20 @@
 !===============================================
 !  ALPS INPUT FILE
-!  Isotropic Maxwellian C4
+!  Anisotropic Maxwellian; 
 !  120 x 240 resolution
 !  6 v_ts spread
-!  Alfven scan over kperp
+!  Scan over kpar
 !
 !  Kristopher Klein, Daniel Verscharen
-!  2023, Feb 14
+!  2017 JAN 02
 !===============================================
 ! REQUIRED NAMELISTS
 !===============================================
 ! SYSTEM AND PLASMA PARAMETERS
 &system
 !Perpendicular and Parallel Wavenumbers
-kperp=1.d-2
-kpar=1.d-3
+kperp=1.d-3
+kpar=3.0
 !Number of Plasma Species
 nspec=2
 !System Option (see README file)
@@ -36,15 +36,16 @@ npar=240
 vA=1.d-4
 !Name of input array- 
 !Located in 'distribution' folder
-arrayName='test_kperp_v00'
+arrayName='test_ICW_v00'
 !Maximum amplitude of Bessel function to determine nmax
-Bessel_zero = 1.d-50
-numiter = 500
-D_threshold = 1.d-13
+Bessel_zero = 1.d-45
+numiter = 50
+D_threshold = 1.d-15
 D_prec = 1.d-5
-D_gap=1.D-5
+D_gap = 1.d-5
 positions_principal=3
 n_resonance_interval=100
+Tlim=0.01d0
 maxsteps_fit=500
 lambda_initial_fit=1.d0
 lambdafac_fit=10.d0
@@ -57,8 +58,8 @@ use_secant=T
 /
 
 &guess_1
-g_om=9.9d-4
-g_gam=-5.5d-10
+g_om=8.d-1
+g_gam=-1.d0
 /
 
 &spec_1
@@ -66,14 +67,16 @@ nn=1.d0
 qq=1.d0
 mm=1.d0
 ff=1
+relat=F
+log_fit=T
 /
 
 &ffit_1_1
 fit_type_in=1
-fit_1=1.7959E-1
-fit_2=1.d0
+fit_1=3.023D-2
+fit_2=5.8824D-1
 fit_3=0.d0
-perpcorr=1.D0
+perpcorr=2.19D-1
 /
 
 &spec_2
@@ -81,25 +84,27 @@ nn=1.d0
 qq=-1.d0
 mm=0.000544662d0
 ff=1
+relat=F
+log_fit=T
 /
 
 &ffit_2_1
 fit_type_in=1
-fit_1=1.4128D+4
-fit_2=1.836D+3
+fit_1=6.374D3
+fit_2=1.08D3
 fit_3=0.d0
-perpcorr=1.836D+3
+perpcorr=1.08E3
 /
 
 &scan_input_1
-scan_type=3 !kperp scan
-swi=0.01d0
-swf=3.d0 
+scan_type=4 !kpar scan
+swi=3.d0
+swf=1.d-1 
 swlog=.true.
 ns=100
 nres=1
-heating=.false.
-eigen=.false.
+heating=.true.
+eigen=.true.
 /
 
 

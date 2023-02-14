@@ -3,10 +3,10 @@
 !  Isotropic Maxwellian C4
 !  120 x 240 resolution
 !  6 v_ts spread
-!  Alfven scan over kperp
+!  Scan over kperp
 !
 !  Kristopher Klein, Daniel Verscharen
-!  2023, Feb 14
+!  2017 JAN 02
 !===============================================
 ! REQUIRED NAMELISTS
 !===============================================
@@ -36,7 +36,7 @@ npar=240
 vA=1.d-4
 !Name of input array- 
 !Located in 'distribution' folder
-arrayName='test_kperp_v00'
+arrayName='test_kpar_fast_v00'
 !Maximum amplitude of Bessel function to determine nmax
 Bessel_zero = 1.d-50
 numiter = 500
@@ -92,11 +92,11 @@ perpcorr=1.836D+3
 /
 
 &scan_input_1
-scan_type=3 !kperp scan
-swi=0.01d0
-swf=3.d0 
+scan_type=4 !kpar scan
+swi=0.001d0
+swf=0.01d0 
 swlog=.true.
-ns=100
+ns=32
 nres=1
 heating=.false.
 eigen=.false.
