@@ -1,4 +1,6 @@
-AM_FCFLAGS = -O3 -fbounds-check -ffpe-trap=zero,overflow -ffast-math -Wunused -funroll-loops -g -fbacktrace -lm -lblas -llapack
+AM_FCFLAGS = -O3 -fbounds-check -ffpe-trap=zero,overflow -ffast-math -Wunused -funroll-loops -g -fbacktrace
+
+ALPS_LDADD = -lm -llapack -lblas
 
 bin_PROGRAMS = ALPS
 
