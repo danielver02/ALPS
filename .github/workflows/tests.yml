@@ -20,6 +20,10 @@ jobs:
     - name: Install MPI on Ubuntu
       if: ${{ matrix.os == 'ubuntu-latest' }}
       run: sudo apt-get install -y libopenmpi-dev
+    
+    - name: Install OPENBLAS on Ubuntu
+      if: ${{ matrix.os == 'ubuntu-latest' }}
+      run: sudo apt-get install libopenblas-dev
 
     - name: Install FORTRAN and MPI on macOS
       if: ${{ matrix.os == 'macos-latest' }}
