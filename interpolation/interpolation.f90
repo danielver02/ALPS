@@ -370,7 +370,7 @@ subroutine polyharmonic_spline(grid_coarse,pperp_coarse,ppar_coarse,n_coarse,ppe
 ! http://vision.ucsd.edu/sites/default/files/fulltext(4).pdf
 implicit none
 
-integer :: i,j,k,permutation_index(n_coarse+3),odd_even,code
+integer :: i,j,k,permutation_index(n_coarse+3)
 integer :: nperp,npar,n_coarse
 double precision :: pperp_coarse(n_coarse),ppar_coarse(n_coarse)
 double precision :: grid_coarse(n_coarse),grid_fine(0:nperp,0:npar)
@@ -379,7 +379,7 @@ double precision :: fullmatrix(n_coarse+3,n_coarse+3)
 double precision :: grid_vector(n_coarse+3),weight_param(n_coarse+3)
 double precision :: pperp(0:nperp,0:npar),ppar(0:nperp,0:npar)
 double precision :: r,smoothing
-
+double precision :: INFO
 
 grid_vector=0.d0
 do i=1,n_coarse
@@ -415,9 +415,7 @@ do i=1,n_coarse
 enddo
 
 weight_param=grid_vector
-call LUDCMP(fullmatrix,n_coarse+3,permutation_index,odd_even,code)
-call LUBKSB(fullmatrix,n_coarse+3,permutation_index,weight_param)
-
+call dgesv(n_coarse+3,1,fullmatrix,n_coarse+3,permutation_index,weight_param,n_coarse+3,INFO)
 
 
 grid_fine=0.d0
