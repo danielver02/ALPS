@@ -23,7 +23,7 @@ jobs:
     
     - name: Install BLAS and LAPACK on Ubuntu
       if: ${{ matrix.os == 'ubuntu-latest' }}
-      run: sudo apt-get install libblas-dev liblapack-dev
+      run: sudo apt-get install libopenblas-dev libblas-dev liblapack-dev
 
     - name: Install FORTRAN and MPI on macOS
       if: ${{ matrix.os == 'macos-latest' }}
