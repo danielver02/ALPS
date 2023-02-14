@@ -7,153 +7,21 @@ double precision :: smoothing,pperp_min,pperp_max,ppar_min,ppar_max,threshold
 double precision :: mult_pperp,mult_ppar,mult_f
 double precision :: r_pperp,r_ppar,r_f,pperp_max_set,pperp_min_set,ppar_max_set,ppar_min_set
 
-integer :: nperp,npar,n_coarse,narg,run_arg,mode
+integer :: nperp,npar,n_coarse,mode
 integer :: i,j,io_error,status_read,i_coarse
-character(LEN=256) :: filename,argument,output_file
-logical :: skip_next,out_to_file,do_normalize
+character(LEN=256) :: filename,output_file
+logical :: out_to_file,do_normalize
 
-nperp=-1
-npar=-1
-smoothing=-1.d0
-mode=1
-pperp_max_set=-9999.d0
-ppar_max_set=-9999.d0
-pperp_min_set=-9999.d0
-ppar_min_set=-9999.d0
-filename=" "
-out_to_file=.FALSE.
-do_normalize=.FALSE.
-threshold=0.d0
-mult_pperp=1.d0
-mult_ppar=1.d0
-mult_f=1.d0
-
-narg=command_argument_count()
-if (narg.EQ.0) then
-	write (*,*) "Specify argument. Use --help or -h for help."
-	stop
-endif
-
-skip_next=.FALSE.
-
- do run_arg=1,narg
-  if (skip_next.EQV..FALSE.) then
-  call get_command_argument(run_arg,argument)
-
-	select case(adjustl(argument))
-	case("--help","-h")
-		call write_help
-    	stop
-    case("-f","-F")
-		call get_command_argument(run_arg+1,argument)
-		filename=adjustl(argument)
-		skip_next=.TRUE.
-   case("-o","-O")
-		call get_command_argument(run_arg+1,argument)
-		output_file=adjustl(argument)
-		skip_next=.TRUE.
-		out_to_file=.TRUE.
-	case("-s","-S")
-		call get_command_argument(run_arg+1,argument)
-		read (argument,*) smoothing
-		skip_next=.TRUE.
-	case("-nperp")
-		call get_command_argument(run_arg+1,argument)
-		read (argument,*) nperp
-		skip_next=.TRUE.
-	case("-npar")
-		call get_command_argument(run_arg+1,argument)
-		read (argument,*) npar
-		skip_next=.TRUE.
-	case("-ppar_min")
-		call get_command_argument(run_arg+1,argument)
-		read (argument,*) ppar_min_set
-		skip_next=.TRUE.
-	case("-ppar_max")
-		call get_command_argument(run_arg+1,argument)
-		read (argument,*) ppar_max_set
-		skip_next=.TRUE.
-	case("-pperp_min")
-		call get_command_argument(run_arg+1,argument)
-		read (argument,*) pperp_min_set
-		skip_next=.TRUE.
-	case("-pperp_max")
-		call get_command_argument(run_arg+1,argument)
-		read (argument,*) pperp_max_set
-		skip_next=.TRUE.
-	case("-m")
-		call get_command_argument(run_arg+1,argument)
-		read (argument,*) mode
-		skip_next=.TRUE.
-	case("-thr")
-		call get_command_argument(run_arg+1,argument)
-		read (argument,*) threshold
-		skip_next=.TRUE.
-	case("-mult_pperp")
-		call get_command_argument(run_arg+1,argument)
-		read (argument,*) mult_pperp
-		skip_next=.TRUE.
-	case("-mult_ppar")
-		call get_command_argument(run_arg+1,argument)
-		read (argument,*) mult_ppar
-		skip_next=.TRUE.
-	case("-mult_f")
-		call get_command_argument(run_arg+1,argument)
-		read (argument,*) mult_f
-		skip_next=.TRUE.
-	case("-n","-N")
-		do_normalize=.TRUE.
-	case default
-		write(*,*) "Option ",adjustl(argument),"unknown."
-	end select
- else
- 	skip_next=.FALSE.
- endif
-end do
+!I/O values for namelist
+  integer :: unit
+  integer, parameter :: stdout_unit=6
+  integer, save :: input_unit_no, error_unit_no=stdout_unit
 
 
+!string for parameter input file
+character(50) :: runname
 
-
- if (len_trim(filename).EQ.0) then
- 	write (*,*) "No filename selected."
- 	stop
- endif
-
- if (smoothing.LT.0.d0) then
- 	write (*,*) "# Using standard smoothing parameter: 0.1"
- 	smoothing=0.1d0
- endif
-
-  if (nperp.LT.0) then
- 	write (*,*) "# Using standard nperp: 50"
- 	nperp=50
- endif
-
-if (npar.LT.0) then
- 	write (*,*) "# Using standard nperp: 50"
- 	npar=50
- endif
-
-if (pperp_max_set.EQ.-9999.d0) then
-	write (*,*) "# Using maximum pperp as upper bound."
-endif
-
-if (pperp_min_set.EQ.-9999.d0) then
-	write (*,*) "# Using minimum pperp as lower bound."
-endif
-
-if (ppar_max_set.EQ.-9999.d0) then
-	write (*,*) "# Using maximum ppar as upper bound."
-endif
-
-if (ppar_min_set.EQ.-9999.d0) then
-	write (*,*) "# Using minimum ppar as lower bound."
-endif
-
-write (*,*) "# Mode:",mode
-write (*,*) "# Threshold for f:",threshold
-
-
+call read_in_params
 
 ! Determine length of input file and min/max values:
 n_coarse=0
@@ -178,7 +46,7 @@ open(unit=10,file=filename,status='old',action='read',iostat=io_error)
 close(10)
 
 if (n_coarse.EQ.0) then
-	write (*,*) "# No data points in selection."
+	write (*,*) "No data points in selection."
 	stop
 endif
 
@@ -187,17 +55,21 @@ pperp_min=pperp_min*mult_pperp
 ppar_max=ppar_max*mult_ppar
 ppar_min=ppar_min*mult_ppar
 
-
-write (*,*) "# Number of points on coarse grid: ",n_coarse
-write (*,*) "# Maximum Pperp:", pperp_max
-write (*,*) "# Minimum Pperp:", pperp_min
-write (*,*) "# Maximum Ppar:", ppar_max
-write (*,*) "# Minimum Ppar:", ppar_min
-
 if (pperp_max_set.NE.-9999.d0) pperp_max=pperp_max_set
 if (ppar_max_set.NE.-9999.d0) ppar_max=ppar_max_set
 if (pperp_min_set.NE.-9999.d0) pperp_min=pperp_min_set
 if (ppar_min_set.NE.-9999.d0) ppar_min=ppar_min_set
+
+write (*,'(a,i12)')    "Number of points in the coarse grid: ",n_coarse
+write (*,*) " "
+write (*,'(a)') "Properties of the fine grid:"
+write (*,'(a,i12)')     "Number of grid points in nperp:      ",nperp
+write (*,'(a,i12)')     "Number of grid points in npar:       ",npar
+write (*,'(a,es12.4)') "Maximum Pperp:                       ", pperp_max
+write (*,'(a,es12.4)') "Minimum Pperp:                       ", pperp_min
+write (*,'(a,es12.4)') "Maximum Ppar:                        ", ppar_max
+write (*,'(a,es12.4)') "Minimum Ppar:                        ", ppar_min
+write (*,*) " "
 
 
 ! Allocate grids:
@@ -248,6 +120,9 @@ if (do_normalize) call normalize (pperp,ppar,grid_fine,nperp,npar)
 
 ! Output:
 if (out_to_file) then
+	output_file=trim(runname)//".array"
+
+	write (*,'(a,a)') "Writing output to file ", output_file
 	open(unit=20,file=output_file,status='unknown',action='write',iostat=io_error)
 	do i=0,nperp
 	do j=0,npar
@@ -264,53 +139,150 @@ else
 endif
 
 
+contains
+
+	subroutine read_in_params
+		!Read in system parameters
+		!input file is argument after executable:
+		!$ ./interpolate input.in
+		implicit none
+		!Dummy values for reading in species parameters
+
+		nameList /system/ &
+				 filename, smoothing, nperp, npar, ppar_min_set, &
+				 ppar_max_set, pperp_min_set, pperp_max_set, mode, &
+				 threshold, out_to_file, do_normalize, mult_pperp, &
+				 mult_ppar, mult_f
+
+		nperp=50
+		npar=100
+		smoothing=1.d0
+		mode=1
+		pperp_max_set=-9999.d0
+		ppar_max_set=-9999.d0
+		pperp_min_set=-9999.d0
+		ppar_min_set=-9999.d0
+		filename=""
+		out_to_file=.FALSE.
+		do_normalize=.FALSE.
+		threshold=0.d0
+		mult_pperp=1.d0
+		mult_ppar=1.d0
+		mult_f=1.d0
+
+
+		call get_unused_unit (input_unit_no)
+		call get_runname(runname)
+		runname=trim(runname)//".in"
+		unit=input_unit_no
+		open (unit=unit,file=runname,status='old',action='read')
+		read (unit=unit,nml=system)
+
+		unit=input_unit_no
+		close (unit)
+
+	end subroutine read_in_params
+
+
+	!-=-=-=-=-=-
+	!The following routines:
+	!    input_unit_exist
+	!    get_unused_unit
+	!    input_unit
+	!were all adopted from the Astrophysical Gyrokinetic Code (AGK)
+	!as a means of allowing arbitrary namelist group name input.
+	!A bit of hassle, but worth the effort.
+	!-=-=-=-=-=-
+
+
+	  function input_unit_exist (nml,exist)
+	    implicit none
+	    character(*), intent (in) :: nml
+	    logical, intent(out) :: exist
+	    integer :: input_unit_exist, iostat
+	    character(500) :: line
+	    intrinsic adjustl, trim
+	    input_unit_exist = input_unit_no
+	    exist = .true.
+	    if (input_unit_no > 0) then
+	       rewind (unit=input_unit_no)
+	       do
+	          read (unit=input_unit_no, fmt="(a)", iostat=iostat) line
+	          if (iostat /= 0) then
+	             rewind (unit=input_unit_no)
+	             exit
+	          end if
+	          if (trim(adjustl(line)) == "&"//nml) then
+	             backspace (unit=input_unit_no)
+	             return
+	          end if
+	       end do
+	    end if
+	    exist = .false.
+	  end function input_unit_exist
+
+	  function input_unit (nml)
+	    implicit none
+	    character(*), intent (in) :: nml
+	    integer :: input_unit, iostat
+	    character(500) :: line
+	    intrinsic adjustl, trim
+	    input_unit = input_unit_no
+	    if (input_unit_no > 0) then
+	       rewind (unit=input_unit_no)
+	       do
+	          read (unit=input_unit_no, fmt="(a)", iostat=iostat) line
+	          if (iostat /= 0) then
+	             rewind (unit=input_unit_no)
+	             exit
+	          end if
+	          if (trim(adjustl(line)) == "&"//nml) then
+	             backspace (unit=input_unit_no)
+	             return
+	          end if
+	       end do
+	    end if
+	    write (unit=error_unit_no, fmt="('Couldn''t find namelist: ',a)") nml
+	    write (unit=*, fmt="('Couldn''t find namelist: ',a)") nml
+	  end function input_unit
+
+
+
+	  subroutine get_unused_unit (unit)
+	    implicit none
+	    integer, intent (out) :: unit
+	    logical :: od
+	    unit = 50
+	    do
+	       inquire (unit=unit, opened=od)
+	       if (.not.od) return
+	       unit = unit + 1
+	    end do
+	  end subroutine get_unused_unit
+	!-=-=-=-=-=-
+
+	!---------------------------------------------------------------
+	! Get runname for output files from input argument
+	  subroutine get_runname(runname)
+	    implicit none
+	    integer       :: l
+	    character(50) :: arg
+	    character(50), intent(out) :: runname
+
+	    !Get the first argument of the program execution command
+	    call getarg(1,arg)
+
+	    !Check if this is the input file and trim .in extension to get runname
+	    l = len_trim (arg)
+	    if (l > 3 .and. arg(l-2:l) == ".in") then
+	       runname = arg(1:l-3)
+	    end if
+	  end subroutine get_runname
+	!------------------------------------------------------------------------------
+
+
 end program
 
-
-
-
-
-! Help output
-subroutine write_help
-implicit none
-
-write(*,*) "This is the interpolation auxiliary program for ALPS."
-write (*,*) " "
-write (*,*) " "
-write (*,*) "Command line options:"
-write (*,*) " "
-write (*,*) "   -f, -F <file>         Specify file that contains the coarse grid."
-write (*,*) "   -o, -O <file>         Output file for the fine grid."
-write (*,*) "   -s, -S <arg>          Set smoothing parameter to <arg>. If not selected, smoothing = 0.1"
-write (*,*) " "
-write (*,*) "   -nperp <arg>          Set the number of steps in nperp for the fine grid. Standard: 50"
-write (*,*) "   -npar <arg>           Set the number of steps in npar for the fine grid. Standard: 50"
-write (*,*) " "
-write (*,*) "   -pperp_min <arg>      Set the minium value of pperp for the fine grid. If not selected, "
-write (*,*) "                         the minimum value of the fine grid is used."
-write (*,*) "   -pperp_max <arg>      Set the maximum value of pperp for the fine grid. If not selected, "
-write (*,*) "                         the maximum value of the fine grid is used."
-write (*,*) "   -ppar_min <arg>       Set the minium value of ppar for the fine grid. If not selected, "
-write (*,*) "                         the minimum value of the fine grid is used."
-write (*,*) "   -ppar_max <arg>       Set the maximum value of ppar for the fine grid. If not selected, "
-write (*,*) "                         the maximum value of the fine grid is used."
-write (*,*) " "
-write (*,*) "   -thr <arg>            Set a threshold on f0. Every data point with f0 below this"
-write (*,*) "                         threshold is ignored (Standard: 0)."
-write (*,*) " "
-write (*,*) "   -m <arg>              Set the mode for the input file (Standard: 1):"
-write (*,*) "                            1:    column 1: pperp, column 2: ppar,  column 3: f0"
-write (*,*) "                            2:    column 1: ppar,  column 2: pperp, column 3: f0"
-write (*,*) " "
-write (*,*) "   -n, -N                Normalize the output to unity in cylindrical coordinates."
-write (*,*) " "
-write (*,*) "   -mult_pperp <arg>     Multiply every value of pperp in the grid with a constant factor <arg>."
-write (*,*) "   -mult_ppar <arg>      Multiply every value of ppar in the grid with a constant factor <arg>."
-write (*,*) "   -mult_f <arg>         Multiply every value of f0 with a constant factor <arg> (after normalization)."
-write (*,*) " "
-write (*,*) "   --help, -h            Displays this help screen."
-
-end subroutine
 
 
 
@@ -443,149 +415,4 @@ end subroutine
 
 
 
-
-
-!-=-=-=-=-=-=
-! The following two functions are from pre-written sources:
-!-=-=-=-=-=-=
-!*******************************************************
-!*    LU decomposition routines 				       *
-!*                                                     *
-!*                 F90 version by J-P Moreau, Paris    *
-!*                        (www.jpmoreau.fr)            *
-!* --------------------------------------------------- *
-!* Reference:                                          *
-!*                                                     *
-!* "Numerical Recipes By W.H. Press, B. P. Flannery,   *
-!*  S.A. Teukolsky and W.T. Vetterling, Cambridge      *
-!*  University Press, 1986" [BIBLI 08].                *
-!*                                                     *
-!*******************************************************
-
-
-!  ***************************************************************
-!  * Given an N x N matrix A, this routine replaces it by the LU *
-!  * decomposition of a rowwise permutation of itself. A and N   *
-!  * are input. INDX is an output vector which records the row   *
-!  * permutation effected by the partial pivoting; D is output   *
-!  * as -1 or 1, depending on whether the number of row inter-   *
-!  * changes was even or odd, respectively. This routine is used *
-!  * in combination with LUBKSB to solve linear equations or to  *
-!  * invert a matrix. Return code is 1, if matrix is singular.   *
-!  ***************************************************************
-subroutine LUDCMP(a,n,indx,d,code)
-implicit none
-
-integer, parameter :: nmax=10000
-double precision, parameter :: tiny=1.5d-16
-double precision :: amax, dum, sum, a(n,n), vv(nmax)
-integer :: n, indx(n), code, d, i, j, k, imax
-
-
- d=1; code=0
-
-
- do i=1,n
-   amax=0.d0
-   do j=1,n
-     if (dabs(a(i,j)).GT.amax) amax=DABS(a(i,j))
-   enddo ! j loop
-   if(amax.LT.tiny) then
-     code = 1
-     return
-   endif
-   vv(i) = 1.d0 / amax
- enddo ! i loop
-
- do j=1,n
-   do i=1,j-1
-     sum = a(i,j)
-     do k=1,i-1
-       sum = sum - a(i,k)*A(k,j)
-     enddo ! k loop
-     a(i,j) = sum
-   enddo ! i loop
-   amax = 0.d0
-   do i=j,n
-     sum = a(i,j)
-     do k=1,j-1
-       sum = sum - a(i,k)*a(k,j)
-     enddo ! k loop
-     a(i,j) = sum
-     dum = vv(i)*dabs(sum)
-     if(dum.GE.amax) then
-       imax = i
-       amax = dum
-     endif
-   enddo ! i loop
-
-   if(j.NE.imax) then
-     do k=1,n
-       dum = a(imax,k)
-       a(imax,k) = a(j,k)
-       a(j,k) = dum
-     enddo ! k loop
-     d = -d
-     vv(imax) = vv(j)
-   endif
-
-   indx(j) = imax
-   if(dabs(a(j,j)) < tiny) a(j,j) = tiny
-
-   if(j.NE.n) then
-     dum = 1.d0 / a(j,j)
-     do i=j+1,n
-       a(i,j) = a(i,j)*dum
-     enddo ! i loop
-   endif
- enddo ! j loop
-
- return
- end subroutine LUDCMP
-
-
-!  ******************************************************************
-!  * Solves the set of N linear equations A . X = B.  Here A is     *
-!  * input, not as the matrix A but rather as its LU decomposition, *
-!  * determined by the routine LUDCMP. INDX is input as the permuta-*
-!  * tion vector returned by LUDCMP. B is input as the right-hand   *
-!  * side vector B, and returns with the solution vector X. A, N and*
-!  * INDX are not modified by this routine and can be used for suc- *
-!  * cessive calls with different right-hand sides. This routine is *
-!  * also efficient for plain matrix inversion.                     *
-!  ******************************************************************
-subroutine LUBKSB(a,n,indx,b)
-implicit none
-
-integer :: n, indx(n), ii, i, ll, j
-double precision :: sum, a(n,n),b(n)
-
-
-ii = 0
-
- do i=1,n
-   ll = indx(i)
-   sum = b(ll)
-   b(ll) = b(i)
-   if(ii.NE.0) then
-     do j=ii,i-1
-       sum = sum - a(i,j)*b(j)
-     enddo ! j loop
-   else if(sum.NE.0.d0) then
-     ii = i
-   endif
-   b(i) = sum
- enddo ! i loop
-
- do i=n,1,-1
-   sum = b(i)
-   if(i < n) then
-     do j=i+1,n
-       sum = sum - a(i,j)*b(j)
-     enddo ! j loop
-   endif
-   b(i) = sum / a(i,i)
- enddo ! i loop
-
- return
- end subroutine LUBKSB
+!

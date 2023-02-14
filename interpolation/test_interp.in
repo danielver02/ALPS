@@ -1,0 +1,28 @@
+&system
+! Input file with coarse distribution:
+filename='test_interp_coarse.array'
+! mode defines the order of the input file:
+! mode 1 - column 1: pperp, column 2: ppar,  column 3: f0
+! mode 2 - column 1: ppar,  column 2: pperp, column 3: f0
+mode=1
+! Only include input points above this threshold
+threshold=0.d0
+! smoothing value: 0.d0 means no smoothing
+smoothing=0.1d0
+! Output grid:
+nperp=50
+npar=100
+! The following min/max values do not need to be set:
+ppar_min_set=
+ppar_max_set=
+pperp_min_set=0.d0
+pperp_max_set=
+! Write output to file
+out_to_file=.true.
+! Normalize the output distribution function:
+do_normalize=.true.
+! Multiply any of the output coordinates or the distribution with a constant number:
+mult_pperp=1.d0
+mult_ppar=1.d0
+mult_f=1.d0
+/
