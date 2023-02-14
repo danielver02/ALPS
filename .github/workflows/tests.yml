@@ -21,7 +21,7 @@ jobs:
       if: ${{ matrix.os == 'ubuntu-latest' }}
       run: sudo apt-get install -y libopenmpi-dev
     
-    - name: Install BLAS and LAPACK on Ubuntu
+    - name: Install BLAS, OPENBLAS, and LAPACK on Ubuntu
       if: ${{ matrix.os == 'ubuntu-latest' }}
       run: sudo apt-get install -y libopenblas-dev libblas-dev liblapack-dev
 
@@ -38,4 +38,6 @@ jobs:
       run: |
         ./configure
         make
-        bash ./run_test.sh
+        
+    - name: Run ALPS
+      run: bash ./run_test.sh
