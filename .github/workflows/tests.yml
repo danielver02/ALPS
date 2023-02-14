@@ -41,7 +41,7 @@ jobs:
         ./configure
         make
         
-   - name: Build ALPS on macOS
+    - name: Build ALPS on macOS
       if: ${{ matrix.os == 'macos-latest' }}
       run: |
         ./configure
