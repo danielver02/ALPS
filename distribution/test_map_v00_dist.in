@@ -5,7 +5,7 @@ vA=1.d-4
 nperp=120
 npar=240
 maxP=6.d0
-writeName='test_kperp_v00'
+writeName='test_map_v00'
 /
 
 &spec_1
