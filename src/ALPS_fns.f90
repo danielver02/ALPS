@@ -32,7 +32,7 @@ contains
 subroutine derivative_f0
     use alps_var, only : f0, pp, df0, nperp, npar, nspec, arrayName
     use alps_var, only : f0_rel, gamma_rel, pparbar_rel,nspec_rel,df0_rel,ngamma,npparbar
-    use alps_var, only : writeOut, pi, relativistic
+    use alps_var, only : writeOut, pi, relativistic, usebM
     use alps_io,  only : get_unused_unit
     use alps_fns_rel, only : derivative_f0_rel
     implicit none
@@ -49,11 +49,17 @@ subroutine derivative_f0
        write(*,'(a)')&
             '-=-=-=-=-=-=-=-=-'
        write(*,'(a)')&
-            'Calculating df0/dpperp, df0/ppar...'
+            'Calculating df0/dpperp, df0/ppar if necessary...'
     endif
 
     OutDF = .true.
     do is = 1, nspec
+
+      if (usebM(is)) then
+                write (*,'(a,i2)') ' Bi-Maxwellian calcuation: no derivatives necessary for species ',is
+                df0(is,iperp,ipar,:)=0.d0
+       else
+
        do iperp = 1, nperp-1
           do ipar = 1, npar-1
              !index 1-> vperp derivative
@@ -67,6 +73,8 @@ subroutine derivative_f0
                   (pp(is,iperp,ipar+1,2) - pp(is,iperp,ipar-1,2))
           enddo
        enddo
+     endif
+
     enddo
     write(*,*)'Derivatives calculated'
 
@@ -155,7 +163,7 @@ end subroutine derivative_f0
 !-=-=-=-=-=-=
  double complex function disp(om)
     use alps_var, only : nlim, proc0, nspec, ierror, sproc, relativistic
-    use alps_var, only : wave, kperp, kpar, ns, qs, vA, chi0
+    use alps_var, only : wave, kperp, kpar, ns, qs, vA, chi0, usebM
     use alps_fns_rel, only : int_ee_rel
     use mpi
     implicit none
@@ -206,6 +214,23 @@ end subroutine derivative_f0
        !-=-=-=-=-=-
        !The processor runs over the n indicies defined by split_processes
        !-=-=-=-=-=
+
+
+       ! Split into NHDS or ALPS routines:
+
+
+       if (usebM(sproc)) then
+
+          ! This is the case to use NHDS for the calculation of chi:
+
+          schi(sproc,1,1)=1.d0
+          schi(sproc,2,2)=1.d0
+          schi(sproc,3,3)=1.d0
+          schi(sproc,1,2)=1.d0
+          schi(sproc,1,3)=1.d0
+          schi(sproc,2,3)=1.d0
+
+       else
 
        do nn = nlim(1),nlim(2)
 
@@ -292,6 +317,8 @@ end subroutine derivative_f0
 	     endif
        endif
        !-=-=-=-=-=-
+
+     endif
 
        ! NOTE ON NORMALISATION:
        ! NOW WE ARE WORKING WITH A NEW NORMALISATION:
@@ -2131,7 +2158,7 @@ subroutine om_double_scan
               if (abs(tmp) .gt. 1.d100) then
                  omega=cmplx(0.d0,0.d0);jump(in)=.false.
               endif
- 
+
 
               do imm=1,in-1
                  if (abs(wroots(in)-wroots(imm)).lt.D_gap) then
@@ -2553,7 +2580,7 @@ end subroutine refine_guess
 ! determine nmax:
 subroutine determine_nmax()
 use ALPS_var, only : pp, kperp, qs, Bessel_zero, nmax, ierror
-use ALPS_var, only : proc0, nperp, nspec, writeOut, nproc
+use ALPS_var, only : proc0, nperp, nspec, writeOut, nproc, usebM
 use ALPS_fns_rel, only : BESSJ
 use mpi
 implicit none
@@ -2572,6 +2599,14 @@ ipar = 1
 
 max_procs=nspec
 do is = 1, nspec
+
+  if (usebM(is)) then
+
+         nmax(is)=1
+
+      else
+
+
     nn = 0
     besselmax = 10.d0
 
@@ -2595,6 +2630,10 @@ do is = 1, nspec
     enddo
 
     nmax(is) = nn
+
+    endif
+
+
     if (writeOut .and. proc0) &
          write(*,'(a,i0,a,i0,a)') 'Required nMax for species ',is,' : ',nmax(is)
 
@@ -2606,10 +2645,14 @@ enddo
 is=1
 modified_nmax=.FALSE.
 do while (max_procs.LT.(nproc-1))
-	modified_nmax=.TRUE.
-	nmax(is)=nmax(is)+1
-	is=is+1
-	max_procs=max_procs+1
+  if (usebM(is)) then
+
+  else
+    modified_nmax=.TRUE.
+	  nmax(is)=nmax(is)+1
+  endif
+	  is=is+1
+	  max_procs=max_procs+1
 	if (is.GT.nspec) is = 1
 enddo
 
@@ -2737,18 +2780,19 @@ subroutine determine_bessel_array()
   double precision :: z		!Bessel Argument
   character (10) :: procwrite
   integer :: iperp, ipar !p_perp, p_par index
-  integer :: unit_bessel
+  !integer :: unit_bessel
 
 
   ipar = 1
 
-  write(procwrite,'(i0)')iproc
+  write(procwrite,'(i0)') iproc
 
   ! Allocate bessel_array:
   if (allocated(bessel_array)) deallocate(bessel_array)
   allocate(bessel_array(nlim(1)-1:nlim(2)+1,0:nperp)); bessel_array = 0.d0
-  unit_bessel=1001+iproc
-  open(unit = unit_bessel,file = 'solution/besselArray.'//trim(procwrite)//'.out', status = 'replace')
+  !unit_bessel=1001+iproc
+
+  !open(unit = unit_bessel,file = 'solution/besselArray.'//trim(procwrite)//'.out', status = 'replace')
 
   !running into an issue for low n, larger kperp, with electrons
 
@@ -2758,12 +2802,12 @@ subroutine determine_bessel_array()
         z = kperp * pp(sproc, iperp, ipar, 1) / qs(sproc)
         bessel_array(nn,iperp) = BESSJ(nn,z)
         if (nn.EQ.-1) bessel_array(nn,iperp)=-BESSJ(1,z)
-        write(unit_bessel,'(i4,i4,2es17.9)')&
-             nn, iperp, z, bessel_array(nn,iperp)
+        !write(unit_bessel,'(i4,i4,2es17.9)')&
+        !     nn, iperp, z, bessel_array(nn,iperp)
      enddo
-     write(unit_bessel,*); write(unit_bessel,*)
+     !write(unit_bessel,*); write(unit_bessel,*)
   enddo
-  close(unit_bessel)
+  !close(unit_bessel)
 
 end subroutine determine_bessel_array
 

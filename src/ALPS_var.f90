@@ -171,6 +171,21 @@ module alps_var
 
   logical, dimension(:), allocatable :: logfit ! Use logarithmic fitting?
 
+
+  logical, dimension(:), allocatable :: usebM ! Use bi-Maxwellian calculation from NHDS?
+
+
+  integer, dimension(:), allocatable ::  bMnmaxs ! Maximum number of n for bi-Maxwellian calculation from NHDS
+
+  double precision, dimension(:), allocatable ::  bMBessel_zeros ! Besser-zero for bi-Maxwellian calculation from NHDS
+
+  double precision, dimension(:), allocatable ::  bMbetas ! Species beta for bi-Maxwellian calculation from NHDS
+
+  double precision, dimension(:), allocatable ::  bMalphas ! Species temperature anisotropy for bi-Maxwellian calculation from NHDS
+
+  double precision, dimension(:), allocatable ::  bMvdrifts ! Species drift speed for bi-Maxwellian calculation from NHDS
+
+
   public :: scanner
      type :: scanner
         double precision :: range_i       !initial value
@@ -210,7 +225,8 @@ module alps_var
   public :: determine_minima, n_resonance_interval
   public :: unit_error, scan_option, n_scan, scan
   public :: kperp_last, kpar_last, kperp_0, kpar_0
-  public :: use_secant, relativistic, logfit
+  public :: use_secant, relativistic, logfit, usebM
   public :: f0_rel,df0_rel,nspec_rel,gamma_rel,pparbar_rel,ngamma,npparbar
+  public :: bMnmaxs,bMBessel_zeros,bMbetas,bMalphas,bMvdrifts
 
  end module alps_var

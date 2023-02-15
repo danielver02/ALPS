@@ -192,7 +192,7 @@ end function
 !-=-=-=-=-=-=
 subroutine determine_param_fit
 	use alps_var, only : writeOut, fit_type, param_fit, n_fits, nspec, f0, nperp, npar, logfit
-	use alps_var, only : relativistic,npparbar,f0_rel,ngamma, perp_correction, gamma_rel
+	use alps_var, only : relativistic,npparbar,f0_rel,ngamma, perp_correction, gamma_rel, usebM
 	implicit none
 	integer :: ifit,n_params,par_ind,iperp,is,is_run,is_rel,sproc_rel,nJT
 	integer :: ipparbar,ipparbar_lower,ipparbar_upper,upperlimit,unit_spec
@@ -210,7 +210,12 @@ subroutine determine_param_fit
 	qualitytotal=0.d0
 
 	do is=1,nspec
-
+		if (usebM(is)) then
+							write (*,'(a,i2)') ' Bi-Maxwellian calcuation: no fits necessary for species ',is
+							param_fit(is,:,:,:)=0.d0
+							fit_type(is,:)=1
+							perp_correction(is,:)=1.d0
+		 else
 		! For all fit types that include a fit parameter for the perpendicular momentum (kappa and Moyal),
 		! we must not fit this parameter when pperp=0. Otherwise, the LM matrix is singular:
 
@@ -433,14 +438,21 @@ subroutine determine_param_fit
 				endif
 
 			enddo
-
 		enddo	! End loop over iperp
 
 		close (unit_spec)
 
 		deallocate (params)
 		deallocate (param_mask)
+
+		endif
 	enddo	! End loop over is
+
+
+
+
+
+
 	if(writeOut) then
 		call output_fit(qualitytotal)
 		   write(*,'(a)') '-=-=-=-=-=-=-=-=-'
@@ -456,7 +468,7 @@ end subroutine
 subroutine output_fit(qualitytotal)
 	use alps_io, only : isnancheck, alps_error
 	use alps_var, only : fit_type, param_fit, n_fits, nspec, nperp, npar, pp, f0, pi, vA
-	use alps_var, only : relativistic,gamma_rel,pparbar_rel,ngamma,npparbar,f0_rel, ms
+	use alps_var, only : relativistic,gamma_rel,pparbar_rel,ngamma,npparbar,f0_rel, ms, usebM
 
 
 	implicit none
@@ -475,10 +487,12 @@ subroutine output_fit(qualitytotal)
 			if(fit_type(is,ifit).EQ.5) n_params=3
 			if(fit_type(is,ifit).EQ.6) n_params=4
 
-			do iparam=1,n_params
-				write (*,'(a,i2,a,i2,a,i2,a,2es14.4)') ' param_fit(',is,', 1,',iparam,',',ifit,') = ',param_fit(is,1,iparam,ifit)
-			enddo
+			if (.not.usebM(is)) then
+				do iparam=1,n_params
+					write (*,'(a,i2,a,i2,a,i2,a,2es14.4)') ' param_fit(',is,', 1,',iparam,',',ifit,') = ',param_fit(is,1,iparam,ifit)
+				enddo
 			write (*,'(a)') ' '
+			endif
 		enddo
 	enddo
 
@@ -491,6 +505,7 @@ subroutine output_fit(qualitytotal)
 	write (*,'(a)') ' Writing fit result to files'
 	do is=1,nspec
 
+		if (.not.usebM(is)) then
 
 	  unit_spec=2000+is
 	  write(specwrite,'(i0)') is
@@ -549,7 +564,7 @@ subroutine output_fit(qualitytotal)
 	  close(unit_spec)
 
        write(*,'(a,i3,a, 2es14.4)') ' Integration of fit for species', is,':', integrate
-
+	endif
 	enddo
 
 end subroutine
