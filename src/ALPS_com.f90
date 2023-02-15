@@ -30,7 +30,8 @@ subroutine pass_instructions
   use alps_var, only : use_map
   use alps_var, only : ni, nr, omi, omf, gami, gamf, loggridg, loggridw
   use alps_var, only : determine_minima, n_resonance_interval, positions_principal, Tlim
-  use alps_var, only : n_scan, scan, scan_option, use_secant, relativistic
+  use alps_var, only : n_scan, scan, scan_option, use_secant, relativistic, logfit, usebM
+  use alps_var, only : bMnmaxs, bMBessel_zeros, bMbetas, bMalphas, bMvdrifts
   use mpi
   implicit none
 
@@ -97,6 +98,15 @@ subroutine pass_instructions
      allocate(ms(1:nspec)); ms = 0.d0
      allocate(n_fits(1:nspec))
      allocate(relativistic(1:nspec)); relativistic=.FALSE.
+     allocate(logfit(1:nspec)); logfit=.TRUE.
+
+     allocate(usebM(1:nspec)); usebM=.TRUE.
+     allocate(bMnmaxs(1:nspec)); bMnmaxs=500
+     allocate(bMBessel_zeros(1:nspec)); bMBessel_zeros=1.d-50
+     allocate(bMbetas(1:nspec)); bMbetas=1.d0
+     allocate(bMalphas(1:nspec)); bMalphas=1.d0
+     allocate(bMvdrifts(1:nspec)); bMvdrifts=0.d0
+
 
      !Allocate solution space for nroots dispersion solutions
      allocate(wroots(1:numroots));wroots=cmplx(0.d0,0.d0,kind(1.d0))
@@ -113,6 +123,20 @@ subroutine pass_instructions
        MPI_INTEGER, 0, MPI_COMM_WORLD, ierror)
   call mpi_bcast(relativistic(:), size(relativistic(:)),&
        MPI_LOGICAL, 0, MPI_COMM_WORLD, ierror)
+  call mpi_bcast(logfit(:), size(logfit(:)),&
+       MPI_LOGICAL, 0, MPI_COMM_WORLD, ierror)
+  call mpi_bcast(usebM(:), size(usebM(:)),&
+       MPI_LOGICAL, 0, MPI_COMM_WORLD, ierror)
+  call mpi_bcast(bMnmaxs(:), size(bMnmaxs(:)),&
+       MPI_INTEGER, 0, MPI_COMM_WORLD, ierror)
+  call mpi_bcast(bMBessel_zeros(:), size(bMBessel_zeros(:)),&
+       MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierror)
+  call mpi_bcast(bMbetas(:), size(bMbetas(:)),&
+       MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierror)
+  call mpi_bcast(bMalphas(:), size(bMalphas(:)),&
+       MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierror)
+  call mpi_bcast(bMvdrifts(:), size(bMvdrifts(:)),&
+       MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierror)
 
 
   call mpi_bcast(wroots(:), size(wroots(:)),&
@@ -210,6 +234,8 @@ subroutine pass_distribution
 		call mpi_bcast(pparbar_rel(:,:,:),  size(pparbar_rel(:,:,:)),&
 		   MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierror)
 	endif
+
+
 
 	  call mpi_bcast(df0(:,:,:,:), size(df0(:,:,:,:)),&
 		   MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierror)

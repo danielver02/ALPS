@@ -73,7 +73,7 @@ program alps
      !Calculate pperp, ppar derivatives of f0
      call derivative_f0 !alps_fns
 
-     call determine_param_fit
+     call determine_param_fit !alps_analyt
 
      !f0 not needed for dispersion calculation
      !Deallocate to save space.
@@ -81,15 +81,16 @@ program alps
 
   endif
 
-  call pass_distribution
+  call pass_distribution ! alps_com
 
   ! Once we know kperp, we can determine nmax and split the processes:
   ! The following three routines will also be called when kperp changes
-  call determine_nmax
-  call split_processes
+  call determine_nmax ! alps_fns
+
+  call split_processes ! alps_fns
 
   ! All processes determine their Bessel function array:
-  if(.NOT.(sproc.EQ.0)) call determine_bessel_array
+  if(.NOT.(sproc.EQ.0)) call determine_bessel_array ! alps_fns
 
   call mpi_barrier(mpi_comm_world,ierror)
 

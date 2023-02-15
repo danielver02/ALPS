@@ -21,7 +21,7 @@ module alps_io
 
   private :: get_runname, get_indexed_namelist_unit
   private :: input_unit_exist, input_unit
-  private :: map_read, solution_read, spec_read, scan_read
+  private :: map_read, solution_read, spec_read, scan_read, bM_read
   public  :: init_param, read_f0, get_unused_unit, alps_error
   public :: output_time, display_credits, isnancheck
 
@@ -38,8 +38,9 @@ contains
     use alps_var, only : nperp, npar, arrayName, fit_check, param_fit, fit_type, perp_correction
     use alps_var, only : ns, qs, ms, vA, Bessel_zero, numiter, D_threshold,positions_principal
     use alps_var, only : determine_minima, n_resonance_interval, ngamma, npparbar, Tlim
-    use alps_var, only : scan_option, n_scan, scan, use_secant, relativistic, logfit
+    use alps_var, only : scan_option, n_scan, scan, use_secant, relativistic, logfit, usebM
     use alps_var, only : maxsteps_fit, n_fits, lambda_initial_fit, lambdafac_fit, epsilon_fit
+    use alps_var, only : bMnmaxs, bMBessel_zeros, bMbetas, bMalphas, bMvdrifts
     implicit none
 
     integer :: ik, is, ifit, ip !Solution, species, fit, additional index
@@ -110,6 +111,14 @@ contains
     allocate(relativistic(1:nspec)); relativistic=.FALSE.
     allocate(logfit(1:nspec)); logfit=.TRUE.
 
+    allocate(usebM(1:nspec)); usebM=.TRUE.
+    allocate(bMnmaxs(1:nspec)); bMnmaxs=500
+    allocate(bMBessel_zeros(1:nspec)); bMBessel_zeros=1.d-50
+    allocate(bMbetas(1:nspec)); bMbetas=1.d0
+    allocate(bMalphas(1:nspec)); bMalphas=1.d0
+    allocate(bMvdrifts(1:nspec)); bMvdrifts=0.d0
+
+
     do is = 1, nspec
        !READ IN SPECIES PARAMETERS
        unit=input_unit_no
@@ -135,8 +144,22 @@ contains
     allocate(fit_type(1:nspec,maxval(n_fits)))
     allocate(perp_correction(1:nspec,maxval(n_fits)))
 
+    write(*,'(a)')'-=-=-=-=-=-=-=-=-'
+
     do is = 1, nspec
        !READ IN SPECIES FIT PARAMETERS
+
+       if (usebM(is)) then
+             write (*,'(a,i2,a)') 'Species ',is,' uses bi-Maxwellian calculation...skipping fits. Parameters:'
+
+             call get_indexed_namelist_unit (unit, "bM_spec", is)
+             call bM_read(is)
+             write(*,'(a,i4,a,es11.4)')&
+                  '  nmax = ',bMnmaxs(is),',        Bessel_zero = ',bMBessel_zeros(is)
+             write(*,'(a,es11.4,a,es11.4,a,es11.4)')&
+                   '  beta = ',bMbetas(is),', alpha = ',bMalphas(is),', drift speed = ',bMvdrifts(is)
+      else
+
        do ifit=1,n_fits(is)
           !call get_indexed_namelist_unit (unit, "ffit", ifit)
           call get_indexed_double_namelist_unit (unit, "ffit", is, ifit)
@@ -174,6 +197,7 @@ contains
                   ' Perpendicular correction:  ',perp_correction(is,ifit)
           close(unit)
        enddo
+     endif
     enddo
 
     !Read in selection for scan paramter
@@ -233,7 +257,7 @@ end subroutine solution_read
 !Subroutine for reading in species parameters
 !-=-=-=-=-
 subroutine spec_read(is)
-  use alps_var, only : ns, qs, ms, n_fits, relativistic, logfit
+  use alps_var, only : ns, qs, ms, n_fits, relativistic, logfit, usebM
   implicit none
   !Passed
   integer :: is !species index
@@ -242,13 +266,37 @@ subroutine spec_read(is)
   integer :: ff !read in value for number of fitted functions for species
   logical :: relat=.false.
   logical :: log_fit=.true.
+  logical :: use_bM=.false.
 
   nameList /spec/ &
-       nn,qq,mm,ff,relat,log_fit
+       nn,qq,mm,ff,relat,log_fit,use_bM
   read (unit=unit,nml=spec)
-  ns(is) = nn; qs(is) = qq; ms(is) = mm; n_fits(is)=ff; relativistic(is)=relat; logfit(is)=log_fit
+  ns(is) = nn; qs(is) = qq; ms(is) = mm; n_fits(is)=ff; relativistic(is)=relat; &
+   logfit(is)=log_fit; usebM(is)=use_bM
 end subroutine spec_read
 !-=-=-=-=-
+
+!-=-=-=-=-
+!Subroutine for reading in bi-Maxwellian parameters
+!-=-=-=-=-
+subroutine bM_read(is)
+  use alps_var, only : bMnmaxs,bMBessel_zeros,bMbetas,bMalphas,bMvdrifts
+  implicit none
+  !Passed
+  integer :: is !species index
+  !Local
+
+  integer :: bM_nmaxs
+  double precision :: bM_Bessel_zeros, bM_betas, bM_alphas, bM_vdrifts
+
+  nameList /bM_spec/ &
+       bM_nmaxs,bM_Bessel_zeros,bM_betas,bM_alphas,bM_vdrifts
+
+  read (unit=unit,nml=bM_spec)
+    bMnmaxs(is)=bM_nmaxs; bMBessel_zeros(is)=bM_Bessel_zeros; bMbetas(is)=bM_betas; &
+    bMalphas(is)=bM_alphas; bMvdrifts(is)=bM_vdrifts
+end subroutine bM_read
+
 !-=-=-=-=-
 
 !-=-=-=-=-
@@ -405,7 +453,7 @@ end subroutine fit_read
 !-=-=-=-=-
 subroutine read_f0
   use alps_var, only : nperp, npar, arrayName, f0, pp, nspec
-  use alps_var, only : writeOut
+  use alps_var, only : writeOut, usebM
   implicit none
   !Local
   integer :: iperp,ipar !parallel and perpendicular indices
@@ -415,7 +463,7 @@ subroutine read_f0
 
      if (writeOut) &
           write(*,'(2a)')&
-          'Reading f0 array from file: ',trim(arrayName)
+          'Attempting to read f0 array from file: ',trim(arrayName)
 
      call get_unused_unit (input_unit_no)
      unit=input_unit_no
@@ -423,6 +471,14 @@ subroutine read_f0
      !arrayName is read in from *.in input file
      !each species is has a unique file for f0 and pp
      do is = 1, nspec
+
+       if (usebM(is)) then
+          write (*,'(a,i2)') ' Bi-Maxwellian calcuation: not reading f0 array for species ',is
+          f0(is,:,:)=0.d0
+          pp(is,:,:,:)=0.d0
+
+       else
+
         write(readname, '(3a,i0,a)') &
              "distribution/",trim(arrayName),'.',is,".array"
         open (unit=unit, file=trim(readname), status='old', action='read')
@@ -434,7 +490,9 @@ subroutine read_f0
            enddo
         enddo
         close(unit)
+      endif
      enddo
+
 
 end subroutine read_f0
 !-=-=-=-=-
