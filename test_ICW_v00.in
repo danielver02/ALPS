@@ -99,7 +99,7 @@ perpcorr=1.836E3
 &scan_input_1
 scan_type=4 !kpar scan
 swi=1.d-1
-swf=3.d0 
+swf=2.d0 
 swlog=.true.
 ns=100
 nres=1
