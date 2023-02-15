@@ -1,12 +1,9 @@
 !===============================================
-!  ALPS INPUT FILE
-!  Anisotropic Maxwellian; 
-!  120 x 240 resolution
-!  6 v_ts spread
-!  Scan over kpar
-!
+!  Relativistic Test Scan
+!  ALPS SCAN INPUT FILE
+! beta = 1.0; kpar = [0.001,10]
 !  Kristopher Klein, Daniel Verscharen
-!  2017 JAN 02
+!  2018 Jan 9
 !===============================================
 ! REQUIRED NAMELISTS
 !===============================================
@@ -20,7 +17,7 @@ nspec=2
 !System Option (see README file)
 option=0
 !Number of Dispersion Solutions to find and follow
-nroots=1
+nroots=2
 !Logical to:
     !T: use search for roots over a map 
     !   in complex frequency space
@@ -30,22 +27,23 @@ use_map=.false.
 !Write or Supress output to screen:
 writeOut=.true.
 !Velocity Space Resolution of f0
-nperp=120
-npar=240
+nperp=30
+npar=60
+ngamma=500
+npparbar=500
 !Proton Alfven Velocity / c
-vA=1.d-4
+vA=1.d0
 !Name of input array- 
 !Located in 'distribution' folder
-arrayName='test_ICW_v00'
+arrayName='test_relativistic_v00'
 !Maximum amplitude of Bessel function to determine nmax
 Bessel_zero = 1.d-45
 numiter = 50
-D_threshold = 1.d-15
+D_threshold = 1.d-13
 D_prec = 1.d-5
-D_gap = 1.d-5
-positions_principal=3
+D_gap=1.d-5
+positions_principal=5
 n_resonance_interval=100
-Tlim=0.01d0
 maxsteps_fit=500
 lambda_initial_fit=1.d0
 lambdafac_fit=10.d0
@@ -57,9 +55,26 @@ n_scan=1 !number of wavevector scans
 use_secant=T
 /
 
+
 &guess_1
-g_om=1.5508d-01   
-g_gam=-1.3429d-05
+g_om=6.2713d-2
+g_gam=-4.662d-8
+/
+
+&guess_2
+g_om=1.d0
+g_gam=-1.655d-6
+/
+
+&maps_1
+loggridw=.false.	
+loggridg=.false.
+omi     = -5.d-3		
+omf     = 5.d-3
+gami    = -2.5d-3
+gamf    = 1.d-4
+ni      = 47
+nr      = 48
 /
 
 &spec_1
@@ -67,44 +82,45 @@ nn=1.d0
 qq=1.d0
 mm=1.d0
 ff=1
-relat=F
+relat=T
 log_fit=T
 /
 
 &ffit_1_1
-fit_type_in=1
-fit_1=5.986D-2
-fit_2=1.00D0
+fit_type_in=4
+fit_1=6.2719d-01
+fit_2=0.d0
 fit_3=0.d0
-perpcorr=3.33D-1
+perpcorr=2.d0 ! Ideally, this is 1 / (beta_perp * ms)
 /
+
 
 &spec_2
 nn=1.d0
 qq=-1.d0
-mm=0.000544662d0
+mm=1.d0
 ff=1
-relat=F
+relat=T
 log_fit=T
 /
 
 &ffit_2_1
-fit_type_in=1
-fit_1=1.412D4
-fit_2=1.836D3
-fit_3=0.d0
-perpcorr=1.836d3
+fit_type_in=4
+fit_1=6.2719d-01
+fit_2=1.d0
+fit_3=1.d0
+perpcorr=2.d0
 /
 
 &scan_input_1
-scan_type=4 !kpar scan
-swi=1.d-1
-swf=2.d0 
-swlog=.true.
-ns=100
+scan_type=4	 
+swi=0.1d0
+swf=1.0d0 
+swlog=.false.
+ns=10
 nres=1
-heating=.true.
-eigen=.true.
+heating=.false.
+eigen=.false.
 /
 
 
