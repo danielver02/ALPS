@@ -16,7 +16,7 @@ module alps_fns_rel
   implicit none
 
   private :: int_T_rel,  int_T_res_rel, integrate_resU_rel
-  private :: funct_g_rel, LUDCMP, LUBKSB
+  private :: funct_g_rel
   private :: determine_sproc_rel,fact
 
   public :: derivative_f0_rel, polyharmonic_spline
@@ -241,8 +241,7 @@ subroutine polyharmonic_spline(grid_coarse,gamma_coarse,pparbar_coarse,n_coarse,
 	! Output:
 	! f0_rel is the interpolated grid. It is a field of rank (ngamma, npparbar)
 	!
-	! This subroutine needs the subroutines LUDCMP and LUBKSB -- see below
-	!
+  ! This subroutine needs the LUPACK and BLAS libraries to evoke the dgesv subroutine	!
 
 	! This is the Thin Plate Spline:
 	! We use these resources:
@@ -251,7 +250,7 @@ subroutine polyharmonic_spline(grid_coarse,gamma_coarse,pparbar_coarse,n_coarse,
 	! http://vision.ucsd.edu/sites/default/files/fulltext(4).pdf
 	implicit none
 
-	integer :: i,j,k,permutation_index(n_coarse+3),odd_even,code
+	integer :: i,j,k,permutation_index(n_coarse+3)
 	integer :: ngamma,npparbar,n_coarse,is_rel,nspec_rel
 	double precision :: gamma_coarse(n_coarse),pparbar_coarse(n_coarse)
 	double precision :: grid_coarse(n_coarse),f0_rel(nspec_rel,0:ngamma,0:npparbar)
@@ -260,7 +259,7 @@ subroutine polyharmonic_spline(grid_coarse,gamma_coarse,pparbar_coarse,n_coarse,
 	double precision :: grid_vector(n_coarse+3),weight_param(n_coarse+3)
 	double precision :: gamma_rel(nspec_rel,0:ngamma,0:npparbar),pparbar(nspec_rel,0:ngamma,0:npparbar)
 	double precision :: r,smoothing
-
+  double precision :: INFO
 
 
 	grid_vector=0.d0
@@ -298,8 +297,7 @@ subroutine polyharmonic_spline(grid_coarse,gamma_coarse,pparbar_coarse,n_coarse,
 	enddo
 
 	weight_param=grid_vector
-	call LUDCMP(fullmatrix,n_coarse+3,permutation_index,odd_even,code)
-	call LUBKSB(fullmatrix,n_coarse+3,permutation_index,weight_param)
+	call dgesv(n_coarse+3,1,fullmatrix,n_coarse+3,permutation_index,weight_param,n_coarse+3,INFO)
 
 	f0_rel(is_rel,:,:)=0.d0
 	do i=0,ngamma
@@ -325,148 +323,6 @@ subroutine polyharmonic_spline(grid_coarse,gamma_coarse,pparbar_coarse,n_coarse,
 
 end subroutine
 
-
-!-=-=-=-=-=-=
-! The following two functions are from pre-written sources:
-!-=-=-=-=-=-=
-!*******************************************************
-!*    LU decomposition routines 				       *
-!*                                                     *
-!*                 F90 version by J-P Moreau, Paris    *
-!*                        (www.jpmoreau.fr)            *
-!* --------------------------------------------------- *
-!* Reference:                                          *
-!*                                                     *
-!* "Numerical Recipes By W.H. Press, B. P. Flannery,   *
-!*  S.A. Teukolsky and W.T. Vetterling, Cambridge      *
-!*  University Press, 1986" [BIBLI 08].                *
-!*                                                     *
-!*******************************************************
-
-
-!  ***************************************************************
-!  * Given an N x N matrix A, this routine replaces it by the LU *
-!  * decomposition of a rowwise permutation of itself. A and N   *
-!  * are input. INDX is an output vector which records the row   *
-!  * permutation effected by the partial pivoting; D is output   *
-!  * as -1 or 1, depending on whether the number of row inter-   *
-!  * changes was even or odd, respectively. This routine is used *
-!  * in combination with LUBKSB to solve linear equations or to  *
-!  * invert a matrix. Return code is 1, if matrix is singular.   *
-!  ***************************************************************
-subroutine LUDCMP(a,n,indx,d,code)
-	implicit none
-	integer, parameter :: nmax=100000
-	double precision, parameter :: tiny=1.5d-16
-	double precision :: amax, dum, sum, a(n,n), vv(nmax)
-	integer :: n, indx(n), code, d, i, j, k, imax
-
-
-	d=1; code=0
-	do i=1,n
-		amax=0.d0
-		do j=1,n
-			if (dabs(a(i,j)).GT.amax) amax=DABS(a(i,j))
-		enddo ! j loop
-		if(amax.LT.tiny) then
-			code = 1
-			return
-		endif
-		vv(i) = 1.d0 / amax
-	enddo ! i loop
-
-	do j=1,n
-		do i=1,j-1
-			sum = a(i,j)
-			do k=1,i-1
-				sum = sum - a(i,k)*A(k,j)
-			enddo ! k loop
-				a(i,j) = sum
-		enddo ! i loop
-		amax = 0.d0
-		do i=j,n
-			sum = a(i,j)
-			do k=1,j-1
-				sum = sum - a(i,k)*a(k,j)
-			enddo ! k loop
-			a(i,j) = sum
-			dum = vv(i)*dabs(sum)
-			if(dum.GE.amax) then
-				imax = i
-				amax = dum
-			endif
-		enddo ! i loop
-
-		if(j.NE.imax) then
-			do k=1,n
-				dum = a(imax,k)
-				a(imax,k) = a(j,k)
-				a(j,k) = dum
-			enddo ! k loop
-			d = -d
-			vv(imax) = vv(j)
-		endif
-
-		indx(j) = imax
-		if(dabs(a(j,j)) < tiny) a(j,j) = tiny
-
-		if(j.NE.n) then
-			dum = 1.d0 / a(j,j)
-			do i=j+1,n
-				a(i,j) = a(i,j)*dum
-			enddo ! i loop
-		endif
-	enddo ! j loop
-
-	return
-
- end subroutine LUDCMP
-
-
-!  ******************************************************************
-!  * Solves the set of N linear equations A . X = B.  Here A is     *
-!  * input, not as the matrix A but rather as its LU decomposition, *
-!  * determined by the routine LUDCMP. INDX is input as the permuta-*
-!  * tion vector returned by LUDCMP. B is input as the right-hand   *
-!  * side vector B, and returns with the solution vector X. A, N and*
-!  * INDX are not modified by this routine and can be used for suc- *
-!  * cessive calls with different right-hand sides. This routine is *
-!  * also efficient for plain matrix inversion.                     *
-!  ******************************************************************
-subroutine LUBKSB(a,n,indx,b)
-	implicit none
-	integer :: n, indx(n), ii, i, ll, j
-	double precision :: sum, a(n,n),b(n)
-
-	ii = 0
-
-	do i=1,n
-		ll = indx(i)
-		sum = b(ll)
-		b(ll) = b(i)
-		if(ii.NE.0) then
-			do j=ii,i-1
-				sum = sum - a(i,j)*b(j)
-			enddo ! j loop
-		else if(sum.NE.0.d0) then
-			ii = i
-		endif
-		b(i) = sum
-	enddo ! i loop
-
-	do i=n,1,-1
-		sum = b(i)
-		if(i < n) then
-			do j=i+1,n
-				sum = sum - a(i,j)*b(j)
-			enddo ! j loop
-		endif
-		b(i) = sum / a(i,i)
-	enddo ! i loop
-
-	return
-
-end subroutine LUBKSB
 
 !-=-=-=-=-=-=
 !
