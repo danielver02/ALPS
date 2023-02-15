@@ -192,12 +192,12 @@ end subroutine derivative_f0
 
        !Indices of refraction for the dispersion relation
 
-       !NHDS normalization
+       ! old NHDS normalization
        !enx2=((kperp/(om))**2)
        !enz2=((kpar/(om))**2)
        !enxnz=(kperp*kpar/(om**2))
 
-       !NHDS normalization multiplied with om**2
+       !new NHDS normalization
        enx2=kperp**2
        enz2=kpar**2
        enxnz=kperp*kpar
@@ -228,12 +228,13 @@ end subroutine derivative_f0
 
           call calc_chi(chi_NHDS,sproc,kpar,kperp,om)
 
-          schi(sproc,1,1)=chi_NHDS(1,1)*om*om
-          schi(sproc,2,2)=chi_NHDS(2,2)*om*om
-          schi(sproc,3,3)=chi_NHDS(3,3)*om*om
-          schi(sproc,1,2)=chi_NHDS(1,2)*om*om
-          schi(sproc,1,3)=chi_NHDS(1,3)*om*om
-          schi(sproc,2,3)=chi_NHDS(2,3)*om*om
+          ! Account for norm below, which is already included in NHDS:
+          schi(sproc,1,1)=chi_NHDS(1,1)/(ns(sproc) * qs(sproc))
+          schi(sproc,2,2)=chi_NHDS(2,2)/(ns(sproc) * qs(sproc))
+          schi(sproc,3,3)=chi_NHDS(3,3)/(ns(sproc) * qs(sproc))
+          schi(sproc,1,2)=chi_NHDS(1,2)/(ns(sproc) * qs(sproc))
+          schi(sproc,1,3)=chi_NHDS(1,3)/(ns(sproc) * qs(sproc))
+          schi(sproc,2,3)=chi_NHDS(2,3)/(ns(sproc) * qs(sproc))
 
        else
 
@@ -330,10 +331,10 @@ end subroutine derivative_f0
        ! WE HAVE ALREADY MULTIPLIED THE schi TERMS AND THE int_ee TERMS INTERNALLY
        ! BY om. The following norm factors account for this:
 
-       !NHDS normalization
+       ! old NHDS normalization
        !norm(sproc) = ns(sproc) * qs(sproc) / (om*om)
 
-       !NHDS normalization multiplied with om**2
+       !new NHDS normalization
        norm(sproc) = ns(sproc) * qs(sproc)
 
        !PLUME normalization
@@ -355,10 +356,9 @@ end subroutine derivative_f0
        schi(sproc,2,3) = schi(sproc,2,3) * norm(sproc)
        !-=-=-=-=-=-
 
-       !Return chi_ns to proc0
-
     endif
 
+    ! Return the schi to proc0
 
     call MPI_REDUCE (schi, chi, size(chi),&
         MPI_DOUBLE_COMPLEX, MPI_SUM, 0, MPI_COMM_WORLD, ierror)
@@ -374,10 +374,10 @@ end subroutine derivative_f0
        !for heating & eigenfunction calculation
 
 
-       !NHDS normalization
+       !old NHDS normalization
        !chi0=chi/(vA*vA)
 
-       !NHDS normalization multiplied with om**2
+       !new NHDS normalization
        chi0=chi/(om*om*vA*vA)
 
        !PLUME normalization
