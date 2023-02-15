@@ -162,7 +162,7 @@ end subroutine derivative_f0
 !
 !-=-=-=-=-=-=
  double complex function disp(om)
-    use alps_var, only : nlim, proc0, nspec, ierror, sproc, relativistic, iproc
+    use alps_var, only : nlim, proc0, nspec, ierror, sproc, relativistic
     use alps_var, only : wave, kperp, kpar, ns, qs, vA, chi0, usebM
     use alps_nhds, only: calc_chi
     use alps_fns_rel, only : int_ee_rel
