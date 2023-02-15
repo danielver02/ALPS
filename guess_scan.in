@@ -84,7 +84,7 @@ mm=1.d0
 ff=1
 relat=F
 log_fit=T
-use_bM=T
+use_bM=F
 /
 
 &ffit_1_1
@@ -118,7 +118,6 @@ perpcorr=1.d0
 /
 
 &bM_spec_1
-! These are the bi-Maxwellian parameters for the NHDS calculation
 bM_nmaxs=500
 bM_Bessel_zeros=1.d-50
 bM_betas=1.d0
@@ -133,7 +132,7 @@ mm=5.4466d-4
 ff=1
 relat=F
 log_fit=T
-use_bM=T
+use_bM=F
 /
 
 &ffit_2_1
@@ -167,7 +166,6 @@ perpcorr=1.d0
 /
 
 &bM_spec_2
-! These are the bi-Maxwellian parameters for the NHDS calculation
 bM_nmaxs=500
 bM_Bessel_zeros=1.d-50
 bM_betas=1.d0

@@ -98,8 +98,8 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_ALPS_OBJECTS = ALPS_var.$(OBJEXT) ALPS_io.$(OBJEXT) \
-	ALPS_com.$(OBJEXT) ALPS_analyt.$(OBJEXT) \
+am_ALPS_OBJECTS = ALPS_NHDS.$(OBJEXT) ALPS_var.$(OBJEXT) \
+	ALPS_io.$(OBJEXT) ALPS_com.$(OBJEXT) ALPS_analyt.$(OBJEXT) \
 	ALPS_fns_rel.$(OBJEXT) ALPS_fns.$(OBJEXT) ALPS.$(OBJEXT)
 ALPS_OBJECTS = $(am_ALPS_OBJECTS)
 ALPS_DEPENDENCIES =
@@ -245,8 +245,8 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AM_FCFLAGS = -O4 -fbounds-check -ffpe-trap=zero,overflow -Wunused -funroll-loops -g -fbacktrace
 ALPS_LDADD = -lm -llapack -lblas
-ALPS_SOURCES = ALPS_var.f90 ALPS_io.f90 ALPS_com.f90 ALPS_analyt.f90 \
-	ALPS_fns_rel.f90 ALPS_fns.f90 ALPS.f90
+ALPS_SOURCES = ALPS_NHDS.f90 ALPS_var.f90 ALPS_io.f90 ALPS_com.f90 \
+	ALPS_analyt.f90 ALPS_fns_rel.f90 ALPS_fns.f90 ALPS.f90
 all: all-am
 
 .SUFFIXES:
