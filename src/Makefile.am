@@ -1,4 +1,4 @@
-AM_FCFLAGS = -O3 -fbounds-check -ffpe-trap=zero,overflow -ffast-math -Wunused -funroll-loops -g -fbacktrace
+AM_FCFLAGS = -O4 -fbounds-check -ffpe-trap=zero,overflow -Wunused -funroll-loops -g -fbacktrace
 
 ALPS_LDADD = -lm -llapack -lblas
 
