@@ -1,10 +1,26 @@
-numproc=8
+echo '-=-=-=-=-=-=-='
+echo 'Interpolate Test'
+echo '-=-=-=-=-=-=-='
+date
+cd interpolation
+./interpolation test_interp.in 2> 'test_interp.error' > 'test_interp.out'
+ll0=$(wc -l 'test_interp.error' | awk '{print $1}')
+if [ $ll0 -eq 0 ]
+then
+    echo 'No Errors in Interpolation Test'
+else
+    echo 'ERRORS in Interpolation Test'
+fi
+date
+cd ../
+
+numproc=12
 echo '-=-=-=-=-=-=-='
 echo ''
 echo '-=-=-=-=-=-=-='
 input='test_kpar_fast_v00'
 echo 'Testing: ' $input
-mkdir solution
+mkdir -p solution
 echo '-=-=-=-=-=-=-='
 echo 'Generate Distribution'
 date
