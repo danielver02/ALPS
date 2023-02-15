@@ -162,8 +162,9 @@ end subroutine derivative_f0
 !
 !-=-=-=-=-=-=
  double complex function disp(om)
-    use alps_var, only : nlim, proc0, nspec, ierror, sproc, relativistic
+    use alps_var, only : nlim, proc0, nspec, ierror, sproc, relativistic, iproc
     use alps_var, only : wave, kperp, kpar, ns, qs, vA, chi0, usebM
+    use alps_nhds, only: calc_chi
     use alps_fns_rel, only : int_ee_rel
     use mpi
     implicit none
@@ -171,6 +172,7 @@ end subroutine derivative_f0
     !Passed
     double complex :: om     !frequency for dispersion solution
     !Local
+    double complex :: chi_NHDS(3,3)
     double complex, dimension(1:nspec,1:3,1:3) :: schi,chi
     double complex, dimension(1:3,1:3) :: eps
     double complex :: enx2, enz2, enxnz            !Indices of refraction
@@ -218,17 +220,20 @@ end subroutine derivative_f0
 
        ! Split into NHDS or ALPS routines:
 
-
-       if (usebM(sproc)) then
+       ! Only run the NHDS routine if useBM is on for the species
+       !   and if you are handling n=0 according to split_processes
+       if (usebM(sproc).and.(nlim(1).EQ.0)) then
 
           ! This is the case to use NHDS for the calculation of chi:
 
-          schi(sproc,1,1)=1.d0
-          schi(sproc,2,2)=1.d0
-          schi(sproc,3,3)=1.d0
-          schi(sproc,1,2)=1.d0
-          schi(sproc,1,3)=1.d0
-          schi(sproc,2,3)=1.d0
+          call calc_chi(chi_NHDS,sproc,kpar,kperp,om)
+
+          schi(sproc,1,1)=chi_NHDS(1,1)*om*om
+          schi(sproc,2,2)=chi_NHDS(2,2)*om*om
+          schi(sproc,3,3)=chi_NHDS(3,3)*om*om
+          schi(sproc,1,2)=chi_NHDS(1,2)*om*om
+          schi(sproc,1,3)=chi_NHDS(1,3)*om*om
+          schi(sproc,2,3)=chi_NHDS(2,3)*om*om
 
        else
 
