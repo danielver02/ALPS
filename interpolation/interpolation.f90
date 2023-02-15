@@ -332,7 +332,7 @@ subroutine polyharmonic_spline(grid_coarse,pperp_coarse,ppar_coarse,n_coarse,ppe
 ! Output:
 ! grid_fine is the interpolated grid. It is a field of rank (nperp, npar)
 !
-! This subroutine needs the subroutines LUDCMP and LUBKSB -- see below
+! This subroutine needs the LUPACK and BLAS libraries to evoke the dgesv subroutine
 !
 
 ! This is the Thin Plate Spline:
