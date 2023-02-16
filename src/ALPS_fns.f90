@@ -242,7 +242,7 @@ end subroutine derivative_f0
 
        ! Only run the NHDS routine if useBM is on for the species
        !   and if you are handling n=0 according to split_processes
-       if (usebM(sproc).and.(nlim(1).EQ.0)) then
+       if (usebM(sproc).and.(nlim(2).GE.0).and.(nlim(1).EQ.0)) then
 
           ! This is the case to use NHDS for the calculation of chi:
 
@@ -2778,7 +2778,6 @@ do is = 1,nspec
       nlim(2) = nlim(1) + ideal_splitting(is)-1
 
       if ((local_iproc.EQ.proc_per_spec(is)).AND.(nlim(1).LE.nmax(is))) nlim(2)=nmax(is)
-
 
 		endif
 	prev_proc_count = proc_count
