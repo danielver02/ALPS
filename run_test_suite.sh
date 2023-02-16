@@ -4,7 +4,7 @@ echo ''
 echo '-=-=-=-=-=-=-='
 input='test_kpar_fast_v00'
 echo 'Testing: ' $input
-mkdir solution
+mkdir -p solution
 echo '-=-=-=-=-=-=-='
 echo 'Generate Distribution'
 date
