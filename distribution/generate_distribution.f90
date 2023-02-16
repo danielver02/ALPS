@@ -1,9 +1,14 @@
-!Helper program to generate (nperp x npar) array of
-!vperp, vpar, f0
-
-!Part of project (name tbd)
-
-!Kristopher Klein, Daniel Verscharen
+!===============================================================================
+!I                                                                             I
+!I                              A  L  P  S                                     I
+!I                     Arbitrary Linear Plasma Solver                          I
+!I                                                                             I
+!I                              Version 1.0                                    I
+!I                                                                             I
+!I  Kristopher Klein   (kgklein@arizona.edu)                                   I
+!I  Daniel Verscharen  (d.verscharen@ucl.ac.uk)                                I
+!I                                                                             I
+!===============================================================================
 
 program generate_distribution
   use alps_distribution_analyt, only : distribution_analyt

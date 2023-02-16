@@ -1,15 +1,14 @@
-!=============================================================================!
-!=============================================================================!
-!!*ALPS                                                                  *!!
-!!                                                                           !!
-!!Kristopher Klein, Daniel Verscharen                                        !!
-!!
-!!Space Science Center, University of New Hampshire                          !!
-!!                                                                           !!
-!!*INPUT/OUTPUT FUNCTIONS                                                   *!!
-!=============================================================================!
-!=============================================================================!
-!
+!===============================================================================
+!I                                                                             I
+!I                              A  L  P  S                                     I
+!I                     Arbitrary Linear Plasma Solver                          I
+!I                                                                             I
+!I                              Version 1.0                                    I
+!I                                                                             I
+!I  Kristopher Klein   (kgklein@arizona.edu)                                   I
+!I  Daniel Verscharen  (d.verscharen@ucl.ac.uk)                                I
+!I                                                                             I
+!===============================================================================
 
 module alps_io
   implicit none
@@ -795,7 +794,7 @@ implicit none
  write (*,*) "I                                                         I"
  write (*,*) "I                       Version 1.0                       I"
  write (*,*) "I                                                         I"
- write (*,*) "I  Kristopher Klein   (kris.klein@gmail.com)              I"
+ write (*,*) "I  Kristopher Klein   (kgklein@arizone.edu)               I"
  write (*,*) "I  Daniel Verscharen  (d.verscharen@ucl.ac.uk)            I"
  write (*,*) "I                                                         I"
  write (*,*) "==========================================================="

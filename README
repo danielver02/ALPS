@@ -1,15 +1,14 @@
-!=============================================================================!
-!=============================================================================!
-!!*ALPS                                                                     *!!
-!!(the Arbitrary Linear Plasma Solver)
-!!                                                                           !!
-!!Kristopher Klein, Daniel Verscharen                                        !!
-!!
-!!University of Arizona, University College London                           !!
-!!                                                                           !!
-!!*README                                                                   *!!
-!=============================================================================!
-!=============================================================================!
+===============================================================================
+I                                                                             I
+I                              A  L  P  S                                     I
+I                     Arbitrary Linear Plasma Solver                          I
+I                                                                             I
+I                              Version 1.0                                    I
+I                                                                             I
+I  Kristopher Klein   (kgklein@arizona.edu)                                   I
+I  Daniel Verscharen  (d.verscharen@ucl.ac.uk)                                I
+I                                                                             I
+===============================================================================
 
 This is the ALPS code: the Arbitrary Linear Plasma Solver.
 ALPS is a parallelised numerical code that solves the Vlasov-Maxwell dispersion

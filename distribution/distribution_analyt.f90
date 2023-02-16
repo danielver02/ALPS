@@ -1,15 +1,15 @@
-!=============================================================================!
-!=============================================================================!
-!!*ALPS                                                                  *!!
-!!                                                                           !!
-!!Kristopher Klein, Daniel Verscharen                                        !!
-!!
-!!Space Science Center, University of New Hampshire                          !!
-!!                                                                           !!
-!!*INPUT/OUTPUT FUNCTIONS                                                   *!!
-!=============================================================================!
-!=============================================================================!
-!
+!===============================================================================
+!I                                                                             I
+!I                              A  L  P  S                                     I
+!I                     Arbitrary Linear Plasma Solver                          I
+!I                                                                             I
+!I                              Version 1.0                                    I
+!I                                                                             I
+!I  Kristopher Klein   (kgklein@arizona.edu)                                   I
+!I  Daniel Verscharen  (d.verscharen@ucl.ac.uk)                                I
+!I                                                                             I
+!===============================================================================
+
 module alps_distribution_analyt
   implicit none
 

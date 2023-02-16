@@ -1,3 +1,15 @@
+!===============================================================================
+!I                                                                             I
+!I                              A  L  P  S                                     I
+!I                     Arbitrary Linear Plasma Solver                          I
+!I                                                                             I
+!I                              Version 1.0                                    I
+!I                                                                             I
+!I  Kristopher Klein   (kgklein@arizona.edu)                                   I
+!I  Daniel Verscharen  (d.verscharen@ucl.ac.uk)                                I
+!I                                                                             I
+!===============================================================================
+
 program interpolate
 implicit none
 
