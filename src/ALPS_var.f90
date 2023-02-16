@@ -183,7 +183,7 @@ module alps_var
 
   double precision, dimension(:), allocatable ::  bMalphas ! Species temperature anisotropy for bi-Maxwellian calculation from NHDS
 
-  double precision, dimension(:), allocatable ::  bMvdrifts ! Species drift speed for bi-Maxwellian calculation from NHDS
+  double precision, dimension(:), allocatable ::  bMpdrifts ! Species drift momentum for bi-Maxwellian calculation from NHDS
 
 
   public :: scanner
@@ -227,6 +227,6 @@ module alps_var
   public :: kperp_last, kpar_last, kperp_0, kpar_0
   public :: use_secant, relativistic, logfit, usebM
   public :: f0_rel,df0_rel,nspec_rel,gamma_rel,pparbar_rel,ngamma,npparbar
-  public :: bMnmaxs,bMBessel_zeros,bMbetas,bMalphas,bMvdrifts
+  public :: bMnmaxs,bMBessel_zeros,bMbetas,bMalphas,bMpdrifts
 
  end module alps_var

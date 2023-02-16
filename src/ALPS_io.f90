@@ -40,7 +40,7 @@ contains
     use alps_var, only : determine_minima, n_resonance_interval, ngamma, npparbar, Tlim
     use alps_var, only : scan_option, n_scan, scan, use_secant, relativistic, logfit, usebM
     use alps_var, only : maxsteps_fit, n_fits, lambda_initial_fit, lambdafac_fit, epsilon_fit
-    use alps_var, only : bMnmaxs, bMBessel_zeros, bMbetas, bMalphas, bMvdrifts
+    use alps_var, only : bMnmaxs, bMBessel_zeros, bMbetas, bMalphas, bMpdrifts
     implicit none
 
     integer :: ik, is, ifit, ip !Solution, species, fit, additional index
@@ -116,7 +116,7 @@ contains
     allocate(bMBessel_zeros(1:nspec)); bMBessel_zeros=1.d-50
     allocate(bMbetas(1:nspec)); bMbetas=1.d0
     allocate(bMalphas(1:nspec)); bMalphas=1.d0
-    allocate(bMvdrifts(1:nspec)); bMvdrifts=0.d0
+    allocate(bMpdrifts(1:nspec)); bMpdrifts=0.d0
 
 
     do is = 1, nspec
@@ -157,7 +157,7 @@ contains
              write(*,'(a,i4,a,es11.4)')&
                   '  nmax = ',bMnmaxs(is),',        Bessel_zero = ',bMBessel_zeros(is)
              write(*,'(a,es11.4,a,es11.4,a,es11.4)')&
-                   '  beta = ',bMbetas(is),', alpha = ',bMalphas(is),', drift speed = ',bMvdrifts(is)
+                   '  beta = ',bMbetas(is),', alpha = ',bMalphas(is),', drift momentum = ',bMpdrifts(is)
       else
 
        do ifit=1,n_fits(is)
@@ -280,21 +280,21 @@ end subroutine spec_read
 !Subroutine for reading in bi-Maxwellian parameters
 !-=-=-=-=-
 subroutine bM_read(is)
-  use alps_var, only : bMnmaxs,bMBessel_zeros,bMbetas,bMalphas,bMvdrifts
+  use alps_var, only : bMnmaxs,bMBessel_zeros,bMbetas,bMalphas,bMpdrifts
   implicit none
   !Passed
   integer :: is !species index
   !Local
 
   integer :: bM_nmaxs
-  double precision :: bM_Bessel_zeros, bM_betas, bM_alphas, bM_vdrifts
+  double precision :: bM_Bessel_zeros, bM_betas, bM_alphas, bM_pdrifts
 
   nameList /bM_spec/ &
-       bM_nmaxs,bM_Bessel_zeros,bM_betas,bM_alphas,bM_vdrifts
+       bM_nmaxs,bM_Bessel_zeros,bM_betas,bM_alphas,bM_pdrifts
 
   read (unit=unit,nml=bM_spec)
     bMnmaxs(is)=bM_nmaxs; bMBessel_zeros(is)=bM_Bessel_zeros; bMbetas(is)=bM_betas; &
-    bMalphas(is)=bM_alphas; bMvdrifts(is)=bM_vdrifts
+    bMalphas(is)=bM_alphas; bMpdrifts(is)=bM_pdrifts
 end subroutine bM_read
 
 !-=-=-=-=-

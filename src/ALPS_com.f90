@@ -31,7 +31,7 @@ subroutine pass_instructions
   use alps_var, only : ni, nr, omi, omf, gami, gamf, loggridg, loggridw
   use alps_var, only : determine_minima, n_resonance_interval, positions_principal, Tlim
   use alps_var, only : n_scan, scan, scan_option, use_secant, relativistic, logfit, usebM
-  use alps_var, only : bMnmaxs, bMBessel_zeros, bMbetas, bMalphas, bMvdrifts
+  use alps_var, only : bMnmaxs, bMBessel_zeros, bMbetas, bMalphas, bMpdrifts
   use mpi
   implicit none
 
@@ -105,7 +105,7 @@ subroutine pass_instructions
      allocate(bMBessel_zeros(1:nspec)); bMBessel_zeros=1.d-50
      allocate(bMbetas(1:nspec)); bMbetas=1.d0
      allocate(bMalphas(1:nspec)); bMalphas=1.d0
-     allocate(bMvdrifts(1:nspec)); bMvdrifts=0.d0
+     allocate(bMpdrifts(1:nspec)); bMpdrifts=0.d0
 
 
      !Allocate solution space for nroots dispersion solutions
@@ -135,7 +135,7 @@ subroutine pass_instructions
        MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierror)
   call mpi_bcast(bMalphas(:), size(bMalphas(:)),&
        MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierror)
-  call mpi_bcast(bMvdrifts(:), size(bMvdrifts(:)),&
+  call mpi_bcast(bMpdrifts(:), size(bMpdrifts(:)),&
        MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierror)
 
 

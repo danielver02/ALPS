@@ -122,7 +122,7 @@ bM_nmaxs=500
 bM_Bessel_zeros=1.d-50
 bM_betas=1.d0
 bM_alphas=1.d0
-bM_vdrifts=0.d0
+bM_pdrifts=0.d0
 /
 
 &spec_2
@@ -170,7 +170,7 @@ bM_nmaxs=500
 bM_Bessel_zeros=1.d-50
 bM_betas=1.d0
 bM_alphas=1.d0
-bM_vdrifts=0.d0
+bM_pdrifts=0.d0
 /
 
 &scan_input_1
