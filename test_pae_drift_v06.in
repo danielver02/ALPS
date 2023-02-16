@@ -1,0 +1,163 @@
+!===============================================
+!  ALPS INPUT FILE
+!  Testing Bimaxwellian NHDS inputs
+!
+!  Kristopher Klein, Daniel Verscharen
+!  2023 FEB 16
+!===============================================
+! REQUIRED NAMELISTS
+!===============================================
+! SYSTEM AND PLASMA PARAMETERS
+&system
+!Perpendicular and Parallel Wavenumbers
+kperp=1.d-3
+kpar=0.03d0
+!Number of Plasma Species
+nspec=3
+!System Option (see README file)
+option=0
+!Number of Dispersion Solutions to find and follow
+nroots=2
+!Logical to:
+    !T: use search for roots over a map
+    !   in complex frequency space
+    !OR
+    !F: use input guesses for solutions
+use_map=.false.
+!Write or Supress output to screen:
+writeOut=.true.
+!Velocity Space Resolution of f0
+nperp=150
+npar=300
+!Velocity Space Resolution for relativistic calculation
+ngamma=100
+npparbar=200
+!Proton Alfven Velocity / c
+vA=1.d-4
+!Name of input array-
+!Located in 'distribution' folder
+arrayName='test_pae_drift'
+!Maximum amplitude of Bessel function to determine nmax
+Bessel_zero = 1.d-45
+numiter = 50
+D_threshold = 1.d-13
+D_prec = 1.d-5
+D_gap=1.d-5
+positions_principal=3
+n_resonance_interval=100
+Tlim=0.01d0
+maxsteps_fit=500
+lambda_initial_fit=1.d0
+lambdafac_fit=10.d0
+epsilon_fit=1.d-8
+fit_check=T
+determine_minima=F
+scan_option=1 !1: consecutive scans, 2: double scan
+n_scan=1 !number of wavevector scans
+use_secant=T
+/
+
+&guess_1
+g_om=3.d-2
+g_gam=-1.d-5
+/
+
+&guess_2
+g_om=4.5d-2
+g_gam=-1.9d-2
+/
+
+&spec_1
+nn=1.d0
+qq=1.d0
+mm=1.d0
+ff=1
+relat=F
+log_fit=T
+use_bM=F
+/
+
+&ffit_1_1
+fit_type_in=1
+fit_1=1.7959d-1
+fit_2=1.d0
+fit_3=0.d0
+fit_4=1.d0
+fit_5=0.d0
+perpcorr=1.d0
+/
+
+&bM_spec_1
+bM_nmaxs=500
+bM_Bessel_zeros=1.d-50
+bM_betas=1.d0
+bM_alphas=1.d0
+bM_pdrifts=0.d0
+/
+
+&spec_2
+nn=1.d0
+qq=1.d0
+mm=1.d0
+ff=1
+relat=F
+log_fit=T
+use_bM=F
+/
+
+&ffit_2_1
+fit_type_in=1
+fit_1=2.2448E-2
+fit_2=2.5d-1
+fit_3=1.d0
+fit_4=1.d0
+fit_5=0.d0
+perpcorr=2.5d-1
+/
+
+&bM_spec_2
+bM_nmaxs=500
+bM_Bessel_zeros=1.d-50
+bM_betas=1.d0
+bM_alphas=1.d0
+bM_pdrifts=1.d0
+/
+
+&spec_3
+nn=1.1d0
+qq=-1.d0
+mm=5.4466d-4
+ff=1
+relat=F
+log_fit=T
+use_bM=T
+/
+
+&ffit_3_1
+fit_type_in=1
+fit_1=1.4d4
+fit_2=1.836d3
+fit_3=1.2379d-5
+fit_4=1.d0
+fit_5=1.d0
+perpcorr=1.836d3
+/
+
+&bM_spec_3
+bM_nmaxs=500
+bM_Bessel_zeros=1.d-50
+bM_betas=1.d0
+bM_alphas=1.d0
+bM_pdrifts=1.2378688d-5
+/
+
+&scan_input_1
+scan_type=4
+swi=3.d-2
+swf=3.d-1
+swlog=.false.
+ns=256
+nres=1
+heating=.true.
+eigen=.true.
+/
