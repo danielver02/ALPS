@@ -52,12 +52,12 @@ subroutine derivative_f0
             'Calculating df0/dpperp, df0/ppar if necessary...'
     endif
 
-    OutDF = .true.
+
     do is = 1, nspec
 
       if (usebM(is)) then
                 write (*,'(a,i2)') ' Bi-Maxwellian calcuation: no derivatives necessary for species ',is
-                df0(is,iperp,ipar,:)=0.d0
+                df0(is,:,:,:)=0.d0
        else
 
        do iperp = 1, nperp-1
@@ -78,43 +78,63 @@ subroutine derivative_f0
     enddo
     write(*,*)'Derivatives calculated'
 
+
+
+
     !Output df/dv to file
+    OutDF = .false.
     if (OutDF) then
 
        if (writeOut) &
-            write(*,'(a)')&
-            'Outputing df0/dpperp, df0/dppar'
+            write(*,'(a)') 'Outputing df0/dpperp, df0/dppar'
        write(fmt,'(a)') '(2es14.4,2es14.4)'
        do is = 1, nspec
-          integrate = 0.d0
+
+
+         if (.not.usebM(is)) then
           dpperp = pp(is, 2, 2, 1) - pp(is, 1, 2, 1)
           dppar  = abs(pp(is, 2, 2, 2) - pp(is, 2, 1, 2))
 
           write(writeName,'(3a,i0,a)')&
                'distribution/',trim(arrayName),'_dfdv.',is,'.array'
+
+
           call get_unused_unit(unit_f)
           open(unit=unit_f,file=trim(writeName),status='replace')
-          do iperp = 0, nperp
-             do ipar = 0, npar
-                integrate = integrate + &
-                     pp(is,iperp,ipar,1) * f0(is,iperp,ipar) * &
-                     2.d0 * pi * dpperp * dppar
 
-                if((iperp.GT.0).AND.(iperp.LT.nperp)) then
-                 if((ipar.GT.0).AND.(ipar.LT.npar)) then
+          do iperp = 1, nperp-1
+             do ipar = 1, npar-1
+
                    write(unit_f,fmt) pp(is,iperp,ipar,1),pp(is,iperp,ipar,2),&
                     df0(is, iperp,ipar,1),df0(is, iperp,ipar,2)
-                 endif
-                endif
-
              enddo
              write(unit_f,*)
           enddo
           close(unit_f)
-          write(*,'(a,i3,a, 2es14.4)') 'Integration of species', is,':', integrate
+        endif
        enddo
     endif
     !End output
+
+
+
+    do is = 1, nspec
+       integrate = 0.d0
+       dpperp = pp(is, 2, 2, 1) - pp(is, 1, 2, 1)
+       dppar  = abs(pp(is, 2, 2, 2) - pp(is, 2, 1, 2))
+
+       do iperp = 0, nperp
+          do ipar = 0, npar
+             integrate = integrate + &
+                  pp(is,iperp,ipar,1) * f0(is,iperp,ipar) * &
+                  2.d0 * pi * dpperp * dppar
+          enddo
+       enddo
+       write(*,'(a,i3,a, 2es14.4)') 'Integration of species', is,':', integrate
+     enddo
+
+
+
 
     if (writeOut) write(*,'(a)') '-=-=-=-=-=-=-=-=-'
 
