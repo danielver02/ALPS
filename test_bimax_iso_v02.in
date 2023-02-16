@@ -102,7 +102,7 @@ mm=5.4466d-4
 ff=1
 relat=F
 log_fit=T
-use_bM=F
+use_bM=T
 /
 
 &ffit_2_1
