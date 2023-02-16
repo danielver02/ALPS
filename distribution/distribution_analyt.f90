@@ -29,11 +29,23 @@ double complex function distribution_analyt(is,pperp,ppar_C)
   ! Ensure that the distribution is normalised. generate_distribution can do this automatically, but the fit
   ! routine of ALPS will not do this.
   ! Define the function for however many species you would like to do this.
+
+  ! Remember that ppar_C is a complex variable. For most functions, this should not make a difference.
+  ! In the following, define the complex f0 function of pperp and ppar_C for any number of species as needed.
+  ! Only those species that are set to have either distributionS=0 in the generate_distribution input file or
+  ! those species that have ff=0 in the ALPS input file will be treated in this way.
+  ! Any other cases for species will be ignored.
+
   select case(is)
-    case(1)
-      f0=123.d0
-    case(2)
-      f0=321.d0
+
+    case(1) ! Species 1
+      f0=1.d0
+
+
+    case(2) ! Species 2
+      f0=1.d0
+
+
     end select
 
 
