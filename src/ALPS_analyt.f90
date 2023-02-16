@@ -191,7 +191,7 @@ end function
 ! the full field param_fit.
 !-=-=-=-=-=-=
 subroutine determine_param_fit
-	use alps_var, only : writeOut, fit_type, param_fit, n_fits, nspec, f0, nperp, npar, logfit
+	use alps_var, only : writeOut, fit_type, param_fit, n_fits, nspec, f0, nperp, npar, logfit, runname
 	use alps_var, only : relativistic,npparbar,f0_rel,ngamma, perp_correction, gamma_rel, usebM
 	implicit none
 	integer :: ifit,n_params,par_ind,iperp,is,is_run,is_rel,sproc_rel,nJT
@@ -242,8 +242,7 @@ subroutine determine_param_fit
 
 	  unit_spec=2500+is
 	  write(specwrite,'(i0)') is
-	  open(unit = unit_spec,file = 'solution/fit_parameters.'//trim(specwrite)//'.out', status = 'replace')
-
+	  open(unit = unit_spec,file = 'distribution/'//trim(runname)//'.fit_parameters.'//trim(specwrite)//'.out', status = 'replace')
 
 
 		do iperp=0,upperlimit
@@ -467,7 +466,7 @@ end subroutine
 !-=-=-=-=-=-=
 subroutine output_fit(qualitytotal)
 	use alps_io, only : isnancheck, alps_error
-	use alps_var, only : fit_type, param_fit, n_fits, nspec, nperp, npar, pp, f0, pi, vA
+	use alps_var, only : fit_type, param_fit, n_fits, nspec, nperp, npar, pp, f0, pi, vA, runname
 	use alps_var, only : relativistic,gamma_rel,pparbar_rel,ngamma,npparbar,f0_rel, ms, usebM
 
 
@@ -509,7 +508,8 @@ subroutine output_fit(qualitytotal)
 
 	  unit_spec=2000+is
 	  write(specwrite,'(i0)') is
-	  open(unit = unit_spec,file = 'solution/fit_result.'//trim(specwrite)//'.out', status = 'replace')
+	  open(unit = unit_spec,file = 'distribution/'//trim(runname)//'.fit_result.'//trim(specwrite)//'.out', status = 'replace')
+
 
 	  integrate = 0.d0
 
