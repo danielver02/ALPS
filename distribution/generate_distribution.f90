@@ -60,9 +60,6 @@ program generate_distribution
     case (0) ! The code will use distribution_analyt, no normalisation necessary
       norm=1.d0
 
-      if (autoscale(is)) &
-		     write (*,*) "Using an analytical function. Ignoring autoscaling."
-
       pperp_max = maxPperp(is)
       ppar_max = maxPpar(is)
 
@@ -231,6 +228,8 @@ program generate_distribution
 
 
      write (*,'(a,i3)')   "Species", is
+     if (distribution(is).EQ.0) &
+       write (*,*) "Using analytical function from distribution_analyt.f90. Ignoring autoscaling."
      write (*,'(a,es14.4)') " Integration:   ", integrate
      write (*,'(a,es14.4)') " Norm:          ", norm
      write (*,'(a,es14.4)') " pperp_max:     ", pperp_max
@@ -239,7 +238,6 @@ program generate_distribution
      select case(distribution(is))
       case (0)
                 write (*,*) "Fit type:          0"
-                write (*,*) "Using analytical function from distribution_analyt.f90"
       case (1)
                 write (*,*) "Fit type:          1"
                 write (*,'(a,es14.4)') " ideal fit_1:   ", ifit_1

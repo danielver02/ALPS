@@ -17,11 +17,11 @@ module alps_distribution_analyt
 
 contains
 
-double complex function distribution_analyt(is,pperp,ppar_C)
+double complex function distribution_analyt(is,pperp,ppar)
   implicit none
   integer :: is
   double precision :: pperp
-  double complex :: ppar_C
+  double complex :: ppar
   double complex :: f0
 
 
@@ -30,8 +30,8 @@ double complex function distribution_analyt(is,pperp,ppar_C)
   ! routine of ALPS will not do this.
   ! Define the function for however many species you would like to do this.
 
-  ! Remember that ppar_C is a complex variable. For most functions, this should not make a difference.
-  ! In the following, define the complex f0 function of pperp and ppar_C for any number of species as needed.
+  ! Remember that ppar is a complex variable. For most functions, this should not make a difference.
+  ! In the following, define the complex f0 function of pperp and ppar for any number of species as needed.
   ! Only those species that are set to have either distributionS=0 in the generate_distribution input file or
   ! those species that have ff=0 in the ALPS input file will be treated in this way.
   ! Any other cases for species will be ignored.
