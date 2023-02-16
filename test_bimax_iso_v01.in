@@ -74,7 +74,7 @@ mm=1.d0
 ff=1
 relat=F
 log_fit=T
-use_bM=F
+use_bM=T
 /
 
 &ffit_1_1

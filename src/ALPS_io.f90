@@ -157,7 +157,8 @@ contains
              write(*,'(a,i4,a,es11.4)')&
                   '  nmax = ',bMnmaxs(is),',        Bessel_zero = ',bMBessel_zeros(is)
              write(*,'(a,es11.4,a,es11.4,a,es11.4)')&
-                   '  beta = ',bMbetas(is),', alpha = ',bMalphas(is),', drift momentum = ',bMpdrifts(is)
+                  '  beta = ',bMbetas(is),', alpha = ',bMalphas(is),', drift momentum = ',bMpdrifts(is)
+             close(unit)
       else
 
        do ifit=1,n_fits(is)
