@@ -52,12 +52,12 @@ contains
 
 
   subroutine calc_chi(chi,j,kz,kperp,x)
-  use alps_var, only : bMnmaxs, bMBessel_zeros, bMbetas, bMalphas,bMvdrifts
+  use alps_var, only : bMnmaxs, bMBessel_zeros, bMbetas, bMalphas,bMpdrifts
   use alps_var, only : ms, qs, ns
   implicit none
   double complex :: chi(3,3),Y(3,3),Ynew(3,3),x
   double precision :: kz,kperp,z
-  double precision :: Omega,ell,vtherm,Bessel_zero
+  double precision :: Omega,ell,vtherm,Bessel_zero,vdrift
   integer :: j,n,i,k,nmaxrun
   logical :: Bessel_run
   integer :: nmax
@@ -67,6 +67,7 @@ contains
   vtherm=sqrt(bMbetas(j)/(ns(j)*ms(j)))
   nmax=bMnmaxs(j)
   Bessel_zero=bMBessel_zeros(j)
+  vdrift=bMpdrifts(j)/ms(j)
 
   z=0.5d0*(kperp*vtherm/Omega)*(kperp*vtherm/Omega)*bMalphas(j)
 
@@ -107,7 +108,7 @@ contains
   chi(2,3)=Y(2,3)/(ell*ell)
   chi(3,1)=Y(3,1)/(ell*ell)
   chi(3,2)=Y(3,2)/(ell*ell)
-  chi(3,3)=2.d0*x*bMvdrifts(j)/(ell*ell*kz*vtherm*vtherm*bMalphas(j))+Y(3,3)/(ell*ell)
+  chi(3,3)=2.d0*x*vdrift/(ell*ell*kz*vtherm*vtherm*bMalphas(j))+Y(3,3)/(ell*ell)
 
 
 
@@ -120,14 +121,14 @@ contains
 
 
   subroutine calc_ypsilon(Y,j,n,kz,kperp,x)
-  use alps_var, only : bMbetas, bMalphas,bMvdrifts
+  use alps_var, only : bMbetas, bMalphas,bMpdrifts
   use alps_var, only : ms, qs, ns
 
   implicit none
   double complex, parameter ::  uniti=(0.d0,1.d0)
   double complex :: zeta,x,Y(3,3),An,Bn,resfac
   double precision :: kz,kperp,BInz,z
-  double precision :: Omega,ell,vtherm
+  double precision :: Omega,ell,vtherm,vdrift
   !double precision :: besselI
   double precision :: dBInzdz
   integer :: n,j
@@ -139,16 +140,17 @@ contains
   Omega=qs(j)/ms(j)
   ell=sqrt(ms(j)/(ns(j)*qs(j)*qs(j)))
   vtherm=sqrt(bMbetas(j)/(ns(j)*ms(j)))
+  vdrift=bMpdrifts(j)/ms(j)
 
 
-  zeta=(x-kz*bMvdrifts(j)-1.d0*n*Omega)/(kz*vtherm)
-  resfac=x-kz*bMvdrifts(j)-1.d0*n*Omega
+  zeta=(x-kz*vdrift-1.d0*n*Omega)/(kz*vtherm)
+  resfac=x-kz*vdrift-1.d0*n*Omega
   z=0.5d0*(kperp*vtherm/Omega)*(kperp*vtherm/Omega)*bMalphas(j)
 
   An=(bMalphas(j)-1.d0)
   An=An+(1.d0/(kz*vtherm)) *( bMalphas(j)*resfac + 1.d0*n*Omega)*dispfunct(zeta,kpos)
 
-  Bn=(bMalphas(j)*(x-1.d0*n*Omega)-(kz*bMvdrifts(j)-1.d0*n*Omega))/kz
+  Bn=(bMalphas(j)*(x-1.d0*n*Omega)-(kz*vdrift-1.d0*n*Omega))/kz
   Bn=Bn+((x-1.d0*n*Omega)*(bMalphas(j)*resfac+1.d0*n*Omega)/(kz*kz*vtherm) )*dispfunct(zeta,kpos)
 
   if (n.GE.0) then
