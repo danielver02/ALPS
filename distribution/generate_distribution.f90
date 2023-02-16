@@ -6,6 +6,7 @@
 !Kristopher Klein, Daniel Verscharen
 
 program generate_distribution
+  use alps_distribution_analyt, only : distribution_analyt
   implicit none
   integer :: iperp,ipar !perp, par indices
   integer :: nperp,npar !size of perp, par grids
@@ -28,6 +29,7 @@ program generate_distribution
   double precision :: integrate
   double precision :: norm, a
   double precision :: BESSK
+  double complex :: ppar_C
 
 
   !I/O values for namelist
@@ -42,7 +44,6 @@ program generate_distribution
 
   call read_in_params
 
-
   allocate(unit_out(1:nspec)); unit_out = 0
 
   do is = 1 , nspec
@@ -56,6 +57,16 @@ program generate_distribution
 
 	! determine the normalization:
 	select case(distribution(is))
+    case (0) ! The code will use distribution_analyt, no normalisation necessary
+      norm=1.d0
+
+      if (autoscale(is)) &
+		     write (*,*) "Using an analytical function. Ignoring autoscaling."
+
+      pperp_max = maxPperp(is)
+      ppar_max = maxPpar(is)
+
+
 	  case (1) ! bi-Maxwellian
 	  	norm = pi**(-1.5d0) /((ms(is) * beta * tau(is))**(3.d0/2.d0)*alph(is) )
 
@@ -150,6 +161,11 @@ program generate_distribution
 
           select case(distribution(is))
 
+          case (0) ! use function from distribution_analyt
+
+            ppar_C=cmplx(ppar,0.d0,kind(1.d0))
+            f0 = real(distribution_analyt(is,pperp,ppar_C))
+
 	        case (1) ! bi-Maxwellian
         	   f0 =  exp( -(( (ppar-p_drift(is))**2.d0)/&
                 	( beta * ms(is) * tau(is))&
@@ -221,6 +237,9 @@ program generate_distribution
      write (*,'(a,es14.4)') " ppar_max:      ", ppar_max
      write (*,*) " "
      select case(distribution(is))
+      case (0)
+                write (*,*) "Fit type:          0"
+                write (*,*) "Using analytical function from distribution_analyt.f90"
       case (1)
                 write (*,*) "Fit type:          1"
                 write (*,'(a,es14.4)') " ideal fit_1:   ", ifit_1

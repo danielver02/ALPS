@@ -98,8 +98,10 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_ALPS_OBJECTS = ALPS_var.$(OBJEXT) ALPS_io.$(OBJEXT) \
-	ALPS_com.$(OBJEXT) ALPS_analyt.$(OBJEXT) ALPS_NHDS.$(OBJEXT) \
+am__dirstamp = $(am__leading_dot)dirstamp
+am_ALPS_OBJECTS = ../distribution/distribution_analyt.$(OBJEXT) \
+	ALPS_var.$(OBJEXT) ALPS_io.$(OBJEXT) ALPS_com.$(OBJEXT) \
+	ALPS_analyt.$(OBJEXT) ALPS_NHDS.$(OBJEXT) \
 	ALPS_fns_rel.$(OBJEXT) ALPS_fns.$(OBJEXT) ALPS.$(OBJEXT)
 ALPS_OBJECTS = $(am_ALPS_OBJECTS)
 ALPS_DEPENDENCIES =
@@ -243,10 +245,12 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
+AUTOMAKE_OPTIONS = subdir-objects
 AM_FCFLAGS = -O4 -fbounds-check -ffpe-trap=zero,overflow -Wunused -funroll-loops -g -fbacktrace
 ALPS_LDADD = -lm -llapack -lblas
-ALPS_SOURCES = ALPS_var.f90 ALPS_io.f90 ALPS_com.f90 ALPS_analyt.f90 \
-	ALPS_NHDS.f90 ALPS_fns_rel.f90 ALPS_fns.f90 ALPS.f90
+ALPS_SOURCES = ../distribution/distribution_analyt.f90 ALPS_var.f90 \
+	ALPS_io.f90 ALPS_com.f90 ALPS_analyt.f90 ALPS_NHDS.f90 \
+	ALPS_fns_rel.f90 ALPS_fns.f90 ALPS.f90
 all: all-am
 
 .SUFFIXES:
@@ -322,6 +326,15 @@ uninstall-binPROGRAMS:
 
 clean-binPROGRAMS:
 	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
+../distribution/$(am__dirstamp):
+	@$(MKDIR_P) ../distribution
+	@: > ../distribution/$(am__dirstamp)
+../distribution/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) ../distribution/$(DEPDIR)
+	@: > ../distribution/$(DEPDIR)/$(am__dirstamp)
+../distribution/distribution_analyt.$(OBJEXT):  \
+	../distribution/$(am__dirstamp) \
+	../distribution/$(DEPDIR)/$(am__dirstamp)
 
 ALPS$(EXEEXT): $(ALPS_OBJECTS) $(ALPS_DEPENDENCIES) $(EXTRA_ALPS_DEPENDENCIES) 
 	@rm -f ALPS$(EXEEXT)
@@ -329,6 +342,7 @@ ALPS$(EXEEXT): $(ALPS_OBJECTS) $(ALPS_DEPENDENCIES) $(EXTRA_ALPS_DEPENDENCIES)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
+	-rm -f ../distribution/*.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
@@ -454,6 +468,8 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-rm -f ../distribution/$(DEPDIR)/$(am__dirstamp)
+	-rm -f ../distribution/$(am__dirstamp)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"

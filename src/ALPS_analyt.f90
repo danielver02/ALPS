@@ -25,11 +25,20 @@ contains
 !-=-=-=-=-=-=
 double complex function eval_fit(is,iperp,ppar_valC)
 	use alps_var, only : fit_type, pp, param_fit, n_fits, gamma_rel,nspec,relativistic
+	use alps_distribution_analyt, only : distribution_analyt
 	implicit none
 	integer :: is,iperp,par_ind,ifit,n_params,is_rel,sproc_rel,is_run
 	double precision :: pperp_val
 	double precision,allocatable, dimension(:) :: params
 	double complex :: ppar_valC
+
+
+
+	! Use the pre-coded distribution from distribution/distribution_analyt.f90
+	if (n_fits(is).EQ.0) then
+		eval_fit=distribution_analyt(is,pp(is,iperp,1,1),ppar_valC)
+		return
+	endif
 
 
 
@@ -210,11 +219,22 @@ subroutine determine_param_fit
 	qualitytotal=0.d0
 
 	do is=1,nspec
+
 		if (usebM(is)) then
 							write (*,'(a,i2)') ' Bi-Maxwellian calcuation: no fits necessary for species ',is
 							param_fit(is,:,:,:)=0.d0
 							fit_type(is,:)=1
 							perp_correction(is,:)=1.d0
+
+		 elseif (n_fits(is).EQ.0) then
+
+			 	write (*,'(a,i2)') ' Using analytical function from distribution/distribution_analyt.f90: no fits necessary for species ',is
+
+				param_fit(is,:,:,:)=0.d0
+				fit_type(is,:)=1
+				perp_correction(is,:)=1.d0
+
+
 		 else
 		! For all fit types that include a fit parameter for the perpendicular momentum (kappa and Moyal),
 		! we must not fit this parameter when pperp=0. Otherwise, the LM matrix is singular:
@@ -311,6 +331,7 @@ subroutine determine_param_fit
 
 			nJT=nJT+n_params
 
+
 			! Fit and return everything in one array "params":
 			if (relativistic(is)) then
 				 ! Determine your sproc_rel:
@@ -342,6 +363,7 @@ subroutine determine_param_fit
 
 					allocate(g(0:ipparbar_upper-ipparbar_lower))
 
+
 					if (logfit(is)) then
 						g=log(f0_rel(sproc_rel,iperp,ipparbar_lower:ipparbar_upper))
 					else
@@ -354,6 +376,7 @@ subroutine determine_param_fit
 					deallocate(g)
 
 				else
+
 
 					par_ind=0
 					do ifit=1,n_fits(is)
@@ -370,6 +393,7 @@ subroutine determine_param_fit
 
 			else	! non-relativistic
 
+
 				allocate(g(0:npar))
 
 				if (logfit(is)) then
@@ -378,11 +402,11 @@ subroutine determine_param_fit
 					g=f0(is,iperp,:)
 				endif
 
+
 				call LM_nonlinear_fit(is,g,n_params,nJT,params,param_mask,iperp,npar,0,quality)
 				deallocate(g)
 
 			endif
-
 
 			qualitytotal=qualitytotal+quality
 
@@ -451,7 +475,6 @@ subroutine determine_param_fit
 
 
 
-
 	if(writeOut) then
 		call output_fit(qualitytotal)
 		   write(*,'(a)') '-=-=-=-=-=-=-=-=-'
@@ -476,7 +499,7 @@ subroutine output_fit(qualitytotal)
 	double complex :: ppar_comp
 	character (10) :: specwrite
 
-	write (*,'(a)') 'Results of the fit for hybrid analytic continuation at iperp = 1:'
+	write (*,'(a)') ' Results of the fit for hybrid analytic continuation at iperp = 1:'
 	do is=1,nspec
 		do ifit=1,n_fits(is)
 			if(fit_type(is,ifit).EQ.1) n_params=3
@@ -488,7 +511,7 @@ subroutine output_fit(qualitytotal)
 
 			if (.not.usebM(is)) then
 				do iparam=1,n_params
-					write (*,'(a,i2,a,i2,a,i2,a,2es14.4)') ' param_fit(',is,', 1,',iparam,',',ifit,') = ',param_fit(is,1,iparam,ifit)
+					write (*,'(a,i2,a,i2,a,i2,a,2es14.4)') '  param_fit(',is,', 1,',iparam,',',ifit,') = ',param_fit(is,1,iparam,ifit)
 				enddo
 			write (*,'(a)') ' '
 			endif
@@ -563,7 +586,7 @@ subroutine output_fit(qualitytotal)
 	  endif
 	  close(unit_spec)
 
-       write(*,'(a,i3,a, 2es14.4)') ' Integration of fit for species', is,':', integrate
+       write(*,'(a,i3,a, 2es14.4)') ' Integration of fit/analytical function for species', is,':', integrate
 	endif
 	enddo
 

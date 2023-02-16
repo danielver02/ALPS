@@ -131,6 +131,8 @@ contains
             ' ns/nREF = ',ns(is),' | qs/qREF = ',qs(is),' | ms/mREF = ',ms(is)
        write(*,'(a,i4)')&
             ' Number of fitted functions = ',n_fits(is)
+      if (n_fits(is).EQ.0) &
+          write(*,'(a)') ' Using function defined in distribution/distribution_analyt.f90'
        write(*,'(a,l1)')&
             ' Relativistic effects = ',relativistic(is)
 
