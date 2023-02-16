@@ -15,6 +15,9 @@ alphs=1.d0
 ps=0.d0
 kappas=8.d0
 distributions=3
+autoscaleS=.true.
+maxPperpS=1.d0
+maxPparS=1.d0
 /
 
 &spec_2
@@ -24,4 +27,7 @@ alphs=1.d0
 ps=0.d0
 kappas=8.d0
 distributions=3
+autoscaleS=.true.
+maxPperpS=1.d0
+maxPparS=1.d0
 /
