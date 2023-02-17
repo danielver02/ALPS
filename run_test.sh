@@ -1,7 +1,9 @@
-mkdir solution
+nnodes=12
+input='test_kpar_fast_v00'
+mkdir -p solution
 cd interpolation
 ./interpolation test_interp.in
 cd ../distribution
-./generate_distribution test_kpar_fast_v00_dist.in
+./generate_distribution $input'_dist.in'
 cd ../
-mpirun -np 8 --oversubscribe ./src/ALPS test_kpar_fast_v00.in
+mpirun -np $nnodes --oversubscribe ./src/ALPS $input'.in'
