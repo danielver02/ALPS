@@ -96,9 +96,9 @@ bM_pdrifts=0.d0
 /
 
 &spec_2
-nn=1.d0
-qq=1.d0
-mm=1.d0
+nn=5.d-2
+qq=2.d0
+mm=4.d0
 ff=1
 relat=F
 log_fit=T
@@ -107,12 +107,12 @@ use_bM=F
 
 &ffit_2_1
 fit_type_in=1
-fit_1=2.2448E-2
-fit_2=2.5d-1
+fit_1=2.2448E-4
+fit_2=1.25d-2
 fit_3=1.d0
 fit_4=1.d0
 fit_5=0.d0
-perpcorr=2.5d-1
+perpcorr=1.25d-2
 /
 
 &bM_spec_2
@@ -135,12 +135,12 @@ use_bM=F
 
 &ffit_3_1
 fit_type_in=1
-fit_1=1.4d4
-fit_2=1.836d3
+fit_1=5.15d5
+fit_2=2.01d4
 fit_3=1.2379d-5
 fit_4=1.d0
 fit_5=1.d0
-perpcorr=1.836d3
+perpcorr=2.019d4
 /
 
 &bM_spec_3
