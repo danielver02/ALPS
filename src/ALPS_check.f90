@@ -1,3 +1,9 @@
+!Copyright (c) 2023, Kristopher G. Klein and Daniel Verscharen
+!All rights reserved.
+!
+!This source code is licensed under the BSD-style license found in the
+!LICENSE file in the root directory of this source tree.
+!
 !===============================================================================
 !I                                                                             I
 !I                              A  L  P  S                                     I
@@ -23,7 +29,6 @@ subroutine check_parameters
   implicit none
 
   write (*,'(a)') "Running parameter checks..."
-
 
   ! THIS IS THE POINT WHERE WE WILL ADD THE PARAMETER CHECKS
 
