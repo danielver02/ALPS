@@ -1,3 +1,9 @@
+!Copyright (c) 2023, Kristopher G. Klein and Daniel Verscharen
+!All rights reserved.
+!
+!This source code is licensed under the BSD-style license found in the
+!LICENSE file in the root directory of this source tree.
+!
 !===============================================================================
 !I                                                                             I
 !I                              A  L  P  S                                     I
@@ -24,6 +30,10 @@ double complex function distribution_analyt(is,pperp,ppar)
   double complex :: ppar
   double complex :: f0
 
+  double precision :: pi,beta,ms
+
+  pi=atan(1.d0)*4.d0
+
 
   ! This function defines the f0 table for the creation of distributions and for the analytic continuation.
   ! Ensure that the distribution is normalised. generate_distribution can do this automatically, but the fit
@@ -36,15 +46,27 @@ double complex function distribution_analyt(is,pperp,ppar)
   ! those species that have ff=0 in the ALPS input file will be treated in this way.
   ! Any other cases for species will be ignored.
 
+
+
   select case(is)
 
     case(1) ! Species 1
-      f0=1.d0
 
+      ! The example below illustrates how to set up a Maxwellian with beta = 1:
+      beta=1.d0
+      ms=1.d0
+
+      f0=(pi**(-1.5d0) /((ms * beta )**(3.d0/2.d0) )) * exp( -( ppar**2/( beta * ms)&
+        + (pperp**2)/( beta * ms ) ) )
 
     case(2) ! Species 2
-      f0=1.d0
 
+      ! The example below illustrates how to set up a Maxwellian with beta = 1:
+      beta=1.d0
+      ms=1.d0/1836.d0
+
+      f0=(pi**(-1.5d0) /((ms * beta )**(3.d0/2.d0) )) * exp( -( ppar**2/( beta * ms)&
+        + (pperp**2)/( beta * ms ) ) )
 
     end select
 
