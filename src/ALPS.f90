@@ -23,6 +23,7 @@ program alps
   use alps_fns,    only : om_scan, om_double_scan
   use alps_com,    only : pass_instructions, pass_distribution
   use alps_analyt, only : determine_param_fit
+  use alps_check,  only : check_parameters
   use mpi
   implicit none
 
@@ -75,6 +76,8 @@ program alps
      !f0 not needed for dispersion calculation
      !Deallocate to save space.
      deallocate(f0)
+
+     call check_parameters
 
   endif
 
