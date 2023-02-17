@@ -1,0 +1,126 @@
+!===============================================
+!  Relativistic Test Scan
+!  ALPS SCAN INPUT FILE
+! beta = 1.0; kpar = [0.001,10]
+!  Kristopher Klein, Daniel Verscharen
+!  2018 Jan 9
+!===============================================
+! REQUIRED NAMELISTS
+!===============================================
+! SYSTEM AND PLASMA PARAMETERS
+&system
+!Perpendicular and Parallel Wavenumbers
+kperp=1.d-3
+kpar=1.d-1
+!Number of Plasma Species
+nspec=2
+!System Option (see README file)
+option=0
+!Number of Dispersion Solutions to find and follow
+nroots=2
+!Logical to:
+    !T: use search for roots over a map 
+    !   in complex frequency space
+    !OR
+    !F: use input guesses for solutions 
+use_map=.false.
+!Write or Supress output to screen:
+writeOut=.true.
+!Velocity Space Resolution of f0
+nperp=30
+npar=60
+ngamma=500
+npparbar=500
+!Proton Alfven Velocity / c
+vA=1.d0
+!Name of input array- 
+!Located in 'distribution' folder
+arrayName='test_relativistic'
+!Maximum amplitude of Bessel function to determine nmax
+Bessel_zero = 1.d-45
+numiter = 50
+D_threshold = 1.d-13
+D_prec = 1.d-5
+D_gap=1.d-5
+positions_principal=5
+n_resonance_interval=100
+maxsteps_fit=500
+lambda_initial_fit=1.d0
+lambdafac_fit=10.d0
+epsilon_fit=1.d-8
+fit_check=T
+determine_minima=T
+scan_option=1 !1: consecutive scans, 2: double scan
+n_scan=1 !number of wavevector scans
+use_secant=T
+/
+
+
+&guess_1
+g_om=6.2713d-2
+g_gam=-4.662d-8
+/
+
+&guess_2
+g_om=1.d0
+g_gam=-1.655d-6
+/
+
+&maps_1
+loggridw=.false.	
+loggridg=.false.
+omi     = -5.d-3		
+omf     = 5.d-3
+gami    = -2.5d-3
+gamf    = 1.d-4
+ni      = 47
+nr      = 48
+/
+
+&spec_1
+nn=1.d0
+qq=1.d0
+mm=1.d0
+ff=1
+relat=T
+log_fit=T
+/
+
+&ffit_1_1
+fit_type_in=4
+fit_1=6.2719d-01
+fit_2=0.d0
+fit_3=0.d0
+perpcorr=2.d0 ! Ideally, this is 1 / (beta_perp * ms)
+/
+
+
+&spec_2
+nn=1.d0
+qq=-1.d0
+mm=1.d0
+ff=1
+relat=T
+log_fit=T
+/
+
+&ffit_2_1
+fit_type_in=4
+fit_1=6.2719d-01
+fit_2=1.d0
+fit_3=1.d0
+perpcorr=2.d0
+/
+
+&scan_input_1
+scan_type=4	 
+swi=0.1d0
+swf=1.0d0 
+swlog=.false.
+ns=25
+nres=1
+heating=.false.
+eigen=.false.
+/
+
+
