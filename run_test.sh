@@ -1,5 +1,5 @@
 nnodes=12
-input='test_kpar_fast_v00'
+input='test_kpar_fast'
 mkdir -p solution
 cd interpolation
 ./interpolation test_interp.in
