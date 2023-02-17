@@ -1,12 +1,9 @@
 !===============================================
 !  ALPS INPUT FILE
-!  Isotropic Maxwellian D5
-!  320 x 640 resolution
-!  8 v_ts spread
-!  Scan over kperp
+!  Testing Bimaxwellian NHDS inputs
 !
 !  Kristopher Klein, Daniel Verscharen
-!  2017 JAN 02
+!  2023 FEB 16
 !===============================================
 ! REQUIRED NAMELISTS
 !===============================================
@@ -14,61 +11,60 @@
 &system
 !Perpendicular and Parallel Wavenumbers
 kperp=1.d-3
-kpar=1.d-2
+kpar=0.03d0
 !Number of Plasma Species
 nspec=2
 !System Option (see README file)
 option=0
 !Number of Dispersion Solutions to find and follow
-nroots=1
+nroots=2
 !Logical to:
-    !T: use search for roots over a map 
+    !T: use search for roots over a map
     !   in complex frequency space
     !OR
-    !F: use input guesses for solutions 
-use_map=.true.
+    !F: use input guesses for solutions
+use_map=.false.
 !Write or Supress output to screen:
 writeOut=.true.
 !Velocity Space Resolution of f0
-nperp=240
-npar=480
+nperp=150
+npar=300
+!Velocity Space Resolution for relativistic calculation
+ngamma=100
+npparbar=200
 !Proton Alfven Velocity / c
 vA=1.d-4
-!Name of input array- 
+!Name of input array-
 !Located in 'distribution' folder
-arrayName='max_C5'
+arrayName='test_bimax_v01'
 !Maximum amplitude of Bessel function to determine nmax
-Bessel_zero = 1.d-50
-numiter = 500
-D_threshold = 1.d-5
+Bessel_zero = 1.d-45
+numiter = 50
+D_threshold = 1.d-13
 D_prec = 1.d-5
-positions_principal=5
+D_gap=1.d-5
+positions_principal=3
 n_resonance_interval=100
+Tlim=0.01d0
 maxsteps_fit=500
 lambda_initial_fit=1.d0
 lambdafac_fit=10.d0
 epsilon_fit=1.d-8
 fit_check=T
-determine_minima=T
+determine_minima=F
 scan_option=1 !1: consecutive scans, 2: double scan
-n_scan=0 !number of wavevector scans
+n_scan=1 !number of wavevector scans
 use_secant=T
 /
 
-&maps_1
-loggridw=.false.	
-loggridg=.false.
-omi     =-3.d-3
-omf     = 3.d-3
-gami    = -1.d-3
-gamf    = 3.d-4
-ni      = 128
-nr      = 128
+&guess_1
+g_om=3.d-2
+g_gam=-1.d-5
 /
 
-&guess_1
-g_om=9.96d-3
-g_gam=-1.39d-5
+&guess_2
+g_om=4.5d-2
+g_gam=-1.9d-2
 /
 
 &spec_1
@@ -76,66 +72,64 @@ nn=1.d0
 qq=1.d0
 mm=1.d0
 ff=1
+relat=F
+log_fit=T
+use_bM=T
 /
 
 &ffit_1_1
 fit_type_in=1
-fit_1=2.d0
+fit_1=1.7959d-1
 fit_2=1.d0
 fit_3=0.d0
+fit_4=1.d0
+fit_5=0.d0
+perpcorr=1.d0
 /
 
-&ffit_1_2
-fit_type_in=1
-fit_1=1.d0
-fit_2=1.d0
-fit_3=1.d0
-/
-
-&ffit_1_3
-fit_type_in=1
-fit_1=1.d0
-fit_2=1.d0
-fit_3=1.d0
+&bM_spec_1
+bM_nmaxs=500
+bM_Bessel_zeros=1.d-50
+bM_betas=1.d0
+bM_alphas=1.d0
+bM_pdrifts=0.d0
 /
 
 &spec_2
 nn=1.d0
 qq=-1.d0
-mm=0.000544662d0
+mm=5.4466d-4
 ff=1
+relat=F
+log_fit=T
+use_bM=F
 /
 
 &ffit_2_1
 fit_type_in=1
-fit_1=1.d0
-fit_2=1.d0
+fit_1=1.4d4
+fit_2=1.836d3
 fit_3=0.d0
+fit_4=1.d0
+fit_5=1.d0
+perpcorr=1.836d3
 /
 
-&ffit_2_2
-fit_type_in=1
-fit_1=1.d0
-fit_2=1.d0
-fit_3=1.d0
-/
-
-&ffit_2_3
-fit_type_in=1
-fit_1=1.d0
-fit_2=1.d0
-fit_3=1.d0
+&bM_spec_2
+bM_nmaxs=500
+bM_Bessel_zeros=1.d-50
+bM_betas=1.d0
+bM_alphas=1.d0
+bM_pdrifts=0.d0
 /
 
 &scan_input_1
-scan_type=4 !kpar scan
-swi=0.01d0
-swf=10.d0 
-swlog=.true.
+scan_type=4
+swi=3.d-2
+swf=3.d-1
+swlog=.false.
 ns=256
 nres=1
-heating=.false.
-eigen=.false.
+heating=.true.
+eigen=.true.
 /
-
-
