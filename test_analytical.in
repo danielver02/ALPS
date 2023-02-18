@@ -1,11 +1,11 @@
 !===============================================
-!  ALPS INPUT FILE: Quick Test Example
+!  ALPS INPUT FILE: Analytic Function Evaluation
 !  120 x 240 momentum resolution
-!  6 v_ts spread (from test_kpar_fast_dist.in)
+!  6 v_ts spread (from test_analytical_dist.in)
 !  Scan over one decade in kparallel
 !
 !  Kristopher Klein, Daniel Verscharen
-!  2023 FEB 17
+!  2023 FEB 18
 !===============================================
 ! REQUIRED NAMELISTS
 !===============================================
@@ -29,6 +29,9 @@ writeOut=.true.
 !Momentum space resolution of f0
 nperp=120
 npar=240
+!Momentum space resolution for relativistic calculation
+ngamma=100
+npparbar=200
 !Reference Alfven velocity / c
 vA=1.d-4
 !Name of input array- 

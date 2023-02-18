@@ -1,7 +1,8 @@
 !===============================================
 !  generate_distribution input file
 !  120 x 240 momentum resolution
-!  6 m_p v_ts spread
+!  6 m_p v_ts span
+!  outputs to 'test_analytical'
 !
 !  Kristopher Klein, Daniel Verscharen
 !  2023 FEB 17

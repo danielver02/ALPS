@@ -1,8 +1,9 @@
 !===============================================
 !  generate_distribution input file
 !  120 x 240 momentum resolution
-!  6 m_p v_ts spread
-!
+!  6 m_p v_ts span
+!  outputs to 'test_kpar_fast'
+!  
 !  Kristopher Klein, Daniel Verscharen
 !  2023 FEB 17
 !===============================================
@@ -18,7 +19,7 @@ vA=1.d-4
 nperp=120
 !# of parallel grid points
 npar=240
-!Maximum value of m_ref v_A,ref
+!Maximum value of m_ref v_A,refo
 maxP=6.d0
 !Name of output array
 writeName='test_kpar_fast'

@@ -1,33 +1,51 @@
+!===============================================
+!  generate_distribution input file
+!  120 x 240 momentum resolution
+!  6 m_p v_ts span
+!  outputs to 'test_map'
+!  
+!  Kristopher Klein, Daniel Verscharen
+!  2023 FEB 18
+!===============================================
+! Global parameters
 &system
+!Number of plasma species
 nspec=2
+!Reference plasma beta
 beta=1.d0
+!v_A,ref/c
 vA=1.d-4
+!# of perpendicular grid points
 nperp=120
+!# of parallel grid points
 npar=240
+!Maximum value of m_ref v_A,refo
 maxP=6.d0
+!Name of output array
 writeName='test_map'
 /
 
+!Input parameters for species 1
 &spec_1
-ms_read=1.d0
-taus=1.d0
-alphs=1.d0
-ps=0.d0
-kappas=8.d0
-distributions=1
-autoscaleS=T
-maxPperpS=1.d0
-maxPparS=1.d0
+ms_read=1.d0     !Mass m_j/m_ref
+taus=1.d0        !Temperature T_par,j/T_par,ref
+alphs=1.d0       !Anisotropy T_perp,j/T_par,ref
+ps=0.d0          !Drift m_j v_drift/m_ref v_A,ref
+kappas=8.d0      !Kappa index
+distributions=1  !Type of distribution (see documentation)
+autoscaleS=T     !Define maximum momentum automatically using global value
+maxPperpS=1.d0   !If autoscale=.false., force maximum perp. momentum
+maxPparS=1.d0    !If autoscale=.false., force maximum par. momentum
 /
 
 &spec_2
-ms_read=5.44662d-4
-taus=1.d0
-alphs=1.0d0
-ps=0.d0
-kappas=8.d0
-distributions=1
-autoscaleS=T
-maxPperpS=1.d0
-maxPparS=1.d0
+ms_read=5.44662d-4 !Mass m_j/m_ref
+taus=1.d0        !Temperature T_par,j/T_par,ref
+alphs=1.d0       !Anisotropy T_perp,j/T_par,ref
+ps=0.d0          !Drift m_j v_drift/m_ref v_A,ref
+kappas=8.d0      !Kappa index
+distributions=1  !Type of distribution (see documentation)
+autoscaleS=T     !Define maximum momentum automatically using global value
+maxPperpS=1.d0   !If autoscale=.false., force maximum perp. momentum
+maxPparS=1.d0    !If autoscale=.false., force maximum par. momentum
 /
