@@ -5,8 +5,19 @@
 *.dSYM
 # Ignore log files
 *.log
+*.out
+*.error
 # Ignore FORTRAN I/O temporary files
 *.scratch
 # autoconf files
 Makefile
 config.status
+#
+distribution/*.array
+distribution/*.out
+distribution/*.error
+#
+solution/*
+!solution/README
+*.in
+!test*.in
