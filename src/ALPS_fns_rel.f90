@@ -449,7 +449,7 @@ double complex function integrate_resU_rel(sproc_rel,om,nn,mode,igamma)
 
 	! determine the limits for the integration:
 
-	!! What are the relevant ranges in pparbar:
+	! What are the relevant ranges in pparbar:
 	found_lower=.FALSE.
 	found_upper=.FALSE.
 	ipparbar_lower = 1
@@ -856,7 +856,7 @@ double complex function int_ee_rel(om)
 
 	int_ee_rel = cmplx (0.d0, 0.d0,kind(1.d0))
 
-	!! What are the relevant ranges in pparbar:
+	! What are the relevant ranges in pparbar:
 	igamma = ngamma-1
 
 	found_lower=.FALSE.
