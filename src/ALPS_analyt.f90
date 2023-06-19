@@ -349,7 +349,7 @@ subroutine determine_param_fit
 					endif
 				 enddo
 
-				 !! What are the relevant ranges in pparbar:
+				 ! What are the relevant ranges in pparbar:
 				found_lower=.FALSE.
 				found_upper=.FALSE.
 				ipparbar_lower = 1
