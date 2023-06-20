@@ -91,8 +91,8 @@
 			 <table class="table table-striped">
 			 <thead><tr><th>Procedure</th><th>Location</th><th>Procedure Type</th><th>Description</th></tr></thead>
 			 <tbody>
-			   <tr><td><a href='../proc/alps_error.html'>alps_error</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Subroutine</td><td></td></tr>
-			   <tr><td><a href='../proc/alps_error_init.html'>alps_error_init</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Subroutine</td><td></td></tr>
+			   <tr><td><a href='../proc/alps_error.html'>alps_error</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Subroutine</td><td><p>Error catching subroutine.</p></td></tr>
+			   <tr><td><a href='../proc/alps_error_init.html'>alps_error_init</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Subroutine</td><td><p>Open a file for the error log.</p></td></tr>
 			   <tr><td><a href='../proc/besseli.html'>besselI</a></td><td><a href='../module/alps_nhds.html'>alps_nhds</a></td><td>Function</td><td><p>Calculates the modified Bessel function of argument x and order n.</p></td></tr>
 			   <tr><td><a href='../proc/bessi.html'>BESSI</a></td><td><a href='../module/alps_nhds.html'>alps_nhds</a></td><td>Function</td><td><p>Function to calculate the first kind modified Bessel function of integer order N
 for any real X.</p></td></tr>
@@ -135,14 +135,16 @@ use <a href="../proc/eval_fit.html">eval_fit</a>.</p></td></tr>
 			   <tr><td><a href='../proc/funct_g.html'>funct_g</a></td><td><a href='../module/alps_fns.html'>alps_fns</a></td><td>Function</td><td></td></tr>
 			   <tr><td><a href='../proc/funct_g_rel.html'>funct_g_rel</a></td><td><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></td><td>Function</td><td></td></tr>
 			   <tr><td><a href='../proc/gamma.html'>Gamma</a></td><td><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></td><td>Function</td><td></td></tr>
-			   <tr><td><a href='../proc/get_indexed_double_namelist_unit.html'>get_indexed_double_namelist_unit</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Subroutine</td><td></td></tr>
-			   <tr><td><a href='../proc/get_indexed_namelist_unit.html'>get_indexed_namelist_unit</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Subroutine</td><td></td></tr>
+			   <tr><td><a href='../proc/get_indexed_double_namelist_unit.html'>get_indexed_double_namelist_unit</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Subroutine</td><td><p>A version of <a href="../proc/get_indexed_namelist_unit.html">get_indexed_namelist_unit</a>, extended
+to allow for double indexing in order to read in multiple fits
+for a single species.</p></td></tr>
+			   <tr><td><a href='../proc/get_indexed_namelist_unit.html'>get_indexed_namelist_unit</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Subroutine</td><td><p>Determines unused I/O unit.</p></td></tr>
 			   <tr><td><a href='../proc/get_runname.html'>get_runname</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Subroutine</td><td><p>Get runname for output files from input argument.</p></td></tr>
-			   <tr><td><a href='../proc/get_unused_unit.html'>get_unused_unit</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Subroutine</td><td></td></tr>
+			   <tr><td><a href='../proc/get_unused_unit.html'>get_unused_unit</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Subroutine</td><td><p>Determine unused number for I/O index.</p></td></tr>
 			   <tr><td><a href='../proc/init_param.html'>init_param</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Subroutine</td><td><p>Read in system parameters from *.in file.
 Only processor 0 calls this routine:</p></td></tr>
-			   <tr><td><a href='../proc/input_unit.html'>input_unit</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Function</td><td></td></tr>
-			   <tr><td><a href='../proc/input_unit_exist.html'>input_unit_exist</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Function</td><td></td></tr>
+			   <tr><td><a href='../proc/input_unit.html'>input_unit</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Function</td><td><p>Assigns input unit for namelist opening.</p></td></tr>
+			   <tr><td><a href='../proc/input_unit_exist.html'>input_unit_exist</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Function</td><td><p>Determine if a particular namelist already opened.</p></td></tr>
 			   <tr><td><a href='../proc/int_ee.html'>int_ee</a></td><td><a href='../module/alps_fns.html'>alps_fns</a></td><td>Function</td><td></td></tr>
 			   <tr><td><a href='../proc/int_ee_rel.html'>int_ee_rel</a></td><td><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></td><td>Function</td><td></td></tr>
 			   <tr><td><a href='../proc/int_t.html'>int_T</a></td><td><a href='../module/alps_fns.html'>alps_fns</a></td><td>Function</td><td></td></tr>
