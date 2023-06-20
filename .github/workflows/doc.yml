@@ -1,0 +1,39 @@
+name: Deploy Documentation
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install ford
+      run: pip install ford
+      
+    - name: Build documentation
+      run: |
+        mkdir docs
+        echo 'title: Readme' > docs/index.md
+        cat README.md >> docs/index.md
+        echo 'title: Install' > docs/INSTALL.md
+        cat INSTALL.md >> docs/INSTALL.md
+        ford ford_project.md
+
+    - name: Deploy to GH pages
+      #if: ${{github.event_name == 'push'}}
+      uses: JamesIves/github-pages-deploy-action@4.1.6
+      with:
+        branch: gh-pages # The branch the action should deploy to.
+        folder: docs # The folder the action should deploy.
