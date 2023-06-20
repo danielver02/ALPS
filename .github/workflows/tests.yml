@@ -20,7 +20,7 @@ jobs:
     - name: Install MPI on Ubuntu
       if: ${{ matrix.os == 'ubuntu-latest' }}
       run: sudo apt-get install -y libopenmpi-dev
-    
+
     - name: Install BLAS, OPENBLAS, and LAPACK on Ubuntu
       if: ${{ matrix.os == 'ubuntu-latest' }}
       run: sudo apt-get install -y libopenblas-dev libblas-dev liblapack-dev
@@ -40,12 +40,12 @@ jobs:
         autoreconf -f -i
         ./configure
         make
-        
+
     - name: Build ALPS on macOS
       if: ${{ matrix.os == 'macos-latest' }}
       run: |
         ./configure
         make
-        
+
     - name: Run ALPS
-      run: bash ./run_test.sh
+      run: bash .tests/run_test.sh

@@ -24,7 +24,8 @@ module alps_var
   private
 
   !I/O Variables
-  character(500) :: runname   !Root of input file name
+  character(500) :: runname       !Root of input file name
+  character(500) :: foldername   !Directory of input file name
   integer :: option           !System Option: Chooses Style of Run
                               !See README file for list of options
   integer :: nroots           !Number of Dispersion Solutions
@@ -218,7 +219,7 @@ module alps_var
   double precision :: kperp_0, kpar_0
 
   public :: nproc, iproc, proc0, ierror
-  public :: runname, option, writeOut
+  public :: runname, foldername, option, writeOut
   public :: kperp, kpar, nspec, use_map, wroots
   public :: loggridw, loggridg, omi, omf, gami, gamf
   public :: arrayName, nperp, npar, f0, pp, df0, bessel_array
