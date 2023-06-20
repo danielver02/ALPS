@@ -29,16 +29,47 @@ contains
 
 double complex function eval_fit(is,iperp,ppar_valC)
 	!! This function evaluates the fit to f0 at and the complex parallel
-	!! momentum [[ppar_valC(variable):eval_fit(function)]]. It requires the fit parameters that will be determined
+	!! momentum [[eval_fit(function):ppar_valC(variable)]]. It requires the fit parameters that will be determined
 	!! by the subroutine [[determine_param_fit(subroutine)]].
 
 	use alps_var, only : fit_type, pp, param_fit, n_fits, gamma_rel,nspec,relativistic
 	use alps_distribution_analyt, only : distribution_analyt
 	implicit none
-	integer :: is,iperp,par_ind,ifit,n_params,is_rel,sproc_rel,is_run
+
+
+	integer, intent(in) :: is
+	!! Index of species for which [[eval_fit(function)]] is executed.
+
+	integer, intent(in) :: iperp
+	!! Index of perpendicular momentum at which [[eval_fit(function)]] is executed.
+
+	double complex, intent(in) :: ppar_valC
+	!! Complex parallel momentum at which [[eval_fit(function)]] is executed.
+
 	double precision :: pperp_val
+	!! Perpendicular momentum corrsponding to index [[iperp(variable)]].
+
+	integer :: par_ind
+	!! Parameter index for the fit parameters.
+
+	integer :: ifit
+	!! Index for the fits that add up to the total fit for a given species.
+
+	integer :: n_params
+	!! Total number of fit parameters for a given species.
+
+	integer :: is_rel
+	!! Index for relativistic species (if any).
+
+	integer :: sproc_rel
+	!! MPI process number for relativistic species.
+
+	integer :: is_run
+	!! Running variable over species to determine relativistic evaluation.
+
 	double precision,allocatable, dimension(:) :: params
-	double complex :: ppar_valC
+	!! Array of fit parameters.
+
 
 
 
