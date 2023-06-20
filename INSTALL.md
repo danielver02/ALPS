@@ -1,14 +1,12 @@
 # A  L  P  S  Arbitrary Linear Plasma Solver
 
+These are the install instructions for the ALPS code: the Arbitrary Linear
+Plasma Solver.
+
 ## Authors
 
 Kristopher Klein   (kgklein@arizona.edu)
 Daniel Verscharen  (d.verscharen@ucl.ac.uk)
-
----
-
-These are the install instructions for the ALPS code: the Arbitrary Linear
-Plasma Solver.
 
 ## CONTENTS
 

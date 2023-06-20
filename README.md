@@ -1,11 +1,11 @@
 # A  L  P  S  Arbitrary Linear Plasma Solver
 
+This is the ALPS code: the Arbitrary Linear Plasma Solver.
+
 ## Authors
 
 Kristopher Klein   (kgklein@arizona.edu)
 Daniel Verscharen  (d.verscharen@ucl.ac.uk)
-
-This is the ALPS code: the Arbitrary Linear Plasma Solver.
 
 ## WARNING
 
