@@ -47,7 +47,7 @@ double complex function eval_fit(is,iperp,ppar_valC)
 	!! Complex parallel momentum at which [[eval_fit(function)]] is executed.
 
 	double precision :: pperp_val
-	!! Perpendicular momentum corrsponding to index [[iperp(variable)]].
+	!! Perpendicular momentum corrsponding to index iperp.
 
 	integer :: par_ind
 	!! Parameter index for the fit parameters.
@@ -289,7 +289,7 @@ subroutine determine_param_fit
 	!! Local process index for relativistic calculation.
 
 	integer :: nJT
-	!! First dimension of matrix nJT [[determine_JT(subroutine):: JT(variable)]].
+	!! First dimension of matrix JT.
 
 	integer :: ipparbar
 	!! Index of parallel momentum (relativistic).
@@ -779,7 +779,7 @@ subroutine determine_JT(is,n_params,nJT,JT,params,iperp,upper_limit,ipparbar_low
 	!! Total number of fit parameters for a given species.
 
 	integer, intent(in) :: nJT
-	!! First dimension of matrix nJT [[JT(variable)]].
+	!! First dimension of matrix JT.
 
 	double precision, intent(out) :: JT(nJT,0:upper_limit)
 	!! Transposed Jacobian matrix of the fit function.
@@ -788,7 +788,7 @@ subroutine determine_JT(is,n_params,nJT,JT,params,iperp,upper_limit,ipparbar_low
 	!! Array of fit parameters.
 
 	integer, intent(in) :: iperp
-	!! Index of perpendicular momentum at which [[JT(variable)]] is evaluated.
+	!! Index of perpendicular momentum at which JT is evaluated.
 
 	integer, intent(in) :: upper_limit
 	!! Upper limit of iperp space (relativistic and non-relativistic).
@@ -998,7 +998,7 @@ subroutine LM_nonlinear_fit(is,g,n_params,nJT,params,param_mask,iperp,npar,ippar
 	!! Total number of fit parameters for a given species.
 
 	integer, intent(in) :: nJT
-	!! First dimension of matrix nJT [[determine_JT(subroutine):JT(variable)]].
+	!! First dimension of matrix JT (see [[determine_JT(subroutine):JT(variable)]]).
 
 	double precision, intent(inout) :: params(n_params)
 	!! Array of fit parameters.
