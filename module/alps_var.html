@@ -1,0 +1,2086 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="Documentation for ALPS">
+    <meta name="author" content="Kristopher Klein, Daniel Verscharen" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>alps_var &ndash; ALPS</title>
+
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <link href="../css/font-awesome.min.css" rel="stylesheet">
+    <link href="../css/local.css" rel="stylesheet">
+      <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+         <script src="../js/jquery-2.1.3.min.js"></script>
+         <script src="../js/svg-pan-zoom.min.js"></script>
+
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="../index.html">ALPS </a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+              <li><a href='../page/index.html'>Readme</a></li>
+            <li class="dropdown hidden-xs visible-sm visible-md hidden-lg">
+              <a href="#" class="dropdown-toggle"
+                 data-toggle="dropdown" role="button"
+                 aria-haspopup="true"
+                 aria-expanded="false">
+                 Contents <span class="caret"></span>
+              </a>
+              <ul class="dropdown-menu">
+                    <li><a href="../lists/files.html">Source Files</a></li>
+                  <li><a href="../lists/modules.html">Modules</a></li>
+                  <li><a href="../lists/procedures.html">Procedures</a></li>
+                  <li><a href="../lists/types.html">Derived Types</a></li>
+                  <li><a href="../program/alps.html">Program</a></li>
+              </ul>
+            </li>
+                <li class="visible-xs hidden-sm visible-lg">
+                  <a href="../lists/files.html">Source Files</a>
+                </li>
+              <li class="visible-xs hidden-sm visible-lg">
+                <a href="../lists/modules.html">Modules</a>
+              </li>
+              <li class="visible-xs hidden-sm visible-lg">
+                <a href="../lists/procedures.html">Procedures</a>
+              </li>
+              <li class="visible-xs hidden-sm visible-lg">
+                <a href="../lists/types.html">Derived Types</a>
+              </li>
+              <li class="visible-xs hidden-sm visible-lg">
+                <a href="../program/alps.html">Program</a>
+              </li>
+          </ul>
+            <form action="../search.html" class="navbar-form navbar-right" role="search">
+              <div class="form-group">
+                <input type="text" class="form-control" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+              </div>
+              <!--
+                  <button type="submit" class="btn btn-default">Submit</button>
+                  -->
+            </form>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+
+    <div class="container">
+  <div class="row">
+    <h1>alps_var
+      <small>Module</small>
+      
+    </h1>
+      <div class="row" id="info-bar">
+    <div class="col-lg-12">
+      <div class="well well-sm">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+          <li id="statements"><i class="fa fa-list-ol"></i>
+            <a data-toggle="tooltip"
+               data-placement="bottom" data-html="true"
+               title=" 4.3% of total for modules and submodules.">106 statements</a>
+          </li>
+
+            <li id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/ALPS_var.f90"> Source File</a>
+            </li>
+        </ul>
+        <ol class="breadcrumb in-well text-right">
+              <li><a href='../sourcefile/alps_var.f90.html'>ALPS_var.f90</a></li>
+          <li class="active">alps_var</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+  <script>
+    $(function () {
+    $('[data-toggle="tooltip"]').tooltip()
+    })
+  </script>
+
+  </div>
+
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+        <div id="sidebar">
+      <h3>Contents</h3>
+  
+      <div class="panel panel-primary">
+      <div class="panel-heading text-left">
+        <h3 class="panel-title">
+          <a data-toggle="collapse" href="#vars-0">Variables</a>
+        </h3>
+      </div>
+      <div id="vars-0" class="panel-collapse collapse">
+        <div class="list-group">
+            <a class="list-group-item" href="../module/alps_var.html#variable-runname">runname</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-foldername">foldername</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-option">option</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-nroots">nroots</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-nroots_max">nroots_max</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-use_map">use_map</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-writeout">writeOut</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-unit_error">unit_error</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-nproc">nproc</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-iproc">iproc</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-proc0">proc0</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-ierror">ierror</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-kperp~2">kperp</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-kpar">kpar</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-va">vA</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-bessel_zero">Bessel_zero</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-nspec">nspec</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-nspec_rel~2">nspec_rel</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-wroots">wroots</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-numroots">numroots</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-omi">omi</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-omf">omf</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-gami">gami</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-gamf">gamf</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-loggridw">loggridw</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-loggridg">loggridg</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-ni">ni</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-nr">nr</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-nperp">nperp</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-npar">npar</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-ngamma~2">ngamma</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-npparbar~2">npparbar</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-positions_principal">positions_principal</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-tlim">Tlim</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-sproc">sproc</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-numiter">numiter</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-d_threshold">D_threshold</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-d_prec">D_prec</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-d_gap">D_gap</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-pi">pi</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-arrayname">arrayName</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-f0">f0</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-f0_rel~2">f0_rel</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-df0">df0</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-df0_rel">df0_rel</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-pp">pp</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-gamma_rel~2">gamma_rel</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-pparbar_rel">pparbar_rel</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-nmax">nmax</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-nlim">nlim</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-ns">ns</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-qs">qs</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-ms">ms</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-relativistic">relativistic</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-wave">wave</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-chi0">chi0</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-bessel_array">bessel_array</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-n_fits">n_fits</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-fit_type">fit_type</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-maxsteps_fit">maxsteps_fit</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-lambda_initial_fit">lambda_initial_fit</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-lambdafac_fit">lambdafac_fit</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-epsilon_fit">epsilon_fit</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-param_fit">param_fit</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-perp_correction">perp_correction</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-fit_check">fit_check</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-determine_minima">determine_minima</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-n_resonance_interval">n_resonance_interval</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-scan_option">scan_option</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-n_scan">n_scan</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-logfit">logfit</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-usebm">usebM</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-bmnmaxs">bMnmaxs</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-bmbessel_zeros">bMBessel_zeros</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-bmbetas">bMbetas</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-bmalphas">bMalphas</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-bmpdrifts">bMpdrifts</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-scan">scan</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-kperp_last">kperp_last</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-kpar_last">kpar_last</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-kperp_0">kperp_0</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-kpar_0">kpar_0</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+      <div class="panel panel-primary">
+      <div class="panel-heading text-left">
+        <h3 class="panel-title">
+          <a data-toggle="collapse" href="#types-0">Derived Types</a>
+        </h3>
+      </div>
+      <div id="types-0" class="panel-collapse collapse">
+        <div class="list-group">
+            <a class="list-group-item" href="../module/alps_var.html#type-scanner">scanner</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+
+
+  </div>
+
+    </div>
+
+    <div class="col-md-9" id='text'>
+      
+<br>          <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Uses</h3>
+      </div>
+      <ul class="list-group">
+          <li class="list-group-item">
+            <ul class="list-inline">
+                <li><a href='<a href="http://www.mpi-forum.org/docs/mpi-3.1/mpi31-report/node410.htm">mpi</a>'>mpi</a></li>
+            </ul>
+          </li>
+      </ul>
+    </div>
+
+      
+      <br>
+
+      <section class="visible-xs visible-sm hidden-md">
+          <h3>Contents</h3>
+  
+      <div class="panel panel-primary">
+      <div class="panel-heading text-left">
+        <h3 class="panel-title">
+          <a data-toggle="collapse" href="#vars-1">Variables</a>
+        </h3>
+      </div>
+      <div id="vars-1" class="panel-collapse collapse">
+        <div class="list-group">
+            <a class="list-group-item" href="../module/alps_var.html#variable-runname">runname</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-foldername">foldername</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-option">option</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-nroots">nroots</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-nroots_max">nroots_max</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-use_map">use_map</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-writeout">writeOut</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-unit_error">unit_error</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-nproc">nproc</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-iproc">iproc</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-proc0">proc0</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-ierror">ierror</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-kperp~2">kperp</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-kpar">kpar</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-va">vA</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-bessel_zero">Bessel_zero</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-nspec">nspec</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-nspec_rel~2">nspec_rel</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-wroots">wroots</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-numroots">numroots</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-omi">omi</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-omf">omf</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-gami">gami</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-gamf">gamf</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-loggridw">loggridw</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-loggridg">loggridg</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-ni">ni</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-nr">nr</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-nperp">nperp</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-npar">npar</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-ngamma~2">ngamma</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-npparbar~2">npparbar</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-positions_principal">positions_principal</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-tlim">Tlim</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-sproc">sproc</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-numiter">numiter</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-d_threshold">D_threshold</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-d_prec">D_prec</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-d_gap">D_gap</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-pi">pi</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-arrayname">arrayName</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-f0">f0</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-f0_rel~2">f0_rel</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-df0">df0</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-df0_rel">df0_rel</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-pp">pp</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-gamma_rel~2">gamma_rel</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-pparbar_rel">pparbar_rel</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-nmax">nmax</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-nlim">nlim</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-ns">ns</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-qs">qs</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-ms">ms</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-relativistic">relativistic</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-wave">wave</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-chi0">chi0</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-bessel_array">bessel_array</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-n_fits">n_fits</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-fit_type">fit_type</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-maxsteps_fit">maxsteps_fit</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-lambda_initial_fit">lambda_initial_fit</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-lambdafac_fit">lambdafac_fit</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-epsilon_fit">epsilon_fit</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-param_fit">param_fit</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-perp_correction">perp_correction</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-fit_check">fit_check</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-determine_minima">determine_minima</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-n_resonance_interval">n_resonance_interval</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-scan_option">scan_option</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-n_scan">n_scan</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-logfit">logfit</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-usebm">usebM</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-bmnmaxs">bMnmaxs</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-bmbessel_zeros">bMBessel_zeros</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-bmbetas">bMbetas</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-bmalphas">bMalphas</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-bmpdrifts">bMpdrifts</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-scan">scan</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-kperp_last">kperp_last</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-kpar_last">kpar_last</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-kperp_0">kperp_0</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-kpar_0">kpar_0</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+      <div class="panel panel-primary">
+      <div class="panel-heading text-left">
+        <h3 class="panel-title">
+          <a data-toggle="collapse" href="#types-1">Derived Types</a>
+        </h3>
+      </div>
+      <div id="types-1" class="panel-collapse collapse">
+        <div class="list-group">
+            <a class="list-group-item" href="../module/alps_var.html#type-scanner">scanner</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+
+
+      </section>
+      <br class="visible-xs visible-sm hidden-md">
+
+
+        <section>
+          <h2>Variables</h2>
+            <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th>Type</th>
+<th>Visibility</th>        <th>Attributes</th>
+        <th></th>
+        <th>Name</th>
+<th></th><th>Initial</th>        <th></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-runname"></span>
+              character(len=500),
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>runname</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-foldername"></span>
+              character(len=500),
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>foldername</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-option"></span>
+              integer,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>option</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nroots"></span>
+              integer,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nroots</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nroots_max"></span>
+              integer,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nroots_max</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-use_map"></span>
+              logical,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>use_map</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-writeout"></span>
+              logical,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>writeOut</strong></td>
+<td> =</td>
+                <td>.true.</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-unit_error"></span>
+              integer,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>unit_error</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nproc"></span>
+              integer,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nproc</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-iproc"></span>
+              integer,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>iproc</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-proc0"></span>
+              logical,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>proc0</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ierror"></span>
+              integer,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>ierror</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-kperp~2"></span>
+              double precision,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>kperp</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-kpar"></span>
+              double precision,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>kpar</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-va"></span>
+              double precision,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>vA</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-bessel_zero"></span>
+              double precision,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Bessel_zero</strong></td>
+<td> =</td>
+                <td>1.d-45</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nspec"></span>
+              integer,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nspec</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nspec_rel~2"></span>
+              integer,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nspec_rel</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-wroots"></span>
+              double complex,
+            </td>
+              <td>public,</td>
+            <td>
+              dimension(:), allocatable
+            </td>
+            <td>::</td>
+            <td><strong>wroots</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-numroots"></span>
+              integer,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>numroots</strong></td>
+<td> =</td>
+                <td>100</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-omi"></span>
+              double precision,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>omi</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-omf"></span>
+              double precision,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>omf</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-gami"></span>
+              double precision,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>gami</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-gamf"></span>
+              double precision,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>gamf</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-loggridw"></span>
+              logical,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>loggridw</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-loggridg"></span>
+              logical,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>loggridg</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ni"></span>
+              integer,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>ni</strong></td>
+<td> =</td>
+                <td>128</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nr"></span>
+              integer,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nr</strong></td>
+<td> =</td>
+                <td>128</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nperp"></span>
+              integer,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nperp</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-npar"></span>
+              integer,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>npar</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ngamma~2"></span>
+              integer,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>ngamma</strong></td>
+<td> =</td>
+                <td>100</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-npparbar~2"></span>
+              integer,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>npparbar</strong></td>
+<td> =</td>
+                <td>200</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-positions_principal"></span>
+              integer,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>positions_principal</strong></td>
+<td> =</td>
+                <td>5</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-tlim"></span>
+              double precision,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Tlim</strong></td>
+<td> =</td>
+                <td>0.01d0</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-sproc"></span>
+              integer,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>sproc</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-numiter"></span>
+              integer,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>numiter</strong></td>
+<td> =</td>
+                <td>50</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-d_threshold"></span>
+              double precision,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>D_threshold</strong></td>
+<td> =</td>
+                <td>1.d-5</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-d_prec"></span>
+              double precision,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>D_prec</strong></td>
+<td> =</td>
+                <td>1.d-5</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-d_gap"></span>
+              double precision,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>D_gap</strong></td>
+<td> =</td>
+                <td>1.d-5</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-pi"></span>
+              double precision,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>pi</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-arrayname"></span>
+              character(len=75),
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>arrayName</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-f0"></span>
+              double precision,
+            </td>
+              <td>public,</td>
+            <td>
+              dimension(:,:,:), allocatable
+            </td>
+            <td>::</td>
+            <td><strong>f0</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-f0_rel~2"></span>
+              double precision,
+            </td>
+              <td>public,</td>
+            <td>
+              dimension(:,:,:), allocatable
+            </td>
+            <td>::</td>
+            <td><strong>f0_rel</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-df0"></span>
+              double precision,
+            </td>
+              <td>public,</td>
+            <td>
+              dimension(:,:,:,:), allocatable
+            </td>
+            <td>::</td>
+            <td><strong>df0</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-df0_rel"></span>
+              double precision,
+            </td>
+              <td>public,</td>
+            <td>
+              dimension(:,:,:,:), allocatable
+            </td>
+            <td>::</td>
+            <td><strong>df0_rel</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-pp"></span>
+              double precision,
+            </td>
+              <td>public,</td>
+            <td>
+              dimension(:,:,:,:), allocatable
+            </td>
+            <td>::</td>
+            <td><strong>pp</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-gamma_rel~2"></span>
+              double precision,
+            </td>
+              <td>public,</td>
+            <td>
+              dimension(:,:,:), allocatable
+            </td>
+            <td>::</td>
+            <td><strong>gamma_rel</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-pparbar_rel"></span>
+              double precision,
+            </td>
+              <td>public,</td>
+            <td>
+              dimension(:,:,:), allocatable
+            </td>
+            <td>::</td>
+            <td><strong>pparbar_rel</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nmax"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+              dimension(:), allocatable
+            </td>
+            <td>::</td>
+            <td><strong>nmax</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nlim"></span>
+              integer,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nlim</strong>(2)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ns"></span>
+              double precision,
+            </td>
+              <td>public,</td>
+            <td>
+              dimension(:), allocatable
+            </td>
+            <td>::</td>
+            <td><strong>ns</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-qs"></span>
+              double precision,
+            </td>
+              <td>public,</td>
+            <td>
+              dimension(:), allocatable
+            </td>
+            <td>::</td>
+            <td><strong>qs</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ms"></span>
+              double precision,
+            </td>
+              <td>public,</td>
+            <td>
+              dimension(:), allocatable
+            </td>
+            <td>::</td>
+            <td><strong>ms</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-relativistic"></span>
+              logical,
+            </td>
+              <td>public,</td>
+            <td>
+              dimension(:), allocatable
+            </td>
+            <td>::</td>
+            <td><strong>relativistic</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-wave"></span>
+              double complex,
+            </td>
+              <td>public,</td>
+            <td>
+              dimension(:,:), allocatable
+            </td>
+            <td>::</td>
+            <td><strong>wave</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-chi0"></span>
+              double complex,
+            </td>
+              <td>public,</td>
+            <td>
+              dimension(:,:,:), allocatable
+            </td>
+            <td>::</td>
+            <td><strong>chi0</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-bessel_array"></span>
+              double precision,
+            </td>
+              <td>public,</td>
+            <td>
+              dimension(:,:), allocatable
+            </td>
+            <td>::</td>
+            <td><strong>bessel_array</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-n_fits"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+              dimension(:), allocatable
+            </td>
+            <td>::</td>
+            <td><strong>n_fits</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-fit_type"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+              dimension(:,:), allocatable
+            </td>
+            <td>::</td>
+            <td><strong>fit_type</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-maxsteps_fit"></span>
+              integer,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>maxsteps_fit</strong></td>
+<td> =</td>
+                <td>500</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-lambda_initial_fit"></span>
+              double precision,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>lambda_initial_fit</strong></td>
+<td> =</td>
+                <td>1.d0</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-lambdafac_fit"></span>
+              double precision,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>lambdafac_fit</strong></td>
+<td> =</td>
+                <td>1.d1</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-epsilon_fit"></span>
+              double precision,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>epsilon_fit</strong></td>
+<td> =</td>
+                <td>1.d-8</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-param_fit"></span>
+              double precision,
+            </td>
+              <td>public,</td>
+            <td>
+              dimension(:,:,:,:), allocatable
+            </td>
+            <td>::</td>
+            <td><strong>param_fit</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-perp_correction"></span>
+              double precision,
+            </td>
+              <td>public,</td>
+            <td>
+              dimension(:,:), allocatable
+            </td>
+            <td>::</td>
+            <td><strong>perp_correction</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-fit_check"></span>
+              logical,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>fit_check</strong></td>
+<td> =</td>
+                <td>.true.</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-determine_minima"></span>
+              logical,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>determine_minima</strong></td>
+<td> =</td>
+                <td>.true.</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-n_resonance_interval"></span>
+              integer,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>n_resonance_interval</strong></td>
+<td> =</td>
+                <td>100</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-scan_option"></span>
+              integer,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>scan_option</strong></td>
+<td> =</td>
+                <td>1</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-n_scan"></span>
+              integer,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>n_scan</strong></td>
+<td> =</td>
+                <td>0</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-logfit"></span>
+              logical,
+            </td>
+              <td>public,</td>
+            <td>
+              dimension(:), allocatable
+            </td>
+            <td>::</td>
+            <td><strong>logfit</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-usebm"></span>
+              logical,
+            </td>
+              <td>public,</td>
+            <td>
+              dimension(:), allocatable
+            </td>
+            <td>::</td>
+            <td><strong>usebM</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-bmnmaxs"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+              dimension(:), allocatable
+            </td>
+            <td>::</td>
+            <td><strong>bMnmaxs</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-bmbessel_zeros"></span>
+              double precision,
+            </td>
+              <td>public,</td>
+            <td>
+              dimension(:), allocatable
+            </td>
+            <td>::</td>
+            <td><strong>bMBessel_zeros</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-bmbetas"></span>
+              double precision,
+            </td>
+              <td>public,</td>
+            <td>
+              dimension(:), allocatable
+            </td>
+            <td>::</td>
+            <td><strong>bMbetas</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-bmalphas"></span>
+              double precision,
+            </td>
+              <td>public,</td>
+            <td>
+              dimension(:), allocatable
+            </td>
+            <td>::</td>
+            <td><strong>bMalphas</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-bmpdrifts"></span>
+              double precision,
+            </td>
+              <td>public,</td>
+            <td>
+              dimension(:), allocatable
+            </td>
+            <td>::</td>
+            <td><strong>bMpdrifts</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-scan"></span>
+              type(<a href='../type/scanner.html'>scanner</a>),
+            </td>
+              <td>public,</td>
+            <td>
+              dimension (:), allocatable
+            </td>
+            <td>::</td>
+            <td><strong>scan</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-kperp_last"></span>
+              double precision,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>kperp_last</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-kpar_last"></span>
+              double precision,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>kpar_last</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-kperp_0"></span>
+              double precision,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>kperp_0</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-kpar_0"></span>
+              double precision,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>kpar_0</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+        </section>
+        <br>
+
+
+
+
+        <section>
+          <h2>Derived Types</h2>
+              <div class="panel panel-default">
+    <div class="panel-heading codesum">
+      <span class="anchor" id="type-scanner"></span>
+      <h3>
+        type, public&nbsp;::&nbsp;
+        <a href='../type/scanner.html'>scanner</a>
+        
+      </h3>
+    </div>
+    <div class="panel-body">
+      
+
+        <h4>Components</h4>
+          <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th>Type</th>
+<th>Visibility</th>        <th>Attributes</th>
+        <th></th>
+        <th>Name</th>
+<th></th><th>Initial</th>        <th></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-range_i"></span>
+              double precision,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>range_i</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-range_f"></span>
+              double precision,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>range_f</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-log_scan"></span>
+              logical,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>log_scan</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-heat_s"></span>
+              logical,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>heat_s</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-eigen_s"></span>
+              logical,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>eigen_s</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-type_s"></span>
+              integer,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>type_s</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-n_out"></span>
+              integer,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>n_out</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-n_res"></span>
+              integer,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>n_res</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-diff"></span>
+              double precision,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>diff</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-diff2"></span>
+              double precision,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>diff2</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+
+
+    </div>
+  </div>
+
+        </section>
+        <br>
+
+
+
+
+
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row">
+          <div class="col-xs-6 col-md-6"><p>ALPS was developed by Kristopher Klein, Daniel Verscharen<br>&copy; 2023 
+</p>
+          </div>
+          <div class="col-xs-6 col-md-6">
+            <p class="text-right">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+            </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+
+    <!-- Bootstrap core JavaScript
+         ================================================== -->
+         <!-- Placed at the end of the document so the pages load faster -->
+    <!--
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        -->
+        <script src="../js/bootstrap.min.js"></script>
+        <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+        <script src="../js/ie10-viewport-bug-workaround.js"></script>
+
+        <!-- MathJax JavaScript
+             ================================================== -->
+             <!-- Placed at the end of the document so the pages load faster -->
+        <script type="text/x-mathjax-config">
+          MathJax.Hub.Config({
+          TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
+          jax: ['input/TeX','input/MathML','output/HTML-CSS'],
+          extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
+          });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+          <script src="../tipuesearch/tipuesearch_content.js"></script>
+          <script src="../tipuesearch/tipuesearch_set.js"></script>
+          <script src="../tipuesearch/tipuesearch.js"></script>
+
+  </body>
+</html>
