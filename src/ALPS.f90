@@ -33,68 +33,69 @@ program alps
   use mpi
   implicit none
 
-  !Local
   integer :: ik
+  !! Index for iterating through wavevector scans with [[om_scan(subroutine)]]
+  !! or [[om_double_scan(subroutine)]]
 
-  !Initialize MPI message passing---------------------------------------------
+  !Initialize MPI message passing:
   call mpi_init (ierror)
   call mpi_comm_size (mpi_comm_world, nproc, ierror)
   call mpi_comm_rank (mpi_comm_world, iproc, ierror)
 
-  !Set logical proc0=true if iproc=0
+  !Set logical proc0=true if iproc=0:
   proc0= (iproc == 0)
 
   if (proc0) then
-     call alps_error_init
+     call alps_error_init !alps_io
      write(*,'(a)')'Starting ALPS==================================='
      write(*,'(a)') "Time:"
-     call output_time
+     call output_time !alps_io
      write(*,'(a)')'================================================'
-     call display_credits
+     call display_credits !alps_io
   endif
 
   call mpi_barrier(mpi_comm_world,ierror)
   if (proc0) write(*,'(a)') 'All processes are up and running.'
 
-  !Check to be sure nproc is even and greater than 2, otherwise shutdown
-  if ((mod(nproc,2) .ne. 0).or.(nproc .le. 2)) call alps_error(0)
+  !Check to be sure nproc is even and greater than 2, otherwise shutdown:
+  if ((mod(nproc,2) .ne. 0).or.(nproc .le. 2)) call alps_error(0) !alps_io
 
-  !Read parameters------------------------------------------------------------
+  !Read parameters:
   if (proc0) call init_param !alps_io
 
-  !Split Problem Amongst Processors
-  !Pass relevant information from readin
+  !Split Problem Amongst Processors.
+  !Pass relevant information from readin:
   call pass_instructions !alps_com
 
   if (proc0) then
 
-     !Allocate background distribution function f0
+     !Allocate background distribution function f0:
      allocate(f0(1:nspec,0:nperp,0:npar)); f0=0.d0
 
-     !Read in f0
+     !Read in f0:
      call read_f0 !alps_io
 
-     !Calculate pperp, ppar derivatives of f0
+     !Calculate pperp, ppar derivatives of f0:
      call derivative_f0 !alps_fns
-
+     !Calculate best fit to f0:
      call determine_param_fit !alps_analyt
 
-     !f0 not needed for dispersion calculation
-     !Deallocate to save space.
+     !f0 not needed for dispersion calculation.
+     !Deallocate to save space:
      deallocate(f0)
 
-     call check_parameters
+     !Check Input Parameters and Distributions:
+     call check_parameters !alps_check
 
   endif
 
+  !Distribute input and derived parameters:
   call pass_distribution ! alps_com
 
-  ! Once we know kperp, we can determine nmax and split the processes:
-  ! The following three routines will also be called when kperp changes
+  ! Once we know kperp, we can determine nmax and split the processes.
+  ! The following three routines will also be called when kperp changes:
   call determine_nmax ! alps_fns
-
   call split_processes ! alps_fns
-
   ! All processes determine their Bessel function array:
   if(.NOT.(sproc.EQ.0)) call determine_bessel_array ! alps_fns
 
@@ -102,34 +103,37 @@ program alps
 
   !Either:
   !use_map=.true.  :
-  !    use a scan over (omega,gamma) to local dispersion solutions
+  !    use a scan over (omega,gamma) to local dispersion solutions:
   !OR
   !use_map=.false. :
-  !    use user input roots as initial guesses for dispersion solutions
+  !    use user input roots as initial guesses for dispersion solutions:
   if (use_map) then
      if (writeOut.and.proc0) &
           write(*,'(a)')'Map Search'
-     call map_search
+     call map_search !alps_fns
   else
      if (writeOut.and.proc0) &
           write(*,'(a)') 'Starting Secant Method'
-     call refine_guess
+     call refine_guess !alps_fns
   endif
 
   if (n_scan.gt.0) then !setting n_scan=0 turns off wavevector scanning
      select case (scan_option)
-     case (1) !scan along perscribed paths in wavevector space
+     case (1)
+        !scan along perscribed paths in wavevector space:
         do ik = 1, n_scan
-           call om_scan(ik)
+           call om_scan(ik) !alps_fns
         enddo
      case(2)
+        !scan along a plane in wavevector space:
         if (n_scan==2) then
-           call om_double_scan
+           call om_double_scan !alps_fns
         else
-           call alps_error(4) !
+           call alps_error(4) !alps_io
         endif
      case default
-        call alps_error(3) !scan_option not selected
+        !scan_option not selected
+        call alps_error(3) !alps_io
      end select
   endif
 
