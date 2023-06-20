@@ -41,16 +41,13 @@ jobs:
         brew link gcc
         ln -s /usr/local/bin/gfortran-12 /usr/local/bin/gfortran
 
-    - name: Build ALPS on Ubuntu
-      if: ${{ matrix.os == 'ubuntu-latest' }}
+    - name: Install autotools on MacOS
+      if: ${{ matrix.os == 'macos-latest' }}
+      run: brew install autoconf automake libtool
+
+    - name: Build ALPS
       run: |
         autoreconf -f -i
-        ./configure
-        make
-
-    - name: Build ALPS on macOS
-      if: ${{ matrix.os == 'macos-latest' }}
-      run: |
         ./configure
         make
 
