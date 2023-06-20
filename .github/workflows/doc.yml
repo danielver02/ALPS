@@ -25,8 +25,10 @@ jobs:
     - name: Build documentation
       run: |
         mkdir docs
-        cp README.md docs/index.md
-        cp INSTALL.md docs/INSTALL.md
+        echo 'title: Readme' > docs/index.md
+        cat README.md >> docs/index.md
+        echo 'title: Install' > docs/INSTALL.md
+        cat INSTALL.md >> docs/INSTALL.md
         ford ford_project.md
 
     - name: Deploy to GH pages
