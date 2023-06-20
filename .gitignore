@@ -9,14 +9,17 @@
 *.error
 # Ignore FORTRAN I/O temporary files
 *.scratch
+*.in~
 # autoconf files
 Makefile
 config.status
-#
+#Ignore arrays in distribution
 distribution/*.array
 distribution/*.out
 distribution/*.error
-#
+#Ignore arrays in interpolation
+interpolation/*.array
+interpolation/*.in~
 solution/*
 !solution/README
 *.in
