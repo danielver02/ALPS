@@ -1474,7 +1474,7 @@ end subroutine secant
 subroutine om_scan(ik)
   use ALPS_var, only : proc0, nroots, runname, ierror, wroots, scan, sproc
   use ALPS_var, only : kperp,kpar,kperp_last,kpar_last, D_prec, D_gap
-  use ALPS_var, only : use_secant, nspec
+  use ALPS_var, only : nspec
   use ALPS_io,  only : get_unused_unit, isnancheck, alps_error
   use mpi
   implicit none
@@ -1669,13 +1669,7 @@ subroutine om_scan(ik)
 
            omega=wroots(in)
 
-           if (use_secant) then
-              call secant(omega)
-           else
-               om1=omega*(1.d0-D_prec)
-        	   om2=omega*(1.d0+D_prec)
-               omega=rtsec(disp,om1,om2,iflag)
-           endif
+           call secant(omega)
 
            wroots(in)=omega
 
@@ -1936,7 +1930,7 @@ end subroutine calc_eigen
 subroutine om_double_scan
   use ALPS_var, only : proc0, nroots, runname, ierror, wroots, scan, sproc
   use ALPS_var, only : kperp,kpar,kperp_last,kpar_last, D_prec, D_gap
-  use ALPS_var, only : use_secant, ierror
+  use ALPS_var, only : ierror
   use ALPS_io,  only : get_unused_unit, alps_error
   use mpi
   implicit none
@@ -2161,12 +2155,7 @@ subroutine om_double_scan
                 om1=omega*(1.d0-D_prec)
                 om2=omega*(1.d0+D_prec)
 
-                if (use_secant) then
-                   call secant(omega)
-                else
-                   omega=rtsec(disp,om1,om2,iflag)
-                endif
-
+                call secant(omega)
 
                 wroots(in)=omega
 
@@ -2396,7 +2385,6 @@ end subroutine map_search
 subroutine refine_guess
   use alps_var, only : wroots, nroots, writeOut, proc0
   use alps_var, only : ierror,runname, D_prec
-  use ALPS_var, only : use_secant
   use alps_io,  only : get_unused_unit
   use mpi
   implicit none
@@ -2428,11 +2416,7 @@ subroutine refine_guess
      om2=omega*(1.d0+D_prec)
 
 
-     if (use_secant) then
-           call secant(omega)
-        else
-           omega=rtsec(disp,om1,om2,iflag)
-        endif
+     call secant(omega)
 
      wroots(iw)=omega
 
@@ -2449,60 +2433,6 @@ subroutine refine_guess
 
 
 end subroutine refine_guess
-
-!-=-=-=-=-=-=
-!------------------------------------------------------------------------------
-!
-!------------------------------------------------------------------------------
-!     Based upon routine from Greg Howes, 2005
-!     which was adapted from f77 routine by Eliot Quataert
-   double complex function rtsec(func,x1,x2,iflag)
-     use alps_var, only : proc0,writeOut,D_threshold,numiter
-     implicit none
-     double complex :: func, x1, xl, x2
-     double complex :: fl, f, swap, dx
-     integer :: iflag,j
-
-     fl=func(x1)
-     f=func(x2)
-
-     if(abs(fl).lt.abs(f))then
-        rtsec=x1
-        xl=x2
-        swap=fl
-        fl=f
-        f=swap
-     else
-        xl=x1
-        rtsec=x2
-     endif
-     do  j=1,numiter-1
-        iflag = j
-        if (abs(f-fl) .GT. 1.d-80) then
-           dx=(xl-rtsec)*f/(f-fl)
-				else
-           dx = (x2-x1)/25.d0
-        end if
-        xl=rtsec
-        fl=f
-
-        rtsec=rtsec+dx/2.d0
-
-        f=func(rtsec)
-        if (proc0) write (*,*) j,f,rtsec
-        if((abs(dx).LT.D_threshold).OR.(abs(f).EQ.0.d0)) then
-	     	if (proc0.AND.writeOut) write(*,'(a,i4)') 'Converged after iteration ',j
-	        return
-        endif
-     enddo
-
-     if (proc0.AND.writeOut) write(*,'(a,i4,a)') 'Maximum iteration ',j,' reached.'
-
-     return
-
-   end function rtsec
-!------------------------------------------------------------------------------
-
 
 !
 !-=-=-=-=-=-=

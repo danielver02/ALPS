@@ -173,13 +173,9 @@ module alps_var
   !must be 1 or larger for scan_option=1
   !n_scan=0 turns off wavevector scans
 
-  logical :: use_secant=.true. !use secant or rtsec methods
-
   logical, dimension(:), allocatable :: logfit ! Use logarithmic fitting?
 
-
   logical, dimension(:), allocatable :: usebM ! Use bi-Maxwellian calculation from NHDS?
-
 
   integer, dimension(:), allocatable ::  bMnmaxs ! Maximum number of n for bi-Maxwellian calculation from NHDS
 
@@ -231,7 +227,7 @@ module alps_var
   public :: determine_minima, n_resonance_interval
   public :: unit_error, scan_option, n_scan, scan
   public :: kperp_last, kpar_last, kperp_0, kpar_0
-  public :: use_secant, relativistic, logfit, usebM
+  public :: relativistic, logfit, usebM
   public :: f0_rel,df0_rel,nspec_rel,gamma_rel,pparbar_rel,ngamma,npparbar
   public :: bMnmaxs,bMBessel_zeros,bMbetas,bMalphas,bMpdrifts
 

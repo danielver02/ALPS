@@ -35,7 +35,7 @@ subroutine pass_instructions
   use alps_var, only : use_map
   use alps_var, only : ni, nr, omi, omf, gami, gamf, loggridg, loggridw
   use alps_var, only : determine_minima, n_resonance_interval, positions_principal, Tlim
-  use alps_var, only : n_scan, scan, scan_option, use_secant, relativistic, logfit, usebM
+  use alps_var, only : n_scan, scan, scan_option, relativistic, logfit, usebM
   use alps_var, only : bMnmaxs, bMBessel_zeros, bMbetas, bMalphas, bMpdrifts
   use mpi
   implicit none
@@ -66,7 +66,6 @@ subroutine pass_instructions
   call mpi_bcast(use_map, 1, MPI_LOGICAL, 0, MPI_COMM_WORLD, ierror)
   call mpi_bcast(n_scan, 1, MPI_INTEGER, 0, MPI_COMM_WORLD, ierror)
   call mpi_bcast(scan_option, 1, MPI_INTEGER, 0, MPI_COMM_WORLD, ierror)
-  call mpi_bcast(use_secant,    1, MPI_LOGICAL, 0, MPI_COMM_WORLD, ierror)
 
   if (use_map) then
      call mpi_bcast(omi,1, MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierror)
