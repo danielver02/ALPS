@@ -54,7 +54,7 @@ jobs:
         ./configure
         make
 
-    - name: Run ALPS
+    - name: Run ALPS test
       run: |
         cd tests
         bash ./run_test.sh
