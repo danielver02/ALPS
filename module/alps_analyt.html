@@ -148,6 +148,7 @@
       <div id="funcs-0" class="panel-collapse collapse">
         <div class="list-group">
             <a class="list-group-item" href="../module/alps_analyt.html#proc-eval_fit">eval_fit</a>
+            <a class="list-group-item" href="../module/alps_analyt.html#proc-fit_function">fit_function</a>
         </div>
       </div>
     </div>
@@ -161,6 +162,9 @@
       <div id="subs-0" class="panel-collapse collapse">
         <div class="list-group">
             <a class="list-group-item" href="../module/alps_analyt.html#proc-determine_param_fit">determine_param_fit</a>
+            <a class="list-group-item" href="../module/alps_analyt.html#proc-output_fit">output_fit</a>
+            <a class="list-group-item" href="../module/alps_analyt.html#proc-determine_jt">determine_JT</a>
+            <a class="list-group-item" href="../module/alps_analyt.html#proc-lm_nonlinear_fit">LM_nonlinear_fit</a>
         </div>
       </div>
     </div>
@@ -205,6 +209,7 @@
       <div id="funcs-1" class="panel-collapse collapse">
         <div class="list-group">
             <a class="list-group-item" href="../module/alps_analyt.html#proc-eval_fit">eval_fit</a>
+            <a class="list-group-item" href="../module/alps_analyt.html#proc-fit_function">fit_function</a>
         </div>
       </div>
     </div>
@@ -218,6 +223,9 @@
       <div id="subs-1" class="panel-collapse collapse">
         <div class="list-group">
             <a class="list-group-item" href="../module/alps_analyt.html#proc-determine_param_fit">determine_param_fit</a>
+            <a class="list-group-item" href="../module/alps_analyt.html#proc-output_fit">output_fit</a>
+            <a class="list-group-item" href="../module/alps_analyt.html#proc-determine_jt">determine_JT</a>
+            <a class="list-group-item" href="../module/alps_analyt.html#proc-lm_nonlinear_fit">LM_nonlinear_fit</a>
         </div>
       </div>
     </div>
@@ -318,6 +326,114 @@ by the subroutine <a href="../proc/determine_param_fit.html">determine_param_fit
     </div>
   </div>
 
+              <div class="panel panel-default">
+    <div class="panel-heading codesum"><span class="anchor" id="proc-fit_function"></span><h3>private  function <a href='../proc/fit_function.html'>fit_function</a>(is, n_params, params, pperp_val, ppar_val)  
+</h3></div>
+    <div class="panel-body">
+          
+  <p>This function evaluates the fit to f0 at real <a>pperp_val</a> and complex <a>ppar_val</a>,
+provided that the one-dimensional fit-parameter array <a>params</a> is fed into the
+function. This is only used during the fitting. For the evaluation in ALPS,
+use <a href="../proc/eval_fit.html">eval_fit</a>.</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th>Type</th>
+<th>Intent</th><th>Optional</th>        <th>Attributes</th>
+        <th></th>
+        <th>Name</th>
+        <th></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>is</strong></td>
+            <td>
+<p>Index of species for which <a href="../proc/eval_fit.html">eval_fit</a> is executed.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>n_params</strong></td>
+            <td>
+<p>Total number of fit parameters for a given species.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              double precision,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>params</strong>(n_params)</td>
+            <td>
+<p>Array of fit parameters.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              double precision,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>pperp_val</strong></td>
+            <td>
+<p>Perpendicular momentum.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              double complex,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>ppar_val</strong></td>
+            <td>
+<p>Complex parallel momentum.</p>
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <h4>
+    Return Value
+    <small>doublecomplex</small>
+    </h4>
+    
+
+    </div>
+  </div>
+
         </section>
         <br>
 
@@ -333,6 +449,369 @@ the full field <a href="../module/alps_var.html#variable-param_fit">param_fit</a
 
   <h4>Arguments</h4>
     <em>None</em>
+
+    </div>
+  </div>
+
+              <div class="panel panel-default">
+    <div class="panel-heading codesum"><span class="anchor" id="proc-output_fit"></span><h3>private  subroutine <a href='../proc/output_fit.html'>output_fit</a>(qualitytotal)  
+</h3></div>
+    <div class="panel-body">
+          
+  <p>This subroutine outputs the fit parameters for iperp=0 to stdout to monitor the fit.</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th>Type</th>
+<th>Intent</th><th>Optional</th>        <th>Attributes</th>
+        <th></th>
+        <th>Name</th>
+        <th></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              double precision,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>qualitytotal</strong></td>
+            <td>
+<p>Quality of the total fit result.</p>
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+    </div>
+  </div>
+
+              <div class="panel panel-default">
+    <div class="panel-heading codesum"><span class="anchor" id="proc-determine_jt"></span><h3>private  subroutine <a href='../proc/determine_jt.html'>determine_JT</a>(is, n_params, nJT, JT, params, iperp, upper_limit, ipparbar_lower)  
+</h3></div>
+    <div class="panel-body">
+          
+  <p>This subroutine calculates the transposed Jacobian matrix of the fit function with respect to the
+fit parameter array.</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th>Type</th>
+<th>Intent</th><th>Optional</th>        <th>Attributes</th>
+        <th></th>
+        <th>Name</th>
+        <th></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>is</strong></td>
+            <td>
+<p>Index of species for which <a href="../proc/determine_jt.html">determine_JT</a> is executed.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>n_params</strong></td>
+            <td>
+<p>Total number of fit parameters for a given species.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nJT</strong></td>
+            <td>
+<p>First dimension of matrix nJT [[JT(variable)]].</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              double precision,
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>JT</strong>(nJT,0:upper_limit)</td>
+            <td>
+<p>Transposed Jacobian matrix of the fit function.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              double precision,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>params</strong>(n_params)</td>
+            <td>
+<p>Array of fit parameters.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>iperp</strong></td>
+            <td>
+<p>Index of perpendicular momentum at which [[JT(variable)]] is evaluated.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>upper_limit</strong></td>
+            <td>
+<p>Upper limit of iperp space (relativistic and non-relativistic).</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>ipparbar_lower</strong></td>
+            <td>
+<p>Lower index of parallel momentum (relativistic).</p>
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+    </div>
+  </div>
+
+              <div class="panel panel-default">
+    <div class="panel-heading codesum"><span class="anchor" id="proc-lm_nonlinear_fit"></span><h3>private  subroutine <a href='../proc/lm_nonlinear_fit.html'>LM_nonlinear_fit</a>(is, g, n_params, nJT, params, param_mask, iperp, npar, ipparbar_lower, quality)  
+</h3></div>
+    <div class="panel-body">
+          
+  <p>This subroutine processes the nonlinear Levenberg-Marquart algorithm and returns
+the one-dimensional array <a>params</a> at a given iperp.
+The variable <a>quality</a> is the sum of the squares of all residuals.</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th>Type</th>
+<th>Intent</th><th>Optional</th>        <th>Attributes</th>
+        <th></th>
+        <th>Name</th>
+        <th></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>is</strong></td>
+            <td>
+<p>Index of species for which <a href="../proc/lm_nonlinear_fit.html">LM_nonlinear_fit</a> is executed.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              double precision,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>g</strong>(0:npar)</td>
+            <td>
+<p>Array of function to be fitted.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>n_params</strong></td>
+            <td>
+<p>Total number of fit parameters for a given species.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nJT</strong></td>
+            <td>
+<p>First dimension of matrix nJT <a href="../proc/determine_jt.html">determine_JT</a>.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              double precision,
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>params</strong>(n_params)</td>
+            <td>
+<p>Array of fit parameters.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              logical,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>param_mask</strong>(n_params)</td>
+            <td>
+<p>Bit mask for required fit parameters.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>iperp</strong></td>
+            <td>
+<p>Index of perpendicular momentum.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>npar</strong></td>
+            <td>
+<p>Number of steps in parallel momentum</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>ipparbar_lower</strong></td>
+            <td>
+<p>Lower index of parallel momentum (relativistic).</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              double precision,
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>quality</strong></td>
+            <td>
+<p>Quality of the individual fit result.</p>
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
 
     </div>
   </div>

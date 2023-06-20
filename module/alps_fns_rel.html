@@ -148,10 +148,15 @@
       <div id="funcs-0" class="panel-collapse collapse">
         <div class="list-group">
             <a class="list-group-item" href="../module/alps_fns_rel.html#proc-integrate_res_rel">integrate_res_rel</a>
+            <a class="list-group-item" href="../module/alps_fns_rel.html#proc-integrate_resu_rel">integrate_resU_rel</a>
             <a class="list-group-item" href="../module/alps_fns_rel.html#proc-principal_integral_rel">principal_integral_rel</a>
+            <a class="list-group-item" href="../module/alps_fns_rel.html#proc-funct_g_rel">funct_g_rel</a>
             <a class="list-group-item" href="../module/alps_fns_rel.html#proc-landau_integrate_rel">landau_integrate_rel</a>
             <a class="list-group-item" href="../module/alps_fns_rel.html#proc-int_ee_rel">int_ee_rel</a>
             <a class="list-group-item" href="../module/alps_fns_rel.html#proc-resu_rel">resU_rel</a>
+            <a class="list-group-item" href="../module/alps_fns_rel.html#proc-int_t_rel">int_T_rel</a>
+            <a class="list-group-item" href="../module/alps_fns_rel.html#proc-int_t_res_rel">int_T_res_rel</a>
+            <a class="list-group-item" href="../module/alps_fns_rel.html#proc-fact">Fact</a>
             <a class="list-group-item" href="../module/alps_fns_rel.html#proc-bessj">BESSJ</a>
             <a class="list-group-item" href="../module/alps_fns_rel.html#proc-bessj0">BESSJ0</a>
             <a class="list-group-item" href="../module/alps_fns_rel.html#proc-bessj1">BESSJ1</a>
@@ -170,6 +175,7 @@
         <div class="list-group">
             <a class="list-group-item" href="../module/alps_fns_rel.html#proc-derivative_f0_rel">derivative_f0_rel</a>
             <a class="list-group-item" href="../module/alps_fns_rel.html#proc-polyharmonic_spline">polyharmonic_spline</a>
+            <a class="list-group-item" href="../module/alps_fns_rel.html#proc-determine_sproc_rel">determine_sproc_rel</a>
             <a class="list-group-item" href="../module/alps_fns_rel.html#proc-cbessj">CBESSJ</a>
         </div>
       </div>
@@ -222,10 +228,15 @@
       <div id="funcs-1" class="panel-collapse collapse">
         <div class="list-group">
             <a class="list-group-item" href="../module/alps_fns_rel.html#proc-integrate_res_rel">integrate_res_rel</a>
+            <a class="list-group-item" href="../module/alps_fns_rel.html#proc-integrate_resu_rel">integrate_resU_rel</a>
             <a class="list-group-item" href="../module/alps_fns_rel.html#proc-principal_integral_rel">principal_integral_rel</a>
+            <a class="list-group-item" href="../module/alps_fns_rel.html#proc-funct_g_rel">funct_g_rel</a>
             <a class="list-group-item" href="../module/alps_fns_rel.html#proc-landau_integrate_rel">landau_integrate_rel</a>
             <a class="list-group-item" href="../module/alps_fns_rel.html#proc-int_ee_rel">int_ee_rel</a>
             <a class="list-group-item" href="../module/alps_fns_rel.html#proc-resu_rel">resU_rel</a>
+            <a class="list-group-item" href="../module/alps_fns_rel.html#proc-int_t_rel">int_T_rel</a>
+            <a class="list-group-item" href="../module/alps_fns_rel.html#proc-int_t_res_rel">int_T_res_rel</a>
+            <a class="list-group-item" href="../module/alps_fns_rel.html#proc-fact">Fact</a>
             <a class="list-group-item" href="../module/alps_fns_rel.html#proc-bessj">BESSJ</a>
             <a class="list-group-item" href="../module/alps_fns_rel.html#proc-bessj0">BESSJ0</a>
             <a class="list-group-item" href="../module/alps_fns_rel.html#proc-bessj1">BESSJ1</a>
@@ -244,6 +255,7 @@
         <div class="list-group">
             <a class="list-group-item" href="../module/alps_fns_rel.html#proc-derivative_f0_rel">derivative_f0_rel</a>
             <a class="list-group-item" href="../module/alps_fns_rel.html#proc-polyharmonic_spline">polyharmonic_spline</a>
+            <a class="list-group-item" href="../module/alps_fns_rel.html#proc-determine_sproc_rel">determine_sproc_rel</a>
             <a class="list-group-item" href="../module/alps_fns_rel.html#proc-cbessj">CBESSJ</a>
         </div>
       </div>
@@ -327,6 +339,111 @@
             </td>
             <td>::</td>
             <td><strong>mode</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <h4>
+    Return Value
+    <small>doublecomplex</small>
+    </h4>
+    
+
+    </div>
+  </div>
+
+              <div class="panel panel-default">
+    <div class="panel-heading codesum"><span class="anchor" id="proc-integrate_resu_rel"></span><h3>private  function <a href='../proc/integrate_resu_rel.html'>integrate_resU_rel</a>(sproc_rel, om, nn, mode, igamma)  
+</h3></div>
+    <div class="panel-body">
+          
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th>Type</th>
+<th>Intent</th><th>Optional</th>        <th>Attributes</th>
+        <th></th>
+        <th>Name</th>
+        <th></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              integer
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>sproc_rel</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              double complex
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>om</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              integer
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nn</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              integer
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>mode</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              integer
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>igamma</strong></td>
             <td>
 
             </td>
@@ -462,6 +579,126 @@
             </td>
             <td>::</td>
             <td><strong>upperlimit</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <h4>
+    Return Value
+    <small>doublecomplex</small>
+    </h4>
+    
+
+    </div>
+  </div>
+
+              <div class="panel panel-default">
+    <div class="panel-heading codesum"><span class="anchor" id="proc-funct_g_rel"></span><h3>private  function <a href='../proc/funct_g_rel.html'>funct_g_rel</a>(sproc_rel, pparbar, igamma, om, nn, mode)  
+</h3></div>
+    <div class="panel-body">
+          
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th>Type</th>
+<th>Intent</th><th>Optional</th>        <th>Attributes</th>
+        <th></th>
+        <th>Name</th>
+        <th></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              integer
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>sproc_rel</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              double precision
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>pparbar</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              integer
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>igamma</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              double complex
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>om</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              integer
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nn</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              integer
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>mode</strong></td>
             <td>
 
             </td>
@@ -697,6 +934,261 @@
     <h4>
     Return Value
     <small>doublecomplex</small>
+    </h4>
+    
+
+    </div>
+  </div>
+
+              <div class="panel panel-default">
+    <div class="panel-heading codesum"><span class="anchor" id="proc-int_t_rel"></span><h3>private  function <a href='../proc/int_t_rel.html'>int_T_rel</a>(sproc_rel, nn, igamma, ipparbar, mode)  
+</h3></div>
+    <div class="panel-body">
+          
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th>Type</th>
+<th>Intent</th><th>Optional</th>        <th>Attributes</th>
+        <th></th>
+        <th>Name</th>
+        <th></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              integer
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>sproc_rel</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              integer
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nn</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              integer
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>igamma</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              integer
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>ipparbar</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              integer
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>mode</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <h4>
+    Return Value
+    <small>doublecomplex</small>
+    </h4>
+    
+
+    </div>
+  </div>
+
+              <div class="panel panel-default">
+    <div class="panel-heading codesum"><span class="anchor" id="proc-int_t_res_rel"></span><h3>private  function <a href='../proc/int_t_res_rel.html'>int_T_res_rel</a>(sproc_rel, nn, igamma, pparbar, mode)  
+</h3></div>
+    <div class="panel-body">
+          
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th>Type</th>
+<th>Intent</th><th>Optional</th>        <th>Attributes</th>
+        <th></th>
+        <th>Name</th>
+        <th></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              integer
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>sproc_rel</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              integer
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nn</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              integer
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>igamma</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              double complex
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>pparbar</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              integer
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>mode</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <h4>
+    Return Value
+    <small>doublecomplex</small>
+    </h4>
+    
+
+    </div>
+  </div>
+
+              <div class="panel panel-default">
+    <div class="panel-heading codesum"><span class="anchor" id="proc-fact"></span><h3>private  function <a href='../proc/fact.html'>Fact</a>(k)  
+</h3></div>
+    <div class="panel-body">
+          
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th>Type</th>
+<th>Intent</th><th>Optional</th>        <th>Attributes</th>
+        <th></th>
+        <th>Name</th>
+        <th></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              integer
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>k</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <h4>
+    Return Value
+    <small>doubleprecision</small>
     </h4>
     
 
@@ -1152,6 +1644,46 @@
             </td>
             <td>::</td>
             <td><strong>nspec_rel</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+    </div>
+  </div>
+
+              <div class="panel panel-default">
+    <div class="panel-heading codesum"><span class="anchor" id="proc-determine_sproc_rel"></span><h3>private  subroutine <a href='../proc/determine_sproc_rel.html'>determine_sproc_rel</a>(sproc_rel)  
+</h3></div>
+    <div class="panel-body">
+          
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th>Type</th>
+<th>Intent</th><th>Optional</th>        <th>Attributes</th>
+        <th></th>
+        <th>Name</th>
+        <th></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              integer
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>sproc_rel</strong></td>
             <td>
 
             </td>
