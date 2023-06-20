@@ -52,12 +52,16 @@
                  Contents <span class="caret"></span>
               </a>
               <ul class="dropdown-menu">
+                    <li><a href="../lists/files.html">Source Files</a></li>
                   <li><a href="../lists/modules.html">Modules</a></li>
                   <li><a href="../lists/procedures.html">Procedures</a></li>
                   <li><a href="../lists/types.html">Derived Types</a></li>
                   <li><a href="../program/alps.html">Program</a></li>
               </ul>
             </li>
+                <li class="visible-xs hidden-sm visible-lg">
+                  <a href="../lists/files.html">Source Files</a>
+                </li>
               <li class="visible-xs hidden-sm visible-lg">
                 <a href="../lists/modules.html">Modules</a>
               </li>
@@ -100,8 +104,13 @@
                title="16.2% of total for modules and submodules.">679 statements</a>
           </li>
 
+            <li id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/ALPS_analyt.f90"> Source File</a>
+            </li>
         </ul>
         <ol class="breadcrumb in-well text-right">
+              <li><a href='../sourcefile/alps_analyt.f90.html'>ALPS_analyt.f90</a></li>
           <li class="active">alps_analyt</li>
         </ol>
       </div>
@@ -389,7 +398,7 @@ modules which it uses.
     <div class="panel-body">
           
   <p>This function evaluates the fit to f0 at and the complex parallel
-momentum ppar_valC. It requires the fit parameters that will be determined
+momentum <a>ppar_valC</a>. It requires the fit parameters that will be determined
 by the subroutine <a href="../proc/determine_param_fit.html">determine_param_fit</a>.</p>
 
   <h4>Arguments</h4>
@@ -465,8 +474,8 @@ by the subroutine <a href="../proc/determine_param_fit.html">determine_param_fit
 </h3></div>
     <div class="panel-body">
           
-  <p>This function evaluates the fit to f0 at real pperp_val and complex ppar_val,
-provided that the one-dimensional fit-parameter array params is fed into the
+  <p>This function evaluates the fit to f0 at real <a>pperp_val</a> and complex <a>ppar_val</a>,
+provided that the one-dimensional fit-parameter array <a>params</a> is fed into the
 function. This is only used during the fitting. For the evaluation in ALPS,
 use <a href="../proc/eval_fit.html">eval_fit</a>.</p>
 
@@ -779,8 +788,8 @@ fit parameter array.</p>
     <div class="panel-body">
           
   <p>This subroutine processes the nonlinear Levenberg-Marquart algorithm and returns
-the one-dimensional array params at a given iperp.
-The variable quality is the sum of the squares of all residuals.</p>
+the one-dimensional array <a>params</a> at a given iperp.
+The variable <a>quality</a> is the sum of the squares of all residuals.</p>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">

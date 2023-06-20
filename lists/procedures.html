@@ -53,12 +53,16 @@
                  Contents <span class="caret"></span>
               </a>
               <ul class="dropdown-menu">
+                    <li><a href="../lists/files.html">Source Files</a></li>
                   <li><a href="../lists/modules.html">Modules</a></li>
                   <li><a href="../lists/procedures.html">Procedures</a></li>
                   <li><a href="../lists/types.html">Derived Types</a></li>
                   <li><a href="../program/alps.html">Program</a></li>
               </ul>
             </li>
+                <li class="visible-xs hidden-sm visible-lg">
+                  <a href="../lists/files.html">Source Files</a>
+                </li>
               <li class="visible-xs hidden-sm visible-lg">
                 <a href="../lists/modules.html">Modules</a>
               </li>
@@ -91,8 +95,8 @@
 			 <table class="table table-striped">
 			 <thead><tr><th>Procedure</th><th>Location</th><th>Procedure Type</th><th>Description</th></tr></thead>
 			 <tbody>
-			   <tr><td><a href='../proc/alps_error.html'>alps_error</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Subroutine</td><td></td></tr>
-			   <tr><td><a href='../proc/alps_error_init.html'>alps_error_init</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Subroutine</td><td></td></tr>
+			   <tr><td><a href='../proc/alps_error.html'>alps_error</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Subroutine</td><td><p>Error catching subroutine.</p></td></tr>
+			   <tr><td><a href='../proc/alps_error_init.html'>alps_error_init</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Subroutine</td><td><p>Open a file for the error log.</p></td></tr>
 			   <tr><td><a href='../proc/besseli.html'>besselI</a></td><td><a href='../module/alps_nhds.html'>alps_nhds</a></td><td>Function</td><td><p>Calculates the modified Bessel function of argument x and order n.</p></td></tr>
 			   <tr><td><a href='../proc/bessi.html'>BESSI</a></td><td><a href='../module/alps_nhds.html'>alps_nhds</a></td><td>Function</td><td><p>Function to calculate the first kind modified Bessel function of integer order N
 for any real X.</p></td></tr>
@@ -122,12 +126,12 @@ the full field <a href="../module/alps_var.html#variable-param_fit">param_fit</a
 			   <tr><td><a href='../proc/dispfunct.html'>dispfunct</a></td><td><a href='../module/alps_nhds.html'>alps_nhds</a></td><td>Function</td><td><p>Calculates the dispersion function based on the complex error function.</p></td></tr>
 			   <tr><td><a href='../proc/display_credits.html'>display_credits</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Subroutine</td><td><p>Writes the opening credits.</p></td></tr>
 			   <tr><td><a href='../proc/eval_fit.html'>eval_fit</a></td><td><a href='../module/alps_analyt.html'>alps_analyt</a></td><td>Function</td><td><p>This function evaluates the fit to f0 at and the complex parallel
-momentum ppar_valC. It requires the fit parameters that will be determined
+momentum <a>ppar_valC</a>. It requires the fit parameters that will be determined
 by the subroutine <a href="../proc/determine_param_fit.html">determine_param_fit</a>.</p></td></tr>
 			   <tr><td><a href='../proc/fact.html'>Fact</a></td><td><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></td><td>Function</td><td></td></tr>
 			   <tr><td><a href='../proc/find_minima.html'>find_minima</a></td><td><a href='../module/alps_fns.html'>alps_fns</a></td><td>Subroutine</td><td></td></tr>
-			   <tr><td><a href='../proc/fit_function.html'>fit_function</a></td><td><a href='../module/alps_analyt.html'>alps_analyt</a></td><td>Function</td><td><p>This function evaluates the fit to f0 at real pperp_val and complex ppar_val,
-provided that the one-dimensional fit-parameter array params is fed into the
+			   <tr><td><a href='../proc/fit_function.html'>fit_function</a></td><td><a href='../module/alps_analyt.html'>alps_analyt</a></td><td>Function</td><td><p>This function evaluates the fit to f0 at real <a>pperp_val</a> and complex <a>ppar_val</a>,
+provided that the one-dimensional fit-parameter array <a>params</a> is fed into the
 function. This is only used during the fitting. For the evaluation in ALPS,
 use <a href="../proc/eval_fit.html">eval_fit</a>.</p></td></tr>
 			   <tr><td><a href='../proc/fit_read.html'>fit_read</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Subroutine</td><td><p>Reads in fit parameters for component is.</p></td></tr>
@@ -135,14 +139,16 @@ use <a href="../proc/eval_fit.html">eval_fit</a>.</p></td></tr>
 			   <tr><td><a href='../proc/funct_g.html'>funct_g</a></td><td><a href='../module/alps_fns.html'>alps_fns</a></td><td>Function</td><td></td></tr>
 			   <tr><td><a href='../proc/funct_g_rel.html'>funct_g_rel</a></td><td><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></td><td>Function</td><td></td></tr>
 			   <tr><td><a href='../proc/gamma.html'>Gamma</a></td><td><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></td><td>Function</td><td></td></tr>
-			   <tr><td><a href='../proc/get_indexed_double_namelist_unit.html'>get_indexed_double_namelist_unit</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Subroutine</td><td></td></tr>
-			   <tr><td><a href='../proc/get_indexed_namelist_unit.html'>get_indexed_namelist_unit</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Subroutine</td><td></td></tr>
+			   <tr><td><a href='../proc/get_indexed_double_namelist_unit.html'>get_indexed_double_namelist_unit</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Subroutine</td><td><p>A version of <a href="../proc/get_indexed_namelist_unit.html">get_indexed_namelist_unit</a>, extended
+to allow for double indexing in order to read in multiple fits
+for a single species.</p></td></tr>
+			   <tr><td><a href='../proc/get_indexed_namelist_unit.html'>get_indexed_namelist_unit</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Subroutine</td><td><p>Determines unused I/O unit.</p></td></tr>
 			   <tr><td><a href='../proc/get_runname.html'>get_runname</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Subroutine</td><td><p>Get runname for output files from input argument.</p></td></tr>
-			   <tr><td><a href='../proc/get_unused_unit.html'>get_unused_unit</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Subroutine</td><td></td></tr>
+			   <tr><td><a href='../proc/get_unused_unit.html'>get_unused_unit</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Subroutine</td><td><p>Determine unused number for I/O index.</p></td></tr>
 			   <tr><td><a href='../proc/init_param.html'>init_param</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Subroutine</td><td><p>Read in system parameters from *.in file.
 Only processor 0 calls this routine:</p></td></tr>
-			   <tr><td><a href='../proc/input_unit.html'>input_unit</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Function</td><td></td></tr>
-			   <tr><td><a href='../proc/input_unit_exist.html'>input_unit_exist</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Function</td><td></td></tr>
+			   <tr><td><a href='../proc/input_unit.html'>input_unit</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Function</td><td><p>Assigns input unit for namelist opening.</p></td></tr>
+			   <tr><td><a href='../proc/input_unit_exist.html'>input_unit_exist</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Function</td><td><p>Determine if a particular namelist already opened.</p></td></tr>
 			   <tr><td><a href='../proc/int_ee.html'>int_ee</a></td><td><a href='../module/alps_fns.html'>alps_fns</a></td><td>Function</td><td></td></tr>
 			   <tr><td><a href='../proc/int_ee_rel.html'>int_ee_rel</a></td><td><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></td><td>Function</td><td></td></tr>
 			   <tr><td><a href='../proc/int_t.html'>int_T</a></td><td><a href='../module/alps_fns.html'>alps_fns</a></td><td>Function</td><td></td></tr>
@@ -157,8 +163,8 @@ Only processor 0 calls this routine:</p></td></tr>
 			   <tr><td><a href='../proc/landau_integrate.html'>landau_integrate</a></td><td><a href='../module/alps_fns.html'>alps_fns</a></td><td>Function</td><td></td></tr>
 			   <tr><td><a href='../proc/landau_integrate_rel.html'>landau_integrate_rel</a></td><td><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></td><td>Function</td><td></td></tr>
 			   <tr><td><a href='../proc/lm_nonlinear_fit.html'>LM_nonlinear_fit</a></td><td><a href='../module/alps_analyt.html'>alps_analyt</a></td><td>Subroutine</td><td><p>This subroutine processes the nonlinear Levenberg-Marquart algorithm and returns
-the one-dimensional array params at a given iperp.
-The variable quality is the sum of the squares of all residuals.</p></td></tr>
+the one-dimensional array <a>params</a> at a given iperp.
+The variable <a>quality</a> is the sum of the squares of all residuals.</p></td></tr>
 			   <tr><td><a href='../proc/map_read.html'>map_read</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Subroutine</td><td><p>Reads in complex frequency map parameters.</p></td></tr>
 			   <tr><td><a href='../proc/map_search.html'>map_search</a></td><td><a href='../module/alps_fns.html'>alps_fns</a></td><td>Subroutine</td><td></td></tr>
 			   <tr><td><a href='../proc/om_double_scan.html'>om_double_scan</a></td><td><a href='../module/alps_fns.html'>alps_fns</a></td><td>Subroutine</td><td></td></tr>
