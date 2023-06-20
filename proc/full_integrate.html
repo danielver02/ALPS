@@ -8,7 +8,7 @@
     <meta name="author" content="Kristopher Klein, Daniel Verscharen" >
     <link rel="icon" href="../favicon.png">
 
-    <title>pass_instructions &ndash; ALPS</title>
+    <title>full_integrate &ndash; ALPS</title>
 
     <link href="../css/bootstrap.min.css" rel="stylesheet">
     <link href="../css/pygments.css" rel="stylesheet">
@@ -89,8 +89,8 @@
 
     <div class="container">
   <div class="row">
-    <h1>pass_instructions
-      <small>Subroutine</small>
+    <h1>full_integrate
+      <small>Function</small>
       
     </h1>
       <div class="row" id="info-bar">
@@ -101,18 +101,18 @@
           <li id="statements"><i class="fa fa-list-ol"></i>
             <a data-toggle="tooltip"
                data-placement="bottom" data-html="true"
-               title=" 4.6% of total for procedures.">120 statements</a>
+               title=" 1.1% of total for procedures.">28 statements</a>
           </li>
 
             <li id="source-file">
               <i class="fa fa-code"></i>
-              <a href="../src/ALPS_com.f90"> Source File</a>
+              <a href="../src/ALPS_fns.f90"> Source File</a>
             </li>
         </ul>
         <ol class="breadcrumb in-well text-right">
-              <li><a href='../sourcefile/alps_com.f90.html'>ALPS_com.f90</a></li>
-              <li><a href='../module/alps_com.html'>alps_com</a></li>
-          <li class="active">pass_instructions</li>
+              <li><a href='../sourcefile/alps_fns.f90.html'>ALPS_fns.f90</a></li>
+              <li><a href='../module/alps_fns.html'>alps_fns</a></li>
+          <li class="active">full_integrate</li>
         </ol>
       </div>
     </div>
@@ -149,14 +149,13 @@
   
   
 
-    <em>None</em>
 
   </div>
 
     </div>
     
     <div class="col-md-9" id='text'>
-    <h2>public  subroutine pass_instructions()  
+    <h2>public  function full_integrate(om, nn, mode, found_res)  
 </h2>
         <div class="panel panel-default">
       <div class="panel-heading">
@@ -165,8 +164,8 @@
       <ul class="list-group">
           <li class="list-group-item">
             <ul class="list-inline">
-                <li><a href='<a href="http://www.mpi-forum.org/docs/mpi-3.1/mpi31-report/node410.htm">mpi</a>'>mpi</a></li>
                 <li><a href='../module/alps_var.html'>alps_var</a></li>
+                <li><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></li>
             </ul>
           </li>
       </ul>
@@ -176,8 +175,86 @@
 
 
     <h3>Arguments</h3>
-    <em>None</em>
-    <br>
+        <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th>Type</th>
+<th>Intent</th><th>Optional</th>        <th>Attributes</th>
+        <th></th>
+        <th>Name</th>
+        <th></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-om~7"></span>
+              double complex
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>om</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nn~5"></span>
+              integer
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nn</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mode~4"></span>
+              integer
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>mode</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-found_res"></span>
+              logical
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>found_res</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+      <h3>Return Value
+        <small>
+          <span class="anchor" id="variable-full_integrate"></span>
+          doublecomplex
+        </small>
+      </h3>
+      
     <br>
 
     <section class="visible-xs visible-sm hidden-md">
@@ -202,7 +279,6 @@
   
   
 
-    <em>None</em>
 
     </section>
     <br class="visible-xs visible-sm hidden-md">

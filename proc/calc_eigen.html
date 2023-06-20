@@ -8,7 +8,7 @@
     <meta name="author" content="Kristopher Klein, Daniel Verscharen" >
     <link rel="icon" href="../favicon.png">
 
-    <title>pass_instructions &ndash; ALPS</title>
+    <title>calc_eigen &ndash; ALPS</title>
 
     <link href="../css/bootstrap.min.css" rel="stylesheet">
     <link href="../css/pygments.css" rel="stylesheet">
@@ -89,7 +89,7 @@
 
     <div class="container">
   <div class="row">
-    <h1>pass_instructions
+    <h1>calc_eigen
       <small>Subroutine</small>
       
     </h1>
@@ -101,18 +101,18 @@
           <li id="statements"><i class="fa fa-list-ol"></i>
             <a data-toggle="tooltip"
                data-placement="bottom" data-html="true"
-               title=" 4.6% of total for procedures.">120 statements</a>
+               title=" 3.0% of total for procedures.">78 statements</a>
           </li>
 
             <li id="source-file">
               <i class="fa fa-code"></i>
-              <a href="../src/ALPS_com.f90"> Source File</a>
+              <a href="../src/ALPS_fns.f90"> Source File</a>
             </li>
         </ul>
         <ol class="breadcrumb in-well text-right">
-              <li><a href='../sourcefile/alps_com.f90.html'>ALPS_com.f90</a></li>
-              <li><a href='../module/alps_com.html'>alps_com</a></li>
-          <li class="active">pass_instructions</li>
+              <li><a href='../sourcefile/alps_fns.f90.html'>ALPS_fns.f90</a></li>
+              <li><a href='../module/alps_fns.html'>alps_fns</a></li>
+          <li class="active">calc_eigen</li>
         </ol>
       </div>
     </div>
@@ -149,14 +149,13 @@
   
   
 
-    <em>None</em>
 
   </div>
 
     </div>
     
     <div class="col-md-9" id='text'>
-    <h2>public  subroutine pass_instructions()  
+    <h2>public  subroutine calc_eigen(omega, electric, magnetic, vmean, ds, Ps, eigen_L, heat_L)  
 </h2>
         <div class="panel panel-default">
       <div class="panel-heading">
@@ -165,7 +164,6 @@
       <ul class="list-group">
           <li class="list-group-item">
             <ul class="list-inline">
-                <li><a href='<a href="http://www.mpi-forum.org/docs/mpi-3.1/mpi31-report/node410.htm">mpi</a>'>mpi</a></li>
                 <li><a href='../module/alps_var.html'>alps_var</a></li>
             </ul>
           </li>
@@ -176,8 +174,139 @@
 
 
     <h3>Arguments</h3>
-    <em>None</em>
-    <br>
+        <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th>Type</th>
+<th>Intent</th><th>Optional</th>        <th>Attributes</th>
+        <th></th>
+        <th>Name</th>
+        <th></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-omega"></span>
+              double complex
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>omega</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-electric"></span>
+              double complex,
+            </td>
+<td>intent(out),</td>
+              <td></td>            <td>
+              dimension(1:3)
+            </td>
+            <td>::</td>
+            <td><strong>electric</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-magnetic"></span>
+              double complex,
+            </td>
+<td>intent(out),</td>
+              <td></td>            <td>
+              dimension(1:3)
+            </td>
+            <td>::</td>
+            <td><strong>magnetic</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-vmean"></span>
+              double complex,
+            </td>
+<td>intent(out),</td>
+              <td></td>            <td>
+              dimension(1:3,1:nspec)
+            </td>
+            <td>::</td>
+            <td><strong>vmean</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ds"></span>
+              double complex,
+            </td>
+<td>intent(out),</td>
+              <td></td>            <td>
+              dimension(1:nspec)
+            </td>
+            <td>::</td>
+            <td><strong>ds</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ps"></span>
+              double precision,
+            </td>
+<td>intent(out),</td>
+              <td></td>            <td>
+              dimension(1:nspec)
+            </td>
+            <td>::</td>
+            <td><strong>Ps</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-eigen_l"></span>
+              logical
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>eigen_L</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-heat_l"></span>
+              logical
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>heat_L</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
     <br>
 
     <section class="visible-xs visible-sm hidden-md">
@@ -202,7 +331,6 @@
   
   
 
-    <em>None</em>
 
     </section>
     <br class="visible-xs visible-sm hidden-md">
