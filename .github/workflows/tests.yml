@@ -48,4 +48,6 @@ jobs:
         make
 
     - name: Run ALPS
-      run: bash ./tests/run_test.sh
+      run: |
+        cd tests
+        bash .run_test.sh
