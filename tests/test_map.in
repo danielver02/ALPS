@@ -1,11 +1,11 @@
 !===============================================
-!  ALPS INPUT FILE: Quick Test Example
-!  120 x 240 momentum resolution
-!  6 v_ts spread (from test_kpar_fast_dist.in)
-!  Scan over one decade in kparallel
+!  ALPS INPUT FILE: Complex Frequency Map
+!  120 x 240 resolution
+!  6 v_ts spread (from test_map_dist.in)
+!  Identification of roots at a single wavevector
 !
 !  Kristopher Klein, Daniel Verscharen
-!  2023 FEB 17
+!  2023 FEB 18
 !===============================================
 ! REQUIRED NAMELISTS
 !===============================================
@@ -13,8 +13,8 @@
 &system
 !Initial perpendicular and parallel wavenumbers
 !Normalized to reference inertial length
-kperp=1.d-2
-kpar=1.d-3
+kperp=1.d-3
+kpar=1.d-2
 !Number of plasma species
 nspec=2
 !System option (see documentation)
@@ -23,7 +23,7 @@ option=0
 nroots=1
 !T-> use search for roots over a map 
 !F-> use input guesses for solutions 
-use_map=.false.
+use_map=.true.
 !Write or suppress output to screen:
 writeOut=.true.
 !Momentum space resolution of f0
@@ -36,11 +36,11 @@ npparbar=200
 vA=1.d-4
 !Name of input array- 
 !Located in 'distribution' folder
-arrayName='test_kpar_fast'
+arrayName='test_map'
 !Maximum amplitude of Bessel function to determine nmax
 Bessel_zero = 1.d-50
 !Maximum number of iterations in secant method
-numiter = 500
+numiter = 50
 !Value of "zero" for secant method
 D_threshold = 1.d-13
 !Size of bounding region for secant method
@@ -64,12 +64,9 @@ fit_check=T
 !T-> After map_scan, determine minima and refine
 determine_minima=T
 !1: consecutive scans, 2: double scan
-scan_option=1 
+scan_option=1
 !# wavevector scans
-n_scan=1
-!T-> use secant method
-!F-> rtsec method
-use_secant=T 
+n_scan=0
 /
 
 !Initial guess of complex frequency for first solution
@@ -85,12 +82,12 @@ g_gam=-5.5d-10 !imaginary frequency
 &maps_1
 loggridw=.false.     !log or linear scan of real freq.
 loggridg=.false.     !log or linear scan of imag. freq.
-omi     = 1.55d0     !minimum value of real freq.
-omf     = 3.d0       !maximum value of real freq.
-gami    = -3.125d-3  !minimum value of imag. freq.
-gamf    = 3.125d-3   !maximum value of imag. freq.
-ni      = 2          !# of steps in imag. freq.
-nr      = 64         !# of steps in real freq. 
+omi     =-3.d-2      !minimum value of real freq.
+omf     = 3.d-2      !maximum value of real freq.
+gami    =-1.d-3      !minimum value of imag. freq.
+gamf    = 3.d-4      !maximum value of imag. freq.
+ni      = 50         !# of steps in imag. freq.
+nr      = 50         !# of steps in real freq. 
 /
 
 !Species parameters list; species 1
@@ -169,5 +166,4 @@ nres=1          !# of scan substeps
 heating=.false. !Calculate heating rates
 eigen=.false.   !Calculate eigenfunctions
 /
-
 
