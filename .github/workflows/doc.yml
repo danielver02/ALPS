@@ -21,7 +21,7 @@ jobs:
 
     - name: Install ford
       run: pip install ford
-      
+
     - name: Build documentation
       run: |
         mkdir docs
@@ -33,7 +33,7 @@ jobs:
 
     - name: Deploy to GH pages
       #if: ${{github.event_name == 'push'}}
-      uses: JamesIves/github-pages-deploy-action@4.1.6
+      uses: JamesIves/github-pages-deploy-action@4.4.2
       with:
         branch: gh-pages # The branch the action should deploy to.
         folder: docs # The folder the action should deploy.
