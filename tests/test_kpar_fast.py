@@ -9,11 +9,11 @@ def read_roots(path=".", filename="test_kpar_fast.scan_kpara_1.root_1"):
     data = np.loadtxt(path_to_file)
     return data
 
-@pytest.mark.parametrize("path", ["."])
+@pytest.mark.parametrize("path", ["../solution"])
 @pytest.mark.parametrize("column", range(4))
 def test_check_outputs(path, column):
 
-    ref_path = "../solution"
+    ref_path = "."
     
     ref_data = read_roots(ref_path)
     test_data = read_roots(path)
