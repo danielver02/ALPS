@@ -1473,7 +1473,7 @@ end subroutine secant
 !KGK:
 subroutine om_scan(ik)
   use ALPS_var, only : proc0, nroots, runname, ierror, wroots, scan, sproc
-  use ALPS_var, only : kperp,kpar,kperp_last,kpar_last, D_prec, D_gap
+  use ALPS_var, only : kperp,kpar,kperp_last,kpar_last, D_gap
   use ALPS_var, only : nspec
   use ALPS_io,  only : get_unused_unit, isnancheck, alps_error
   use mpi
@@ -1493,8 +1493,6 @@ subroutine om_scan(ik)
 
 
   double complex :: omega    !Complex Frequency
-  double complex :: om1, om2 !Bounding frequencies for secant search
-  integer :: iflag                           !Flag for Root search
   integer, dimension(:), allocatable :: scan_unit
   integer, dimension(:), allocatable :: heat_unit  ! file for outputting damping rates
   integer, dimension(:), allocatable :: eigen_unit ! file for outputting eigenfn values
@@ -1929,7 +1927,7 @@ end subroutine calc_eigen
 !KGK:
 subroutine om_double_scan
   use ALPS_var, only : proc0, nroots, runname, ierror, wroots, scan, sproc
-  use ALPS_var, only : kperp,kpar,kperp_last,kpar_last, D_prec, D_gap
+  use ALPS_var, only : kperp,kpar,kperp_last,kpar_last, D_gap
   use ALPS_var, only : ierror
   use ALPS_io,  only : get_unused_unit, alps_error
   use mpi
@@ -1947,8 +1945,6 @@ subroutine om_double_scan
 
 
   double complex :: omega    !Complex Frequency
-  double complex :: om1, om2 !Bounding frequencies for secant search
-  integer :: iflag                           !Flag for Root search
   integer, dimension(:), allocatable :: scan_unit
 
   double precision :: tmp
@@ -2151,9 +2147,6 @@ subroutine om_double_scan
 
 
                 omega=wroots(in)
-
-                om1=omega*(1.d0-D_prec)
-                om2=omega*(1.d0+D_prec)
 
                 call secant(omega)
 
@@ -2384,14 +2377,12 @@ end subroutine map_search
 !-=-=-=-=-=-=
 subroutine refine_guess
   use alps_var, only : wroots, nroots, writeOut, proc0
-  use alps_var, only : ierror,runname, D_prec
+  use alps_var, only : ierror,runname
   use alps_io,  only : get_unused_unit
   use mpi
   implicit none
 
   double complex :: omega    !Complex Frequency
-  double complex :: om1, om2 !Bounding frequencies for secant search
-  integer :: iflag                           !Flag for Root search
   character(100) :: mapName                  !Output file names
   double complex :: tmpDisp  !holding variable for dispersion relation solution
   integer :: iw   !loop index
@@ -2411,10 +2402,6 @@ subroutine refine_guess
      if (proc0.and.writeOut) write(*,'(a,i0)')'Root ',iw
      call mpi_barrier(mpi_comm_world,ierror)
      omega=wroots(iw)
-
-     om1=omega*(1.d0-D_prec)
-     om2=omega*(1.d0+D_prec)
-
 
      call secant(omega)
 
