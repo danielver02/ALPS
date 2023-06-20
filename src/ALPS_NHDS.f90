@@ -573,14 +573,14 @@ double complex function dispfunct(zeta,kpos)
         double precision FUNCTION BESSI(N,X)
         !! Function to calculate the first kind modified Bessel function of integer order N
         !! for any real X.
-        !* -------------------------------------------------------------------- *
-        !*   Reference: From Numath Library By Tuan Dang Trong in Fortran 77.   *
-        !*                                                                      *
-        !*                               F90 Release 1.1 By J-P Moreau, Paris.  *
-        !*                                                                      *
-        !*   Version 1.1: corected value of P4 in BESSIO (P4=1.2067492 and not  *
-        !*                1.2067429) Aug. 2011.                                 *
-        !************************************************************************
+        ! -------------------------------------------------------------------- *
+        !   Reference: From Numath Library By Tuan Dang Trong in Fortran 77.   *
+        !                                                                      *
+        !                               F90 Release 1.1 By J-P Moreau, Paris.  *
+        !                                                                      *
+        !   Version 1.1: corected value of P4 in BESSIO (P4=1.2067492 and not  *
+        !                1.2067429) Aug. 2011.                                 *
+  
         IMPLICIT DOUBLE PRECISION (A-H, O-Z)
         IMPLICIT INTEGER (I-N)
   !     This subroutine calculates the first kind modified Bessel function
@@ -674,7 +674,7 @@ double complex function dispfunct(zeta,kpos)
         ENDIF
         RETURN
         END
-  
+
 
 
 
