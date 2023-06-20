@@ -50,4 +50,4 @@ jobs:
     - name: Run ALPS
       run: |
         cd tests
-        bash .run_test.sh
+        bash ./run_test.sh
