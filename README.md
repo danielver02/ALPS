@@ -1,24 +1,19 @@
-===============================================================================
-I                                                                             I
-I                              A  L  P  S                                     I
-I                     Arbitrary Linear Plasma Solver                          I
-I                                                                             I
-I                              Version 1.0                                    I
-I                                                                             I
-I  Kristopher Klein   (kgklein@arizona.edu)                                   I
-I  Daniel Verscharen  (d.verscharen@ucl.ac.uk)                                I
-I                                                                             I
-===============================================================================
+# A  L  P  S  Arbitrary Linear Plasma Solver
+
+## Authors
+
+Kristopher Klein   (kgklein@arizona.edu)
+Daniel Verscharen  (d.verscharen@ucl.ac.uk)
 
 This is the ALPS code: the Arbitrary Linear Plasma Solver.
 
-# WARNING
+## WARNING
 
 IN ITS CURRENT FORM, THE CODE IS STILL UNDER DEVELOPMENT. WE RECOMMEND THAT YOU
 USE IT VERY CAREFULLY OR ONLY IN DIRECT COMMUNICATION WITH THE CODE DEVELOPMENT
 TEAM. THE CODE WILL BE MADE MORE USEABLE AND SUSTAINABLE IN THE FUTURE.
 
-# CONTENTS
+## CONTENTS
 
 1. What is ALPS?
 2. Acknowledgements
@@ -28,7 +23,7 @@ TEAM. THE CODE WILL BE MADE MORE USEABLE AND SUSTAINABLE IN THE FUTURE.
 6. List of Error Codes
 7. License
 
-#  WHAT IS ALPS?
+## WHAT IS ALPS?
 
 ALPS is a parallelised numerical code that solves the Vlasov-Maxwell dispersion
 relation in hot (even relativistic) magnetised plasma. ALPS allows for any
@@ -43,7 +38,7 @@ Verscharen, D., Klein, K. G., Chandran, B. D. G., Stevens, M. L., Salem, C. S.,
 and Bale, S. D.: ALPS: the Arbitrary Linear Plasma Solver, J. Plasma Phys. 84,
 905840403, 2018, doi: 10.1017/S0022377818000739
 
-# ACKNOWLEDGEMENTS
+## ACKNOWLEDGEMENTS
 
 The development of the ALPS code was supported by NASA Grant NNX16AG81G. We will
 present document more details about the numerics on the website
@@ -54,12 +49,12 @@ Software Sustainability Funding programme from UCL's Advanced Research Computing
 Centre and UCL's eResearch Domain. We appreciate software engineering support by
 David Stansby (UCL).
 
-#  INSTALLING THE ALPS CODE
+##  INSTALLING THE ALPS CODE
 
 For advice on the installation of the code, please check the `INSTALL` file in the
 main directory.
 
-#  RUNNING THE ALPS CODE
+##  RUNNING THE ALPS CODE
 
 ALPS works with input files that specify the plasma and numerical parameters for
 the calculation. We recommend that you start by checking out the provided test
@@ -84,54 +79,54 @@ required. In this case, the above command must be replaced with
 mpirun -np <NP> --oversubscribe ./src/ALPS <input_file.in>
 ```
 
-# DOCUMENTATION FOR INPUT/OUTPUT DATA
+## DOCUMENTATION FOR INPUT/OUTPUT DATA
 
-## Input Velocity Distribution Function
+### Input Velocity Distribution Function
   - folder: `./distribution`
   - (optionally created by subroutine generate_distribution
       `distribution/generate_distribution.f90`)
   - file: `distribution/<arrayName>.<is>.array`
   - data: `pp(is,iperp,ipar,1:2)`,`f0(is,iperp,ipar)`
 
-## Fit Parameters for Hybrid Analytic Continuation
+### Fit Parameters for Hybrid Analytic Continuation
   - folder: `./distribution`
   - created by subroutine `determine_fit_parameters` (`ALPS_analyt.f90`)
   - file: `distribution/<runname>.fit_parameters.<is>.out`
   - data: `iperp`, `params`
 
-## Result from Fit Routine for Hybrid Analytic Continuation
+### Result from Fit Routine for Hybrid Analytic Continuation
   - folder: `./distribution`
   - created by `subroutine output_fit` (`ALPS_analyt.f90`)
   - file: `distribution/<runname>.fit_parameters.<is>.out`
   - data: `pp(is,iperp,ipar,1:2)`,`fit_result(is,iperp,ipar)`,
       `abs(fit_result(is,iperp,ipar,1:2)- f0(is,iperp,ipar))/f0(is,iperp,ipar)`
 
-## Map (grid in omega,gamma) of Dispersion Solutions
+### Map (grid in omega,gamma) of Dispersion Solutions
   - created by `subroutine map_search` (`ALPS_fns.f90`)
   - file: `solution/<runname>.map`
   - data: `ir`,`ii`,`om(ir,ii)`,`log10(val(ir,ii))`,`cal(ir,ii)`
 
-## Listing of Roots
+### Listing of Roots
   - created by `subroutine refine_guess` (`ALPS_fns.f90`)
   - file: `solution/<runname>.roots`
   - data: `iw`,`wroots(iw)`,`log10(abs(tmpDisp))`,`tmpDisp`
 
-## Scans of the Dispersion Solutions through k-space
+### Scans of the Dispersion Solutions through k-space
   - created by `subroutine om_scan` (`ALPS_fns.f90`)
   - file: `solution/<runname>.scan_<option>.root_<rootnumber>`
   - data: `kperp`,`kpar`,`om(ir,ii)`
 
-## Evaluation of the Eigen Vectors
+### Evaluation of the Eigen Vectors
   - created by `subroutine om_scan` (`ALPS_fns.f90`)
   - file: `solution/<runname>.eigen_<option>.root_<rootnumber>`
   - data: `kperp`,`kpar`,`om(ir,ii)`,`ef`,`bf`,`Us`,`ds`
 
-## Evaluation of the Heating Rates
+### Evaluation of the Heating Rates
   - created by `subroutine om_scan` (`ALPS_fns.f90`)
   - file: `solution/<runname>.heat_<option>.root_<rootnumber>`
   - data: `kperp`,`kpar`,`om(ir,ii)`,`Ps`
 
-# LIST OF ERROR CODES
+## LIST OF ERROR CODES
 
 ```
 error_id=0
@@ -142,11 +137,11 @@ error_id=2
    - if ((1+npar).LT.n_params)
 ```
 
-## ERRORS TO ADD:
+### ERRORS TO ADD:
 - if the size of the input distribution function array is not equal to
 the allocated distribution function array in ALPS
 
-# LICENSE
+## LICENSE
 
 BSD 2-Clause License
 
