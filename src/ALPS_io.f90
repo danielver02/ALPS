@@ -279,7 +279,7 @@ contains
     integer :: is
     !!Species index.
     
-    double precision :: nn,qq,mm
+    double precision :: nn
     !! Read in value for relative density for \(f_j\).
     
     double precision :: qq
@@ -356,26 +356,34 @@ contains
   !!Scan index.
   
   integer :: scan_type
-  !!Determine Kind of wavevector scan.
-  !!
+  !!Determine kind of wavevector scan.
   
   integer :: ns
+  !!Number of output scan values.
 
   integer :: nres
-
+  !!Resolution between output scan values.
+  
   double precision :: swi
+  !!Initial Scan Value.
 
   double precision :: swf
+  !!Final Scan Value.
 
   logical :: swlog
+  !!\(\log_{10}\) or linear scan spacing.
 
   logical :: heating
-
+  !!Activate heating calculation.
+  
   logical :: eigen
+  !!Activate eigenfunction calculation.
 
   double precision :: theta_0
+  !!\(\atan(k_\perp/k_\parallel)\)
 
   double precision :: k_0
+  !!\(\sqrt{k_\perp^2+k_\parallel^2}\)
 
   nameList /scan_input/ &
        scan_type,swi,swf,swlog,ns,nres,&
@@ -391,43 +399,52 @@ contains
   scan(is)%eigen_s =eigen
   scan(is)%heat_s  =heating
 
-  !calculate step size
+  !Calculate step size:
   select case (scan_type)
   case(0)
-     !scan from k_0 to k_1
+     !Scan from k_0 to k_1:
      write(*,'(a,i0,a,es12.3,a,es12.3,a,es12.3,a,es12.3,a)')&
           'Scan ',is,': (kpar,kperp) from (',&
           kperp_last,',',kpar_last,') to (',swi,',',swf,')'
      if (swlog) then
-        scan(is)%diff =(log10(swi)-log10(kperp_last))/(1.d0*ns*nres)
-        scan(is)%diff2=(log10(swf)-log10(kpar_last))/(1.d0*ns*nres)
+        scan(is)%diff =(log10(swi)-log10(kperp_last))/&
+             (1.d0*ns*nres)
+        scan(is)%diff2=(log10(swf)-log10(kpar_last))/&
+             (1.d0*ns*nres)
      else
         scan(is)%diff =(swi-kperp_last)/(1.d0*ns*nres)
         scan(is)%diff2=(swf-kpar_last )/(1.d0*ns*nres)
      endif
      kperp_last=swi;kpar_last=swf
   case(1)
-     !scan from theta_0 to theta_1
-     theta_0=atan(kperp_last/kpar_last); k_0=sqrt(kperp_last**2+kpar_last**2)
+     !Scan from theta_0 to theta_1:
+     theta_0=atan(kperp_last/kpar_last)
+     k_0=sqrt(kperp_last**2+kpar_last**2)
      write(*,'(a,i0,a,es12.3,a,es12.3)')&
           'Scan ',is,': theta from ',&
           theta_0*180.d0/(4.d0*atan(1.d0)),' to ',swf
      if (swlog) then
-        scan(is)%diff=(log10(swf*4.d0*atan(1.d0)/180.)-log10(theta_0))/(1.d0*ns*nres)
+        scan(is)%diff=(log10(swf*4.d0*atan(1.d0)/180.)-&
+             log10(theta_0))/(1.d0*ns*nres)
      else
-        scan(is)%diff=((swf*4.d0*atan(1.d0)/180.)-theta_0)/(1.d0*ns*nres)
+        scan(is)%diff=((swf*4.d0*atan(1.d0)/180.)-theta_0)/&
+             (1.d0*ns*nres)
      endif
      kpar_last=k_0*cos(swf*4.d0*atan(1.d0)/180.d0)
      kperp_last=k_0*sin(swf*4.d0*atan(1.d0)/180.d0)
   case(2)
-     !scan from |k_0| to |k_1| at constant theta
-     theta_0=atan(kperp_last/kpar_last); k_0=sqrt(kperp_last**2+kpar_last**2)
+     !Scan from |k_0| to |k_1| at constant theta.
+     theta_0=atan(kperp_last/kpar_last)
+     k_0=sqrt(kperp_last**2+kpar_last**2)
      write(*,'(a,i0,a,es12.3,a,es12.3,a,es12.3,a,es12.3,a)')&
           'Scan ',is,': |k| from ',&
-          k_0,' to ',swf,' at theta=',theta_0*180.d0/(4.d0*atan(1.d0))
+          k_0,' to ',swf,' at theta=',theta_0*180.d0/&
+          (4.d0*atan(1.d0))
      if (swlog) then
-        scan(is)%diff =(log10(swf*sin(theta_0))-log10(kperp_last))/(1.d0*ns*nres)
-        scan(is)%diff2=(log10(swf*cos(theta_0))-log10(kpar_last))/(1.d0*ns*nres)
+        scan(is)%diff =(log10(swf*sin(theta_0))-&
+             log10(kperp_last))/(1.d0*ns*nres)
+        scan(is)%diff2=(log10(swf*cos(theta_0))-&
+             log10(kpar_last))/(1.d0*ns*nres)
      else
         scan(is)%diff =(swf*sin(theta_0)-kperp_last)/(1.d0*ns*nres)
         scan(is)%diff2=(swf*cos(theta_0)-kpar_last )/(1.d0*ns*nres)
@@ -435,7 +452,7 @@ contains
      kpar_last=swf*cos(theta_0)
      kperp_last=swf*sin(theta_0)
   case(3)
-     !scan of kperp; kpar constant
+     !Scan of kperp; kpar constant:
      write(*,'(a,i0,a,es12.3,a,es12.3)')&
           'Scan ',is,': kperp from ',kperp_last,' to ',swf
      if (swlog) then
@@ -445,7 +462,7 @@ contains
      endif
      kperp_last=swf
   case(4)
-     !scan of kpar; kperp constant
+     !Scan of kpar; kperp constant:
      write(*,'(a,i0,a,es12.3,a,es12.3)')&
           'Scan ',is,': kpar from ',kpar_last,' to ',swf
      if (swlog) then
@@ -457,21 +474,42 @@ contains
   end select
 
 end subroutine scan_read
-!-=-=-=-=-
-!-=-=-=-=-
 
-!-=-=-=-=-
-!Subroutine for reading in species parameters
-!-=-=-=-=-
+
+
 subroutine fit_read(is,ifit)
+  !!Reads in fit parameters for component is.
   use alps_var, only : fit_type, param_fit, perp_correction
   implicit none
-  !Passed
-  integer :: is, ifit !species,  index
-  !Local
-  double precision :: fit_1, fit_2, fit_3, fit_4, fit_5    ! Read in values for fit functions
+  
+  integer :: is
+  !!Species index.
+  
+  integer :: ifit
+  !Fit index.
+
+  double precision :: fit_1
+  !! Read in values for fit component 1.
+
+  double precision :: fit_2
+  !! Read in values for fit component 2.
+
+  double precision :: fit_3
+  !! Read in values for fit component 3.
+  
+  double precision :: fit_4
+  !! Read in values for fit component 4.
+
+  double precision :: fit_5
+  !! Read in values for fit component 5.
+  
   double precision :: perpcorr
-  integer :: fit_type_in !read in value for type of analytic function
+  !!Perpendicular correction to compensate for exponential
+  !!dependency of drift to make fit more reliable
+  !![\(y\) in Eqn B1 of Verscharen et al 2018].
+  
+  integer :: fit_type_in
+  !!Read in value for type of analytic function.
 
   nameList /ffit/ &
        fit_type_in, fit_1, fit_2, fit_3, fit_4, fit_5, perpcorr
@@ -487,49 +525,51 @@ subroutine fit_read(is,ifit)
   perp_correction(is,ifit)=perpcorr
 
 end subroutine fit_read
-!-=-=-=-=-
-!-=-=-=-=-
-
-!-=-=-=-=-
-! Get runname for output files from input argument
-!-=-=-=-=-
-  subroutine get_runname(runname,foldername)
-    implicit none
-    integer       :: l
-    integer       :: pathend
-    character(500) :: arg
-    character(500), intent(out) :: runname
-    character(500), intent(out) :: foldername
-
-    !Get the first argument of the program execution command
-    call getarg(1,arg)
-    pathend=0
-
-    !Check if this is the input file and trim .in extension to get runname
-    !Also remove any folder structure from the runname:
-    l = len_trim (arg)
-    pathend = scan(arg, "/", .true.)
-    if (l > 3 .and. arg(l-2:l) == ".in") then
-       runname = arg(pathend+1:l-3)
-       foldername = arg(1:pathend)
-    end if
 
 
 
+subroutine get_runname(runname,foldername)
+  !! Get runname for output files from input argument.
+  implicit none
+  integer       :: l
+  !!Dummy Length.
+  
+  integer       :: pathend
+  !!Directory divider.
+  
+  character(500) :: arg
+  !!Input Argument.
+  
+  character(500), intent(out) :: runname
+  !!Basename for file I/O.
+  
+  character(500), intent(out) :: foldername
+  !!Directory in which input file is stored.
+  
+  !Get the first argument of the program execution command:
+  call getarg(1,arg)
+  pathend=0
+  
+  !Check if this is the input file and trim .in extension to get runname.
+  !Also remove any folder structure from the runname:
+  l = len_trim (arg)
+  pathend = scan(arg, "/", .true.)
+  if (l > 3 .and. arg(l-2:l) == ".in") then
+     runname = arg(pathend+1:l-3)
+     foldername = arg(1:pathend)
+  end if
 
   end subroutine get_runname
-!-=-=-=-=-
-!-=-=-=-=-
 
-!-=-=-=-=-
-! Subroutine for reading in background distribution function
-!-=-=-=-=-
-subroutine read_f0
-  use alps_var, only : nperp, npar, arrayName, f0, pp, nspec
-  use alps_var, only : writeOut, usebM
-  implicit none
-  !Local
-  integer :: iperp,ipar !parallel and perpendicular indices
+  
+  
+  subroutine read_f0
+    !! Subroutine for reading in background distribution function
+    use alps_var, only : nperp, npar, arrayName, f0, pp, nspec
+    use alps_var, only : writeOut, usebM
+    implicit none
+    
+    integer :: iperp,ipar !parallel and perpendicular indices
   integer :: is         !species index
   character (100) :: readname
 
