@@ -83,7 +83,7 @@ sudo make install           (this option is only required if you want to
                              make the ALPS executable available to all users)
 ```
 
-If either of these steps fails, we recommend starting with
+The `Makefile.in` in the repository has been generated with `automake-1.15` from `Makefile.am`. If you have a different version of `automake`, `make` may fail. In that case, start again with
 
 ```
 autoreconf -i -f
