@@ -133,7 +133,7 @@ ALPS uses [Ford](https://forddocs.readthedocs.io/en/latest/) to build its docume
 
 ### Adding static pages to documentation
 
-The [README.md](./README.md) and [INSTALL.md](./INSTALL.md) files are added to the Ford documentation as static pages. You can add more static pages to the documentation by
+The [README.md](./README.md) and [INSTALL.md](./INSTALL.md) files are added to the [Ford documentation](https://danielver02.github.io/ALPS/) as static pages. You can add more static pages to the documentation by
 1. Add the content in a markdown file to the repository.
-2. Add a title line and copy it to `docs/` in the [`doc workflow`](https://github.com/danielver02/ALPS/blob/master/.github/workflows/doc.yml), see steps 3-4 in the previous section, or the [Build documentation](https://github.com/danielver02/ALPS/blob/07a4f8dc996ff76729edeedf5c2a0dc1a5c3028b/.github/workflows/doc.yml#L25-L32) step in the workflow.
+2. Add a `title: ` line to the beginning of the file and copy it to `docs/` in the [doc workflow](https://github.com/danielver02/ALPS/blob/master/.github/workflows/doc.yml). See steps 3-4 in the previous section, or the [Build documentation](https://github.com/danielver02/ALPS/blob/07a4f8dc996ff76729edeedf5c2a0dc1a5c3028b/.github/workflows/doc.yml#L25-L32) step in the workflow.
 3. Add the name of the markdown file as a new line under `ordered_subpage` in [ford_project.md](./ford_project.md)
