@@ -51,8 +51,8 @@ David Stansby (UCL).
 
 ##  INSTALLING THE ALPS CODE
 
-For advice on the installation of the code, please check the `INSTALL` file in the
-main directory.
+For advice on the installation of the code, please check [`INSTALL.md`](./INSTALL.md)
+
 
 ##  RUNNING THE ALPS CODE
 
