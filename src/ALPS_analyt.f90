@@ -29,7 +29,7 @@ contains
 
 double complex function eval_fit(is,iperp,ppar_valC)
 	!! This function evaluates the fit to f0 at and the complex parallel
-	!! momentum [[eval_fit(function):ppar_valC(variable)]]. It requires the fit parameters that will be determined
+	!! momentum [[ppar_valC(variable):eval_fit(function)]]. It requires the fit parameters that will be determined
 	!! by the subroutine [[determine_param_fit(subroutine)]].
 
 	use alps_var, only : fit_type, pp, param_fit, n_fits, gamma_rel,nspec,relativistic
