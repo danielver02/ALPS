@@ -29,7 +29,7 @@ contains
 
 double complex function eval_fit(is,iperp,ppar_valC)
 	!! This function evaluates the fit to f0 at and the complex parallel
-	!! momentum [[eval_fit(function):ppar_valC(variable)]]. It requires the fit parameters that will be determined
+	!! momentum [[ppar_valC]]. It requires the fit parameters that will be determined
 	!! by the subroutine [[determine_param_fit(subroutine)]].
 
 	use alps_var, only : fit_type, pp, param_fit, n_fits, gamma_rel,nspec,relativistic
@@ -171,19 +171,41 @@ end function
 
 
 
-
-!-=-=-=-=-=-=
-! This function evaluates the fit to f0 at real pperp_val and complex ppar_val
-! provided that the one-dimensional fit-parameter array params is fed into the
-! function. This is only used during the fitting. For the evaluation in ALPS,
-! use eval_fit.
-!-=-=-=-=-=-=
 double complex function fit_function(is,n_params,params,pperp_val,ppar_val)
+	!! This function evaluates the fit to f0 at real [[pperp_val]] and complex [[ppar_val]],
+	!! provided that the one-dimensional fit-parameter array [[params]] is fed into the
+	!! function. This is only used during the fitting. For the evaluation in ALPS,
+	!! use [[eval_fit(function)]].
 	use alps_var, only : fit_type, n_fits, ms, vA, perp_correction
 	implicit none
-	integer :: n_params,ifit,is,par_ind
-	double precision :: params(n_params),pperp_val
-	double complex :: ppar_val,sqrtpart,kappapart
+
+	integer, intent(in) :: is
+	!! Index of species for which [[eval_fit(function)]] is executed.
+
+	integer, intent(in) :: n_params
+	!! Total number of fit parameters for a given species.
+
+	double precision, intent(in) :: params(n_params)
+	!! Array of fit parameters.
+
+	double precision, intent(in) :: pperp_val
+	!! Perpendicular momentum.
+
+	double complex, intent(in) :: ppar_val
+	!! Complex parallel momentum.
+
+	integer :: ifit
+	!! Index for the fits that add up to the total fit for a given species.
+
+	integer :: par_ind
+	!! Parameter index to loop over fits.
+
+	double complex :: sqrtpart
+	!! Square-root part of Juettner distribution.
+
+	double complex :: kappapart
+	!! Kappa part of the kappa distribution.
+
 
 	fit_function=cmplx(0.d0,0.d0,kind(1.d0))
 
@@ -234,22 +256,79 @@ end function
 
 
 
-!-=-=-=-=-=-=
-! This is the fitting routine for the hybrid analytic continuation. It determines
-! the full field param_fit.
-!-=-=-=-=-=-=
+
 subroutine determine_param_fit
+	!! This is the fitting routine for the hybrid analytic continuation. It determines
+	!! the full field [[alps_var(module):param_fit(variable)]].
 	use alps_var, only : writeOut, fit_type, param_fit, n_fits, nspec, f0, nperp, npar, logfit, runname
 	use alps_var, only : relativistic,npparbar,f0_rel,ngamma, perp_correction, gamma_rel, usebM
 	implicit none
-	integer :: ifit,n_params,par_ind,iperp,is,is_run,is_rel,sproc_rel,nJT
-	integer :: ipparbar,ipparbar_lower,ipparbar_upper,upperlimit,unit_spec
-	logical :: found_lower, found_upper
-	double precision :: quality,qualitytotal
+
+	integer :: ifit
+	!! Index for the fits that add up to the total fit for a given species.
+
+	integer :: n_params
+	!! Total number of fit parameters for a given species.
+
+	integer :: par_ind
+	!! Parameter index for the fit parameters.
+
+	integer :: iperp
+	!! Index of perpendicular momentum.
+
+	integer :: is
+	!! Index of species.
+
+	integer :: is_run
+	!! Running variable over species to determine relativistic evaluation.
+
+	integer :: is_rel
+	!! Index for relativistic species (if any).
+
+	integer :: sproc_rel
+	!! Local process index for relativistic calculation.
+
+	integer :: nJT
+	!! First dimension of matrix nJT [[determine_JT(subroutine):: JT(variable)]].
+
+	integer :: ipparbar
+	!! Index of parallel momentum (relativistic).
+
+	integer :: ipparbar_lower
+	!! Lower index of parallel momentum (relativistic).
+
+	integer :: ipparbar_upper
+	!! Upper index of parallel momentum (relativistic).
+
+	integer :: upperlimit
+	!! Upper limit of iperp space (relativistic and non-relativistic).
+
+	integer :: unit_spec
+	!! Unit to write fit parameters to file.
+
+	logical :: found_lower
+	!! Check whether lower boundary was found.
+
+	logical :: found_upper
+	!! Check whether upper boundary was found.
+
+	double precision :: quality
+	!! Quality of the individual fit result.
+
+	double precision :: qualitytotal
+	!! Quality of the total fit result.
+
 	logical, allocatable, dimension (:) :: param_mask
+	!! Bit mask for required fit parameters.
+
 	double precision,allocatable,dimension (:) :: g
+	!! Array of function to be fitted.
+
 	double precision,allocatable,dimension(:) :: params
+	!! Array of fit parameters.
+
 	character (10) :: specwrite
+	!! File name to write fit parameters to file.
 
 	if (writeOut) then
 		write (*,'(a)') 'Determine fit parameters for hybrid analytic continuation...'
@@ -523,20 +602,72 @@ end subroutine
 
 
 
-!-=-=-=-=-=-=
-! This subroutine outputs the fit parameters for iperp=0 to stdout to monitor the fit
-!-=-=-=-=-=-=
 subroutine output_fit(qualitytotal)
+	!! This subroutine outputs the fit parameters for iperp=0 to stdout to monitor the fit.
 	use alps_io, only : isnancheck, alps_error
 	use alps_var, only : fit_type, param_fit, n_fits, nspec, nperp, npar, pp, f0, pi, vA, runname
 	use alps_var, only : relativistic,gamma_rel,pparbar_rel,ngamma,npparbar,f0_rel, ms, usebM
-
-
 	implicit none
-	integer :: is,ifit,n_params,iparam,unit_spec,ipar,iperp, is_rel,sproc_rel,igamma,ipparbar,is_run
-	double precision :: qualitytotal, integrate, dpperp, dppar, dgamma, dpparbar
+
+	double precision, intent(in) :: qualitytotal
+	!! Quality of the total fit result.
+
+	integer :: is
+	!! Index of species.
+
+	integer :: ifit
+	!! Index for the fits that add up to the total fit for a given species.
+
+	integer :: n_params
+	!! Total number of fit parameters for a given species.
+
+	integer :: iparam
+	!! Variable running over fit parameters.
+
+	integer :: unit_spec
+	!! Unit to write fit results to file.
+
+	integer :: ipar
+	!! Index of parallel momentum.
+
+	integer :: iperp
+	!! Index of perpendicular momentum.
+
+	integer :: is_rel
+	!! Index for relativistic species (if any).
+
+	integer :: sproc_rel
+	!! Local process index for relativistic calculation.
+
+	integer :: igamma
+	!! Index of gamma (relativistic).
+
+	integer :: ipparbar
+	!! Index of pparbar (relativistic).
+
+	integer :: is_run
+	!! Index for relativistic species (if any).
+
+	double precision :: integrate
+	!! Integration of fit result.
+
+	double precision :: dpperp
+	!! Step size in pperp for integration of fit result.
+
+	double precision :: dppar
+	!! Step size in ppar for integration of fit result.
+
+	double precision :: dgamma
+	!! Step size in gamma for integration of relativistic fit result.
+
+	double precision :: dpparbar
+	!! Step size in pparbar for integration of relativistic fit result.
+
 	double complex :: ppar_comp
+	!! Complex parallel momentum to evaluate fit function at.
+
 	character (10) :: specwrite
+	!! File name to write fit results to file.
 
 	write (*,'(a)') ' Results of the fit for hybrid analytic continuation at iperp = 1:'
 	do is=1,nspec
@@ -633,18 +764,73 @@ end subroutine
 
 
 
-!-=-=-=-=-=-=
-! This subroutine calculates the transposed Jacobian matrix of the fit function w.r.t. the
-! fit parameter array.
-!-=-=-=-=-=-=!
+
 subroutine determine_JT(is,n_params,nJT,JT,params,iperp,upper_limit,ipparbar_lower)
+	!! This subroutine calculates the transposed Jacobian matrix of the fit function with respect to the
+	!! fit parameter array.
 	use alps_var, only : fit_type, n_fits, pp, ms, vA, perp_correction
 	use alps_var, only : gamma_rel,pparbar_rel,nspec,relativistic
 	implicit none
-	integer :: n_params,ifit,par_ind,iperp,ipar,is,upper_limit,is_rel,sproc_rel,is_run,ipparbar_lower,nJT,JT_ind
-	double precision :: ppar_val,pperp_val,params(n_params)
-	double precision :: sqrtpart,expterm,kappapart, JT(nJT,0:upper_limit)
 
+	integer, intent(in) :: is
+	!! Index of species for which [[determine_JT]] is executed.
+
+	integer, intent(in) :: n_params
+	!! Total number of fit parameters for a given species.
+
+	integer, intent(in) :: nJT
+	!! First dimension of matrix nJT [[JT(variable)]].
+
+	double precision, intent(out) :: JT(nJT,0:upper_limit)
+	!! Transposed Jacobian matrix of the fit function.
+
+	double precision, intent(in) :: params(n_params)
+	!! Array of fit parameters.
+
+	integer, intent(in) :: iperp
+	!! Index of perpendicular momentum at which [[JT(variable)]] is evaluated.
+
+	integer, intent(in) :: upper_limit
+	!! Upper limit of iperp space (relativistic and non-relativistic).
+
+	integer, intent(in) :: ipparbar_lower
+	!! Lower index of parallel momentum (relativistic).
+
+	integer :: ifit
+	!! Index for the fits that add up to the total fit for a given species.
+
+	integer :: par_ind
+	!! Parameter index to loop over fits.
+
+	integer :: ipar
+	!! Index of parallel momentum.
+
+	integer :: is_rel
+	!! Index for relativistic species (if any).
+
+	integer :: sproc_rel
+	!! Local process index for relativistic calculation.
+
+	integer :: is_run
+	!! Index for relativistic species (if any).
+
+	integer :: JT_ind
+	!! Index running over [[JT]]
+
+	double precision :: ppar_val
+	!! Parallel momentum.
+
+	double precision :: pperp_val
+	!! Perpendicular momentum.
+
+	double precision :: sqrtpart
+	!! Square-root part of Juettner distribution.
+
+	double precision :: expterm
+	!! Exponential part of the Maxwellian distribution.
+
+	double precision :: kappapart
+	!! Kappa part of the kappa distribution.
 
 	if (relativistic(is)) then
 		 ! Determine your sproc_rel:
@@ -791,12 +977,10 @@ end subroutine
 
 
 
-!-=-=-=-=-=-=
-! This subroutine processes the nonlinear Levenberg-Marquart algorithm and returns
-! the one-dimensional array params at a given iperp.
-! quality is the sum of the squares of all residuals.
-!-=-=-=-=-=-=
 subroutine LM_nonlinear_fit(is,g,n_params,nJT,params,param_mask,iperp,npar,ipparbar_lower,quality)
+	!! This subroutine processes the nonlinear Levenberg-Marquart algorithm and returns
+	!! the one-dimensional array [[params]] at a given iperp.
+	!! The variable [[quality]] is the sum of the squares of all residuals.
 	use alps_var, only : lambda_initial_fit, pp, lambdafac_fit, logfit
 	use alps_var, only : epsilon_fit, maxsteps_fit
 	use alps_var, only : gamma_rel,pparbar_rel,relativistic,nspec
@@ -804,16 +988,101 @@ subroutine LM_nonlinear_fit(is,g,n_params,nJT,params,param_mask,iperp,npar,ippar
 	use mpi
 	implicit none
 
-	logical :: converged,param_mask(n_params)
-	integer :: ipar,k,counter,is,n_params,nJT,iperp,npar,is_rel,is_run,sproc_rel,ipparbar_lower,l
-	double precision :: LSQ,LSQnew,lambda_fit,quality,pperp_val,ppar_val
-	double precision :: g(0:npar),params(n_params)
-	double precision :: residuals(0:npar),deltaparam_fit(nJT)
-	double precision :: JTJ(nJT,nJT),JT(nJT,0:npar)
-	double precision :: diagmat(nJT,nJT), Amat(nJT,nJT)
-	double precision :: work_array(nJT)
-	integer :: ipiv(nJT), info
+	integer, intent(in) :: is
+	!! Index of species for which [[LM_nonlinear_fit]] is executed.
 
+	double precision, intent(in) :: g(0:npar)
+	!! Array of function to be fitted.
+
+	integer, intent(in) :: n_params
+	!! Total number of fit parameters for a given species.
+
+	integer, intent(in) :: nJT
+	!! First dimension of matrix nJT [[determine_JT(subroutine):JT(variable)]].
+
+	double precision, intent(inout) :: params(n_params)
+	!! Array of fit parameters.
+
+	logical, intent(in) :: param_mask(n_params)
+	!! Bit mask for required fit parameters.
+
+	integer, intent(in) :: iperp
+	!! Index of perpendicular momentum.
+
+	integer, intent(in) :: npar
+	!! Number of steps in parallel momentum
+
+	integer, intent(in) :: ipparbar_lower
+	!! Lower index of parallel momentum (relativistic).
+
+	double precision, intent(out) :: quality
+	!! Quality of the individual fit result.
+
+	logical :: converged
+	!! Check whether fit has converged.
+
+	integer :: ipar
+	!! Index running over parallel momentum.
+
+	integer :: k
+	!! Index running over entries of [[JT]].
+
+	integer :: counter
+	!! Count of fit iterations.
+
+	integer :: is_rel
+	!! Index for relativistic species (if any).
+
+	integer :: is_run
+	!! Index for relativistic species (if any).
+
+	integer :: sproc_rel
+	!! Local process index for relativistic calculation.
+
+	integer :: l
+	!! Index running over the delta's in the L-M fit.
+
+	integer :: ipiv(nJT)
+	!! Integer array required for matrix inversion.
+
+	integer :: info
+	!! Integer required for matrix inversion.
+
+	double precision :: LSQ
+	!! Least squares for L-M fit.
+
+	double precision :: LSQnew
+	!! Next iteration of least squares for L-M fit.
+
+	double precision :: lambda_fit
+	!! Lambda in L-M fit.
+
+	double precision :: pperp_val
+	!! Perpendicular momentum.
+
+	double precision :: ppar_val
+	!! Parallel momentum.
+
+	double precision :: residuals(0:npar)
+	!! Array of residuals.
+
+	double precision :: deltaparam_fit(nJT)
+	!! delta's in the L-M fit.
+
+	double precision :: JTJ(nJT,nJT)
+	!! Matrix product of JT and J.
+
+	double precision :: JT(nJT,0:npar)
+	!! Transposed Jacobian matrix of the fit function.
+
+	double precision :: diagmat(nJT,nJT)
+	!! Diagonal matrix of JT.
+
+	double precision :: Amat(nJT,nJT)
+	!! Matrix to be inverted.
+
+	double precision :: work_array(nJT)
+	!! Work array for matrix inversion.
 
 	converged=.FALSE.
 	counter=0
