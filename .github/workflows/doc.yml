@@ -22,6 +22,9 @@ jobs:
     - name: Install ford
       run: pip install ford
 
+    - name: Install graphviz
+      run: sudo apt install graphviz
+
     - name: Build documentation
       run: |
         mkdir docs
