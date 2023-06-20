@@ -17,11 +17,11 @@
 !===============================================================================
 
 module alps_nhds
-!! Module including the NHDS implementation for bi-Maxwellian reference cases.
-!! The original NHDS code can be found under github.com/danielver02/NHDS.
+
   implicit none
 
   private :: calc_ypsilon, besselI, BESSI, BESSI0, BESSI1, WOFZ, dispfunct
+
   public :: calc_chi
 
 contains
@@ -57,70 +57,15 @@ contains
 
 
   subroutine calc_chi(chi,j,kz,kperp,x)
-  !! Subroutine that calculates the susceptibility of species j based on NHDS.
   use alps_var, only : bMnmaxs, bMBessel_zeros, bMbetas, bMalphas,bMpdrifts
   use alps_var, only : ms, qs, ns
   implicit none
-
-
-
-  double complex, intent(out) :: chi(3,3)
-  !! Susceptibility tensor of species j.
-
-  integer, intent(in) :: j
-  !! Index for species.
-
-  double precision, intent(in) :: kz
-  !! Normalised parallel wavenumber.
-
-  double precision, intent(in) :: kperp
-  !! Normalised perpendicular wavenumber.
-
-  double complex, intent(in) :: x
-  !! Normalised complex frequency.
-
-  double complex :: Y(3,3)
-  !! Y-tensor according to Stix.
-
-  double complex :: Ynew(3,3)
-  !! Iteration of Y-tensor according to Stix.
-
-  double precision :: z
-  !! Argument of dispersion function.
-
-  double precision :: Omega
-  !! Normalised gyro-frequency.
-
-  double precision :: ell
-  !! Normalised inertial length.
-
-  double precision :: vtherm
-  !! Normalised thermal speed.
-
-  double precision :: Bessel_zero
-  !! Limit of Bessel-function calculation.
-
-  double precision :: vdrift
-  !! Normalised drift speed of bi-Maxwellian.
-
-  integer :: n
-  !! Index of sum over Bessel functions.
-
-  integer :: i
-  !! Index running over tensor.
-
-  integer :: k
-  !! Index running over tensor.
-
-  integer :: nmaxrun
-  !! Running to maximum index of n for Bessel functions.
-
-  integer :: nmax
-  !! Maximum index of n for Bessel functions.
-
+  double complex :: chi(3,3),Y(3,3),Ynew(3,3),x
+  double precision :: kz,kperp,z
+  double precision :: Omega,ell,vtherm,Bessel_zero,vdrift
+  integer :: j,n,i,k,nmaxrun
   logical :: Bessel_run
-  !! Check whether maximum n has been achieved.
-
+  integer :: nmax
 
   Omega=qs(j)/ms(j)
   ell=sqrt(ms(j)/(ns(j)*qs(j)*qs(j)))
@@ -181,67 +126,18 @@ contains
 
 
   subroutine calc_ypsilon(Y,j,n,kz,kperp,x)
-  !! Calculates the Y-tensor according to Stix for a bi-Maxwelling, using the NHDS calculation.
   use alps_var, only : bMbetas, bMalphas,bMpdrifts
   use alps_var, only : ms, qs, ns
+
   implicit none
-
   double complex, parameter ::  uniti=(0.d0,1.d0)
-  !! Imaginary unit.
-
-  double complex, intent(out) :: Y(3,3)
-
-  integer, intent(in) :: j
-  !! Index for species.
-
-  integer, intent(in) :: n
-  !! Index of sum over Bessel functions.
-
-  double precision, intent(in) :: kz
-  !! Normalised parallel wavenumber.
-
-  double precision, intent(in) :: kperp
-  !! Normalised perpendicular wavenumber.
-
-  double complex, intent(in) :: x
-  !! Normalised complex frequency.
-
-  double complex :: zeta
-  !! Argument of dispersion function.
-
-  double complex :: An
-  !! An function according to Stix.
-
-  double complex :: Bn
-  !! Bn function according to Stix.
-
-  double complex :: resfac
-  !! Resonance factor.
-
-  double precision :: BInz
-  !! Modified Bessel function, evaluated.
-
-  double precision :: z
-  !! Argument of Bessel function.
-
-  double precision :: Omega
-  !! Normalised gyro-frequency.
-
-  double precision :: ell
-  !! Normalised inertial length.
-
-  double precision :: vtherm
-  !! Normalised thermal speed.
-
-
-  double precision :: vdrift
-  !! Normalised drift speed of bi-Maxwellian.
-
+  double complex :: zeta,x,Y(3,3),An,Bn,resfac
+  double precision :: kz,kperp,BInz,z
+  double precision :: Omega,ell,vtherm,vdrift
+  !double precision :: besselI
   double precision :: dBInzdz
-  !! Derivative of Bessel function.
-
+  integer :: n,j
   logical :: kpos
-  !! Check whether kpar is positive.
 
   kpos=.TRUE.
   if (kz.LT.0.d0) kpos=.FALSE.
@@ -290,14 +186,9 @@ contains
 
 
 double precision function besselI(n,x)
-  !! Calculates the modified Bessel function of argument x and order n.
   implicit none
-
-  double precision, intent(in) :: x
-  !! Argument of the modified Bessel function.
-
-  integer, intent(in) :: n
-  !! Order of the modified Bessel function.
+  double precision :: x
+  integer :: n
 
   if (n.LT.0) then
   	besselI=BESSI(-n,x)
@@ -312,35 +203,15 @@ double precision function besselI(n,x)
 ! Calculate the dispersion function:
 !
 double complex function dispfunct(zeta,kpos)
-  !! Calculates the dispersion function based on the complex error function.
   implicit none
 
   double complex, parameter ::  uniti=(0.d0,1.d0)
-  !! Imaginary init.
 
-  double complex, intent(in) :: zeta
-  !! Argument of dispersion function.
-
-  logical, intent(in) :: kpos
-  !! Check whether kpar is positive.
-
-  logical :: flag
-  !! Check whether [[WOFZ(subroutine)]] executes successfully.
-
-  double precision :: U
-  !! Real part of the output for [[WOFZ(subroutine)]].
-
-  double precision :: V
-  !! Imaginary part of the output for [[WOFZ(subroutine)]].
-
-  double precision :: XI
-  !! Real part of the argument for [[WOFZ(subroutine)]].
-
-  double precision :: YI
-  !! Imaginary part of the argument for [[WOFZ(subroutine)]].
+  double complex :: zeta
+  logical :: flag,kpos
+  double precision :: U,V,XI,YI
 
   double precision :: M_PI = 4.d0*atan(1.d0)
-  !! Pi.
 
   XI=1.d0*real(zeta)
   YI=1.d0*aimag(zeta)
@@ -358,62 +229,66 @@ double complex function dispfunct(zeta,kpos)
 
 
 
+  !Based on
+  !G.P.M. Poppe, C.M.J. Wijers, "More Efficient Computation of the Complex Error-Function",
+  !ACM Trans. Math. Software 16, 47 (1990).
 
+  !C      ALGORITHM 680, COLLECTED ALGORITHMS FROM ACM.
+  !C      THIS WORK PUBLISHED IN TRANSACTIONS ON MATHEMATICAL SOFTWARE,
+  !C      VOL. 16, NO. 1, PP. 47
 
-  SUBROUTINE WOFZ (XI, YI, U, V, FLAG)
-    !!  Given a complex number Z = (XI,YI), this subroutine computes
-    !!  the value of the Faddeeva function W(Z) = exp(-Z**2)*erfc(-I*Z),
-    !!  where erfc is the complex complementary error function and I
-    !! is the imaginary unit.
-
-    !Based on
-        !G.P.M. Poppe, C.M.J. Wijers, "More Efficient Computation of the Complex Error-Function",
-        !ACM Trans. Math. Software 16, 47 (1990).
-
-        !      ALGORITHM 680, COLLECTED ALGORITHMS FROM ACM.
-        !      THIS WORK PUBLISHED IN TRANSACTIONS ON MATHEMATICAL SOFTWARE,
-        !      VOL. 16, NO. 1, PP. 47
-
-
-  !  THE ACCURACY OF THE ALGORITHM FOR Z IN THE 1ST AND 2ND QUADRANT
-  !  IS 14 SIGNIFICANT DIGITS; IN THE 3RD AND 4TH IT IS 13 SIGNIFICANT
-  !  DIGITS OUTSIDE A CIRCULAR REGION WITH RADIUS 0.126 AROUND A ZERO
-  !  OF THE FUNCTION.
-  !  ALL REAL VARIABLES IN THE PROGRAM ARE DOUBLE PRECISION.
-
-  !  THE CODE CONTAINS A FEW COMPILER-DEPENDENT PARAMETERS :
-  !     RMAXREAL = THE MAXIMUM VALUE OF RMAXREAL EQUALS THE ROOT OF
-  !                RMAX = THE LARGEST NUMBER WHICH CAN STILL BE
-  !                IMPLEMENTED ON THE COMPUTER IN DOUBLE PRECISION
-  !                FLOATING-POINT ARITHMETIC
-  !     RMAXEXP  = LN(RMAX) - LN(2)
-  !     RMAXGONI = THE LARGEST POSSIBLE ARGUMENT OF A DOUBLE PRECISION
-  !                GONIOMETRIC FUNCTION (DCOS, DSIN, ...)
-  !  THE REASON WHY THESE PARAMETERS ARE NEEDED AS THEY ARE DEFINED WILL
-  !  BE EXPLAINED IN THE CODE BY MEANS OF COMMENTS
-  !
-  !
-  !  PARAMETER LIST
-  !     XI     = REAL      PART OF Z
-  !     YI     = IMAGINARY PART OF Z
-  !     U      = REAL      PART OF W(Z)
-  !     V      = IMAGINARY PART OF W(Z)
-  !     FLAG   = AN ERROR FLAG INDICATING WHETHER OVERFLOW WILL
-  !              OCCUR OR NOT; TYPE LOGICAL;
-  !              THE VALUES OF THIS VARIABLE HAVE THE FOLLOWING
-  !              MEANING :
-  !              FLAG=.FALSE. : NO ERROR CONDITION
-  !              FLAG=.TRUE.  : OVERFLOW WILL OCCUR, THE ROUTINE
-  !                             BECOMES INACTIVE
-  !  XI, YI      ARE THE INPUT-PARAMETERS
-  !  U, V, FLAG  ARE THE OUTPUT-PARAMETERS
-  !
-  !  FURTHERMORE THE PARAMETER FACTOR EQUALS 2/SQRT(PI)
-  !
-  !  THE ROUTINE IS NOT UNDERFLOW-PROTECTED BUT ANY VARIABLE CAN BE
-  !  PUT TO 0 UPON UNDERFLOW;
-  !
-
+      SUBROUTINE WOFZ (XI, YI, U, V, FLAG)
+  !C
+  !C  GIVEN A COMPLEX NUMBER Z = (XI,YI), THIS SUBROUTINE COMPUTES
+  !C  THE VALUE OF THE FADDEEVA-FUNCTION W(Z) = EXP(-Z**2)*ERFC(-I*Z),
+  !C  WHERE ERFC IS THE COMPLEX COMPLEMENTARY ERROR-FUNCTION AND I
+  !C  MEANS SQRT(-1).
+  !C  THE ACCURACY OF THE ALGORITHM FOR Z IN THE 1ST AND 2ND QUADRANT
+  !C  IS 14 SIGNIFICANT DIGITS; IN THE 3RD AND 4TH IT IS 13 SIGNIFICANT
+  !C  DIGITS OUTSIDE A CIRCULAR REGION WITH RADIUS 0.126 AROUND A ZERO
+  !C  OF THE FUNCTION.
+  !C  ALL REAL VARIABLES IN THE PROGRAM ARE DOUBLE PRECISION.
+  !C
+  !C
+  !C  THE CODE CONTAINS A FEW COMPILER-DEPENDENT PARAMETERS :
+  !C     RMAXREAL = THE MAXIMUM VALUE OF RMAXREAL EQUALS THE ROOT OF
+  !C                RMAX = THE LARGEST NUMBER WHICH CAN STILL BE
+  !C                IMPLEMENTED ON THE COMPUTER IN DOUBLE PRECISION
+  !C                FLOATING-POINT ARITHMETIC
+  !C     RMAXEXP  = LN(RMAX) - LN(2)
+  !C     RMAXGONI = THE LARGEST POSSIBLE ARGUMENT OF A DOUBLE PRECISION
+  !C                GONIOMETRIC FUNCTION (DCOS, DSIN, ...)
+  !C  THE REASON WHY THESE PARAMETERS ARE NEEDED AS THEY ARE DEFINED WILL
+  !C  BE EXPLAINED IN THE CODE BY MEANS OF COMMENTS
+  !C
+  !C
+  !C  PARAMETER LIST
+  !C     XI     = REAL      PART OF Z
+  !C     YI     = IMAGINARY PART OF Z
+  !C     U      = REAL      PART OF W(Z)
+  !C     V      = IMAGINARY PART OF W(Z)
+  !C     FLAG   = AN ERROR FLAG INDICATING WHETHER OVERFLOW WILL
+  !C              OCCUR OR NOT; TYPE LOGICAL;
+  !C              THE VALUES OF THIS VARIABLE HAVE THE FOLLOWING
+  !C              MEANING :
+  !C              FLAG=.FALSE. : NO ERROR CONDITION
+  !C              FLAG=.TRUE.  : OVERFLOW WILL OCCUR, THE ROUTINE
+  !C                             BECOMES INACTIVE
+  !C  XI, YI      ARE THE INPUT-PARAMETERS
+  !C  U, V, FLAG  ARE THE OUTPUT-PARAMETERS
+  !C
+  !C  FURTHERMORE THE PARAMETER FACTOR EQUALS 2/SQRT(PI)
+  !C
+  !C  THE ROUTINE IS NOT UNDERFLOW-PROTECTED BUT ANY VARIABLE CAN BE
+  !C  PUT TO 0 UPON UNDERFLOW;
+  !C
+  !C  REFERENCE - GPM POPPE, CMJ WIJERS; MORE EFFICIENT COMPUTATION OF
+  !C  THE COMPLEX ERROR-FUNCTION, ACM TRANS. MATH. SOFTWARE.
+  !C
+  !*
+  !*
+  !*
+  !*
         IMPLICIT DOUBLE PRECISION (A-H, O-Z)
         IMPLICIT INTEGER (I-N)
 
@@ -427,10 +302,11 @@ double complex function dispfunct(zeta,kpos)
         YABS = DABS(YI)
         X    = XABS/6.3
         Y    = YABS/4.4
-
-  !     THE FOLLOWING IF-STATEMENT PROTECTS
-  !     QRHO = (X**2 + Y**2) AGAINST OVERFLOW
-  !
+  !*
+  !C
+  !C     THE FOLLOWING IF-STATEMENT PROTECTS
+  !C     QRHO = (X**2 + Y**2) AGAINST OVERFLOW
+  !C
         IF ((XABS.GT.RMAXREAL).OR.(YABS.GT.RMAXREAL)) GOTO 100
 
         QRHO = X**2 + Y**2
@@ -442,12 +318,12 @@ double complex function dispfunct(zeta,kpos)
        A     = QRHO.LT.0.085264D0
 
         IF (A) THEN
-
-  !  IF (QRHO.LT.0.085264D0) THEN THE FADDEEVA-FUNCTION IS EVALUATED
-  !  USING A POWER-SERIES (ABRAMOWITZ/STEGUN, EQUATION (7.1.5), P.297)
-  !  N IS THE MINIMUM NUMBER OF TERMS NEEDED TO OBTAIN THE REQUIRED
-  !  ACCURACY
-
+  !C
+  !C  IF (QRHO.LT.0.085264D0) THEN THE FADDEEVA-FUNCTION IS EVALUATED
+  !C  USING A POWER-SERIES (ABRAMOWITZ/STEGUN, EQUATION (7.1.5), P.297)
+  !C  N IS THE MINIMUM NUMBER OF TERMS NEEDED TO OBTAIN THE REQUIRED
+  !C  ACCURACY
+  !C
           QRHO  = (1-0.85*Y)*DSQRT(QRHO)
           N     = IDNINT(6 + 72*QRHO)
           J     = 2*N+1
@@ -469,19 +345,20 @@ double complex function dispfunct(zeta,kpos)
           V    = U1*V2 + V1*U2
 
         ELSE
-
-  !  IF (QRHO.GT.1.O) THEN W(Z) IS EVALUATED USING THE LAPLACE
-  !  CONTINUED FRACTION
-  !  NU IS THE MINIMUM NUMBER OF TERMS NEEDED TO OBTAIN THE REQUIRED
-  !  ACCURACY
+  !C
+  !C  IF (QRHO.GT.1.O) THEN W(Z) IS EVALUATED USING THE LAPLACE
+  !C  CONTINUED FRACTION
+  !C  NU IS THE MINIMUM NUMBER OF TERMS NEEDED TO OBTAIN THE REQUIRED
+  !C  ACCURACY
+  !C
+  !C  IF ((QRHO.GT.0.085264D0).AND.(QRHO.LT.1.0)) THEN W(Z) IS EVALUATED
+  !C  BY A TRUNCATED TAYLOR EXPANSION, WHERE THE LAPLACE CONTINUED FRACTION
+  !C  IS USED TO CALCULATE THE DERIVATIVES OF W(Z)
+  !C  KAPN IS THE MINIMUM NUMBER OF TERMS IN THE TAYLOR EXPANSION NEEDED
+  !C  TO OBTAIN THE REQUIRED ACCURACY
+  !C  NU IS THE MINIMUM NUMBER OF TERMS OF THE CONTINUED FRACTION NEEDED
+  !C  TO CALCULATE THE DERIVATIVES WITH THE REQUIRED ACCURACY
   !
-  !  IF ((QRHO.GT.0.085264D0).AND.(QRHO.LT.1.0)) THEN W(Z) IS EVALUATED
-  !  BY A TRUNCATED TAYLOR EXPANSION, WHERE THE LAPLACE CONTINUED FRACTION
-  !  IS USED TO CALCULATE THE DERIVATIVES OF W(Z)
-  !  KAPN IS THE MINIMUM NUMBER OF TERMS IN THE TAYLOR EXPANSION NEEDED
-  !  TO OBTAIN THE REQUIRED ACCURACY
-  !  NU IS THE MINIMUM NUMBER OF TERMS OF THE CONTINUED FRACTION NEEDED
-  !  TO CALCULATE THE DERIVATIVES WITH THE REQUIRED ACCURACY
 
           IF (QRHO.GT.1.0) THEN
             H    = 0.0D0
@@ -532,7 +409,7 @@ double complex function dispfunct(zeta,kpos)
 
         END IF
 
-  !  EVALUATION OF W(Z) IN THE OTHER QUADRANTS
+  !C  EVALUATION OF W(Z) IN THE OTHER QUADRANTS
 
         IF (YI.LT.0.0) THEN
           IF (A) THEN
@@ -566,21 +443,24 @@ double complex function dispfunct(zeta,kpos)
         END
 
 
-
+  !************************************************************************
+  !*                                                                      *
+  !*    Program to calculate the first kind modified Bessel function of   *
+  !*    integer order N, for any REAL X, using the function BESSI(N,X).   *
+  !*                                                                      *
+  !* -------------------------------------------------------------------- *
+  !* -------------------------------------------------------------------- *
+  !*   Reference: From Numath Library By Tuan Dang Trong in Fortran 77.   *
+  !*                                                                      *
+  !*                               F90 Release 1.1 By J-P Moreau, Paris.  *
+  !*                                                                      *
+  !*   Version 1.1: corected value of P4 in BESSIO (P4=1.2067492 and not  *
+  !*                1.2067429) Aug. 2011.                                 *
+  !************************************************************************
 
 
   ! ----------------------------------------------------------------------
         double precision FUNCTION BESSI(N,X)
-        !! Function to calculate the first kind modified Bessel function of integer order N
-        !! for any real X.
-        !* -------------------------------------------------------------------- *
-        !*   Reference: From Numath Library By Tuan Dang Trong in Fortran 77.   *
-        !*                                                                      *
-        !*                               F90 Release 1.1 By J-P Moreau, Paris.  *
-        !*                                                                      *
-        !*   Version 1.1: corected value of P4 in BESSIO (P4=1.2067492 and not  *
-        !*                1.2067429) Aug. 2011.                                 *
-        !************************************************************************
         IMPLICIT DOUBLE PRECISION (A-H, O-Z)
         IMPLICIT INTEGER (I-N)
   !     This subroutine calculates the first kind modified Bessel function
@@ -624,12 +504,9 @@ double complex function dispfunct(zeta,kpos)
         BESSI = BESSI*BESSI0(X)/BI
         RETURN
         END
-
-
-
-
+  ! ----------------------------------------------------------------------
+  ! Auxiliary Bessel functions for N=0, N=1
         double precision FUNCTION BESSI0(X)
-        !! Auxiliary Bessel functions for N=0, N=1
         REAL *8 X,Y,P1,P2,P3,P4,P5,P6,P7,  &
         Q1,Q2,Q3,Q4,Q5,Q6,Q7,Q8,Q9,AX,BX
         DATA P1,P2,P3,P4,P5,P6,P7/1.D0,3.5156229D0,3.0899424D0,1.2067492D0,  &
@@ -649,12 +526,8 @@ double complex function dispfunct(zeta,kpos)
         ENDIF
         RETURN
         END
-
-
-
+  ! ----------------------------------------------------------------------
         double precision FUNCTION BESSI1(X)
-        !! Modified Bessel function of order 1.
-
         REAL *8 X,Y,P1,P2,P3,P4,P5,P6,P7,  &
         Q1,Q2,Q3,Q4,Q5,Q6,Q7,Q8,Q9,AX,BX
         DATA P1,P2,P3,P4,P5,P6,P7/0.5D0,0.87890594D0,0.51498869D0,  &
@@ -674,7 +547,7 @@ double complex function dispfunct(zeta,kpos)
         ENDIF
         RETURN
         END
-  
+  ! ----------------------------------------------------------------------
 
 
 
