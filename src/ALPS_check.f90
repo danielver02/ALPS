@@ -17,20 +17,26 @@
 !===============================================================================
 
 module alps_check
-	implicit none
-
-	public  :: check_parameters
-	!private ::
+  !! Verification of input parameters and distributions.
+  implicit none
+  
+  public  :: check_parameters
+  !private ::
 
 contains
 
 
-subroutine check_parameters
+  subroutine check_parameters
+    !! Verifies input parameters and distributions.
+    !! @todo
+    !! Add
+    !! - [ ] Quasi-Neutrality
+    !! - [ ] Zero Net Current
+    !! - [ ] ...
+    !! @endtodo
   implicit none
 
   write (*,'(a)') "Running parameter checks..."
-
-  ! THIS IS THE POINT WHERE WE WILL ADD THE PARAMETER CHECKS
 
   write (*,'(a)') " Parameter checks completed."
   write (*,'(a)') "-=-=-=-=-=-=-=-=-"
