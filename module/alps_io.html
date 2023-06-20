@@ -101,7 +101,7 @@
           <li id="statements"><i class="fa fa-list-ol"></i>
             <a data-toggle="tooltip"
                data-placement="bottom" data-html="true"
-               title="13.2% of total for modules and submodules.">549 statements</a>
+               title="13.6% of total for modules and submodules.">567 statements</a>
           </li>
 
             <li id="source-file">
@@ -137,7 +137,7 @@
       </div>
       <div id="vars-0" class="panel-collapse collapse">
         <div class="list-group">
-            <a class="list-group-item" href="../module/alps_io.html#variable-unit~4">unit</a>
+            <a class="list-group-item" href="../module/alps_io.html#variable-unit">unit</a>
             <a class="list-group-item" href="../module/alps_io.html#variable-stdout_unit">stdout_unit</a>
             <a class="list-group-item" href="../module/alps_io.html#variable-input_unit_no">input_unit_no</a>
             <a class="list-group-item" href="../module/alps_io.html#variable-error_unit_no">error_unit_no</a>
@@ -210,7 +210,7 @@
     </div>
 
     <div class="col-md-9" id='text'>
-      
+      <p>Controls input and output functions to and from main program.</p>
       
       
       <br>
@@ -226,7 +226,7 @@
       </div>
       <div id="vars-1" class="panel-collapse collapse">
         <div class="list-group">
-            <a class="list-group-item" href="../module/alps_io.html#variable-unit~4">unit</a>
+            <a class="list-group-item" href="../module/alps_io.html#variable-unit">unit</a>
             <a class="list-group-item" href="../module/alps_io.html#variable-stdout_unit">stdout_unit</a>
             <a class="list-group-item" href="../module/alps_io.html#variable-input_unit_no">input_unit_no</a>
             <a class="list-group-item" href="../module/alps_io.html#variable-error_unit_no">error_unit_no</a>
@@ -312,7 +312,7 @@
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-unit~4"></span>
+              <span class="anchor" id="variable-unit"></span>
               integer,
             </td>
               <td>public</td>
@@ -324,7 +324,7 @@
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Index for file I/O.</p>
             </td>
         </tr>
         <tr>
@@ -341,7 +341,7 @@ parameter
 <td> =</td>
                 <td>6</td>
             <td>
-                
+                <p>Standard unit for I/O.</p>
             </td>
         </tr>
         <tr>
@@ -358,7 +358,7 @@ parameter
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Saved input unit for use with multiple read in calls.</p>
             </td>
         </tr>
         <tr>
@@ -375,7 +375,7 @@ parameter
 <td> =</td>
                 <td>stdout_unit</td>
             <td>
-                
+                <p>Error output unit.</p>
             </td>
         </tr>
     </tbody>
@@ -500,7 +500,7 @@ parameter
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>Checks if double precision number input is NaN.</p>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
@@ -525,7 +525,7 @@ parameter
             <td>::</td>
             <td><strong>input</strong></td>
             <td>
-
+<p>Variable to be checked.</p>
             </td>
         </tr>
     </tbody>
@@ -550,7 +550,8 @@ parameter
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>Read in system parameters from *.in file.
+Only processor 0 calls this routine:</p>
 
   <h4>Arguments</h4>
     <em>None</em>
@@ -563,7 +564,7 @@ parameter
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>Reads in complex frequency map parameters.</p>
 
   <h4>Arguments</h4>
     <em>None</em>
@@ -576,7 +577,7 @@ parameter
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>Reads in initial guesses for dispersion solutions.</p>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
@@ -601,7 +602,7 @@ parameter
             <td>::</td>
             <td><strong>ik</strong></td>
             <td>
-
+<p>Solution index.</p>
             </td>
         </tr>
     </tbody>
@@ -616,7 +617,7 @@ parameter
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>Subroutine for reading in species parameters</p>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
@@ -641,7 +642,7 @@ parameter
             <td>::</td>
             <td><strong>is</strong></td>
             <td>
-
+<p>Species index.</p>
             </td>
         </tr>
     </tbody>
@@ -656,7 +657,7 @@ parameter
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>Reads in bi-Maxwellian parameters.</p>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
@@ -681,7 +682,7 @@ parameter
             <td>::</td>
             <td><strong>is</strong></td>
             <td>
-
+<p>Species index.</p>
             </td>
         </tr>
     </tbody>
@@ -696,7 +697,10 @@ parameter
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>The most important subroutine.
+Reads in wavevector scan parameters.
+Defines <a href="../type/scanner.html">scanner</a>, which controls the
+behavior of the wavevector scan.</p>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
@@ -721,7 +725,7 @@ parameter
             <td>::</td>
             <td><strong>is</strong></td>
             <td>
-
+<p>Scan index.</p>
             </td>
         </tr>
     </tbody>
@@ -1107,7 +1111,8 @@ parameter
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>Outputs the date and time in a given format using intrinsic
+FORTRAN function.</p>
 
   <h4>Arguments</h4>
     <em>None</em>
@@ -1120,7 +1125,7 @@ parameter
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>Writes the opening credits.</p>
 
   <h4>Arguments</h4>
     <em>None</em>

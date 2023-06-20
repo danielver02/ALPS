@@ -104,7 +104,7 @@
 			   <tr><td><a href='../proc/bessj.html'>BESSJ</a></td><td><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></td><td>Function</td><td></td></tr>
 			   <tr><td><a href='../proc/bessj0.html'>BESSJ0</a></td><td><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></td><td>Function</td><td></td></tr>
 			   <tr><td><a href='../proc/bessj1.html'>BESSJ1</a></td><td><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></td><td>Function</td><td></td></tr>
-			   <tr><td><a href='../proc/bm_read.html'>bM_read</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Subroutine</td><td></td></tr>
+			   <tr><td><a href='../proc/bm_read.html'>bM_read</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Subroutine</td><td><p>Reads in bi-Maxwellian parameters.</p></td></tr>
 			   <tr><td><a href='../proc/calc_chi.html'>calc_chi</a></td><td><a href='../module/alps_nhds.html'>alps_nhds</a></td><td>Subroutine</td><td></td></tr>
 			   <tr><td><a href='../proc/calc_eigen.html'>calc_eigen</a></td><td><a href='../module/alps_fns.html'>alps_fns</a></td><td>Subroutine</td><td></td></tr>
 			   <tr><td><a href='../proc/calc_ypsilon.html'>calc_ypsilon</a></td><td><a href='../module/alps_nhds.html'>alps_nhds</a></td><td>Subroutine</td><td></td></tr>
@@ -123,7 +123,7 @@ the full field <a href="../module/alps_var.html#variable-param_fit">param_fit</a
 			   <tr><td><a href='../proc/determine_sproc_rel.html'>determine_sproc_rel</a></td><td><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></td><td>Subroutine</td><td></td></tr>
 			   <tr><td><a href='../proc/disp.html'>disp</a></td><td><a href='../module/alps_fns.html'>alps_fns</a></td><td>Function</td><td></td></tr>
 			   <tr><td><a href='../proc/dispfunct.html'>dispfunct</a></td><td><a href='../module/alps_nhds.html'>alps_nhds</a></td><td>Function</td><td></td></tr>
-			   <tr><td><a href='../proc/display_credits.html'>display_credits</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Subroutine</td><td></td></tr>
+			   <tr><td><a href='../proc/display_credits.html'>display_credits</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Subroutine</td><td><p>Writes the opening credits.</p></td></tr>
 			   <tr><td><a href='../proc/eval_fit.html'>eval_fit</a></td><td><a href='../module/alps_analyt.html'>alps_analyt</a></td><td>Function</td><td><p>This function evaluates the fit to f0 at and the complex parallel
 momentum <a>ppar_valC</a>. It requires the fit parameters that will be determined
 by the subroutine <a href="../proc/determine_param_fit.html">determine_param_fit</a>.</p></td></tr>
@@ -142,7 +142,8 @@ use <a href="../proc/eval_fit.html">eval_fit</a>.</p></td></tr>
 			   <tr><td><a href='../proc/get_indexed_namelist_unit.html'>get_indexed_namelist_unit</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Subroutine</td><td></td></tr>
 			   <tr><td><a href='../proc/get_runname.html'>get_runname</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Subroutine</td><td></td></tr>
 			   <tr><td><a href='../proc/get_unused_unit.html'>get_unused_unit</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Subroutine</td><td></td></tr>
-			   <tr><td><a href='../proc/init_param.html'>init_param</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Subroutine</td><td></td></tr>
+			   <tr><td><a href='../proc/init_param.html'>init_param</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Subroutine</td><td><p>Read in system parameters from *.in file.
+Only processor 0 calls this routine:</p></td></tr>
 			   <tr><td><a href='../proc/input_unit.html'>input_unit</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Function</td><td></td></tr>
 			   <tr><td><a href='../proc/input_unit_exist.html'>input_unit_exist</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Function</td><td></td></tr>
 			   <tr><td><a href='../proc/int_ee.html'>int_ee</a></td><td><a href='../module/alps_fns.html'>alps_fns</a></td><td>Function</td><td></td></tr>
@@ -155,18 +156,19 @@ use <a href="../proc/eval_fit.html">eval_fit</a>.</p></td></tr>
 			   <tr><td><a href='../proc/integrate_res.html'>integrate_res</a></td><td><a href='../module/alps_fns.html'>alps_fns</a></td><td>Function</td><td></td></tr>
 			   <tr><td><a href='../proc/integrate_res_rel.html'>integrate_res_rel</a></td><td><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></td><td>Function</td><td></td></tr>
 			   <tr><td><a href='../proc/integrate_resu_rel.html'>integrate_resU_rel</a></td><td><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></td><td>Function</td><td></td></tr>
-			   <tr><td><a href='../proc/isnancheck.html'>isnancheck</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Function</td><td></td></tr>
+			   <tr><td><a href='../proc/isnancheck.html'>isnancheck</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Function</td><td><p>Checks if double precision number input is NaN.</p></td></tr>
 			   <tr><td><a href='../proc/landau_integrate.html'>landau_integrate</a></td><td><a href='../module/alps_fns.html'>alps_fns</a></td><td>Function</td><td></td></tr>
 			   <tr><td><a href='../proc/landau_integrate_rel.html'>landau_integrate_rel</a></td><td><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></td><td>Function</td><td></td></tr>
 			   <tr><td><a href='../proc/lm_nonlinear_fit.html'>LM_nonlinear_fit</a></td><td><a href='../module/alps_analyt.html'>alps_analyt</a></td><td>Subroutine</td><td><p>This subroutine processes the nonlinear Levenberg-Marquart algorithm and returns
 the one-dimensional array <a>params</a> at a given iperp.
 The variable <a>quality</a> is the sum of the squares of all residuals.</p></td></tr>
-			   <tr><td><a href='../proc/map_read.html'>map_read</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Subroutine</td><td></td></tr>
+			   <tr><td><a href='../proc/map_read.html'>map_read</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Subroutine</td><td><p>Reads in complex frequency map parameters.</p></td></tr>
 			   <tr><td><a href='../proc/map_search.html'>map_search</a></td><td><a href='../module/alps_fns.html'>alps_fns</a></td><td>Subroutine</td><td></td></tr>
 			   <tr><td><a href='../proc/om_double_scan.html'>om_double_scan</a></td><td><a href='../module/alps_fns.html'>alps_fns</a></td><td>Subroutine</td><td></td></tr>
 			   <tr><td><a href='../proc/om_scan.html'>om_scan</a></td><td><a href='../module/alps_fns.html'>alps_fns</a></td><td>Subroutine</td><td></td></tr>
 			   <tr><td><a href='../proc/output_fit.html'>output_fit</a></td><td><a href='../module/alps_analyt.html'>alps_analyt</a></td><td>Subroutine</td><td><p>This subroutine outputs the fit parameters for iperp=0 to stdout to monitor the fit.</p></td></tr>
-			   <tr><td><a href='../proc/output_time.html'>output_time</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Subroutine</td><td></td></tr>
+			   <tr><td><a href='../proc/output_time.html'>output_time</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Subroutine</td><td><p>Outputs the date and time in a given format using intrinsic
+FORTRAN function.</p></td></tr>
 			   <tr><td><a href='../proc/pass_distribution.html'>pass_distribution</a></td><td><a href='../module/alps_com.html'>alps_com</a></td><td>Subroutine</td><td></td></tr>
 			   <tr><td><a href='../proc/pass_instructions.html'>pass_instructions</a></td><td><a href='../module/alps_com.html'>alps_com</a></td><td>Subroutine</td><td></td></tr>
 			   <tr><td><a href='../proc/polyharmonic_spline.html'>polyharmonic_spline</a></td><td><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></td><td>Subroutine</td><td></td></tr>
@@ -175,10 +177,13 @@ The variable <a>quality</a> is the sum of the squares of all residuals.</p></td>
 			   <tr><td><a href='../proc/refine_guess.html'>refine_guess</a></td><td><a href='../module/alps_fns.html'>alps_fns</a></td><td>Subroutine</td><td></td></tr>
 			   <tr><td><a href='../proc/resu.html'>resU</a></td><td><a href='../module/alps_fns.html'>alps_fns</a></td><td>Function</td><td></td></tr>
 			   <tr><td><a href='../proc/resu_rel.html'>resU_rel</a></td><td><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></td><td>Function</td><td></td></tr>
-			   <tr><td><a href='../proc/scan_read.html'>scan_read</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Subroutine</td><td></td></tr>
+			   <tr><td><a href='../proc/scan_read.html'>scan_read</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Subroutine</td><td><p>The most important subroutine.
+Reads in wavevector scan parameters.
+Defines <a href="../type/scanner.html">scanner</a>, which controls the
+behavior of the wavevector scan.</p></td></tr>
 			   <tr><td><a href='../proc/secant.html'>secant</a></td><td><a href='../module/alps_fns.html'>alps_fns</a></td><td>Subroutine</td><td></td></tr>
-			   <tr><td><a href='../proc/solution_read.html'>solution_read</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Subroutine</td><td></td></tr>
-			   <tr><td><a href='../proc/spec_read.html'>spec_read</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Subroutine</td><td></td></tr>
+			   <tr><td><a href='../proc/solution_read.html'>solution_read</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Subroutine</td><td><p>Reads in initial guesses for dispersion solutions.</p></td></tr>
+			   <tr><td><a href='../proc/spec_read.html'>spec_read</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Subroutine</td><td><p>Subroutine for reading in species parameters</p></td></tr>
 			   <tr><td><a href='../proc/split_processes.html'>split_processes</a></td><td><a href='../module/alps_fns.html'>alps_fns</a></td><td>Subroutine</td><td></td></tr>
 			   <tr><td><a href='../proc/wofz.html'>WOFZ</a></td><td><a href='../module/alps_nhds.html'>alps_nhds</a></td><td>Subroutine</td><td><p>C
 C     THE FOLLOWING IF-STATEMENT PROTECTS
