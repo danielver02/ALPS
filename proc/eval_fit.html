@@ -101,7 +101,7 @@
           <li id="statements"><i class="fa fa-list-ol"></i>
             <a data-toggle="tooltip"
                data-placement="bottom" data-html="true"
-               title=" 6.5% of total for procedures.">86 statements</a>
+               title=" 7.0% of total for procedures.">93 statements</a>
           </li>
 
             <li id="source-file">
@@ -173,7 +173,7 @@
 
 
     <p>This function evaluates the fit to f0 at and the complex parallel
-momentum [[ppar_valC(variable):eval_fit(function)]]. It requires the fit parameters that will be determined
+momentum <a href="../proc/eval_fit.html">eval_fit</a>. It requires the fit parameters that will be determined
 by the subroutine <a href="../proc/determine_param_fit.html">determine_param_fit</a>.</p>
 
 
@@ -190,47 +190,47 @@ by the subroutine <a href="../proc/determine_param_fit.html">determine_param_fit
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-is~3"></span>
-              integer
+              <span class="anchor" id="variable-is"></span>
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>is</strong></td>
             <td>
-                
+                <p>Index of species for which <a href="../proc/eval_fit.html">eval_fit</a> is executed.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" id="variable-iperp"></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>iperp</strong></td>
             <td>
-                
+                <p>Index of perpendicular momentum at which <a href="../proc/eval_fit.html">eval_fit</a> is executed.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" id="variable-ppar_valc"></span>
-              double complex
+              double complex,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>ppar_valC</strong></td>
             <td>
-                
+                <p>Complex parallel momentum at which <a href="../proc/eval_fit.html">eval_fit</a> is executed.</p>
             </td>
         </tr>
     </tbody>
