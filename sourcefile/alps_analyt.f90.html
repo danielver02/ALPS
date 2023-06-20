@@ -101,7 +101,7 @@
           <li id="statements"><i class="fa fa-list-ol"></i>
             <a data-toggle="tooltip"
                data-placement="bottom" data-html="true"
-               title="16.0% of total for source files.">679 statements</a>
+               title="15.9% of total for source files.">679 statements</a>
           </li>
 
             <li id="source-file">
@@ -504,7 +504,7 @@ can be.
 <a id="ln-47" name="ln-47" href="#ln-47"></a><span class="w">	</span><span class="c">!! Complex parallel momentum at which [[eval_fit(function)]] is executed.</span>
 <a id="ln-48" name="ln-48" href="#ln-48"></a>
 <a id="ln-49" name="ln-49" href="#ln-49"></a><span class="w">	</span><span class="kt">double precision</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">pperp_val</span><span class="w"></span>
-<a id="ln-50" name="ln-50" href="#ln-50"></a><span class="w">	</span><span class="c">!! Perpendicular momentum corrsponding to index [[iperp(variable)]].</span>
+<a id="ln-50" name="ln-50" href="#ln-50"></a><span class="w">	</span><span class="c">!! Perpendicular momentum corrsponding to index iperp.</span>
 <a id="ln-51" name="ln-51" href="#ln-51"></a>
 <a id="ln-52" name="ln-52" href="#ln-52"></a><span class="w">	</span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">par_ind</span><span class="w"></span>
 <a id="ln-53" name="ln-53" href="#ln-53"></a><span class="w">	</span><span class="c">!! Parameter index for the fit parameters.</span>
@@ -746,7 +746,7 @@ can be.
 <a id="ln-289" name="ln-289" href="#ln-289"></a><span class="w">	</span><span class="c">!! Local process index for relativistic calculation.</span>
 <a id="ln-290" name="ln-290" href="#ln-290"></a>
 <a id="ln-291" name="ln-291" href="#ln-291"></a><span class="w">	</span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">nJT</span><span class="w"></span>
-<a id="ln-292" name="ln-292" href="#ln-292"></a><span class="w">	</span><span class="c">!! First dimension of matrix nJT [[determine_JT(subroutine):: JT(variable)]].</span>
+<a id="ln-292" name="ln-292" href="#ln-292"></a><span class="w">	</span><span class="c">!! First dimension of matrix JT.</span>
 <a id="ln-293" name="ln-293" href="#ln-293"></a>
 <a id="ln-294" name="ln-294" href="#ln-294"></a><span class="w">	</span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">ipparbar</span><span class="w"></span>
 <a id="ln-295" name="ln-295" href="#ln-295"></a><span class="w">	</span><span class="c">!! Index of parallel momentum (relativistic).</span>
@@ -1236,7 +1236,7 @@ can be.
 <a id="ln-779" name="ln-779" href="#ln-779"></a><span class="w">	</span><span class="c">!! Total number of fit parameters for a given species.</span>
 <a id="ln-780" name="ln-780" href="#ln-780"></a>
 <a id="ln-781" name="ln-781" href="#ln-781"></a><span class="w">	</span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">nJT</span><span class="w"></span>
-<a id="ln-782" name="ln-782" href="#ln-782"></a><span class="w">	</span><span class="c">!! First dimension of matrix nJT [[JT(variable)]].</span>
+<a id="ln-782" name="ln-782" href="#ln-782"></a><span class="w">	</span><span class="c">!! First dimension of matrix JT.</span>
 <a id="ln-783" name="ln-783" href="#ln-783"></a>
 <a id="ln-784" name="ln-784" href="#ln-784"></a><span class="w">	</span><span class="kt">double precision</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">JT</span><span class="p">(</span><span class="n">nJT</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="n">upper_limit</span><span class="p">)</span><span class="w"></span>
 <a id="ln-785" name="ln-785" href="#ln-785"></a><span class="w">	</span><span class="c">!! Transposed Jacobian matrix of the fit function.</span>
@@ -1245,7 +1245,7 @@ can be.
 <a id="ln-788" name="ln-788" href="#ln-788"></a><span class="w">	</span><span class="c">!! Array of fit parameters.</span>
 <a id="ln-789" name="ln-789" href="#ln-789"></a>
 <a id="ln-790" name="ln-790" href="#ln-790"></a><span class="w">	</span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">iperp</span><span class="w"></span>
-<a id="ln-791" name="ln-791" href="#ln-791"></a><span class="w">	</span><span class="c">!! Index of perpendicular momentum at which [[JT(variable)]] is evaluated.</span>
+<a id="ln-791" name="ln-791" href="#ln-791"></a><span class="w">	</span><span class="c">!! Index of perpendicular momentum at which JT is evaluated.</span>
 <a id="ln-792" name="ln-792" href="#ln-792"></a>
 <a id="ln-793" name="ln-793" href="#ln-793"></a><span class="w">	</span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">upper_limit</span><span class="w"></span>
 <a id="ln-794" name="ln-794" href="#ln-794"></a><span class="w">	</span><span class="c">!! Upper limit of iperp space (relativistic and non-relativistic).</span>
@@ -1455,7 +1455,7 @@ can be.
 <a id="ln-998" name="ln-998" href="#ln-998"></a><span class="w">	</span><span class="c">!! Total number of fit parameters for a given species.</span>
 <a id="ln-999" name="ln-999" href="#ln-999"></a>
 <a id="ln-1000" name="ln-1000" href="#ln-1000"></a><span class="w">	</span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">nJT</span><span class="w"></span>
-<a id="ln-1001" name="ln-1001" href="#ln-1001"></a><span class="w">	</span><span class="c">!! First dimension of matrix nJT [[determine_JT(subroutine):JT(variable)]].</span>
+<a id="ln-1001" name="ln-1001" href="#ln-1001"></a><span class="w">	</span><span class="c">!! First dimension of matrix JT (see [[determine_JT(subroutine):JT(variable)]]).</span>
 <a id="ln-1002" name="ln-1002" href="#ln-1002"></a>
 <a id="ln-1003" name="ln-1003" href="#ln-1003"></a><span class="w">	</span><span class="kt">double precision</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">params</span><span class="p">(</span><span class="n">n_params</span><span class="p">)</span><span class="w"></span>
 <a id="ln-1004" name="ln-1004" href="#ln-1004"></a><span class="w">	</span><span class="c">!! Array of fit parameters.</span>

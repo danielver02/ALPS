@@ -101,7 +101,7 @@
           <li id="statements"><i class="fa fa-list-ol"></i>
             <a data-toggle="tooltip"
                data-placement="bottom" data-html="true"
-               title=" 7.0% of total for modules and submodules.">290 statements</a>
+               title=" 7.6% of total for modules and submodules.">319 statements</a>
           </li>
 
             <li id="source-file">
@@ -184,22 +184,8 @@
     </div>
 
     <div class="col-md-9" id='text'>
-      <hr>
-<div class="codehilite"><pre><span></span><code>                                                                  <span class="o">*</span>
-<span class="nv">Program</span> <span class="nv">to</span> <span class="nv">calculate</span> <span class="nv">the</span> <span class="nv">first</span> <span class="nv">kind</span> <span class="nv">modified</span> <span class="nv">Bessel</span> <span class="nv">function</span> <span class="nv">of</span>   <span class="o">*</span>
-<span class="nv">integer</span> <span class="nv">order</span> <span class="nv">N</span>, <span class="k">for</span> <span class="nv">any</span> <span class="nv">REAL</span> <span class="nv">X</span>, <span class="nv">using</span> <span class="nv">the</span> <span class="nv">function</span> <span class="nv">BESSI</span><span class="ss">(</span><span class="nv">N</span>,<span class="nv">X</span><span class="ss">)</span>.   <span class="o">*</span>
-                                                                  <span class="o">*</span>
-</code></pre></div>
-
-<p>-------------------------------------------------------------------- *
- -------------------------------------------------------------------- *
-   Reference: From Numath Library By Tuan Dang Trong in Fortran 77.   *
-                                                                      *
-                               F90 Release 1.1 By J-P Moreau, Paris.  *
-                                                                      *
-   Version 1.1: corected value of P4 in BESSIO (P4=1.2067492 and not  *
-                1.2067429) Aug. 2011.                                 *</p>
-<hr>
+      <p>Module including the NHDS implementation for bi-Maxwellian reference cases.
+The original NHDS code can be found under github.com/danielver02/NHDS.</p>
 <br>      
           <div class="panel panel-default">
       <div class="panel-heading">
@@ -386,7 +372,7 @@ modules which it uses.
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>Calculates the modified Bessel function of argument x and order n.</p>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
@@ -402,31 +388,31 @@ modules which it uses.
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>n</strong></td>
             <td>
-
+<p>Order of the modified Bessel function.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              double precision
+              double precision,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>x</strong></td>
             <td>
-
+<p>Argument of the modified Bessel function.</p>
             </td>
         </tr>
     </tbody>
@@ -446,7 +432,7 @@ modules which it uses.
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>Calculates the dispersion function based on the complex error function.</p>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
@@ -462,31 +448,31 @@ modules which it uses.
         <tr>
             <td>
               <span class="anchor" ></span>
-              double complex
+              double complex,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>zeta</strong></td>
             <td>
-
+<p>Argument of dispersion function.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              logical
+              logical,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>kpos</strong></td>
             <td>
-
+<p>Check whether kpar is positive.</p>
             </td>
         </tr>
     </tbody>
@@ -506,7 +492,15 @@ modules which it uses.
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>Function to calculate the first kind modified Bessel function of integer order N
+ for any real X.
+ -------------------------------------------------------------------- *
+   Reference: From Numath Library By Tuan Dang Trong in Fortran 77.   *
+                                                                      *
+                               F90 Release 1.1 By J-P Moreau, Paris.  *
+                                                                      *
+   Version 1.1: corected value of P4 in BESSIO (P4=1.2067492 and not  *
+                1.2067429) Aug. 2011.                                 *</p><a href="../proc/bessi.html" class="pull-right"><emph>Read more&hellip;</emph></a>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
@@ -566,7 +560,7 @@ modules which it uses.
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>Auxiliary Bessel functions for N=0, N=1</p>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
@@ -611,7 +605,7 @@ modules which it uses.
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>Modified Bessel function of order 1.</p>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
@@ -661,7 +655,7 @@ modules which it uses.
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>Subroutine that calculates the susceptibility of species j based on NHDS.</p>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
@@ -677,76 +671,76 @@ modules which it uses.
         <tr>
             <td>
               <span class="anchor" ></span>
-              double complex
+              double complex,
             </td>
-<td></td>
+<td>intent(out)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>chi</strong>(3,3)</td>
             <td>
-
+<p>Susceptibility tensor of species j.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>j</strong></td>
             <td>
-
+<p>Index for species.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              double precision
+              double precision,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>kz</strong></td>
             <td>
-
+<p>Normalised parallel wavenumber.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              double precision
+              double precision,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>kperp</strong></td>
             <td>
-
+<p>Normalised perpendicular wavenumber.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              double complex
+              double complex,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>x</strong></td>
             <td>
-
+<p>Normalised complex frequency.</p>
             </td>
         </tr>
     </tbody>
@@ -761,7 +755,7 @@ modules which it uses.
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>Calculates the Y-tensor according to Stix for a bi-Maxwelling, using the NHDS calculation.</p>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
@@ -777,9 +771,9 @@ modules which it uses.
         <tr>
             <td>
               <span class="anchor" ></span>
-              double complex
+              double complex,
             </td>
-<td></td>
+<td>intent(out)</td>
               <td></td>            <td>
               
             </td>
@@ -792,76 +786,76 @@ modules which it uses.
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>j</strong></td>
             <td>
-
+<p>Index for species.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>n</strong></td>
             <td>
-
+<p>Index of sum over Bessel functions.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              double precision
+              double precision,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>kz</strong></td>
             <td>
-
+<p>Normalised parallel wavenumber.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              double precision
+              double precision,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>kperp</strong></td>
             <td>
-
+<p>Normalised perpendicular wavenumber.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              double complex
+              double complex,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>x</strong></td>
             <td>
-
+<p>Normalised complex frequency.</p>
             </td>
         </tr>
     </tbody>
@@ -876,10 +870,10 @@ modules which it uses.
 </h3></div>
     <div class="panel-body">
           
-  <p>C
-C     THE FOLLOWING IF-STATEMENT PROTECTS
-C     QRHO = (X<strong>2 + Y</strong>2) AGAINST OVERFLOW
-C</p>
+  <p>Given a complex number Z = (XI,YI), this subroutine computes
+ the value of the Faddeeva function W(Z) = exp(-Z<em><em>2)</em>erfc(-I</em>Z),
+ where erfc is the complex complementary error function and I
+is the imaginary unit.</p>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
