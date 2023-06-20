@@ -1,0 +1,7 @@
+#Ignore arrays in distribution
+*.array
+*.out
+*.error
+.deps
+.dirstamp
+generate_distribution
