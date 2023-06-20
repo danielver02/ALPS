@@ -29,7 +29,7 @@ contains
 
 double complex function eval_fit(is,iperp,ppar_valC)
 	!! This function evaluates the fit to f0 at and the complex parallel
-	!! momentum [[ppar_valC]]. It requires the fit parameters that will be determined
+	!! momentum ppar_valC. It requires the fit parameters that will be determined
 	!! by the subroutine [[determine_param_fit(subroutine)]].
 
 	use alps_var, only : fit_type, pp, param_fit, n_fits, gamma_rel,nspec,relativistic
@@ -172,8 +172,8 @@ end function
 
 
 double complex function fit_function(is,n_params,params,pperp_val,ppar_val)
-	!! This function evaluates the fit to f0 at real [[pperp_val]] and complex [[ppar_val]],
-	!! provided that the one-dimensional fit-parameter array [[params]] is fed into the
+	!! This function evaluates the fit to f0 at real pperp_val and complex ppar_val,
+	!! provided that the one-dimensional fit-parameter array params is fed into the
 	!! function. This is only used during the fitting. For the evaluation in ALPS,
 	!! use [[eval_fit(function)]].
 	use alps_var, only : fit_type, n_fits, ms, vA, perp_correction
@@ -979,8 +979,8 @@ end subroutine
 
 subroutine LM_nonlinear_fit(is,g,n_params,nJT,params,param_mask,iperp,npar,ipparbar_lower,quality)
 	!! This subroutine processes the nonlinear Levenberg-Marquart algorithm and returns
-	!! the one-dimensional array [[params]] at a given iperp.
-	!! The variable [[quality]] is the sum of the squares of all residuals.
+	!! the one-dimensional array params at a given iperp.
+	!! The variable quality is the sum of the squares of all residuals.
 	use alps_var, only : lambda_initial_fit, pp, lambdafac_fit, logfit
 	use alps_var, only : epsilon_fit, maxsteps_fit
 	use alps_var, only : gamma_rel,pparbar_rel,relativistic,nspec
@@ -998,7 +998,7 @@ subroutine LM_nonlinear_fit(is,g,n_params,nJT,params,param_mask,iperp,npar,ippar
 	!! Total number of fit parameters for a given species.
 
 	integer, intent(in) :: nJT
-	!! First dimension of matrix JT (see [[determine_JT(subroutine):JT(variable)]]).
+	!! First dimension of matrix JT (see [[determine_JT(subroutine)]]).
 
 	double precision, intent(inout) :: params(n_params)
 	!! Array of fit parameters.

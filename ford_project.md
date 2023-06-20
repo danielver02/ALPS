@@ -14,6 +14,7 @@ display: public
          private
 source: false
 graph: true
+incl_src: false
 ---
 ALPS is a parallelised numerical code that solves the Vlasov-Maxwell dispersion
 relation in hot (even relativistic) magnetised plasma. ALPS allows for any
