@@ -67,9 +67,6 @@ determine_minima=T
 scan_option=1 
 !# wavevector scans
 n_scan=1 
-!T-> use secant method
-!F-> rtsec method
-use_secant=T
 /
 
 !Initial guess of complex frequency for first solution
