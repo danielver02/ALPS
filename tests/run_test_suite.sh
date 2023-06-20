@@ -2,9 +2,9 @@ echo '-=-=-=-=-=-=-='
 echo 'Interpolate Test'
 echo '-=-=-=-=-=-=-='
 date
-cd interpolation
-./interpolation test_interp.in 2> 'test_interp.error' > 'test_interp.out'
-ll0=$(wc -l 'test_interp.error' | awk '{print $1}')
+cd ../interpolation
+./interpolation test_interp.in 2> '../tests/test_interp.error' > '../tests/test_interp.out'
+ll0=$(wc -l '../tests/test_interp.error' | awk '{print $1}')
 if [ $ll0 -eq 0 ]
 then
     echo 'No Errors in Interpolation Test'
@@ -25,8 +25,8 @@ echo '-=-=-=-=-=-=-='
 echo 'Generate Distribution'
 date
 cd distribution
-./generate_distribution $input'_dist.in' 2> $input'_dist.error' > $input'_dist.out'
-jj0=$(wc -l $input'_dist.error' | awk '{print $1}')
+./generate_distribution $input'_dist.in' 2> '../tests/'$input'_dist.error' > '../tests/'$input'_dist.out'
+jj0=$(wc -l '../tests/'$input'_dist.error' | awk '{print $1}')
 if [ $jj0 -eq 0 ]
 then
     echo 'No Errors in generate_distribution execution of' $input
@@ -38,8 +38,8 @@ cd ../
 echo '-=-=-=-=-=-=-='
 echo 'ALPS'
 date
-mpirun -np $numproc --oversubscribe ./src/ALPS $input.in 2> $input'.error' > $input'.out'
-kk0=$(wc -l $input'.error' | awk '{print $1}')
+mpirun -np $numproc --oversubscribe ./src/ALPS 'tests/'$input.in #2> 'tests/'$input'.error' > 'tests/'$input'.out'
+kk0=$(wc -l 'tests/'$input'.error' | awk '{print $1}')
 if [ $kk0 -eq 0 ]
 then
     echo 'No Errors for ALPS Execution of ' $input
@@ -58,8 +58,8 @@ echo '-=-=-=-=-=-=-='
 echo 'Generate Distribution'
 date
 cd distribution
-./generate_distribution $input'_dist.in' 2> $input'_dist.error' > $input'_dist.out'
-jj1=$(wc -l $input'_dist.error' | awk '{print $1}')
+./generate_distribution $input'_dist.in' 2> '../tests/'$input'_dist.error' > '../tests/'$input'_dist.out'
+jj1=$(wc -l '../tests/'$input'_dist.error' | awk '{print $1}')
 if [ $jj1 -eq 0 ]
 then
     echo 'No Errors in generate_distribution execution of' $input
@@ -71,8 +71,8 @@ cd ../
 echo '-=-=-=-=-=-=-='
 echo 'ALPS'
 date
-mpirun -np $numproc --oversubscribe ./src/ALPS $input.in 2> $input'.error' > $input'.out'
-kk1=$(wc -l $input'.error' | awk '{print $1}')
+mpirun -np $numproc --oversubscribe ./src/ALPS 'tests/'$input.in 2> 'tests/'$input'.error' > 'tests/'$input'.out'
+kk1=$(wc -l 'tests/'$input'.error' | awk '{print $1}')
 if [ $kk1 -eq 0 ]
 then
     echo 'No Errors for ALPS Execution of ' $input
@@ -90,8 +90,8 @@ echo '-=-=-=-=-=-=-='
 echo 'Generate Distribution'
 date
 cd distribution
-./generate_distribution $input'_dist.in' 2> $input'_dist.error' > $input'_dist.out'
-jj2=$(wc -l $input'_dist.error' | awk '{print $1}')
+./generate_distribution $input'_dist.in' 2> '../tests/'$input'_dist.error' > '../tests/'$input'_dist.out'
+jj2=$(wc -l '../tests/'$input'_dist.error' | awk '{print $1}')
 if [ $jj2 -eq 0 ]
 then
     echo 'No Errors in generate_distribution execution of' $input
@@ -103,8 +103,8 @@ cd ../
 echo '-=-=-=-=-=-=-='
 echo 'ALPS'
 date
-mpirun -np $numproc --oversubscribe ./src/ALPS $input.in 2> $input'.error' > $input'.out'
-kk2=$(wc -l $input'.error' | awk '{print $1}')
+mpirun -np $numproc --oversubscribe ./src/ALPS 'tests/'$input.in 2> 'tests/'$input'.error' > 'tests/'$input'.out'
+kk2=$(wc -l 'tests/'$input'.error' | awk '{print $1}')
 if [ $kk2 -eq 0 ]
 then
     echo 'No Errors for ALPS Execution of ' $input
@@ -122,8 +122,8 @@ echo '-=-=-=-=-=-=-='
 echo 'Generate Distribution'
 date
 cd distribution
-./generate_distribution $input'_dist.in' 2> $input'_dist.error' > $input'_dist.out'
-jj3=$(wc -l $input'_dist.error' | awk '{print $1}')
+./generate_distribution $input'_dist.in' 2> '../tests/'$input'_dist.error' > '../tests/'$input'_dist.out'
+jj3=$(wc -l '../tests/'$input'_dist.error' | awk '{print $1}')
 if [ $jj3 -eq 0 ]
 then
     echo 'No Errors in generate_distribution execution of' $input
@@ -135,8 +135,8 @@ cd ../
 echo '-=-=-=-=-=-=-='
 echo 'ALPS'
 date
-mpirun -np $numproc --oversubscribe ./src/ALPS $input.in 2> $input'.error' > $input'.out'
-kk3=$(wc -l $input'.error' | awk '{print $1}')
+mpirun -np $numproc --oversubscribe ./src/ALPS 'tests/'$input.in 2> 'tests/'$input'.error' > 'tests/'$input'.out'
+kk3=$(wc -l 'tests/'$input'.error' | awk '{print $1}')
 if [ $kk3 -eq 0 ]
 then
     echo 'No Errors for ALPS Execution of ' $input
@@ -154,8 +154,8 @@ echo '-=-=-=-=-=-=-='
 echo 'Generate Distribution'
 date
 cd distribution
-./generate_distribution $input'_dist.in' 2> $input'_dist.error' > $input'_dist.out'
-jj4=$(wc -l $input'_dist.error' | awk '{print $1}')
+./generate_distribution $input'_dist.in' 2> '../tests/'$input'_dist.error' > '../tests/'$input'_dist.out'
+jj4=$(wc -l '../tests/'$input'_dist.error' | awk '{print $1}')
 if [ $jj4 -eq 0 ]
 then
     echo 'No Errors in generate_distribution execution of' $input
@@ -167,8 +167,8 @@ cd ../
 echo '-=-=-=-=-=-=-='
 echo 'ALPS'
 date
-mpirun -np $numproc --oversubscribe ./src/ALPS $input.in 2> $input'.error' > $input'.out'
-kk4=$(wc -l $input'.error' | awk '{print $1}')
+mpirun -np $numproc --oversubscribe ./src/ALPS 'tests/'$input.in 2> 'tests/'$input'.error' > 'tests/'$input'.out'
+kk4=$(wc -l 'tests/'$input'.error' | awk '{print $1}')
 if [ $kk4 -eq 0 ]
 then
     echo 'No Errors for ALPS Execution of ' $input
@@ -186,8 +186,8 @@ echo '-=-=-=-=-=-=-='
 echo 'Generate Distribution'
 date
 cd distribution
-./generate_distribution $input'_dist.in' 2> $input'_dist.error' > $input'_dist.out'
-jj5=$(wc -l $input'_dist.error' | awk '{print $1}')
+./generate_distribution $input'_dist.in' 2> '../tests/'$input'_dist.error' > '../tests/'$input'_dist.out'
+jj5=$(wc -l '../tests/'$input'_dist.error' | awk '{print $1}')
 if [ $jj5 -eq 0 ]
 then
     echo 'No Errors in generate_distribution execution of' $input
@@ -199,8 +199,8 @@ cd ../
 echo '-=-=-=-=-=-=-='
 echo 'ALPS'
 date
-mpirun -np $numproc --oversubscribe ./src/ALPS $input.in 2> $input'.error' > $input'.out'
-kk5=$(wc -l $input'.error' | awk '{print $1}')
+mpirun -np $numproc --oversubscribe ./src/ALPS 'tests/'$input.in 2> 'tests/'$input'.error' > 'tests/'$input'.out'
+kk5=$(wc -l 'tests/'$input'.error' | awk '{print $1}')
 if [ $kk5 -eq 0 ]
 then
     echo 'No Errors for ALPS Execution of ' $input
@@ -218,8 +218,8 @@ echo '-=-=-=-=-=-=-='
 echo 'Generate Distribution'
 date
 cd distribution
-./generate_distribution $input'_dist.in' 2> $input'_dist.error' > $input'_dist.out'
-jj6=$(wc -l $input'_dist.error' | awk '{print $1}')
+./generate_distribution $input'_dist.in' 2> '../tests/'$input'_dist.error' > '../tests/'$input'_dist.out'
+jj6=$(wc -l '../tests/'$input'_dist.error' | awk '{print $1}')
 if [ $jj6 -eq 0 ]
 then
     echo 'No Errors in generate_distribution execution of' $input
@@ -231,8 +231,8 @@ cd ../
 echo '-=-=-=-=-=-=-='
 echo 'ALPS'
 date
-mpirun -np $numproc --oversubscribe ./src/ALPS $input.in 2> $input'.error' > $input'.out'
-kk6=$(wc -l $input'.error' | awk '{print $1}')
+mpirun -np $numproc --oversubscribe ./src/ALPS 'tests/'$input.in 2> 'tests/'$input'.error' > 'tests/'$input'.out'
+kk6=$(wc -l 'tests/'$input'.error' | awk '{print $1}')
 if [ $kk6 -eq 0 ]
 then
     echo 'No Errors for ALPS Execution of ' $input
