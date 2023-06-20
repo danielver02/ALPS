@@ -1519,7 +1519,7 @@ subroutine om_scan(ik)
         write(scan_ID,'(a)')'k1_k2_'
      case (1) !theta_0 to theta_1
         write(scan_ID,'(a)')'theta_'
-     case (2) !|k_0| to |k_1| @ constant theta
+     case (2) ! |k_0| to |k_1| @ constant theta
         write(scan_ID,'(a)')'kcstq_'
      case (3) !kperp scan
         write(scan_ID,'(a)')'kperp_'
@@ -1616,7 +1616,7 @@ subroutine om_scan(ik)
         endif
         kperp=k_0*sin(theta_1)
         kpar=k_0*cos(theta_1)
-     case (2) !|k_0| to |k_1| @ constant theta
+     case (2) ! |k_0| to |k_1| @ constant theta
         if (scan(ik)%log_scan) then
            kperp=10.d0**(log10(kperp_last)+scan(ik)%diff*it)
            kpar=10.d0**(log10(kpar_last)+scan(ik)%diff2*it)
@@ -1972,7 +1972,7 @@ subroutine om_double_scan
         write(scan_ID,'(a)')'k1_k2_'
      case (1) !theta_0 to theta_1
         write(scan_ID,'(a)')'theta_'
-     case (2) !|k_0| to |k_1| @ constant theta
+     case (2) ! |k_0| to |k_1| @ constant theta
         write(scan_ID,'(a)')'kcstq_'
      case (3) !kperp scan
         write(scan_ID,'(a)')'kperp_'
@@ -1986,7 +1986,7 @@ subroutine om_double_scan
         write(scan_ID2,'(a)')'k1_k2'
      case (1) !theta_0 to theta_1
         write(scan_ID2,'(a)')'theta'
-     case (2) !|k_0| to |k_1| @ constant theta
+     case (2) ! |k_0| to |k_1| @ constant theta
         write(scan_ID2,'(a)')'kcstq'
      case (3) !kperp scan
         write(scan_ID2,'(a)')'kperp'
@@ -2033,7 +2033,7 @@ subroutine om_double_scan
         endif
         kperp=k_0*sin(theta_1)
         kpar=k_0*cos(theta_1)
-     case (2) !|k_0| to |k_1| @ constant theta
+     case (2) ! |k_0| to |k_1| @ constant theta
         if (scan(1)%log_scan) then
            kperp=10.d0**(log10(kperp_last)+scan(1)%diff*it)
            kpar=10.d0**(log10(kpar_last)+scan(1)%diff2*it)
@@ -2100,7 +2100,7 @@ subroutine om_double_scan
            endif
            kperp=k_i*sin(theta_1)
            kpar=k_i*cos(theta_1)
-        case (2) !|k_0| to |k_1| @ constant theta
+        case (2) ! |k_0| to |k_1| @ constant theta
            if (scan(2)%log_scan) then
               kperp=10.d0**(log10(kperpi)+scan(2)%diff*it2)
               kpar=10.d0**(log10(kpari)+scan(2)%diff2*it2)
