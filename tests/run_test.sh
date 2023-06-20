@@ -1,4 +1,4 @@
-nnodes=12
+nnodes=4
 input='test_kpar_fast'
 cd ..
 mkdir -p solution
