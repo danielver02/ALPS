@@ -1,3 +1,5 @@
+title: Readme
+
 # A  L  P  S  Arbitrary Linear Plasma Solver
 
 This is the ALPS code: the Arbitrary Linear Plasma Solver.
