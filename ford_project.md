@@ -9,6 +9,7 @@ output_dir: docs
 fpp_extensions: f90
 base_url: http://www.alps.space
 ordered_subpage: INSTALL.md
+display : public private
 ---
 ALPS is a parallelised numerical code that solves the Vlasov-Maxwell dispersion
 relation in hot (even relativistic) magnetised plasma. ALPS allows for any
