@@ -569,10 +569,17 @@ subroutine get_runname(runname,foldername)
     use alps_var, only : writeOut, usebM
     implicit none
     
-    integer :: iperp,ipar !parallel and perpendicular indices
-  integer :: is         !species index
-  character (100) :: readname
+    integer :: ipar
+    !Parallel index.
 
+    integer :: iperp
+    !!Perpendicular index.
+    
+    integer :: is
+    !!Species index.
+
+    character (100) :: readname
+    !!Base I/O name.
 
      if (writeOut) &
           write(*,'(2a)')&
@@ -580,9 +587,9 @@ subroutine get_runname(runname,foldername)
 
      call get_unused_unit (input_unit_no)
      unit=input_unit_no
-     !The f0 arrays are stored in the distribution folder
-     !arrayName is read in from *.in input file
-     !each species is has a unique file for f0 and pp
+     !The f0 arrays are stored in the distribution folder.
+     !arrayName is read in from *.in input file.
+     !each species is has a unique file for f0 as a function of pp.
      do is = 1, nspec
 
        if (usebM(is)) then
@@ -598,14 +605,12 @@ subroutine get_runname(runname,foldername)
 
         do iperp=0,nperp
            do ipar=0,npar
-              !read in: pperp, ppar, f0
               read(unit,*) pp(is,iperp,ipar,1),pp(is,iperp,ipar,2),f0(is,iperp,ipar)
            enddo
         enddo
         close(unit)
       endif
      enddo
-
 
 end subroutine read_f0
 !-=-=-=-=-
@@ -619,105 +624,149 @@ end subroutine read_f0
 !    input_unit
 !were all adopted from the Astrophysical Gyrokinetic Code (AGK)
 !as a means of allowing arbitrary namelist group name input.
-!A bit of hassle, but worth the effort.
 !-=-=-=-=-=-
-  subroutine get_indexed_namelist_unit (unit, nml, index_in)
-    use alps_var, only : runname
-    implicit none
-    integer, intent (out) :: unit
-    character (*), intent (in) :: nml
-    integer, intent (in) :: index_in
-    character(500) :: line
-    integer :: iunit, iostat, in_file
-    integer :: ind_slash
-    logical :: exist
 
-    call get_unused_unit (unit)
-    ind_slash=index(runname,"/",.True.)
-    if (ind_slash.EQ.0) then !No slash in name
-        !Original behaviour
-        open (unit=unit, file='.'//trim(runname)//'.scratch')
-    else
-        !General behaviour
-        open (unit=unit, file=trim(runname(1:ind_slash))//"."//trim(runname(ind_slash+1:))//".scratch")
-    endif
+subroutine get_indexed_namelist_unit (unit, nml, index_in)
+  !!Determines unused I/O unit.
+  use alps_var, only : runname
+  implicit none
+  
+  integer, intent (out) :: unit
+  !!Unit to be defined.
+  
+  character (*), intent (in) :: nml
+  !!Character string for namelist to be read in.
+  
+  integer, intent (in) :: index_in
+  !!Index of namelist to be read in.
+  
+  character(500) :: line
+  !!I/O dummy variable.
+  
+  integer :: iunit, iostat, in_file
+  !!I/O dummy indices.
 
-    write (line, *) index_in
-    line = nml//"_"//trim(adjustl(line))
-    in_file = input_unit_exist(trim(line), exist)
+  integer :: ind_slash
+  !!I/O dummy index.
+  
+  logical :: exist
+  !!Check if namelist is open.
 
-    if (exist) then
-       iunit = input_unit(trim(line))
-    else
-       call alps_error(1)
-       !return
-    end if
+  call get_unused_unit (unit)
+  ind_slash=index(runname,"/",.True.)
+  if (ind_slash.EQ.0) then !No slash in name
+     !Original behaviour
+     open (unit=unit, file='.'//trim(runname)//'.scratch')
+  else
+     !General behaviour
+     open (unit=unit, file=trim(runname(1:ind_slash))//"."//trim(runname(ind_slash+1:))//".scratch")
+  endif
 
-    read (unit=iunit, fmt="(a)") line
-    write (unit=unit, fmt="('&',a)") nml
+  write (line, *) index_in
+  line = nml//"_"//trim(adjustl(line))
+  in_file = input_unit_exist(trim(line), exist)
+  
+  if (exist) then
+     iunit = input_unit(trim(line))
+  else
+     call alps_error(1)
+  end if
+  
+  read (unit=iunit, fmt="(a)") line
+  write (unit=unit, fmt="('&',a)") nml
+  
+  do
+     read (unit=iunit, fmt="(a)", iostat=iostat) line
+     if (iostat /= 0 .or. trim(adjustl(line)) == "/") exit
+     write (unit=unit, fmt="(a)") trim(line)
+  end do
+  write (unit=unit, fmt="('/')")
+  rewind (unit=unit)
+end subroutine get_indexed_namelist_unit
 
-    do
-       read (unit=iunit, fmt="(a)", iostat=iostat) line
-       if (iostat /= 0 .or. trim(adjustl(line)) == "/") exit
-       write (unit=unit, fmt="(a)") trim(line)
-    end do
-    write (unit=unit, fmt="('/')")
-    rewind (unit=unit)
-  end subroutine get_indexed_namelist_unit
 
-!KGK- a work around to allow fit parameter readins for
-!an arbitrary number of species for an arbitrary number of fitted functions
-  subroutine get_indexed_double_namelist_unit (unit, nml, spec_in, index_in)
-    use alps_var, only : runname
-    implicit none
-    integer, intent (out) :: unit
-    character (*), intent (in) :: nml
-    integer, intent (in) :: index_in
-    integer, intent (in) :: spec_in
-    character(500) :: line,lines
-    integer :: iunit, iostat, in_file
-    integer :: ind_slash
-    logical :: exist
+subroutine get_indexed_double_namelist_unit (unit, nml, spec_in, index_in)
+  !!A version of [[get_indexed_namelist_unit(subroutine)]], extended
+  !!to allow for double indexing in order to read in multiple fits
+  !!for a single species.
+  use alps_var, only : runname
+  
+  implicit none
+  integer, intent (out) :: unit
+  !!Unit to be defined.
+  
+  character (*), intent (in) :: nml
+  !!Character string for namelist to be read in.
 
-    call get_unused_unit (unit)
-    ind_slash=index(runname,"/",.True.)
-    if (ind_slash.EQ.0) then !No slash in name
-        !Original behaviour
-        open (unit=unit, file='.'//trim(runname)//'.scratch')
-    else
-        !General behaviour
-        open (unit=unit, file=trim(runname(1:ind_slash))//"."//trim(runname(ind_slash+1:))//".scratch")
-    endif
+  integer, intent (in) :: spec_in
+  !!First index of namelist to be read in.
+  
+  integer, intent (in) :: index_in
+  !!Second index of namelist to be read in.
+    
+  character(500) :: line,lines
+  !!I/O dummy variable.
 
-    write (line, *) index_in
-    write (lines, *) spec_in
-    line = nml//"_"//trim(adjustl(lines))//"_"//trim(adjustl(line))
-    in_file = input_unit_exist(trim(line), exist)
+  integer :: iunit, iostat, in_file
+  !!I/O dummy indices.
+  
+  integer :: ind_slash
+  !!I/O dummy index.
+  
+  logical :: exist
+  !!Check if namelist is open.
+  
+  call get_unused_unit (unit)
+  ind_slash=index(runname,"/",.True.)
+  if (ind_slash.EQ.0) then !No slash in name
+     !Original behaviour
+     open (unit=unit, file='.'//trim(runname)//'.scratch')
+  else
+     !General behaviour
+     open (unit=unit, file=trim(runname(1:ind_slash))//"."//trim(runname(ind_slash+1:))//".scratch")
+  endif
+  
+  write (line, *) index_in
+  write (lines, *) spec_in
+  line = nml//"_"//trim(adjustl(lines))//"_"//trim(adjustl(line))
+  in_file = input_unit_exist(trim(line), exist)
+  
+  if (exist) then
+     iunit = input_unit(trim(line))
+  else
+     call alps_error(1)
+  end if
+  
+  read (unit=iunit, fmt="(a)") line
+  write (unit=unit, fmt="('&',a)") nml
+  
+  do
+     read (unit=iunit, fmt="(a)", iostat=iostat) line
+     if (iostat /= 0 .or. trim(adjustl(line)) == "/") exit
+     write (unit=unit, fmt="(a)") trim(line)
+  end do
+  write (unit=unit, fmt="('/')")
+  rewind (unit=unit)
+end subroutine get_indexed_double_namelist_unit
 
-    if (exist) then
-       iunit = input_unit(trim(line))
-    else
-       call alps_error(1)
-    end if
 
-    read (unit=iunit, fmt="(a)") line
-    write (unit=unit, fmt="('&',a)") nml
 
-    do
-       read (unit=iunit, fmt="(a)", iostat=iostat) line
-       if (iostat /= 0 .or. trim(adjustl(line)) == "/") exit
-       write (unit=unit, fmt="(a)") trim(line)
-    end do
-    write (unit=unit, fmt="('/')")
-    rewind (unit=unit)
-  end subroutine get_indexed_double_namelist_unit
-
-  function input_unit_exist (nml,exist)
-    implicit none
-    character(*), intent (in) :: nml
-    logical, intent(out) :: exist
-    integer :: input_unit_exist, iostat
-    character(500) :: line
+function input_unit_exist (nml,exist)
+  !!Determine if a particular namelist already opened.
+  implicit none
+  
+  character(*), intent (in) :: nml
+  !!Namelist to be opened.
+  
+  logical, intent(out) :: exist
+  !!Determination if namelist is open.
+  
+  integer :: input_unit_exist, iostat
+  !!I/O dummy indices.
+  
+  character(500) :: line
+  !!I/O dummy variable.
+  
     intrinsic adjustl, trim
     input_unit_exist = input_unit_no
     exist = .true.
@@ -738,11 +787,21 @@ end subroutine read_f0
     exist = .false.
   end function input_unit_exist
 
+
+  
   function input_unit (nml)
+    !!Assigns input unit for namelist opening.
     implicit none
+    
     character(*), intent (in) :: nml
+    !! Namelist string.
+    
     integer :: input_unit, iostat
+    !!I/O dummy indices.
+    
     character(500) :: line
+    !!I/O dummy variable.
+    
     intrinsic adjustl, trim
     input_unit = input_unit_no
     if (input_unit_no > 0) then
@@ -763,9 +822,14 @@ end subroutine read_f0
     write (unit=*, fmt="('Couldn''t find namelist: ',a)") nml
   end function input_unit
 
+  
   subroutine get_unused_unit (unit)
+    !!Determine unused number for I/O index.
     implicit none
+    
     integer, intent (out) :: unit
+    !!Unit to be assigned.
+    
     logical :: od
     unit = 50
     do
@@ -774,11 +838,14 @@ end subroutine read_f0
        unit = unit + 1
     end do
   end subroutine get_unused_unit
-!-=-=-=-=-=-
-!Open a file for the error log
+
+
+  
   subroutine alps_error_init
+    !!Open a file for the error log.
     use alps_var, only : unit_error, runname, foldername
     implicit none
+    
     call get_unused_unit(unit_error)
     !Get the run name, which comes from the name
     !of the input file appended after the executable:
@@ -788,13 +855,16 @@ end subroutine read_f0
     open (unit=unit_error,file=trim(foldername)//trim(runname)//".log",status='replace')
   end subroutine alps_error_init
 
-!Error catching subroutine
+
+  
   subroutine alps_error(error_id)
+    !!Error catching subroutine.
     use alps_var, only : ierror,unit_error,nproc,scan_option
     use mpi
 
     implicit none
     integer :: error_id
+    !!Index of error message.
 
 !    if (proc0) then
        select case(error_id)
@@ -854,7 +924,6 @@ end subroutine read_f0
        write(*,'(a)') "Time:"
        call output_time
        write(*,'(a)')'================================================'
- !   endif
 
     close(unit_error)
     call mpi_abort(MPI_COMM_WORLD,error_id, ierror)
