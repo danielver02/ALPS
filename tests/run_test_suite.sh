@@ -38,7 +38,7 @@ cd ../
 echo '-=-=-=-=-=-=-='
 echo 'ALPS'
 date
-mpirun -np $numproc --oversubscribe ./src/ALPS 'tests/'$input.in #2> 'tests/'$input'.error' > 'tests/'$input'.out'
+mpirun -np $numproc --oversubscribe ./src/ALPS 'tests/'$input.in 2> 'tests/'$input'.error' > 'tests/'$input'.out'
 kk0=$(wc -l 'tests/'$input'.error' | awk '{print $1}')
 if [ $kk0 -eq 0 ]
 then

@@ -37,7 +37,7 @@ contains
 !Only processor 0 calls this routine
 !-=-=-=-=-
   subroutine init_param
-    use alps_var, only : runname, kperp, kpar, option, nroots, D_prec, D_gap
+    use alps_var, only : runname, foldername, kperp, kpar, option, nroots, D_prec, D_gap
     use alps_var, only : kperp_last, kpar_last, kperp_0, kpar_0
     use alps_var, only : use_map, writeOut, wroots, nspec, numroots
     use alps_var, only : nperp, npar, arrayName, fit_check, param_fit, fit_type, perp_correction
@@ -64,7 +64,7 @@ contains
     !Read in system parameters
     !runname called earlier in alps_error_init
     unit=input_unit_no
-    open (unit=unit,file=trim(runname)//".in",status='old',action='read')
+    open (unit=unit,file=trim(foldername)//trim(runname)//".in",status='old',action='read')
     read (unit=unit,nml=system)
 
     if (writeOut) &
@@ -438,20 +438,30 @@ end subroutine fit_read
 !-=-=-=-=-
 ! Get runname for output files from input argument
 !-=-=-=-=-
-  subroutine get_runname(runname)
+  subroutine get_runname(runname,foldername)
     implicit none
     integer       :: l
+    integer       :: pathend
     character(500) :: arg
     character(500), intent(out) :: runname
+    character(500), intent(out) :: foldername
 
     !Get the first argument of the program execution command
     call getarg(1,arg)
+    pathend=0
 
     !Check if this is the input file and trim .in extension to get runname
+    !Also remove any folder structure from the runname:
     l = len_trim (arg)
+    pathend = scan(arg, "/", .true.)
     if (l > 3 .and. arg(l-2:l) == ".in") then
-       runname = arg(1:l-3)
+       runname = arg(pathend+1:l-3)
+       foldername = arg(1:pathend)
     end if
+
+
+
+
   end subroutine get_runname
 !-=-=-=-=-
 !-=-=-=-=-
@@ -672,15 +682,15 @@ end subroutine read_f0
 !-=-=-=-=-=-
 !Open a file for the error log
   subroutine alps_error_init
-    use alps_var, only : unit_error, runname
+    use alps_var, only : unit_error, runname, foldername
     implicit none
     call get_unused_unit(unit_error)
     !Get the run name, which comes from the name
     !of the input file appended after the executable:
     !mpirun -np 8 ./alps.e sample.in
     !yields a run name of 'sample'
-    call get_runname(runname)
-    open (unit=unit_error,file=trim(runname)//".log",status='replace')
+    call get_runname(runname,foldername)
+    open (unit=unit_error,file=trim(foldername)//trim(runname)//".log",status='replace')
   end subroutine alps_error_init
 
 !Error catching subroutine
