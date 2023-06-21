@@ -332,11 +332,11 @@ Read in from <a href="../module/alps_io.html#proc-scan_read">scan_read</a>.</p>
             <td>
                 <p>Type of parameter scan;<br>
 0: Current value of <script type="math/tex">\textbf{k}</script> to
- <script type="math/tex">k_\perp</script>=swi and <script type="math/tex">k_\parallel </script>=swf
+ <script type="math/tex">k_\perp</script>=range<script type="math/tex">_\textrm{i}</script> and <script type="math/tex">k_\parallel </script>=range<script type="math/tex">_\textrm{f}</script>. <br>
 1: <script type="math/tex">\theta_0 \rightarrow \theta_1</script> at fixed <script type="math/tex">|k|</script>
- from current value of <script type="math/tex">\theta=\atan(k_\perp/k_\parallel)</script>
- to swf.
-2: Wavevector scan at fixed angle <script type="math/tex">\theta_{k,B}</script> to <script type="math/tex">|k|</script>=swf.
+ from current value of <script type="math/tex">\theta=\mathrm{atan}(k_\perp/k_\parallel)</script>
+ to range<script type="math/tex">_\textrm{f}</script>.<br>
+2: Wavevector scan at fixed angle <script type="math/tex">\theta_{k,B}</script> to <script type="math/tex">|k|</script>=range<script type="math/tex">_\textrm{f}</script>.<br>
 3: <script type="math/tex">k_\perp</script> scan with constant <script type="math/tex">k_\parallel</script>.<br>
 4: <script type="math/tex">k_\parallel</script> scan with constant <script type="math/tex">k_\perp</script>.  </p>
             </td>
@@ -355,7 +355,7 @@ Read in from <a href="../module/alps_io.html#proc-scan_read">scan_read</a>.</p>
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Number of output scan values.</p>
             </td>
         </tr>
         <tr>

@@ -1532,9 +1532,11 @@ modules which it uses.
                 <td></td>
                 <td></td>
             <td>
-                <p>Choice of:
- -T: searching for roots over a map in complex frequency space;
- -F: input (nroots) guesses for solutions.</p>
+                <p>Choice of:<br>
+ (T) searching for roots over a map in complex frequency space,
+ via <a href="../proc/map_read.html">map_read</a>;<br>
+ (F) input (nroots) guesses for solutions,
+ via <a href="../proc/solution_read.html">solution_read</a></p>
             </td>
         </tr>
         <tr>
@@ -1653,7 +1655,8 @@ modules which it uses.
                 <td></td>
                 <td></td>
             <td>
-                <p>Perpendicular wavenumber, normalized by inverse reference inertial length, <script type="math/tex">k_\perp d_p</script>.</p>
+                <p>Perpendicular wavenumber, normalized by
+inverse reference inertial length, <script type="math/tex">k_\perp d_p</script>.</p>
             </td>
         </tr>
         <tr>
@@ -1670,7 +1673,8 @@ modules which it uses.
                 <td></td>
                 <td></td>
             <td>
-                <p>Parallel wavenumber, normalized by inverse reference inertial length, <script type="math/tex">k_\parallel d_p</script>.</p>
+                <p>Parallel wavenumber, normalized by
+inverse reference inertial length, <script type="math/tex">k_\parallel d_p</script>.</p>
             </td>
         </tr>
         <tr>
@@ -1704,7 +1708,7 @@ modules which it uses.
 <td> =</td>
                 <td>1.d-45</td>
             <td>
-                <p>Calculated Bessel functions until the maximum is less than this value.</p>
+                <p>Calculate Bessel functions until the maximum is less than this value.</p>
             </td>
         </tr>
         <tr>
@@ -1891,7 +1895,7 @@ modules which it uses.
 <td> =</td>
                 <td>128</td>
             <td>
-                <p>Number of points in <script type="math/tex">\omega_{\textrm{r}}/\Omega_p</script> grid.</p>
+                <p>Number of <script type="math/tex">\omega_{\textrm{r}}/\Omega_p</script> points in frequency grid.</p>
             </td>
         </tr>
         <tr>
@@ -1908,7 +1912,7 @@ modules which it uses.
 <td> =</td>
                 <td>128</td>
             <td>
-                <p>Number of points in <script type="math/tex">\gamma/\Omega_p</script> grid.</p>
+                <p>Number of <script type="math/tex">\gamma/\Omega_p</script> points in frequency grid.</p>
             </td>
         </tr>
         <tr>
@@ -2169,7 +2173,7 @@ evaluating Eqn 3.6 and 3.7, <script type="math/tex">t_{\textrm{lim}}</script>.</
                 <td></td>
             <td>
                 <p>Relativistic background distribution function array <script type="math/tex">f_{0j}</script>;
-(1:nspec,0:ngamma,0:npparbar)</p>
+(1:nspec,0:ngamma,0:npparbar).</p>
             </td>
         </tr>
         <tr>
@@ -2187,9 +2191,9 @@ evaluating Eqn 3.6 and 3.7, <script type="math/tex">t_{\textrm{lim}}</script>.</
                 <td></td>
             <td>
                 <p>Perpendicular and parallel derivatives of <script type="math/tex">f_{0j}</script>;
-(1:nspec,0:nperp,0:npar,1:2),
-with <script type="math/tex">\partial_{p_\perp} f_{0j} </script> index 1
-with <script type="math/tex">\partial_{p_\parallel} f_{0j} </script> index 2</p>
+(1:nspec,0:nperp,0:npar,1:2),<br>
+with <script type="math/tex">\partial_{p_\perp} f_{0j} </script> in index 1,<br>
+and <script type="math/tex">\partial_{p_\parallel} f_{0j} </script> in index 2.</p>
             </td>
         </tr>
         <tr>
@@ -2207,9 +2211,9 @@ with <script type="math/tex">\partial_{p_\parallel} f_{0j} </script> index 2</p>
                 <td></td>
             <td>
                 <p>Derivatives of <script type="math/tex">f_{0j}</script>;
-(1:nspec,0:nperp,0:npar,1:2),
-with <script type="math/tex">\partial_{\Gamma} f_{0j} </script> index 1
-and <script type="math/tex">\partial_{\bar{p}_\parallel} f_{0j} </script> index 2.</p>
+(1:nspec,0:nperp,0:npar,1:2),<br>
+with <script type="math/tex">\partial_{\Gamma} f_{0j} </script> in index 1<br>
+and <script type="math/tex">\partial_{\bar{p}_\parallel} f_{0j} </script> in index 2.</p>
             </td>
         </tr>
         <tr>
@@ -2227,9 +2231,9 @@ and <script type="math/tex">\partial_{\bar{p}_\parallel} f_{0j} </script> index 
                 <td></td>
             <td>
                 <p>Momentum Space Array for <script type="math/tex">f_{0j}</script>;
-(1:nspec,0:nperp,0:npar,1:2)
-with <script type="math/tex">p_\parallel/m_p v_A</script> index 1
-and <script type="math/tex">p_\perp/m_p v_A</script> index 2.</p>
+(1:nspec,0:nperp,0:npar,1:2)<br>
+with <script type="math/tex">p_\parallel/m_p v_A</script> in index 1<br>
+and <script type="math/tex">p_\perp/m_p v_A</script> in index 2.</p>
             </td>
         </tr>
         <tr>
@@ -2452,12 +2456,12 @@ and <script type="math/tex">p_\perp/m_p v_A</script> index 2.</p>
                 <td></td>
                 <td></td>
             <td>
-                <p>Type of analytic function to be fit, (1:nspec,1:maxval(nfits));
-1) Maxwellian,
-2) Kappa,
-3) Juettner with <script type="math/tex">p_\perp,p_\parallel</script>,
-4) Juettner with <script type="math/tex">\Gamma,\bar{p}_\parallel</script>, constant <script type="math/tex">\bar{p}_\parallel</script>,
-5) Juettner with <script type="math/tex">p_\perp,p_\parallel</script>; variable <script type="math/tex">\bar{p}_\parallel</script>,
+                <p>Type of analytic function to be fit, (1:nspec,1:maxval(nfits));<br>
+1) Maxwellian,<br>
+2) Kappa,<br>
+3) Juettner with <script type="math/tex">p_\perp,p_\parallel</script>,<br>
+4) Juettner with <script type="math/tex">\Gamma,\bar{p}_\parallel</script>, constant <script type="math/tex">\bar{p}_\parallel</script>,<br>
+5) Juettner with <script type="math/tex">p_\perp,p_\parallel</script>; variable <script type="math/tex">\bar{p}_\parallel</script>,<br>
 6) Bi-Moyal distribution.</p>
             </td>
         </tr>
@@ -2612,7 +2616,7 @@ and <script type="math/tex">p_\perp/m_p v_A</script> index 2.</p>
 <td> =</td>
                 <td>100</td>
             <td>
-                <p>Mow many steps should be used to integrate around the resonance,
+                <p>How many steps should be used to integrate around the resonance,
 <script type="math/tex">M_P</script>, used for integrating near poles (see section 3.1).</p>
             </td>
         </tr>
@@ -2630,9 +2634,9 @@ and <script type="math/tex">p_\perp/m_p v_A</script> index 2.</p>
 <td> =</td>
                 <td>1</td>
             <td>
-                <p>!Select case for scans; 
+                <p>Select case for scans;<br>
 1) consecutive scans along input paths in wavevector space,<br>
-2) double scans of two selected parameters</p>
+2) double scans of two selected parameters.</p>
             </td>
         </tr>
         <tr>
@@ -2649,7 +2653,10 @@ and <script type="math/tex">p_\perp/m_p v_A</script> index 2.</p>
 <td> =</td>
                 <td>0</td>
             <td>
-                <p>Number of wavevector scans.  </p>
+                <p>Number of wavevector scans.<br>
+Must be set to 2 for scan_option=2;<br>
+Must be 1 or larger for scan_option=1.<br>
+0 turns off wavevector scans.</p>
             </td>
         </tr>
         <tr>
@@ -2996,11 +3003,11 @@ Read in from <a href="../module/alps_io.html#proc-scan_read">scan_read</a>.</p>
             <td>
 <p>Type of parameter scan;<br>
 0: Current value of <script type="math/tex">\textbf{k}</script> to
- <script type="math/tex">k_\perp</script>=swi and <script type="math/tex">k_\parallel </script>=swf
+ <script type="math/tex">k_\perp</script>=range<script type="math/tex">_\textrm{i}</script> and <script type="math/tex">k_\parallel </script>=range<script type="math/tex">_\textrm{f}</script>. <br>
 1: <script type="math/tex">\theta_0 \rightarrow \theta_1</script> at fixed <script type="math/tex">|k|</script>
- from current value of <script type="math/tex">\theta=\atan(k_\perp/k_\parallel)</script>
- to swf.
-2: Wavevector scan at fixed angle <script type="math/tex">\theta_{k,B}</script> to <script type="math/tex">|k|</script>=swf.
+ from current value of <script type="math/tex">\theta=\mathrm{atan}(k_\perp/k_\parallel)</script>
+ to range<script type="math/tex">_\textrm{f}</script>.<br>
+2: Wavevector scan at fixed angle <script type="math/tex">\theta_{k,B}</script> to <script type="math/tex">|k|</script>=range<script type="math/tex">_\textrm{f}</script>.<br>
 3: <script type="math/tex">k_\perp</script> scan with constant <script type="math/tex">k_\parallel</script>.<br>
 4: <script type="math/tex">k_\parallel</script> scan with constant <script type="math/tex">k_\perp</script>.  </p>
             </td>
@@ -3019,7 +3026,7 @@ Read in from <a href="../module/alps_io.html#proc-scan_read">scan_read</a>.</p>
                 <td></td>
                 <td></td>
             <td>
-
+<p>Number of output scan values.</p>
             </td>
         </tr>
         <tr>
