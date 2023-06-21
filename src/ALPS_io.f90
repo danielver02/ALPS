@@ -45,7 +45,7 @@ contains
   subroutine init_param
     !!Read in system parameters from *.in file.
     !!Only processor 0 calls this routine:
-    use alps_var, only : runname, foldername, kperp, kpar, option, nroots, D_prec, D_gap
+    use alps_var, only : runname, foldername, kperp, kpar, nroots, D_prec, D_gap
     use alps_var, only : kperp_last, kpar_last, kperp_0, kpar_0
     use alps_var, only : use_map, writeOut, wroots, nspec, numroots
     use alps_var, only : nperp, npar, arrayName, fit_check, param_fit, fit_type, perp_correction
@@ -73,7 +73,7 @@ contains
 
     !Namelist read in from input file:
     nameList /system/ &
-         kperp, kpar, nspec, option, nroots, use_map, writeOut,&
+         kperp, kpar, nspec, nroots, use_map, writeOut,&
          nperp, npar, ngamma, npparbar, vA, arrayName, Bessel_zero, numiter, D_threshold, &
          D_prec, D_gap, positions_principal, Tlim, &
          maxsteps_fit, lambda_initial_fit, lambdafac_fit, epsilon_fit, fit_check, &
