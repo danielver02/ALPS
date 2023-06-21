@@ -97,7 +97,7 @@
           <li id="statements"><i class="fa fa-list-ol"></i>
             <a data-toggle="tooltip"
                data-placement="bottom" data-html="true"
-               title=" 1.1% of total for procedures.">50 statements</a>
+               title=" 1.3% of total for procedures.">60 statements</a>
           </li>
 
         </ul>
@@ -149,6 +149,13 @@
 </h2>
     
 
+    <p>This soubroutine interpolates the grid with a polyharmonic thin-plate spline.
+This subroutine needs the LUPACK and BLAS libraries to evoke the dgesv subroutine.
+The method uses the Thin Plate Spline.
+We use these resources:
+<a href="http://cseweb.ucsd.edu/~sjb/eccv_tps.pdf">http://cseweb.ucsd.edu/~sjb/eccv_tps.pdf</a>
+<a href="http://www.univie.ac.at/nuhag-php/bibtex/open_files/po94_M%20J%20D%20Powell%2003%2093.pdf">http://www.univie.ac.at/nuhag-php/bibtex/open_files/po94_M%20J%20D%20Powell%2003%2093.pdf</a>
+<a href="http://vision.ucsd.edu/sites/default/files/fulltext(4).pdf">http://vision.ucsd.edu/sites/default/files/fulltext(4).pdf</a></p>
 
 
     <h3>Arguments</h3>
@@ -164,70 +171,70 @@
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-grid_coarse"></span>
-              double precision
+              <span class="anchor" id="variable-grid_coarse~2"></span>
+              double precision,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>grid_coarse</strong>(n_coarse)</td>
             <td>
-                
+                <p>Coarse input grid for interpolation.</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-pperp_coarse"></span>
-              double precision
+              <span class="anchor" id="variable-pperp_coarse~2"></span>
+              double precision,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>pperp_coarse</strong>(n_coarse)</td>
             <td>
-                
+                <p>Coordinates of perpendicular momentum on coarse grid.</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-ppar_coarse"></span>
-              double precision
+              <span class="anchor" id="variable-ppar_coarse~2"></span>
+              double precision,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>ppar_coarse</strong>(n_coarse)</td>
             <td>
-                
+                <p>Coordinates of parallel momentum on coarse grid.</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-n_coarse"></span>
-              integer
+              <span class="anchor" id="variable-n_coarse~2"></span>
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>n_coarse</strong></td>
             <td>
-                
+                <p>Number of entries in coarse grid.</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-pperp~2"></span>
-              double precision
+              <span class="anchor" id="variable-pperp~3"></span>
+              double precision,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
@@ -239,10 +246,10 @@
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-ppar~2"></span>
-              double precision
+              <span class="anchor" id="variable-ppar~3"></span>
+              double precision,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
@@ -254,37 +261,37 @@
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-nperp~3"></span>
-              integer
+              <span class="anchor" id="variable-nperp~4"></span>
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>nperp</strong></td>
             <td>
-                
+                <p>Number of perpendicular steps on fine output grid.</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-npar~4"></span>
-              integer
+              <span class="anchor" id="variable-npar~5"></span>
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>npar</strong></td>
             <td>
-                
+                <p>Number of parallel steps on fine output grid.</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-smoothing"></span>
+              <span class="anchor" id="variable-smoothing~2"></span>
               double precision
             </td>
 <td></td>
@@ -294,22 +301,22 @@
             <td>::</td>
             <td><strong>smoothing</strong></td>
             <td>
-                
+                <p>Smoothing parameter for spline interpolation.</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-grid_fine~2"></span>
-              double precision
+              <span class="anchor" id="variable-grid_fine~3"></span>
+              double precision,
             </td>
-<td></td>
+<td>intent(out)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>grid_fine</strong>(0:nperp,0:npar)</td>
             <td>
-                
+                <p>Fine output grid after interpolation.</p>
             </td>
         </tr>
     </tbody>

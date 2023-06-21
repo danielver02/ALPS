@@ -97,7 +97,7 @@
           <li id="statements"><i class="fa fa-list-ol"></i>
             <a data-toggle="tooltip"
                data-placement="bottom" data-html="true"
-               title=" 0.2% of total for procedures.">11 statements</a>
+               title=" 0.4% of total for procedures.">16 statements</a>
           </li>
 
         </ul>
@@ -146,10 +146,11 @@
     </div>
     
     <div class="col-md-9" id='text'>
-    <h2> subroutine get_runname(runname)  
+    <h2> subroutine get_runname(runname, foldername)  
 </h2>
     
 
+    <p>Get runname for output files from input argument.</p>
 
 
     <h3>Arguments</h3>
@@ -166,7 +167,7 @@
         <tr>
             <td>
               <span class="anchor" id="variable-runname~3"></span>
-              character(len=50),
+              character(len=500),
             </td>
 <td>intent(out)</td>
               <td></td>            <td>
@@ -175,7 +176,22 @@
             <td>::</td>
             <td><strong>runname</strong></td>
             <td>
-                
+                <p>Basename for file I/O.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-foldername~3"></span>
+              character(len=500),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>foldername</strong></td>
+            <td>
+                <p>Directory in which input file is stored.</p>
             </td>
         </tr>
     </tbody>

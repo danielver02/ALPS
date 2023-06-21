@@ -97,7 +97,7 @@
           <li id="statements"><i class="fa fa-list-ol"></i>
             <a data-toggle="tooltip"
                data-placement="bottom" data-html="true"
-               title=" 0.4% of total for procedures.">17 statements</a>
+               title=" 0.5% of total for procedures.">24 statements</a>
           </li>
 
         </ul>
@@ -149,6 +149,7 @@
 </h2>
     
 
+    <p>This subroutine normalises the fine interpolation grid.</p>
 
 
     <h3>Arguments</h3>
@@ -164,77 +165,77 @@
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-pperp"></span>
-              double precision
+              <span class="anchor" id="variable-pperp~2"></span>
+              double precision,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>pperp</strong>(0:nperp,0:npar)</td>
             <td>
-                
+                <p>Coordinates of perpendicular momentum on fine grid.</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-ppar"></span>
-              double precision
+              <span class="anchor" id="variable-ppar~2"></span>
+              double precision,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>ppar</strong>(0:nperp,0:npar)</td>
             <td>
-                
+                <p>Coordinates of parallel momentum on fine grid.</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-grid_fine"></span>
-              double precision
+              <span class="anchor" id="variable-grid_fine~2"></span>
+              double precision,
             </td>
-<td></td>
+<td>intent(inout)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>grid_fine</strong>(0:nperp,0:npar)</td>
             <td>
-                
+                <p>Fine output grid from interpolation.</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-nperp~2"></span>
-              integer
+              <span class="anchor" id="variable-nperp~3"></span>
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>nperp</strong></td>
             <td>
-                
+                <p>Number of perpendicular steps on fine output grid.</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-npar~3"></span>
-              integer
+              <span class="anchor" id="variable-npar~4"></span>
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>npar</strong></td>
             <td>
-                
+                <p>Number of parallel steps on fine output grid.</p>
             </td>
         </tr>
     </tbody>

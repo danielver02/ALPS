@@ -96,7 +96,7 @@
           <li id="statements"><i class="fa fa-list-ol"></i>
             <a data-toggle="tooltip"
                data-placement="bottom" data-html="true"
-               title="31.5% of total for programs.">205 statements</a>
+               title="35.0% of total for programs.">240 statements</a>
           </li>
 
         </ul>
@@ -127,13 +127,13 @@
       </div>
       <div id="vars-0" class="panel-collapse collapse">
         <div class="list-group">
-            <a class="list-group-item" href="../program/interpolate.html#variable-grid_coarse~3">grid_coarse</a>
-            <a class="list-group-item" href="../program/interpolate.html#variable-pperp_coarse~2">pperp_coarse</a>
-            <a class="list-group-item" href="../program/interpolate.html#variable-ppar_coarse~2">ppar_coarse</a>
-            <a class="list-group-item" href="../program/interpolate.html#variable-grid_fine~3">grid_fine</a>
-            <a class="list-group-item" href="../program/interpolate.html#variable-pperp~4">pperp</a>
-            <a class="list-group-item" href="../program/interpolate.html#variable-ppar~4">ppar</a>
-            <a class="list-group-item" href="../program/interpolate.html#variable-smoothing~3">smoothing</a>
+            <a class="list-group-item" href="../program/interpolate.html#variable-grid_coarse">grid_coarse</a>
+            <a class="list-group-item" href="../program/interpolate.html#variable-pperp_coarse">pperp_coarse</a>
+            <a class="list-group-item" href="../program/interpolate.html#variable-ppar_coarse">ppar_coarse</a>
+            <a class="list-group-item" href="../program/interpolate.html#variable-grid_fine">grid_fine</a>
+            <a class="list-group-item" href="../program/interpolate.html#variable-pperp">pperp</a>
+            <a class="list-group-item" href="../program/interpolate.html#variable-ppar">ppar</a>
+            <a class="list-group-item" href="../program/interpolate.html#variable-smoothing">smoothing</a>
             <a class="list-group-item" href="../program/interpolate.html#variable-pperp_min">pperp_min</a>
             <a class="list-group-item" href="../program/interpolate.html#variable-pperp_max">pperp_max</a>
             <a class="list-group-item" href="../program/interpolate.html#variable-ppar_min">ppar_min</a>
@@ -149,10 +149,10 @@
             <a class="list-group-item" href="../program/interpolate.html#variable-pperp_min_set">pperp_min_set</a>
             <a class="list-group-item" href="../program/interpolate.html#variable-ppar_max_set">ppar_max_set</a>
             <a class="list-group-item" href="../program/interpolate.html#variable-ppar_min_set">ppar_min_set</a>
-            <a class="list-group-item" href="../program/interpolate.html#variable-nperp~4">nperp</a>
-            <a class="list-group-item" href="../program/interpolate.html#variable-npar~5">npar</a>
-            <a class="list-group-item" href="../program/interpolate.html#variable-n_coarse~3">n_coarse</a>
-            <a class="list-group-item" href="../program/interpolate.html#variable-mode~15">mode</a>
+            <a class="list-group-item" href="../program/interpolate.html#variable-nperp~2">nperp</a>
+            <a class="list-group-item" href="../program/interpolate.html#variable-npar~3">npar</a>
+            <a class="list-group-item" href="../program/interpolate.html#variable-n_coarse">n_coarse</a>
+            <a class="list-group-item" href="../program/interpolate.html#variable-mode">mode</a>
             <a class="list-group-item" href="../program/interpolate.html#variable-i~2">i</a>
             <a class="list-group-item" href="../program/interpolate.html#variable-j~3">j</a>
             <a class="list-group-item" href="../program/interpolate.html#variable-io_error">io_error</a>
@@ -162,11 +162,12 @@
             <a class="list-group-item" href="../program/interpolate.html#variable-output_file">output_file</a>
             <a class="list-group-item" href="../program/interpolate.html#variable-out_to_file">out_to_file</a>
             <a class="list-group-item" href="../program/interpolate.html#variable-do_normalize">do_normalize</a>
-            <a class="list-group-item" href="../program/interpolate.html#variable-unit~8">unit</a>
+            <a class="list-group-item" href="../program/interpolate.html#variable-unit~6">unit</a>
             <a class="list-group-item" href="../program/interpolate.html#variable-stdout_unit~2">stdout_unit</a>
             <a class="list-group-item" href="../program/interpolate.html#variable-input_unit_no~2">input_unit_no</a>
             <a class="list-group-item" href="../program/interpolate.html#variable-error_unit_no~2">error_unit_no</a>
-            <a class="list-group-item" href="../program/interpolate.html#variable-runname~5">runname</a>
+            <a class="list-group-item" href="../program/interpolate.html#variable-runname~4">runname</a>
+            <a class="list-group-item" href="../program/interpolate.html#variable-foldername~4">foldername</a>
         </div>
       </div>
     </div>
@@ -223,7 +224,8 @@
     
     <div class="col-md-9" id='text'>
     
-    
+    <p>This program includes the interpolation routine used by ALPS to fill a grid in momentum space.
+It is based on the polyharmonic spline algorithm as described in the ALPS code paper.</p>
     <br>
     <div class="panel panel-default">
       <div class="panel-heading">
@@ -421,13 +423,13 @@ implementation in a submodule of an interface in a parent module.
       </div>
       <div id="vars-1" class="panel-collapse collapse">
         <div class="list-group">
-            <a class="list-group-item" href="../program/interpolate.html#variable-grid_coarse~3">grid_coarse</a>
-            <a class="list-group-item" href="../program/interpolate.html#variable-pperp_coarse~2">pperp_coarse</a>
-            <a class="list-group-item" href="../program/interpolate.html#variable-ppar_coarse~2">ppar_coarse</a>
-            <a class="list-group-item" href="../program/interpolate.html#variable-grid_fine~3">grid_fine</a>
-            <a class="list-group-item" href="../program/interpolate.html#variable-pperp~4">pperp</a>
-            <a class="list-group-item" href="../program/interpolate.html#variable-ppar~4">ppar</a>
-            <a class="list-group-item" href="../program/interpolate.html#variable-smoothing~3">smoothing</a>
+            <a class="list-group-item" href="../program/interpolate.html#variable-grid_coarse">grid_coarse</a>
+            <a class="list-group-item" href="../program/interpolate.html#variable-pperp_coarse">pperp_coarse</a>
+            <a class="list-group-item" href="../program/interpolate.html#variable-ppar_coarse">ppar_coarse</a>
+            <a class="list-group-item" href="../program/interpolate.html#variable-grid_fine">grid_fine</a>
+            <a class="list-group-item" href="../program/interpolate.html#variable-pperp">pperp</a>
+            <a class="list-group-item" href="../program/interpolate.html#variable-ppar">ppar</a>
+            <a class="list-group-item" href="../program/interpolate.html#variable-smoothing">smoothing</a>
             <a class="list-group-item" href="../program/interpolate.html#variable-pperp_min">pperp_min</a>
             <a class="list-group-item" href="../program/interpolate.html#variable-pperp_max">pperp_max</a>
             <a class="list-group-item" href="../program/interpolate.html#variable-ppar_min">ppar_min</a>
@@ -443,10 +445,10 @@ implementation in a submodule of an interface in a parent module.
             <a class="list-group-item" href="../program/interpolate.html#variable-pperp_min_set">pperp_min_set</a>
             <a class="list-group-item" href="../program/interpolate.html#variable-ppar_max_set">ppar_max_set</a>
             <a class="list-group-item" href="../program/interpolate.html#variable-ppar_min_set">ppar_min_set</a>
-            <a class="list-group-item" href="../program/interpolate.html#variable-nperp~4">nperp</a>
-            <a class="list-group-item" href="../program/interpolate.html#variable-npar~5">npar</a>
-            <a class="list-group-item" href="../program/interpolate.html#variable-n_coarse~3">n_coarse</a>
-            <a class="list-group-item" href="../program/interpolate.html#variable-mode~15">mode</a>
+            <a class="list-group-item" href="../program/interpolate.html#variable-nperp~2">nperp</a>
+            <a class="list-group-item" href="../program/interpolate.html#variable-npar~3">npar</a>
+            <a class="list-group-item" href="../program/interpolate.html#variable-n_coarse">n_coarse</a>
+            <a class="list-group-item" href="../program/interpolate.html#variable-mode">mode</a>
             <a class="list-group-item" href="../program/interpolate.html#variable-i~2">i</a>
             <a class="list-group-item" href="../program/interpolate.html#variable-j~3">j</a>
             <a class="list-group-item" href="../program/interpolate.html#variable-io_error">io_error</a>
@@ -456,11 +458,12 @@ implementation in a submodule of an interface in a parent module.
             <a class="list-group-item" href="../program/interpolate.html#variable-output_file">output_file</a>
             <a class="list-group-item" href="../program/interpolate.html#variable-out_to_file">out_to_file</a>
             <a class="list-group-item" href="../program/interpolate.html#variable-do_normalize">do_normalize</a>
-            <a class="list-group-item" href="../program/interpolate.html#variable-unit~8">unit</a>
+            <a class="list-group-item" href="../program/interpolate.html#variable-unit~6">unit</a>
             <a class="list-group-item" href="../program/interpolate.html#variable-stdout_unit~2">stdout_unit</a>
             <a class="list-group-item" href="../program/interpolate.html#variable-input_unit_no~2">input_unit_no</a>
             <a class="list-group-item" href="../program/interpolate.html#variable-error_unit_no~2">error_unit_no</a>
-            <a class="list-group-item" href="../program/interpolate.html#variable-runname~5">runname</a>
+            <a class="list-group-item" href="../program/interpolate.html#variable-runname~4">runname</a>
+            <a class="list-group-item" href="../program/interpolate.html#variable-foldername~4">foldername</a>
         </div>
       </div>
     </div>
@@ -529,7 +532,7 @@ implementation in a submodule of an interface in a parent module.
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-grid_coarse~3"></span>
+              <span class="anchor" id="variable-grid_coarse"></span>
               double precision,
             </td>
             <td>
@@ -540,12 +543,13 @@ implementation in a submodule of an interface in a parent module.
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Coarse input grid for interpolation.
+(1:n_coarse)</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-pperp_coarse~2"></span>
+              <span class="anchor" id="variable-pperp_coarse"></span>
               double precision,
             </td>
             <td>
@@ -556,12 +560,13 @@ implementation in a submodule of an interface in a parent module.
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Coordinates of perpendicular momentum on coarse grid.
+(1:n_coarse)</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-ppar_coarse~2"></span>
+              <span class="anchor" id="variable-ppar_coarse"></span>
               double precision,
             </td>
             <td>
@@ -572,12 +577,13 @@ implementation in a submodule of an interface in a parent module.
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Coordinates of parallel momentum on coarse grid.
+(1:n_coarse)</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-grid_fine~3"></span>
+              <span class="anchor" id="variable-grid_fine"></span>
               double precision,
             </td>
             <td>
@@ -588,12 +594,13 @@ implementation in a submodule of an interface in a parent module.
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Fine output grid after interpolation.
+(0:nperp,0:npar)</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-pperp~4"></span>
+              <span class="anchor" id="variable-pperp"></span>
               double precision,
             </td>
             <td>
@@ -604,12 +611,13 @@ implementation in a submodule of an interface in a parent module.
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Coordinates of perpendicular momentum on fine output grid.
+(0:nperp,0:npar)</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-ppar~4"></span>
+              <span class="anchor" id="variable-ppar"></span>
               double precision,
             </td>
             <td>
@@ -620,12 +628,13 @@ implementation in a submodule of an interface in a parent module.
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Coordinates of parallel momentum on fine output grid.
+(0:nperp,0:npar)</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-smoothing~3"></span>
+              <span class="anchor" id="variable-smoothing"></span>
               double precision
             </td>
             <td>
@@ -636,7 +645,7 @@ implementation in a submodule of an interface in a parent module.
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Smoothing parameter for spline interpolation.</p>
             </td>
         </tr>
         <tr>
@@ -652,7 +661,7 @@ implementation in a submodule of an interface in a parent module.
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Minimum perpendicuar momentum.</p>
             </td>
         </tr>
         <tr>
@@ -668,7 +677,7 @@ implementation in a submodule of an interface in a parent module.
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Maximum perpendicular momentum.</p>
             </td>
         </tr>
         <tr>
@@ -684,7 +693,7 @@ implementation in a submodule of an interface in a parent module.
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Minimum parallel momentum.</p>
             </td>
         </tr>
         <tr>
@@ -700,7 +709,7 @@ implementation in a submodule of an interface in a parent module.
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Maximum parallel momentum.</p>
             </td>
         </tr>
         <tr>
@@ -716,7 +725,7 @@ implementation in a submodule of an interface in a parent module.
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Lower treshold for f0-values (coarse grid) to be included.</p>
             </td>
         </tr>
         <tr>
@@ -732,7 +741,7 @@ implementation in a submodule of an interface in a parent module.
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Scaling factor for perpendicular momentum.</p>
             </td>
         </tr>
         <tr>
@@ -748,7 +757,7 @@ implementation in a submodule of an interface in a parent module.
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Scaling factor for parallel momentum.</p>
             </td>
         </tr>
         <tr>
@@ -764,7 +773,7 @@ implementation in a submodule of an interface in a parent module.
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Scaling factor for f0.</p>
             </td>
         </tr>
         <tr>
@@ -780,7 +789,7 @@ implementation in a submodule of an interface in a parent module.
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Read-in variable for perpendicular momentum.</p>
             </td>
         </tr>
         <tr>
@@ -796,7 +805,7 @@ implementation in a submodule of an interface in a parent module.
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Read-in variable for parallel momentum.</p>
             </td>
         </tr>
         <tr>
@@ -812,7 +821,7 @@ implementation in a submodule of an interface in a parent module.
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Read-in variable for f0.</p>
             </td>
         </tr>
         <tr>
@@ -828,7 +837,7 @@ implementation in a submodule of an interface in a parent module.
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Forced maximum perpendicular momentum for output.</p>
             </td>
         </tr>
         <tr>
@@ -844,7 +853,7 @@ implementation in a submodule of an interface in a parent module.
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Forced minimum perpendicular momentum for output.</p>
             </td>
         </tr>
         <tr>
@@ -860,7 +869,7 @@ implementation in a submodule of an interface in a parent module.
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Forced maximum parallel momentum for output.</p>
             </td>
         </tr>
         <tr>
@@ -876,12 +885,12 @@ implementation in a submodule of an interface in a parent module.
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Forced minimum perpendicular momentum for output.</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-nperp~4"></span>
+              <span class="anchor" id="variable-nperp~2"></span>
               integer
             </td>
             <td>
@@ -892,12 +901,12 @@ implementation in a submodule of an interface in a parent module.
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Number of perpendicular steps on fine output grid.</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-npar~5"></span>
+              <span class="anchor" id="variable-npar~3"></span>
               integer
             </td>
             <td>
@@ -908,12 +917,12 @@ implementation in a submodule of an interface in a parent module.
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Number of parallel steps on fine output grid.</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-n_coarse~3"></span>
+              <span class="anchor" id="variable-n_coarse"></span>
               integer
             </td>
             <td>
@@ -924,12 +933,12 @@ implementation in a submodule of an interface in a parent module.
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Number of entries in coarse grid.</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-mode~15"></span>
+              <span class="anchor" id="variable-mode"></span>
               integer
             </td>
             <td>
@@ -940,7 +949,7 @@ implementation in a submodule of an interface in a parent module.
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Format of input grid (order pperp/ppar).</p>
             </td>
         </tr>
         <tr>
@@ -956,7 +965,7 @@ implementation in a submodule of an interface in a parent module.
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Index for loops.</p>
             </td>
         </tr>
         <tr>
@@ -972,7 +981,7 @@ implementation in a submodule of an interface in a parent module.
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Index for loops.</p>
             </td>
         </tr>
         <tr>
@@ -988,7 +997,7 @@ implementation in a submodule of an interface in a parent module.
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Error flag for i/o.</p>
             </td>
         </tr>
         <tr>
@@ -1004,7 +1013,7 @@ implementation in a submodule of an interface in a parent module.
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Status flag for i/o.</p>
             </td>
         </tr>
         <tr>
@@ -1020,7 +1029,7 @@ implementation in a submodule of an interface in a parent module.
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Index to loop over the coarse grid entries.</p>
             </td>
         </tr>
         <tr>
@@ -1036,7 +1045,7 @@ implementation in a submodule of an interface in a parent module.
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>File name of input file for interpolation.</p>
             </td>
         </tr>
         <tr>
@@ -1052,7 +1061,7 @@ implementation in a submodule of an interface in a parent module.
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>File name of output file in ALPS distribution format.</p>
             </td>
         </tr>
         <tr>
@@ -1068,7 +1077,7 @@ implementation in a submodule of an interface in a parent module.
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Check whether output should be written to file.</p>
             </td>
         </tr>
         <tr>
@@ -1084,12 +1093,12 @@ implementation in a submodule of an interface in a parent module.
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Check whether normalisation should be applied.</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-unit~8"></span>
+              <span class="anchor" id="variable-unit~6"></span>
               integer
             </td>
             <td>
@@ -1100,7 +1109,7 @@ implementation in a submodule of an interface in a parent module.
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Unit variable for opening namelist.</p>
             </td>
         </tr>
         <tr>
@@ -1116,7 +1125,7 @@ parameter
 <td> =</td>
                 <td>6</td>
             <td>
-                
+                <p>Stdout unit for opening namelist.</p>
             </td>
         </tr>
         <tr>
@@ -1132,7 +1141,7 @@ parameter
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Unit index for opening namelist.</p>
             </td>
         </tr>
         <tr>
@@ -1148,13 +1157,13 @@ parameter
 <td> =</td>
                 <td>stdout_unit</td>
             <td>
-                
+                <p>Error unit for opening namelist.</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-runname~5"></span>
-              character(len=50)
+              <span class="anchor" id="variable-runname~4"></span>
+              character(len=500)
             </td>
             <td>
               
@@ -1164,7 +1173,23 @@ parameter
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>String for parameter input file.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-foldername~4"></span>
+              character(len=500)
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>foldername</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                <p>String for parameter input folder.</p>
             </td>
         </tr>
     </tbody>
@@ -1185,7 +1210,7 @@ parameter
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>This function checks whether a unit number exists. It is taken from the AstroGK code.</p>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
@@ -1210,7 +1235,7 @@ parameter
             <td>::</td>
             <td><strong>nml</strong></td>
             <td>
-
+<p>Namelist identifier.</p>
             </td>
         </tr>
         <tr>
@@ -1225,7 +1250,7 @@ parameter
             <td>::</td>
             <td><strong>exist</strong></td>
             <td>
-
+<p>Flags whether input unit exists.</p>
             </td>
         </tr>
     </tbody>
@@ -1235,7 +1260,7 @@ parameter
     Return Value
     <small>integer</small>
     </h4>
-    
+    <p>Unit number.</p>
 
     </div>
   </div>
@@ -1245,7 +1270,7 @@ parameter
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>This function returns a unit number for a namelist. It is taken from the AstroGK code.</p>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
@@ -1270,7 +1295,7 @@ parameter
             <td>::</td>
             <td><strong>nml</strong></td>
             <td>
-
+<p>Namelist identifier.</p>
             </td>
         </tr>
     </tbody>
@@ -1280,7 +1305,7 @@ parameter
     Return Value
     <small>integer</small>
     </h4>
-    
+    <p>Unit number for namelist.</p>
 
     </div>
   </div>
@@ -1296,7 +1321,8 @@ parameter
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>This subroutine reads in system parameters input file (namelist) as argument after executable:
+ <code>./interpolate input.in</code></p>
 
   <h4>Arguments</h4>
     <em>None</em>
@@ -1309,7 +1335,7 @@ parameter
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>This subroutine returns an available unit number. It is taken from the AstroGK code.</p>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
@@ -1334,7 +1360,7 @@ parameter
             <td>::</td>
             <td><strong>unit</strong></td>
             <td>
-
+<p>Unit number.</p>
             </td>
         </tr>
     </tbody>
@@ -1345,11 +1371,11 @@ parameter
   </div>
 
       <div class="panel panel-default">
-    <div class="panel-heading codesum"><span class="anchor" id="proc-get_runname~2"></span><h3> subroutine <a href='../proc/get_runname~2.html'>get_runname</a>(runname)  
+    <div class="panel-heading codesum"><span class="anchor" id="proc-get_runname~2"></span><h3> subroutine <a href='../proc/get_runname~2.html'>get_runname</a>(runname, foldername)  
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>Get runname for output files from input argument.</p>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
@@ -1365,7 +1391,7 @@ parameter
         <tr>
             <td>
               <span class="anchor" ></span>
-              character(len=50),
+              character(len=500),
             </td>
 <td>intent(out)</td>
               <td></td>            <td>
@@ -1374,7 +1400,22 @@ parameter
             <td>::</td>
             <td><strong>runname</strong></td>
             <td>
-
+<p>Basename for file I/O.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              character(len=500),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>foldername</strong></td>
+            <td>
+<p>Directory in which input file is stored.</p>
             </td>
         </tr>
     </tbody>
