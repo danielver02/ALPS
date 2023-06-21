@@ -17,21 +17,26 @@
 !===============================================================================
 
 module alps_var
+  !!Contains all global variables.
   use mpi
   implicit none
 
 
   private
 
-  !I/O Variables
-  character(500) :: runname       !Root of input file name
-  character(500) :: foldername   !Directory of input file name
-  integer :: option           !System Option: Chooses Style of Run
-                              !See README file for list of options
-  integer :: nroots           !Number of Dispersion Solutions
-                              !under consideration
-  integer :: nroots_max       !Number of Dispersion Solutions
-                              !found in frequency map scan
+  !I/O Variables:
+  character(500) :: runname
+  !!Root of input file name.
+  
+  character(500) :: foldername
+  !!Directory of input file name.
+  
+  integer :: nroots
+  !!Number of dispersion solutions under consideration.
+
+  integer :: nroots_max
+  !!Number of dispersion solutions found in frequency map scan.
+  
   logical :: use_map          !Choice of
     !T: searching for roots over a map in complex frequency space
     !OR
@@ -215,7 +220,7 @@ module alps_var
   double precision :: kperp_0, kpar_0
 
   public :: nproc, iproc, proc0, ierror
-  public :: runname, foldername, option, writeOut
+  public :: runname, foldername, writeOut
   public :: kperp, kpar, nspec, use_map, wroots
   public :: loggridw, loggridg, omi, omf, gami, gamf
   public :: arrayName, nperp, npar, f0, pp, df0, bessel_array

@@ -17,8 +17,6 @@ kperp=1.d-3
 kpar=1.d-1
 !Number of plasma species
 nspec=2
-!System option (see documentation)
-option=0
 !Number of dispersion solutions to find and follow
 nroots=1
 !T-> use search for roots over a map 
