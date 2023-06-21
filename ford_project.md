@@ -9,6 +9,8 @@ output_dir: docs
 fpp_extensions: f90
 base_url: http://www.alps.space
 ordered_subpage: INSTALL.md
+                 tutorial.md
+                 quick_guide.md
 display: public
          protected
          private
