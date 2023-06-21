@@ -118,12 +118,12 @@ module alps_var
   !!Number of parallel momentum space grid points, \(N_\parallel\).
   
   integer :: ngamma=100
-  !!Number of grid points in relativitic \(\Gamma=\sqrt{1+\frac{p_\perp^2+p_\parallel^2}{m_j^2c^2}}\)
+  !!Number of grid points in relativitic \(\Gamma=\sqrt{1+\frac{p_\perp^2+p_\parallel^2}{m_j^2c^2}}\),
   !!\(N_\Gamma\) (Eqn. 3.14).
 
   integer :: npparbar=200
   !!Number of grid points in dimensionless paralell momentum
-  !!\(\bar{p}_\parallel = p_\parallel/m_j c\), \(N_{\bar{p}_\parallel}).
+  !!\(\bar{p}_\parallel = p_\parallel/m_j c\), \(N_{\bar{p}_\parallel}\).
 
   integer :: positions_principal=5
   !! How many parallel momentum steps distant from the resonant momentum
@@ -155,58 +155,67 @@ module alps_var
   !! Name of input files for distributions.
 
   double precision, dimension(:,:,:), allocatable :: f0
-  !! Background Distribution Function Array,
-  !! -(1:nspec)
-  !! -(0:nperp)
-  !! -(0:npar)
+  !! Background distribution function array \(f_{0j}\);
+  !! (1:nspec,0:nperp,0:npar).
 
   double precision, dimension(:,:,:), allocatable :: f0_rel
-  !! Background Distribution Function Array,
-  !! -(1:nspec)
-  !! -(0:ngamma)
-  !! -(0:npparbar)
-  
-  !Perpendicular and parallel Derivatives of f0
-  !df0(1:nspec,0:nperp,0:npar,1:2)
-  !with index 1-> dvperp
-  !     index 2-> dvpar
+  !! Relativistic background distribution function array \(f_{0j}\);
+  !! (1:nspec,0:ngamma,0:npparbar)
+    
   double precision, dimension(:,:,:,:), allocatable :: df0
+  !!Perpendicular and parallel derivatives of \(f_{0j}\);
+  !!(1:nspec,0:nperp,0:npar,1:2),
+  !!with \(\partial_{p_\perp} f_{0j} \) index 1
+  !!with \(\partial_{p_\parallel} f_{0j} \) index 2
+
   double precision, dimension(:,:,:,:), allocatable :: df0_rel
-
-  !Momentum Space Array for f0
-  !pp(1:nspec,0:nperp,0:npar,1:2)
-  !with index 1->vperp
-  !     index 2->vpar
+  !!Derivatives of \(f_{0j}\);
+  !!(1:nspec,0:nperp,0:npar,1:2),
+  !!with \(\partial_{\Gamma} f_{0j} \) index 1
+  !!and \(\partial_{\bar{p}_\parallel} f_{0j} \) index 2.
+  
   double precision, dimension(:,:,:,:), allocatable :: pp
+  !!Momentum Space Array for \(f_{0j}\);
+  !!(1:nspec,0:nperp,0:npar,1:2)
+  !!with \(p_\parallel/m_p v_A\) index 1
+  !!and \(p_\perp/m_p v_A\) index 2.
 
-  double precision, dimension(:,:,:), allocatable :: gamma_rel,pparbar_rel
+  double precision, dimension(:,:,:), allocatable :: gamma_rel
+  !!Relativistic momentum space array of \(\Gamma\);
+  !!(1:nspec,0:ngamma,0:npparbar).
 
-  !number of n values to sum over
-  !nmax(1:nspec)
+  double precision, dimension(:,:,:), allocatable :: pparbar_rel
+  !!Relativistic momentum space array of \(\bar{p}_\parallel\);
+  !!(1:nspec,0:ngamma,0:npparbar).
+  
   integer, dimension(:), allocatable :: nmax
+  !!number of n values to sum over, (1:nspec).
 
-  !Lower and Upper limits for n values for
-  !iproc to sum over
   integer :: nlim(2)
+  !!Lower and Upper limits for n values for iproc to sum over.
 
-  !Ratios of species density
+  
   double precision, dimension(:), allocatable :: ns
-  !charge
+  !!Ratio of species density to reference \(n_j/n_p\), (1:nspec).
+
   double precision, dimension(:), allocatable :: qs
-  !and mass
+  !!Ratio of species charge to reference \(q_j/q_p\), (1:nspec).
+
   double precision, dimension(:), allocatable :: ms
-  !relative to the reference value.
-  logical, dimension(:), allocatable :: relativistic !use relativistic treatment; set for each species
+  !!Ratio of species mass to reference \(m_j/m_p\), (1:nspec).
+    
+  logical, dimension(:), allocatable :: relativistic
+  !!Use relativistic treatment; (1:nspec).
 
-  !Wave Equation Tensor
-  !wave(1:3, 1:3)
   double complex, dimension(:,:), allocatable :: wave
+  !!Wave Equation Tensor (1:3,1:3).
+  
   double complex, dimension(:,:,:), allocatable :: chi0
+  !!Susceptibility Tensor (1:nspec,1:3,1:3).
 
-  ! Array of Bessel functions:
-  ! bessel_array(nlim(1):nlim(2)+1,0:nperp)
   double precision, dimension(:,:), allocatable :: bessel_array
-
+  !! Array of Bessel functions; (nlim(1):nlim(2)+1,0:nperp)
+  
   !Fit Parameters for Hybrid-Analytical Continuation Method
   integer, dimension(:), allocatable :: n_fits !number of fitted functions, per species
   integer, dimension(:,:), allocatable :: fit_type !type of analytic function to be fit
