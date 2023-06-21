@@ -2418,7 +2418,7 @@ and <script type="math/tex">p_\perp/m_p v_A</script> index 2.</p>
                 <td></td>
                 <td></td>
             <td>
-                <p>Array of Bessel functions; (nlim(1):nlim(2)+1,0:nperp)</p>
+                <p>Array of Bessel functions; (nlim(1):nlim(2)+1,0:nperp).</p>
             </td>
         </tr>
         <tr>
@@ -2435,7 +2435,7 @@ and <script type="math/tex">p_\perp/m_p v_A</script> index 2.</p>
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Number of fitted functions, (1:nspec)</p>
             </td>
         </tr>
         <tr>
@@ -2452,7 +2452,13 @@ and <script type="math/tex">p_\perp/m_p v_A</script> index 2.</p>
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Type of analytic function to be fit, (1:nspec,1:maxval(nfits));
+1) Maxwellian,
+2) Kappa,
+3) Juettner with <script type="math/tex">p_\perp,p_\parallel</script>,
+4) Juettner with <script type="math/tex">\Gamma,\bar{p}_\parallel</script>, constant <script type="math/tex">\bar{p}_\parallel</script>,
+5) Juettner with <script type="math/tex">p_\perp,p_\parallel</script>; variable <script type="math/tex">\bar{p}_\parallel</script>,
+6) Bi-Moyal distribution.</p>
             </td>
         </tr>
         <tr>
@@ -2469,7 +2475,7 @@ and <script type="math/tex">p_\perp/m_p v_A</script> index 2.</p>
 <td> =</td>
                 <td>500</td>
             <td>
-                
+                <p>Maximum number of fitting iterations.</p>
             </td>
         </tr>
         <tr>
@@ -2486,7 +2492,7 @@ and <script type="math/tex">p_\perp/m_p v_A</script> index 2.</p>
 <td> =</td>
                 <td>1.d0</td>
             <td>
-                
+                <p>Inital Levenberg-Marquardt damping parameter.</p>
             </td>
         </tr>
         <tr>
@@ -2503,7 +2509,7 @@ and <script type="math/tex">p_\perp/m_p v_A</script> index 2.</p>
 <td> =</td>
                 <td>1.d1</td>
             <td>
-                
+                <p>Adjustment factor for Levenberg-Marquardt damping parameter.</p>
             </td>
         </tr>
         <tr>
@@ -2520,7 +2526,7 @@ and <script type="math/tex">p_\perp/m_p v_A</script> index 2.</p>
 <td> =</td>
                 <td>1.d-8</td>
             <td>
-                
+                <p>Convergence for Levenberg-Marquardt fit.</p>
             </td>
         </tr>
         <tr>
@@ -2537,7 +2543,7 @@ and <script type="math/tex">p_\perp/m_p v_A</script> index 2.</p>
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Fit parameters, (1:nspec,0:nperp,4,maxval(n_fits)).</p>
             </td>
         </tr>
         <tr>
@@ -2554,7 +2560,8 @@ and <script type="math/tex">p_\perp/m_p v_A</script> index 2.</p>
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>This parameter, <script type="math/tex">y</script> in Eqn. B1, compensates for the strong
+ <script type="math/tex">p_\perp</script> dependence of <script type="math/tex">u_1</script>, making the fit more reliable.</p>
             </td>
         </tr>
         <tr>
@@ -2571,7 +2578,7 @@ and <script type="math/tex">p_\perp/m_p v_A</script> index 2.</p>
 <td> =</td>
                 <td>.true.</td>
             <td>
-                
+                <p>If true, output fitted functions to ASCII file for each species.</p>
             </td>
         </tr>
         <tr>
@@ -2588,7 +2595,7 @@ and <script type="math/tex">p_\perp/m_p v_A</script> index 2.</p>
 <td> =</td>
                 <td>.true.</td>
             <td>
-                
+                <p>If true, after map search, determine minima and refine solutions.</p>
             </td>
         </tr>
         <tr>
@@ -2605,7 +2612,8 @@ and <script type="math/tex">p_\perp/m_p v_A</script> index 2.</p>
 <td> =</td>
                 <td>100</td>
             <td>
-                
+                <p>Mow many steps should be used to integrate around the resonance,
+<script type="math/tex">M_P</script>, used for integrating near poles (see section 3.1).</p>
             </td>
         </tr>
         <tr>
@@ -2622,7 +2630,9 @@ and <script type="math/tex">p_\perp/m_p v_A</script> index 2.</p>
 <td> =</td>
                 <td>1</td>
             <td>
-                
+                <p>!Select case for scans;
+1) consecutive scans along input paths in wavevector space
+2) double scans of two selected parameters</p>
             </td>
         </tr>
         <tr>
