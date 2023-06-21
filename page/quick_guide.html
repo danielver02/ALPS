@@ -105,10 +105,6 @@
   <div class="row">
     <div class="col-md-9 col-md-push-3" id='text'>
       <h1>Quick Guide</h1>
-<p>lorem $\sqrt{3x-1}+(1+x)^2$ ipsum</p>
-<p>
-<script type="math/tex; mode=display"> x = {-b \pm \sqrt{b^2-4ac} \over 2a} </script>
-</p>
 <p>This is a quick guide that gives a reference for the key parameters used by ALPS.</p>
 <h2>Namelists in input files.</h2>
 <p>The following namelists and associated input parameters are read in by ALPS from the input file.</p>
@@ -245,7 +241,7 @@ u_1 \mathrm{exp}[-y \hat{p}^2_\perp-u_2(\hat{p}_\parallel-u_3)^2 ]. </script>
 <li>
 <p>Juettner with $p_\perp,p_\parallel$,<br>
 <script type="math/tex; mode=display">F_{J}(\hat{p}_\perp,\hat{p}_\parallel)=
-u_1 \mathrm{exp}[-u_2].</script>
+u_1 \mathrm{exp}[-u_2\sqrt{1+\frac{\hat{p}^2_\perp+(\hat{p}^2_\parallel-u_3)^2 v_A^2}{m_j^2 c^2}}].</script>
 </p>
 </li>
 <li>
@@ -255,12 +251,18 @@ u_1 \mathrm{exp}[-u_2].</script>
 </li>
 <li>
 <p>Juettner with $p_\perp,p_\parallel$; variable $\bar{p}_\parallel$,<br>
-<script type="math/tex; mode=display">F_{\kappa}()= .</script>
+<script type="math/tex; mode=display">F_{\kappa}(\hat{p}_\perp,\hat{p}_\parallel)=
+u_1\mathrm{exp}[-y \hat{p}_\perp]
+\mathrm{exp}[-u_2*(\hat{p}_\parallel+u_3)^2]
+.</script>
 </p>
 </li>
 <li>
 <p>Bi-Moyal distribution<br>
-<script type="math/tex; mode=display">F_{\kappa}()= .</script>
+<script type="math/tex; mode=display">F_{\kappa}(\hat{p}_\perp,\hat{p}_\parallel)=
+u_1 \mathrm{exp}[0.5 (y u_4 \hat{p}^2_perp +
+u_2 (\hat{p}_\parallel -u_3)^2 -
+\mathrm{exp}(y u_4 \hat{p}^2_perp + u_2 (\hat{p}_\parallel-u_3)^2) )].</script>
 </p>
 </li>
 </ol>
