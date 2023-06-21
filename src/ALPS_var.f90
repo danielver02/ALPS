@@ -37,81 +37,135 @@ module alps_var
   integer :: nroots_max
   !!Number of dispersion solutions found in frequency map scan.
   
-  logical :: use_map          !Choice of
-    !T: searching for roots over a map in complex frequency space
-    !OR
-    !F: input (nroots) guesses for solutions
-  logical :: writeOut =.true.   !Write or Spress output to screen
+  logical :: use_map
+  !!Choice of:
+  !! -T: searching for roots over a map in complex frequency space;
+  !! -F: input (nroots) guesses for solutions.
+  
+  logical :: writeOut =.true.
+  !! Write or suppress output to screen.
 
   integer :: unit_error
+  !! Output unit for error file.
+  
+  !MPI variables:
+  integer :: nproc
+  !! Total number of processors.
+  
+  integer :: iproc
+  !! Number of local processor.
+  
+  logical :: proc0
+  !! T if iproc=0.
+  
+  integer :: ierror
+  !! Integer error flag.
 
-  !MPI variables
-  integer :: nproc           !Number of Processors (1 to nproc)
-  integer :: iproc           !Number of local processor (0 to nproc-1)
-  logical :: proc0           !T if iproc=0
-  integer :: ierror          !Integer error flag
+  !Plasma Parameters:
+  double precision :: kperp
+  !! Perpendicular wavenumber, normalized by inverse reference inertial length, \(k_\perp d_p\).
+  
+  double precision :: kpar
+  !! Parallel wavenumber, normalized by inverse reference inertial length, \(k_\parallel d_p\).
 
-  !Plasma Parameters
-  !Wave vector normalized by inverse reference inertial length
-  double precision :: kperp  !Perpendicular Wave number;
-  double precision :: kpar   !Parallel Wave number;
+  double precision :: vA
+  !! Alfven Velocity, normalized to speed of light, \(v_{Ap}/c\).
+  
+  double precision :: Bessel_zero=1.d-45
+  !! Calculated Bessel functions until the maximum is less than this value.
 
-  double precision :: vA     !reference Alfven Velocity /c
-  double precision :: Bessel_zero=1.d-45	! Use Bessel functions until
-  					! the maximum is less than this value
-  !The proton typically serves as the reference species.
+  integer :: nspec
+  !!Number of plasma components.
+  
+  integer :: nspec_rel
+  !!Number of relativistic plasma components.
 
-  integer :: nspec           !Number of plasma species
-  integer :: nspec_rel		 !Number of relativistic plasma species
 
-  !Solutions for dispersion surface
   double complex, dimension(:), allocatable :: wroots !(1:numroots)
-  !maximum # of roots
+  !!Dispersion solutions, ranging from 1 to numroots.
+
   integer :: numroots = 100
-  !Limits on (real, imaginary) map search
-  double precision :: omi,omf, gami,gamf
-  !T: log spacing for complex frequency map search
-  !F: linear spacing for complex frequency map search
-  logical :: loggridw,loggridg
-  !number of points in (real, imaginary) frequency space grid
-  integer :: ni=128, nr=128
+  !! Maximum number of solutions.
+  
+  double precision :: omi
+  !!Smallest \(\omega_{\textrm{r}}/\Omega_p\) value for complex map search.
+  
+  double precision :: omf
+  !!Largest \(\omega_{\textrm{r}}/\Omega_p\) value for complex map search.
 
-  !Number of Momentum Space Grid Points
-  integer :: nperp, npar
-  integer :: ngamma=100, npparbar=200
+  double precision :: gami
+  !!Smallest \(\gamma/\Omega_p\) value for complex map search.
 
-  ! How many points in ipar should be used to calculate the principal value integral?
+  double precision :: gamf  
+  !!Largest \(\gamma/\Omega_p\) value for complex map search.
+  
+  logical :: loggridw
+  !!Linear (F) or Log (T) spacing for \(\omega_{\textrm{r}}/\Omega_p\) map search.
+
+  logical :: loggridg
+  !!Linear (F) or Log (T) spacing for \(\gamma/\Omega_p\) map search.
+
+  integer :: nr=128
+  !!Number of points in \(\omega_{\textrm{r}}/\Omega_p\) grid.
+
+  integer :: ni=128
+  !!Number of points in \(\gamma/\Omega_p\) grid.
+
+  integer :: nperp
+  !!Number of perpendicular momentum space grid points, \(N_\perp\).
+
+  integer :: npar
+  !!Number of parallel momentum space grid points, \(N_\parallel\).
+  
+  integer :: ngamma=100
+  !!Number of grid points in relativitic \(\Gamma=\sqrt{1+\frac{p_\perp^2+p_\parallel^2}{m_j^2c^2}}\)
+  !!\(N_\Gamma\) (Eqn. 3.14).
+
+  integer :: npparbar=200
+  !!Number of grid points in dimensionless paralell momentum
+  !!\(\bar{p}_\parallel = p_\parallel/m_j c\), \(N_{\bar{p}_\parallel}).
+
   integer :: positions_principal=5
+  !! How many parallel momentum steps distant from the resonant momentum
+  !! are included in the numerical calculation of Eqn 3.5, \(M_I\).
 
-  ! Threshold for analytical principal-value integration
   double precision :: Tlim=0.01d0
+  !! Threshold for analytical principal-value integration for
+  !! evaluating Eqn 3.6 and 3.7, \(t_{\textrm{lim}}\).
 
-  ! The species number on which this process is working
   integer :: sproc
+  !! The species number on which this process is working.
 
-  ! Maximum number of iterations in secant method
   integer :: numiter=50
+  !! Maximum number of iterations in secant method.
 
-  ! Value of "zero" for secant method
   double precision :: D_threshold=1.d-5
+  !! Minimum threshold for secant method.
 
-  ! size of bounding region for secant method
   double precision :: D_prec=1.d-5
+  !! Size of bounding region for secant method.
 
-  ! size of allowable difference between roots
   double precision :: D_gap =1.d-5
+  !! Size of allowable difference between roots.
 
-  !pi
   double precision :: pi
+  !! The ratio of a circle's circumference to its diameter.
 
-  !Name of input files for distributions
   character (75) :: arrayName
+  !! Name of input files for distributions.
 
-  !Background Distribution Function Array
-  !f0(1:nspec,0:nperp,0:npar)
   double precision, dimension(:,:,:), allocatable :: f0
-  double precision, dimension(:,:,:), allocatable :: f0_rel
+  !! Background Distribution Function Array,
+  !! -(1:nspec)
+  !! -(0:nperp)
+  !! -(0:npar)
 
+  double precision, dimension(:,:,:), allocatable :: f0_rel
+  !! Background Distribution Function Array,
+  !! -(1:nspec)
+  !! -(0:ngamma)
+  !! -(0:npparbar)
+  
   !Perpendicular and parallel Derivatives of f0
   !df0(1:nspec,0:nperp,0:npar,1:2)
   !with index 1-> dvperp
