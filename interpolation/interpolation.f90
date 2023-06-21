@@ -363,7 +363,7 @@ contains
       character(*), intent (in) :: nml
       !! Namelist identifier.
 
-	    integer, intent(out) :: input_unit
+	    integer :: input_unit
       !! Unit number for namelist.
 
       integer :: iostat
@@ -399,7 +399,7 @@ contains
 
 	    implicit none
 
-	    integer, intent (out) :: unit=50
+	    integer, intent (out) :: unit
       !! Unit number.
 
 	    logical :: od
