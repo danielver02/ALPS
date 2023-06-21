@@ -531,14 +531,19 @@ integer, intent(in) :: n_coarse
 !! Number of entries in coarse grid.
 
 double precision, intent(in) :: pperp(0:nperp,0:npar)
+!! Coordinates of perpendicular momentum on fine grid.
 
 double precision, intent(in) :: ppar(0:nperp,0:npar)
+!! Coordinates of parallel momentum on fine grid.
 
 integer, intent(in) :: nperp
 !! Number of perpendicular steps on fine output grid.
 
 integer, intent(in) :: npar
 !! Number of parallel steps on fine output grid.
+
+double precision, intent(in) :: smoothing
+!! Smoothing parameter for spline interpolation.
 
 double precision, intent(out) :: grid_fine(0:nperp,0:npar)
 !! Fine output grid after interpolation.
@@ -567,11 +572,9 @@ double precision :: weight_param(n_coarse+3)
 double precision :: r
 !! Distance between coarse and fine grid points.
 
-double precision :: smoothing
-!! Smoothing parameter for spline interpolation.
-
 double precision :: INFO
 !! Info flag for [[dgesv]] from LUPACK/BLAS.
+
 
 grid_vector=0.d0
 do i=1,n_coarse

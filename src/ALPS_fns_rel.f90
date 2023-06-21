@@ -17,7 +17,7 @@
 !===============================================================================
 
 module alps_fns_rel
-
+!! This module contains the relativistic numerical functions of ALPS.
   implicit none
 
   private :: int_T_rel,  int_T_res_rel, integrate_resU_rel
@@ -34,21 +34,90 @@ contains
 
 !-=-=-=-=-=-=
 subroutine derivative_f0_rel(is,is_rel)
+    !! This subroutine calculates the derivatives of the background velocity distribution function f0 for the relativistic calculation.
     use alps_var, only : f0, pp, nperp, npar, vA, ms, writeOut, arrayName
     use alps_var, only : f0_rel, df0_rel,gamma_rel, pparbar_rel,nspec_rel,ngamma,npparbar
     use alps_var, only : writeOut, pi
     use alps_io,  only : get_unused_unit
     implicit none
 
-    integer :: is, is_rel, n_coarse, counter, igamma, ipparbar,iperp,ipar
-    double precision :: pparbar_max,pparbar_min,gamma_max,gamma_min,gamma_max_use,dgamma,dpparbar
-    double precision, allocatable, dimension (:) :: gamma_coarse,pparbar_coarse,grid_coarse
-    character (50) :: fmt   !Output format
-    character (100) :: writename
-    double precision :: integrate, gamma, smoothing
-    integer :: unit_f
 
-    ! Determine the minimum and maximum values of Gamma and ppar
+    integer, intent(in) :: is
+    !! Index of particle species.
+
+    integer, intent(in) :: is_rel
+	  !! Index for relativistic species (if any).
+
+    integer :: n_coarse
+    !! Number of entries in coarse grid.
+
+    integer :: counter
+    !! Index to loop over coarse grid entries.
+
+    integer :: igamma
+    !! Index to loop over \(\Gamma\).
+
+    integer :: ipparbar
+    !! Index to loop over relativistic parallel momentum.
+
+    integer :: iperp
+    !! Index for loop over perpendicular momentum.
+
+    integer :: ipar
+    !! Index for loop over parallel momentum.
+
+    double precision :: pparbar_max
+    !! Maximum value of relativistic parallel momentum.
+
+    double precision :: pparbar_min
+    !! Minimum value of relativistic parallel momentum.
+
+    double precision :: gamma_max
+    !! Maximum value of \(\Gamma\).
+
+    double precision :: gamma_min
+    !! Minimum value of \(\Gamma\).
+
+    double precision :: gamma_max_use
+    !! Maximum usable value of \(\Gamma\).
+
+    double precision :: dgamma
+    !! Infinitesimal step in \(\Gamma\).
+
+    double precision :: dpparbar
+    !! Infinitesimal step in relativistic parallel momentum.
+
+    double precision, allocatable, dimension (:) :: grid_coarse
+    !! Coarse input grid for relativistic interpolation.
+    !! (1:n_coarse)
+
+    double precision, allocatable, dimension (:) :: gamma_coarse
+    !! Coordinates of \(\Gamma\) on coarse grid.
+    !! (1:n_coarse)
+
+    double precision, allocatable, dimension (:) :: pparbar_coarse
+    !! Coordinates of relativistic parallel momentum on coarse grid.
+    !! (1:n_coarse)
+
+    character (50) :: fmt
+    !! Output format for file i/o.
+
+    character (100) :: writename
+    !! File name for file i/o.
+
+    double precision :: integrate
+    !! Integral of the distribution function.
+
+    double precision :: gamma
+    !! Lorentz factor \(\Gamma\).
+
+    double precision ::  smoothing
+    !! Smoothing parameter for spline interpolation.
+
+    integer :: unit_f
+    !! Unit for file i/o.
+
+  ! Determine the minimum and maximum values of Gamma and ppar:
 	pparbar_min=999999.d0
 	pparbar_max=-999999.d0
 	gamma_min=999999.d0
@@ -77,16 +146,19 @@ subroutine derivative_f0_rel(is,is_rel)
 		write (*,'(a,i3,a,1es14.4)') "Usable Maximum Gamma for species",is,":", gamma_max_use
     endif
 
-    smoothing = 0.d0!0.001d0! make this a user-defined parameter ?
+    ! For now, the relativistic smoothing is set to zero.
+    !This can become a user-defined parameter at some stage:
+    smoothing = 0.d0
 
-    n_coarse=(nperp+1)*(npar+1)	! This has to be (nperp+2)*(npar+1) if we include a line of zeroes
+  n_coarse=(nperp+1)*(npar+1)
+
 	allocate (gamma_coarse(n_coarse))
 	allocate (pparbar_coarse(n_coarse))
 	allocate (grid_coarse(n_coarse))
 
+  counter=0
 
-    counter=0
-	do iperp = 0, nperp
+  do iperp = 0, nperp
 		do ipar = 0,npar
 			counter=counter+1
 			gamma_coarse(counter) = sqrt(1.d0+(pp(is,iperp,ipar,1)**2+pp(is,iperp,ipar,2)**2)*&
@@ -95,14 +167,6 @@ subroutine derivative_f0_rel(is,is_rel)
   			grid_coarse(counter) = log(f0(is,iperp,ipar))
 		enddo
 	enddo
-
-    ! add a line of zeroes at the end:
-!	do ipar = 0, npar
-!		counter=counter+1
-!		gamma_coarse(counter)=gamma_max+(gamma_max-gamma_min)/(1.d0*ngamma)
-!		pparbar_coarse(counter)=pp(is,nperp,ipar,2)*vA/ms(is)
-!		grid_coarse(counter)=0.d0
-!	enddo
 
 
     do igamma = 0,ngamma
@@ -118,8 +182,7 @@ subroutine derivative_f0_rel(is,is_rel)
 	call polyharmonic_spline(grid_coarse,gamma_coarse,pparbar_coarse,n_coarse,gamma_rel,pparbar_rel,&
 			ngamma,npparbar,smoothing,f0_rel,is_rel,nspec_rel)
 
-
-	! Stay within the subluminal cone
+	! Stay within the subluminal cone:
 	do igamma=0,ngamma
 	 do ipparbar=0,npparbar
 
@@ -129,7 +192,6 @@ subroutine derivative_f0_rel(is,is_rel)
 			 f0_rel(is_rel,igamma,ipparbar)=-1.d0
 	 enddo
 	enddo
-
 
       integrate = 0.d0
 
@@ -146,8 +208,7 @@ subroutine derivative_f0_rel(is,is_rel)
         enddo
 
 
-          write(*,'(a,i3,a, 2es14.4)') 'Integration of species', is,':', integrate
-
+    write(*,'(a,i3,a, 2es14.4)') 'Integration of species', is,':', integrate
 
 	 	if(writeOut) write (*,'(a)') 'Writing relativistic grid to file...'
         write(fmt,'(a)') '(2es14.4,1es14.4)'
@@ -170,7 +231,7 @@ subroutine derivative_f0_rel(is,is_rel)
         do igamma = 1, ngamma-1
            do ipparbar = 1, npparbar-1
 
-              !index 1-> gamma derivative
+              ! index 1-> gamma derivative:
               df0_rel(is_rel,igamma,ipparbar,1) = 0.d0
 
               if ((f0_rel(is_rel,igamma-1,ipparbar).GT.0.d0).AND.(f0_rel(is_rel,igamma+1,ipparbar).GT.0.d0)) then
@@ -179,7 +240,7 @@ subroutine derivative_f0_rel(is,is_rel)
                    (gamma_rel(is_rel,igamma+1,ipparbar) - gamma_rel(is_rel,igamma-1,ipparbar))
              endif
 
-              !index 2-> pparbar derivative
+              ! index 2-> pparbar derivative:
               df0_rel(is_rel,igamma,ipparbar,2) = 0.d0
 
               if ((f0_rel(is_rel,igamma,ipparbar+1).GT.0.d0).AND.(f0_rel(is_rel,igamma,ipparbar-1).GT.0.d0)) then
@@ -189,17 +250,21 @@ subroutine derivative_f0_rel(is,is_rel)
               endif
 
               if (f0_rel(is_rel,igamma,ipparbar).GE.0.d0) then
+
                 if ((f0_rel(is_rel,igamma,ipparbar+1).LE.0.d0).AND.(f0_rel(is_rel,igamma,ipparbar-1).GT.0.d0)) then
                   df0_rel(is_rel,igamma,ipparbar,2) = &
                    (f0_rel(is_rel,igamma,ipparbar) - f0_rel(is_rel,igamma,ipparbar-1))/&
                    (pparbar_rel(is_rel,igamma,ipparbar) - pparbar_rel(is_rel,igamma,ipparbar-1))
                  endif
+
                  if ((f0_rel(is_rel,igamma,ipparbar+1).GT.0.d0).AND.(f0_rel(is_rel,igamma,ipparbar-1).LE.0.d0)) then
                       df0_rel(is_rel,igamma,ipparbar,2) = &
                         (f0_rel(is_rel,igamma,ipparbar+1) - f0_rel(is_rel,igamma,ipparbar))/&
                         (pparbar_rel(is_rel,igamma,ipparbar+1) - pparbar_rel(is_rel,igamma,ipparbar))
                  endif
+
               endif
+
            enddo
         enddo
 
@@ -225,53 +290,85 @@ end subroutine derivative_f0_rel
 
 
 
-! Polyharmonic Spline for relativistic calculation:
 subroutine polyharmonic_spline(grid_coarse,gamma_coarse,pparbar_coarse,n_coarse,gamma_rel,pparbar,ngamma,npparbar,&
 		smoothing,f0_rel,is_rel,nspec_rel)
-	!
-	! This soubroutine interpolates the grid with a polyharmonic thin-plate spline.
-	!
-	! Input:
-	! grid_coarse is a vector of length n_coarse that includes the values of f at each point i
-	! gamma_coarse is a vector of length n_coarse that includes the values of gamma at each point i
-	! pparbar_coarse is a vector of length n_coarse that includes the values of ppar at each point i
-	! n_coarse is the total number of points in the coarse grid (ngamma_coarse * npparbar_coarse)
-	!
-	! gamma_rel is the value of gamma in the fine grid. It is a field of rank (ngamma, npparbar)
-	! pparbar is the value of ppar in the fine grid. It is a field of rank (ngamma, npparbar)
-	! ngamma is the number of perpendicular data points in the fine grid
-	! npparbar is the number of parallel data points in the fine grid
-	!
-	!
-	! Output:
-	! f0_rel is the interpolated grid. It is a field of rank (ngamma, npparbar)
-	!
-  ! This subroutine needs the LUPACK and BLAS libraries to evoke the dgesv subroutine	!
-
-	! This is the Thin Plate Spline:
-	! We use these resources:
-	! http://cseweb.ucsd.edu/~sjb/eccv_tps.pdf
-	! http://www.univie.ac.at/nuhag-php/bibtex/open_files/po94_M%20J%20D%20Powell%2003%2093.pdf
-	! http://vision.ucsd.edu/sites/default/files/fulltext(4).pdf
+!! This soubroutine interpolates the grid with a polyharmonic thin-plate spline.
+!! This subroutine needs the LUPACK and BLAS libraries to evoke the dgesv subroutine.
+!! The method uses the Thin Plate Spline.
+!! We use these resources:
+!! [http://cseweb.ucsd.edu/~sjb/eccv_tps.pdf](http://cseweb.ucsd.edu/~sjb/eccv_tps.pdf)
+!! [http://www.univie.ac.at/nuhag-php/bibtex/open_files/po94_M%20J%20D%20Powell%2003%2093.pdf](http://www.univie.ac.at/nuhag-php/bibtex/open_files/po94_M%20J%20D%20Powell%2003%2093.pdf)
+!! [http://vision.ucsd.edu/sites/default/files/fulltext(4).pdf](http://vision.ucsd.edu/sites/default/files/fulltext(4).pdf)
 	implicit none
 
-	integer :: i,j,k,permutation_index(n_coarse+3)
-	integer :: ngamma,npparbar,n_coarse,is_rel,nspec_rel
-	double precision :: gamma_coarse(n_coarse),pparbar_coarse(n_coarse)
-	double precision :: grid_coarse(n_coarse),f0_rel(nspec_rel,0:ngamma,0:npparbar)
+  double precision, intent(in) :: grid_coarse(n_coarse)
+  !! Coarse input grid for interpolation.
 
-	double precision :: fullmatrix(n_coarse+3,n_coarse+3)
-	double precision :: grid_vector(n_coarse+3),weight_param(n_coarse+3)
-	double precision :: gamma_rel(nspec_rel,0:ngamma,0:npparbar),pparbar(nspec_rel,0:ngamma,0:npparbar)
-	double precision :: r,smoothing
+  double precision, intent(in) :: gamma_coarse(n_coarse)
+  !! Coordinates of \(\Gamma\) on coarse grid.
+
+  double precision, intent(in) :: pparbar_coarse(n_coarse)
+  !! Coordinates of relativistic parallel momentum on coarse grid.
+
+  integer, intent(in) :: n_coarse
+  !! Number of entries in coarse grid.
+
+  double precision, intent(in) :: gamma_rel(nspec_rel,0:ngamma,0:npparbar)
+  !! Coordinates of \(\Gamma\) on fine grid.
+
+  double precision, intent(in) :: pparbar(nspec_rel,0:ngamma,0:npparbar)
+  !! Coordinates of relativistic parallel momentum on fine grid.
+
+  integer, intent(in) :: ngamma
+  !! Number of \(\Gamma\) steps on fine output grid.
+
+  integer, intent(in) :: npparbar
+  !! Number of parallel momentum steps on fine output grid.
+
+  double precision, intent(in) :: smoothing
+  !! Smoothing parameter for spline interpolation.
+
+  double precision, intent(out) :: f0_rel(nspec_rel,0:ngamma,0:npparbar)
+  !! Fine output grid after interpolation.
+
+  integer :: i
+  !! Index to loop over n_coarse.
+
+  integer :: j
+  !! Index to loop over n_coarse.
+
+  integer :: k
+  !! Index to loop over n_coarse.
+
+  integer :: permutation_index(n_coarse+3)
+  !! Permutation index for [[dgesv]] from LUPACK/BLAS.
+
+	integer :: nspec_rel
+  !! Number of relativistic species.
+
+  integer :: is_rel
+  !! Index for relativistic species (if any).
+
+  double precision :: fullmatrix(n_coarse+3,n_coarse+3)
+  !! K-matrix for spline interpolation.
+
+  double precision :: grid_vector(n_coarse+3)
+  !! Vector of the coarse grid. Required for 3 additional entries compared to grid_coarse.
+
+  double precision :: weight_param(n_coarse+3)
+  !! Weight parameter for spline interpolation.
+
+  double precision :: r
+  !! Distance between coarse and fine grid points.
+
   double precision :: INFO
+  !! Info flag for [[dgesv]] from LUPACK/BLAS.
 
 
 	grid_vector=0.d0
 	do i=1,n_coarse
 		grid_vector(i)=grid_coarse(i)
 	enddo
-	! grid_vector has three additional entries. The last three entries are all zero.
 
 	fullmatrix=0.d0
 	do i=1,n_coarse
@@ -329,15 +426,22 @@ subroutine polyharmonic_spline(grid_coarse,gamma_coarse,pparbar_coarse,n_coarse,
 end subroutine
 
 
-!-=-=-=-=-=-=
-!
-!-=-=-=-=-=-=
 
 
-! This subroutine determines sproc_rel for the given process
 subroutine determine_sproc_rel(sproc_rel)
+!! This subroutine determines sproc_rel for the given process.
 	use alps_var, only : relativistic, sproc, nspec
-	integer :: is_rel, is, sproc_rel
+  implicit none
+
+  integer, intent(out) :: sproc_rel
+  !! is_rel of the current process.
+
+  integer :: is
+  !! Index of particle species.
+
+  integer :: is_rel
+  !! Index for relativistic species.
+
 
 	is_rel=0
 
@@ -354,12 +458,33 @@ end subroutine
 
 ! This function does the relativistic integration around resonances if necessary:
 double complex function integrate_res_rel(om,nn,mode)
+!! This function performs the integration near resonances as described in Section 3.1 of the code paper for a relativistic calculation. It is only called if resonances are present in or near the integration domain.
 	use alps_var, only : ngamma, gamma_rel, pparbar_rel
 	implicit none
+
+  double complex, intent(in) :: om
+  !! Complex wave frequency \(\omega\).
+
+  integer, intent(in) :: nn
+  !! Order of the Bessel function.
+
+  integer, intent(in) :: mode
+  !! Index of the entries in the T-tensor of Eq. (2.10).
+
 	integer :: igamma
-	integer :: nn,mode,sproc_rel
-	double precision :: dgamma,dpparbar
-	double complex :: ii,om
+  !! Index to loop over \(\Gamma\).
+
+	integer :: sproc_rel
+  !! is_rel of the current process.
+
+  double precision :: dgamma
+  !! Infinitesimal step in \(\Gamma\).
+
+  double precision :: dpparbar
+  !! Infinitesimal step in relativistic parallel momentum.
+
+	double complex :: ii
+  !! Imaginary unit.
 
 	integrate_res_rel=cmplx(0.d0,0.d0,kind(1.d0))
 	ii=cmplx(0.d0,1.d0,kind(1.d0))
@@ -372,7 +497,6 @@ double complex function integrate_res_rel(om,nn,mode)
 
 	! At igamma=1, we are already missing the part from igamma=0, where we should actually start.
   ! Therefore, we use 2 instead of 1 in the trapezoid integration:
-
 	do igamma = 1,ngamma - 2
 		integrate_res_rel = integrate_res_rel + 2.d0 * integrate_resU_rel(sproc_rel,om,nn,mode,igamma)
 	enddo
@@ -389,17 +513,72 @@ end function integrate_res_rel
 
 
 
-! This function performs the integration of the resU term in (gamma,pparbar) space at a constant igamma
 double complex function integrate_resU_rel(sproc_rel,om,nn,mode,igamma)
+!! This function evaluates the integral with the integrand proportional to \(U\) in Eq. (2.9) of the code paper for a relativistic calculation.
 	use alps_var, only : npparbar,sproc,positions_principal,f0_rel,kpar,vA,ms,qs
 	use alps_var, only : gamma_rel,pparbar_rel
 	use alps_io, only : alps_error
 	implicit none
-	integer :: igamma,ipparbar,int_start,int_end
-	integer :: nn,mode,ipparbar_res,sproc_rel,lowerlimit,upperlimit,ipparbar_lower,ipparbar_upper
-	double precision :: dgamma,dpparbar
-	double complex :: ii,om,pparbar_res
-	logical :: found_res,found_lower,found_upper
+
+  integer, intent(in) :: sproc_rel
+  !! is_rel of the current process.
+
+  double complex, intent(in) :: om
+  !! Complex wave frequency \(\omega\).
+
+  integer, intent(in) :: nn
+  !! Order of the Bessel function.
+
+  integer, intent(in) :: mode
+  !! Index of the entries in the T-tensor of Eq. (2.10).
+
+	integer, intent(in) :: igamma
+  !! Index to loop over \(\Gamma\).
+
+	integer :: ipparbar
+  !! Index to loop over relativistic parallel momentum.
+
+  integer :: int_start
+  !! Lower limit for integration.
+
+  integer :: int_end
+  !! Upper limit for integration.
+
+	integer :: ipparbar_res
+  !! Index of the nearest relativistic parallel momentum to the resonance.
+
+  integer :: lowerlimit
+  !! Index of lower limit for integration according to Eq. (3.5).
+
+  integer :: upperlimit
+  !! Index of upper limit for integration according to Eq. (3.5).
+
+  integer :: ipparbar_lower
+  !! Lower boundary of resonance range in relativistic parallel momentum.
+
+  integer :: ipparbar_upper
+  !! Upper boundary of resonance range in relativistic parallel momentum.
+
+  double precision :: dgamma
+  !! Infinitesimal step in \(\Gamma\).
+
+  double precision :: dpparbar
+  !! Infinitesimal step in relativistic parallel momentum.
+
+	double complex :: ii
+  !! Imaginary unit.
+
+  double complex :: pparbar_res
+  !! Relativistic parallel momentum of the resonance.
+
+  logical :: found_res
+  !! Check whether a resonance is found.
+
+	logical :: found_lower
+  !! Check whether resonance lies in lower range of relativistic parallel momentum.
+
+  logical :: found_upper
+  !! Check whether resonance lies in upper range of relativistic parallel momentum.
 
 	integrate_resU_rel=cmplx(0.d0,0.d0,kind(1.d0))
 	ii=cmplx(0.d0,1.d0,kind(1.d0))
@@ -408,9 +587,7 @@ double complex function integrate_resU_rel(sproc_rel,om,nn,mode,igamma)
 	dgamma = gamma_rel(sproc_rel,2,2)-gamma_rel(sproc_rel,1,2)
 	dpparbar = pparbar_rel(sproc_rel,2,2)-pparbar_rel(sproc_rel,2,1)
 
-
-
-	! determine the position of the resonance (i.e., the step LEFT of it):
+	! Determine the position of the resonance (i.e., the step LEFT of it):
 	ipparbar = 0
 	ipparbar_res=0
 	found_res = .FALSE.
@@ -430,7 +607,6 @@ double complex function integrate_resU_rel(sproc_rel,om,nn,mode,igamma)
   endif
 
 	! Handle resonances that are right outside the integration domain:
-
 	do ipparbar=0,positions_principal
 		if ((real(pparbar_res).GE.(pparbar_rel(sproc_rel,2,0)-dpparbar*ipparbar)).AND.&
 		  (real(pparbar_res).LT.(pparbar_rel(sproc_rel,2,0)-dpparbar*(ipparbar-1)))) then
@@ -447,9 +623,7 @@ double complex function integrate_resU_rel(sproc_rel,om,nn,mode,igamma)
 
 
 
-	! determine the limits for the integration:
-
-	! What are the relevant ranges in pparbar:
+	! Determine the limits for the integration:
 	found_lower=.FALSE.
 	found_upper=.FALSE.
 	ipparbar_lower = 1
@@ -466,9 +640,8 @@ double complex function integrate_resU_rel(sproc_rel,om,nn,mode,igamma)
 	enddo
 
 
-	! define int_start, int_end, lowerlimit, and upperlimit:
 	if (found_res) then
-		! These four are in general correct:
+
 		int_start = ipparbar_lower
 		int_end = ipparbar_upper
 		lowerlimit = ipparbar_res - positions_principal
@@ -478,22 +651,18 @@ double complex function integrate_resU_rel(sproc_rel,om,nn,mode,igamma)
 			if(abs(real(pparbar_res)-pparbar_rel(sproc_rel,2,ipparbar_res)).GT.(0.5d0*dpparbar)) upperlimit = upperlimit + 1
 		endif
 
-    ! But there are special circumstances:
+    ! Cover special circumstances:
 		if ((lowerlimit.LT.ipparbar_lower).AND.(upperlimit.GT.ipparbar_upper)) then
       call alps_error(8)
 		elseif (lowerlimit.LE.ipparbar_lower) then	! resonance outside or near the left end of the subluminal cone
 				int_start = 1
 				lowerlimit = 0
-				!upperlimit = max(upperlimit, ipparbar_lower)
         upperlimit = ipparbar_lower
 			elseif (upperlimit.GE.ipparbar_upper) then ! resonance outside or near the right end of the subluminal cone
-				!lowerlimit = min(lowerlimit, ipparbar_upper)
         lowerlimit = ipparbar_upper
 				upperlimit = npparbar
 				int_end = npparbar - 1
 			endif
-
-
 
 	else ! no resonance (only integrate from int_start to lowerlimit)
 		int_start = ipparbar_lower
@@ -503,8 +672,7 @@ double complex function integrate_resU_rel(sproc_rel,om,nn,mode,igamma)
 	endif
 
 
-	! Now comes the normal integration:
-
+	! Direct integration:
 	if (int_start.LE.lowerlimit) then
 		ipparbar = int_start
 		integrate_resU_rel = integrate_resU_rel + resU_rel(sproc_rel,om,nn,igamma,ipparbar) &
@@ -542,7 +710,7 @@ double complex function integrate_resU_rel(sproc_rel,om,nn,mode,igamma)
 	integrate_resU_rel = integrate_resU_rel * dpparbar
 
 
-	! And this is the resonance integration:
+	! If needed, add resonance integration:
 	if (found_res.AND.(lowerlimit.GE.int_start).AND.(upperlimit.LE.int_end)) &
 		integrate_resU_rel = integrate_resU_rel + principal_integral_rel(sproc_rel,om,nn,mode,igamma,ipparbar_res,upperlimit)
 
@@ -553,15 +721,68 @@ end function integrate_resU_rel
 
 
 
-
-
 double complex function principal_integral_rel(sproc_rel,om,nn,mode,igamma,ipparbar_res,upperlimit)
+!! This function performs the integration near resonances as described in Section 3.1 of the code paper for a relativistic calculation. It is only called if resonances are present in or near the integration domain.
 	use alps_var, only : positions_principal,n_resonance_interval, sproc
 	use alps_var, only : gamma_rel, pparbar_rel,vA,kpar,qs,ms, Tlim, pi
 	implicit none
-	double complex :: om, ii, pparbar_res, gprimetr
-	double precision :: denomR,denomI,capDelta,smdelta,correction,pparbar, dpparbar
-	integer :: nn, mode, ipparbar_res,ipparbar,igamma,upperlimit, sproc_rel, ntiny
+
+  integer, intent(in) :: sproc_rel
+  !! is_rel of the current process.
+
+  double complex, intent(in) :: om
+  !! Complex wave frequency \(\omega\).
+
+  integer, intent(in) :: nn
+  !! Order of the Bessel function.
+
+  integer, intent(in) :: mode
+  !! Index of the entries in the T-tensor of Eq. (2.10).
+
+  integer, intent(in) :: igamma
+  !! Index to loop over \(\Gamma\).
+
+  integer, intent(in) :: ipparbar_res
+  !! Index of the nearest relativistic parallel momentum to the resonance.
+
+  integer, intent(in) :: upperlimit
+  !! Index of upper limit for integration according to Eq. (3.5).
+
+  double complex :: ii
+  !! Imaginary unit.
+
+  double complex :: pparbar_res
+  !! Relativistic parallel momentum of the resonance.
+
+	double complex :: gprimetr
+  !! Function \(g^{\prime}\) in Eq. (3.6).
+
+  double precision :: denomR
+  !! Real part of denominator of Eq. (3.6).
+
+  double precision :: denomI
+  !! Imaginary part of denominator of Eq. (3.6).
+
+  double precision :: capDelta
+  !! Size of interval \(\Delta\) for integration according to Eq. (3.5).
+
+  double precision :: smdelta
+  !! Size of sub-interval \(\delta\) for integration according to Eq. (3.5).
+
+  double precision :: correction
+   !! Correction factor for finite size of interval \(\delta\).
+
+	double precision :: pparbar
+  !! Relativistic parallel momentum.
+
+  double precision :: dpparbar
+  !! Infinitesimal step in relativistic parallel momentum.
+
+  integer :: ipparbar
+  !! Index to loop over relativistic parallel momentum.
+
+  integer :: ntiny
+  !! Small steps for integration near pole according to Eq. (3.5).
 
 
 	ii = cmplx(0.d0,1.d0,kind(1.d0))
@@ -569,22 +790,13 @@ double complex function principal_integral_rel(sproc_rel,om,nn,mode,igamma,ippar
 	principal_integral_rel=cmplx(0.d0,0.d0,kind(1.d0))
 
     dpparbar = pparbar_rel(sproc_rel,2,2)-pparbar_rel(sproc_rel,2,1)
-	! split the range between the resonance and the upper limit into n_resonance_interval steps:
 
-	! Now comes the resonance part:
-	! We call the function that needs to be integrated WITHOUT the resonance part funct_g.
-	! We linearize this function. Now we can calculate the even part of the integration.
-	! We set Delta so that it starts at ipparbar_res-positions_principal. In that way, there is only
-	! a tiny rest left on the right side that needs to be integrated.
-	! split the range between the resonance and the upper limit into n_resonance_interval steps:
-	! the denominator is:
-	! (pparbar - gamma * om/kpar + (1.d0*nn) * qs(sproc)/ms(sproc)) * vA /kpar
-	! we define
-	! denomR=real(gamma *om/kpar - (1.d0*nn) * qs(sproc)/ms(sproc))vA /kpar )
-	! denomI=aimag(gamma * ms(sproc)*om/kpar)
-	! so that the denominator is
-	! (ppar-denomR-ii*denomI)
-
+	   ! Now comes the resonance part:
+	   ! We call the function that needs to be integrated WITHOUT the resonance part funct_g.
+	   ! We linearize this function. Now we can calculate the even part of the integration.
+	   ! We set Delta so that it starts at ipparbar_res-positions_principal. In that way, there is only
+	   ! a tiny rest left on the right side that needs to be integrated.
+	   ! split the range between the resonance and the upper limit into n_resonance_interval steps:
 
 	denomR=real( gamma_rel(sproc_rel,igamma,ipparbar_res) * om * vA / kpar - (1.d0*nn) * (qs(sproc)/ms(sproc)) * vA / kpar )
 	denomI=aimag(gamma_rel(sproc_rel,igamma,ipparbar_res) * om * vA / kpar)
@@ -625,28 +837,18 @@ double complex function principal_integral_rel(sproc_rel,om,nn,mode,igamma,ippar
 		enddo
 
 
-	else ! analytical approximation
+	else ! analytical approximation according to Eq. (3.7):
 
 		gprimetr = (funct_g_rel(sproc_rel,denomR+dpparbar,igamma,om,nn,mode)&
 			-funct_g_rel(sproc_rel,denomR-dpparbar,igamma,om,nn,mode))/(2.d0*dpparbar)
 
 		! Integrate the edges:
 		pparbar=real(pparbar_res)
-    ! This case is when pparbar=denomR, so no contribution is needed.
-		!if (denomI.NE.0.d0) then
-		!	principal_integral_rel=principal_integral_rel &
-		!		+ 2.d0 * gprimetr*(pparbar-denomR)**2 / ((pparbar-denomR)**2+denomI**2)
-		!else
-		!	principal_integral_rel=principal_integral_rel + 2.d0 * gprimetr
-		!endif
-
 
 		pparbar=real(pparbar_res)+capDelta
 		principal_integral_rel=principal_integral_rel &
 			+ 2.d0 * gprimetr*(pparbar-denomR)**2 / ((pparbar-denomR)**2+denomI**2)
 
-
-		! end of edges.
 
 		do ipparbar = 1, n_resonance_interval-1
 			pparbar=real(pparbar_res)+smdelta*ipparbar
@@ -657,7 +859,7 @@ double complex function principal_integral_rel(sproc_rel,om,nn,mode,igamma,ippar
 		enddo
 
     ! The following lines account for Eq. (3.7) in the paper:
-		! the factor 2 is for normalization reasons in the trapezoidal rule
+		! the factor 2 is for normalization reasons in the trapezoidal rule:
     if (denomI.GT.0.d0) then
       principal_integral_rel=principal_integral_rel &
 				+ 2.d0 * ii * pi * funct_g_rel(sproc_rel,denomR,igamma,om,nn,mode)/smdelta
@@ -672,13 +874,8 @@ double complex function principal_integral_rel(sproc_rel,om,nn,mode,igamma,ippar
 
 
 
-
-
-
-
 	! There is a tiny rest left between the point real(pparbar_res)+capDelta and the position
 	! pparbar_rel(sproc_rel,iperp,upperlimit). We split this interval into steps of roughly size smdelta:
-
 	ntiny=int((pparbar_rel(sproc_rel,igamma,upperlimit)-real(pparbar_res)-capDelta)/smdelta)
 
 
@@ -699,6 +896,7 @@ double complex function principal_integral_rel(sproc_rel,om,nn,mode,igamma,ippar
 		principal_integral_rel=principal_integral_rel + 1.d0*&
 		correction*(funct_g_rel(sproc_rel,pparbar,igamma,om,nn,mode)/(pparbar-denomR-ii*denomI))
 
+
 		do ipparbar=1,ntiny-1
 			pparbar=real(pparbar_res)+capDelta+correction*smdelta*ipparbar
 
@@ -708,7 +906,6 @@ double complex function principal_integral_rel(sproc_rel,om,nn,mode,igamma,ippar
 		enddo
 	endif
 
-
 	principal_integral_rel = principal_integral_rel * smdelta
 
 	return
@@ -717,15 +914,48 @@ end function
 
 
 
-! Linearized integrand WITHOUT the resonance part.
-! It is  resU * int_T * Omega but without the denominator.
-! It can be evaluated at any real value of pp (ppar_real) between the grid around the resonance.
+
 double complex function funct_g_rel(sproc_rel,pparbar,igamma,om,nn,mode)
+!! This function returns the function \(g\) from Eq. (3.2) of the code paper for a relativistic calculation.
 	use alps_var,only : ms,qs,kpar,df0_rel,sproc,vA,npparbar,pparbar_rel,pi,f0_rel
 	implicit none
-	integer :: nn, mode, ipparbar,ipparbar_close,sproc_rel,igamma
-	double complex :: om,integrandplus,integrandminus,integrand
-	double precision :: pparbar,dpparbar
+
+  integer, intent(in) :: sproc_rel
+  !! is_rel of the current process.
+
+  double precision, intent(in) :: pparbar
+  !! Relativistic parallel momentum.
+
+  integer, intent(in) :: igamma
+  !! Index of \(\Gamma\).
+
+  double complex, intent(in) :: om
+  !! Complex wave frequency \(\omega\).
+
+  integer, intent(in) :: nn
+  !! Order of the Bessel function.
+
+  integer, intent(in) :: mode
+  !! Index of the entries in the T-tensor of Eq. (2.10).
+
+  integer :: ipparbar_close
+  !! Index of the relativistic parallel momentum closest to the resonance.
+
+	integer :: ipparbar
+  !! Index to loop over relativistic parallel momentum.
+
+  double precision :: dpparbar
+  !! Infinitesimal step in relativistic parallel momentum.
+
+  double complex :: integrandplus
+  !! Integrand function ahead of position.
+
+  double complex :: integrandminus
+  !! Integrand function behind of position.
+
+  double complex :: integrand
+  !! Integrand function at position.
+
 
 	dpparbar = pparbar_rel(sproc_rel,2,2)-pparbar_rel(sproc_rel,2,1)
 
@@ -746,7 +976,6 @@ double complex function funct_g_rel(sproc_rel,pparbar,igamma,om,nn,mode)
 	if (ipparbar_close.LE.1) ipparbar_close=2
 
 	! calculate the function on the grid (left and right of pparbar):
-
 	integrandplus = -2.d0*pi*(ms(sproc)/vA)**3 * (qs(sproc)*vA/(kpar*ms(sproc))) * &
 		(om*df0_rel(sproc_rel,igamma,ipparbar_close+1,1) + &
 			 (kpar/(vA))*df0_rel(sproc_rel,igamma,ipparbar_close+1,2))&
@@ -774,27 +1003,55 @@ end function funct_g_rel
 
 
 double complex function landau_integrate_rel(om, nn, mode)
+!! This function evaluates the Landau contour according to Eqs. (3.8) and (3.9) of the code paper for a relativistic calculation.
 	use alps_var, only : ngamma, gamma_rel,pparbar_rel, pi, ms, qs, kpar, sproc, vA
 	use alps_analyt, only: eval_fit
 	implicit none
-	!Passed
-	double complex :: om   !complex frequency
-	integer :: nn          !Bessel N
-	integer :: mode        !index in T tensor
-	!Local
-	integer :: igamma, sproc_rel
-	double precision :: dgamma,dpparbar
-	double precision :: h
-	double complex :: ii
-	double complex :: dfgamma_C,dfpparbar_C,pparbar_res
 
-	ii = cmplx(0.d0,1.d0,kind(1.d0))
+
+   double complex, intent(in) :: om
+   !! Complex wave frequency \(\omega\).
+
+   integer, intent(in) :: nn
+   !! Order of the Bessel function.
+
+   integer, intent(in) :: mode
+   !! Index of the entries in the T-tensor of Eq. (2.10).
+
+
+   integer :: igamma
+   !! Index to loop over \(\Gamma\).
+
+ 	 integer :: sproc_rel
+   !! is_rel of the current process.
+
+   double precision :: dgamma
+   !! Infinitesimal step in \(\Gamma\).
+
+   double precision :: dpparbar
+   !! Infinitesimal step in relativistic parallel momentum.
+
+   double precision :: h
+   !! Scaling factor.
+
+	 double complex :: ii
+   !! Imaginary unit.
+
+	 double complex :: dfgamma_C
+   !! Derivative of f0 evaluated at resonance.
+
+   double complex :: dfpparbar_C
+   !! Derivative of f0 evaluated at resonance.
+
+   double complex :: pparbar_res
+   !! Relativistic parallel resonance momentum.
+
+
+  ii = cmplx(0.d0,1.d0,kind(1.d0))
 
 	landau_integrate_rel = cmplx(0.d0,0.d0,kind(1.d0))
 
-
 	call determine_sproc_rel(sproc_rel)
-
 
 	dgamma = gamma_rel(sproc_rel,2,2)-gamma_rel(sproc_rel,1,2)
 	dpparbar = pparbar_rel(sproc_rel,2,2)-pparbar_rel(sproc_rel,2,1)
@@ -803,7 +1060,6 @@ double complex function landau_integrate_rel(om, nn, mode)
 	do igamma = 1, ngamma-1
 
 		pparbar_res = gamma_rel(sproc_rel,igamma,1)*om*vA/kpar - (1.d0*nn)*qs(sproc)*vA/(kpar*ms(sproc))
-
 
 		if ((real(pparbar_res)**2).LE.(gamma_rel(sproc_rel,igamma,1)**2-1.d0)) then
 
