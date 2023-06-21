@@ -298,7 +298,7 @@ contains
     !! Use linear or \(\log_{10}\) fitting routine.
     
     logical :: use_bM=.false.
-    !! Use actual distribution of bi-Maxwellian proxy.
+    !! Use actual numerical integration or bi-Maxwellian proxy via NHDS.
     
     nameList /spec/ &
          nn,qq,mm,ff,relat,log_fit,use_bM
@@ -319,7 +319,7 @@ contains
     !!Species index.
     
     integer :: bM_nmaxs
-    !!Number of biMaxwellians.
+    !!Maximum number of resonances to consider.
     
     double precision :: bM_Bessel_zeros
     !!Precision threshold for \(I_n\).

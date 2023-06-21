@@ -129,8 +129,8 @@ module alps_var
   !!\(\bar{p}_\parallel = p_\parallel/m_j c\), \(N_{\bar{p}_\parallel}\).
 
   integer :: positions_principal=5
-  !! How many parallel momentum steps distant from the resonant momentum
-  !! are included in the numerical calculation of Eqn 3.5, \(M_I\).
+  !! Number of parallel momentum steps distant from the resonant momentum
+  !! included in the numerical calculation of Eqn 3.5, \(M_I\).
 
   double precision :: Tlim=0.01d0
   !! Threshold for analytical principal-value integration for
