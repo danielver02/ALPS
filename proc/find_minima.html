@@ -97,7 +97,7 @@
           <li id="statements"><i class="fa fa-list-ol"></i>
             <a data-toggle="tooltip"
                data-placement="bottom" data-html="true"
-               title=" 1.8% of total for procedures.">83 statements</a>
+               title=" 1.8% of total for procedures.">84 statements</a>
           </li>
 
         </ul>
@@ -280,6 +280,8 @@ modules which it uses.
     </div>
 
 
+    <p>This subroutine identifies the minima of the coarse map grid. It is called by <a href="../proc/map_search.html">map_search</a>.
+The code is based on a routine by Greg Howes, 2006.</p>
 
 
     <h3>Arguments</h3>
@@ -295,52 +297,52 @@ modules which it uses.
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-val"></span>
+              <span class="anchor" id="variable-val~2"></span>
               double precision,
             </td>
-<td></td>
+<td>intent(in),</td>
               <td></td>            <td>
               dimension(:,:), pointer
             </td>
             <td>::</td>
             <td><strong>val</strong></td>
             <td>
-                
+                <p>Array of determinant of the dispersion tensor.</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-numroots~2"></span>
-              integer
+              <span class="anchor" id="variable-numroots"></span>
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>numroots</strong></td>
             <td>
-                
+                <p>Number of roots.</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-iroots"></span>
+              <span class="anchor" id="variable-iroots~2"></span>
               integer,
             </td>
-<td></td>
+<td>intent(out),</td>
               <td></td>            <td>
               dimension(1:2,1:numroots)
             </td>
             <td>::</td>
             <td><strong>iroots</strong></td>
             <td>
-                
+                <p>Indices of roots.</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-nroots~2"></span>
+              <span class="anchor" id="variable-nroots"></span>
               integer,
             </td>
 <td>intent(out)</td>
@@ -350,7 +352,7 @@ modules which it uses.
             <td>::</td>
             <td><strong>nroots</strong></td>
             <td>
-                
+                <p>Number of roots found.</p>
             </td>
         </tr>
     </tbody>

@@ -97,7 +97,7 @@
           <li id="statements"><i class="fa fa-list-ol"></i>
             <a data-toggle="tooltip"
                data-placement="bottom" data-html="true"
-               title=" 1.0% of total for procedures.">43 statements</a>
+               title=" 1.0% of total for procedures.">48 statements</a>
           </li>
 
         </ul>
@@ -296,6 +296,7 @@ modules which it uses.
     </div>
 
 
+    <p>This subroutine determines whether any kinetic resonances are located in the integration domain.</p>
 
 
     <h3>Arguments</h3>
@@ -312,61 +313,61 @@ modules which it uses.
         <tr>
             <td>
               <span class="anchor" id="variable-om~9"></span>
-              double complex
+              double complex,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>om</strong></td>
             <td>
-                
+                <p>Complex wave frequency <script type="math/tex">\omega</script>.</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-nn~10"></span>
-              integer
+              <span class="anchor" id="variable-nn~11"></span>
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>nn</strong></td>
             <td>
-                
+                <p>Order of Bessel function.</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-found_res_plus"></span>
-              logical
+              <span class="anchor" id="variable-found_res_plus~2"></span>
+              logical,
             </td>
-<td></td>
+<td>intent(out)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>found_res_plus</strong></td>
             <td>
-                
+                <p>Check whether a resonance is found at positive n.</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-found_res_minus"></span>
-              logical
+              <span class="anchor" id="variable-found_res_minus~2"></span>
+              logical,
             </td>
-<td></td>
+<td>intent(out)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>found_res_minus</strong></td>
             <td>
-                
+                <p>Check whether a resonance is found at negative n.</p>
             </td>
         </tr>
     </tbody>

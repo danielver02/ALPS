@@ -97,7 +97,7 @@
           <li id="statements"><i class="fa fa-list-ol"></i>
             <a data-toggle="tooltip"
                data-placement="bottom" data-html="true"
-               title="37.4% of total for modules and submodules.">1585 statements</a>
+               title="38.6% of total for modules and submodules.">1667 statements</a>
           </li>
 
         </ul>
@@ -189,7 +189,7 @@
     </div>
 
     <div class="col-md-9" id='text'>
-      
+      <p>This module contains the key numerical functions of ALPS.</p>
 <br>      
           <div class="panel panel-default">
       <div class="panel-heading">
@@ -390,7 +390,7 @@ modules which it uses.
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>This function returns the determinant of the dispersion tensor for a given frequency om.</p>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
@@ -406,16 +406,16 @@ modules which it uses.
         <tr>
             <td>
               <span class="anchor" ></span>
-              double complex
+              double complex,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>om</strong></td>
             <td>
-
+<p>Complex wave frequency <script type="math/tex">\omega</script>.</p>
             </td>
         </tr>
     </tbody>
@@ -435,7 +435,7 @@ modules which it uses.
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>This function returns the full integral expression according to Eq. (2.9) in the code paper.</p>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
@@ -451,61 +451,61 @@ modules which it uses.
         <tr>
             <td>
               <span class="anchor" ></span>
-              double complex
+              double complex,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>om</strong></td>
             <td>
-
+<p>Complex wave frequency <script type="math/tex">\omega</script>.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>nn</strong></td>
             <td>
-
+<p>Order of the Bessel function.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>mode</strong></td>
             <td>
-
+<p>Index of the entries in the T-tensor of Eq. (2.10).</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              logical
+              logical,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>found_res</strong></td>
             <td>
-
+<p>Check whether a resonance is found.</p>
             </td>
         </tr>
     </tbody>
@@ -525,7 +525,8 @@ modules which it uses.
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>This function performs the integral in Eq. (2.9) of the code paper, but without
+accounting for the Landau contour integral. It is called by <a>full_integral</a>.</p>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
@@ -541,46 +542,46 @@ modules which it uses.
         <tr>
             <td>
               <span class="anchor" ></span>
-              double complex
+              double complex,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>om</strong></td>
             <td>
-
+<p>Complex wave frequency <script type="math/tex">\omega</script>.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>nn</strong></td>
             <td>
-
+<p>Order of the Bessel function.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>mode</strong></td>
             <td>
-
+<p>Index of the entries in the T-tensor of Eq. (2.10).</p>
             </td>
         </tr>
         <tr>
@@ -595,7 +596,7 @@ modules which it uses.
             <td>::</td>
             <td><strong>iparmin</strong></td>
             <td>
-
+<p>Minimum limit index of parallel momentum for integration.</p>
             </td>
         </tr>
         <tr>
@@ -610,7 +611,7 @@ modules which it uses.
             <td>::</td>
             <td><strong>iparmax</strong></td>
             <td>
-
+<p>Maximum limit index of parallel momentum for integration.</p>
             </td>
         </tr>
     </tbody>
@@ -630,7 +631,7 @@ modules which it uses.
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>This function performs the integration near resonances as described in Section 3.1 of the code paper. It is only called if resonances are present in or near the integration domain.</p>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
@@ -646,46 +647,46 @@ modules which it uses.
         <tr>
             <td>
               <span class="anchor" ></span>
-              double complex
+              double complex,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>om</strong></td>
             <td>
-
+<p>Complex wave frequency <script type="math/tex">\omega</script>.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>nn</strong></td>
             <td>
-
+<p>Order of the Bessel function.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>mode</strong></td>
             <td>
-
+<p>Index of the entries in the T-tensor of Eq. (2.10).</p>
             </td>
         </tr>
     </tbody>
@@ -705,7 +706,7 @@ modules which it uses.
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>This function returns the function <script type="math/tex">g</script> from Eq. (3.2) of the code paper.</p>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
@@ -721,76 +722,76 @@ modules which it uses.
         <tr>
             <td>
               <span class="anchor" ></span>
-              double precision
+              double precision,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>ppar_real</strong></td>
             <td>
-
+<p>Real part of the momentum at which <script type="math/tex">g</script> is evaluated.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>iperp</strong></td>
             <td>
-
+<p>Index of the perpendicular momentum.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              double complex
+              double complex,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>om</strong></td>
             <td>
-
+<p>Complex wave frequency <script type="math/tex">\omega</script>.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>nn</strong></td>
             <td>
-
+<p>Order of the Bessel function.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>mode</strong></td>
             <td>
-
+<p>Index of the entries in the T-tensor of Eq. (2.10).</p>
             </td>
         </tr>
     </tbody>
@@ -810,7 +811,7 @@ modules which it uses.
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>This function evaluates the Landau contour according to Eqs. (3.8) and (3.9) of the code paper.</p>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
@@ -826,46 +827,46 @@ modules which it uses.
         <tr>
             <td>
               <span class="anchor" ></span>
-              double complex
+              double complex,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>om</strong></td>
             <td>
-
+<p>Complex wave frequency <script type="math/tex">\omega</script>.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>nn</strong></td>
             <td>
-
+<p>Order of the Bessel function.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>mode</strong></td>
             <td>
-
+<p>Index of the entries in the T-tensor of Eq. (2.10).</p>
             </td>
         </tr>
     </tbody>
@@ -885,7 +886,7 @@ modules which it uses.
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>This function returns the ee term in Eq. (2.9).</p>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
@@ -901,16 +902,16 @@ modules which it uses.
         <tr>
             <td>
               <span class="anchor" ></span>
-              double complex
+              double complex,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>om</strong></td>
             <td>
-
+<p>Complex wave frequency <script type="math/tex">\omega</script>.</p>
             </td>
         </tr>
     </tbody>
@@ -930,7 +931,7 @@ modules which it uses.
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>This function evaluates the term proportional to <script type="math/tex">U</script> in Eq. (2.9) of the code paper.</p>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
@@ -946,61 +947,61 @@ modules which it uses.
         <tr>
             <td>
               <span class="anchor" ></span>
-              double complex
+              double complex,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>om</strong></td>
             <td>
-
+<p>Complex wave frequency <script type="math/tex">\omega</script>.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>nn</strong></td>
             <td>
-
+<p>Order of the Bessel function.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>iperp</strong></td>
             <td>
-
+<p>Index to loop over perpendicular momentum.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>ipar</strong></td>
             <td>
-
+<p>Index to loop over parallel momentum.</p>
             </td>
         </tr>
     </tbody>
@@ -1020,7 +1021,7 @@ modules which it uses.
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>This function returns the T-tensor according to Eq. (2.10) of the code paper.</p>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
@@ -1036,61 +1037,61 @@ modules which it uses.
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>nn</strong></td>
             <td>
-
+<p>Order of the Bessel function.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>iperp</strong></td>
             <td>
-
+<p>Index to loop over perpendicular momentum.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>ipar</strong></td>
             <td>
-
+<p>Index to loop over parallel momentum.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>mode</strong></td>
             <td>
-
+<p>Index of the entries in the T-tensor of Eq. (2.10).</p>
             </td>
         </tr>
     </tbody>
@@ -1110,7 +1111,7 @@ modules which it uses.
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>This function returns the T-tensor according to Eq. (2.10) of the code paper for the case in which it is evaluated at the complex resonance momentum.</p>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
@@ -1126,61 +1127,61 @@ modules which it uses.
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>nn</strong></td>
             <td>
-
+<p>Order of the Bessel function.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>iperp</strong></td>
             <td>
-
+<p>Index to loop over perpendicular momentum.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              double complex
+              double complex,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>p_res</strong></td>
             <td>
-
+<p>Complex resonance momentum.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>mode</strong></td>
             <td>
-
+<p>Index of the entries in the T-tensor of Eq. (2.10).</p>
             </td>
         </tr>
     </tbody>
@@ -1205,7 +1206,7 @@ modules which it uses.
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>This subroutine calculates the perpendicular and parallel derivatives of the background velocity distribution function f0.</p>
 
   <h4>Arguments</h4>
     <em>None</em>
@@ -1218,7 +1219,7 @@ modules which it uses.
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>This subroutine determines whether any kinetic resonances are located in the integration domain.</p>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
@@ -1234,61 +1235,61 @@ modules which it uses.
         <tr>
             <td>
               <span class="anchor" ></span>
-              double complex
+              double complex,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>om</strong></td>
             <td>
-
+<p>Complex wave frequency <script type="math/tex">\omega</script>.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>nn</strong></td>
             <td>
-
+<p>Order of Bessel function.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              logical
+              logical,
             </td>
-<td></td>
+<td>intent(out)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>found_res_plus</strong></td>
             <td>
-
+<p>Check whether a resonance is found at positive n.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              logical
+              logical,
             </td>
-<td></td>
+<td>intent(out)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>found_res_minus</strong></td>
             <td>
-
+<p>Check whether a resonance is found at negative n.</p>
             </td>
         </tr>
     </tbody>
@@ -1303,7 +1304,7 @@ modules which it uses.
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>This subroutine applies the secant method to find the roots of the dispersion tensor.</p>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
@@ -1319,16 +1320,16 @@ modules which it uses.
         <tr>
             <td>
               <span class="anchor" ></span>
-              double complex
+              double complex,
             </td>
-<td></td>
+<td>intent(inout)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>om</strong></td>
             <td>
-
+<p>Complex wave frequency <script type="math/tex">\omega</script>.</p>
             </td>
         </tr>
     </tbody>
@@ -1343,7 +1344,7 @@ modules which it uses.
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>This subroutine scans solutions along a single prescribed path in wavevector space.</p>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
@@ -1359,16 +1360,16 @@ modules which it uses.
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>ik</strong></td>
             <td>
-
+<p>Index of scan number.</p>
             </td>
         </tr>
     </tbody>
@@ -1383,7 +1384,8 @@ modules which it uses.
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>This subroutine calculates the relative electric and magnetic field amplitudes, the relative fluctuations in the density and velocity of all species, and the heating rates of the given solution.
+It is based on the calc_eigen routine by Greg Howes and Kris Klein.</p>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
@@ -1399,16 +1401,16 @@ modules which it uses.
         <tr>
             <td>
               <span class="anchor" ></span>
-              double complex
+              double complex,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>omega</strong></td>
             <td>
-
+<p>Complex wave frequency <script type="math/tex">\omega</script>.</p>
             </td>
         </tr>
         <tr>
@@ -1423,7 +1425,7 @@ modules which it uses.
             <td>::</td>
             <td><strong>electric</strong></td>
             <td>
-
+<p>Relative electric field amplitude (eigenfunction).</p>
             </td>
         </tr>
         <tr>
@@ -1438,7 +1440,7 @@ modules which it uses.
             <td>::</td>
             <td><strong>magnetic</strong></td>
             <td>
-
+<p>Relative magnetic field amplitude (eigenfunction).</p>
             </td>
         </tr>
         <tr>
@@ -1453,7 +1455,7 @@ modules which it uses.
             <td>::</td>
             <td><strong>vmean</strong></td>
             <td>
-
+<p>Relative velocity-fluctuation amplitude (eigenfunction).</p>
             </td>
         </tr>
         <tr>
@@ -1468,7 +1470,7 @@ modules which it uses.
             <td>::</td>
             <td><strong>ds</strong></td>
             <td>
-
+<p>Relative density-fluctuation amplitude (eigenfunction).</p>
             </td>
         </tr>
         <tr>
@@ -1483,37 +1485,37 @@ modules which it uses.
             <td>::</td>
             <td><strong>Ps</strong></td>
             <td>
-
+<p>Relative heating rate of a given species.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              logical
+              logical,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>eigen_L</strong></td>
             <td>
-
+<p>Check whether eigenfunction calculation is requested.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              logical
+              logical,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>heat_L</strong></td>
             <td>
-
+<p>Check whether eigenfunction calculation is requested.</p>
             </td>
         </tr>
     </tbody>
@@ -1528,7 +1530,7 @@ modules which it uses.
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>This subroutine scans along a prescribed plane in wavevector space to map out <script type="math/tex">\omega</script> in this space. It is required that n_scan=2.</p>
 
   <h4>Arguments</h4>
     <em>None</em>
@@ -1541,7 +1543,7 @@ modules which it uses.
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>This subroutine calculates the map of the determinant of the dispersion tensor in complex frequency space.</p>
 
   <h4>Arguments</h4>
     <em>None</em>
@@ -1554,7 +1556,7 @@ modules which it uses.
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>This subroutine refines the guess at the starting point of the search for solutions to the dispersion relation when scanning. It is also used by <a href="../proc/map_search.html">map_search</a> to identify the roots on the map.</p>
 
   <h4>Arguments</h4>
     <em>None</em>
@@ -1567,7 +1569,8 @@ modules which it uses.
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>This subroutine identifies the minima of the coarse map grid. It is called by <a href="../proc/map_search.html">map_search</a>.
+The code is based on a routine by Greg Howes, 2006.</p>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
@@ -1585,29 +1588,14 @@ modules which it uses.
               <span class="anchor" ></span>
               double precision,
             </td>
-<td></td>
+<td>intent(in),</td>
               <td></td>            <td>
               dimension(:,:), pointer
             </td>
             <td>::</td>
             <td><strong>val</strong></td>
             <td>
-
-            </td>
-        </tr>
-        <tr>
-            <td>
-              <span class="anchor" ></span>
-              integer
-            </td>
-<td></td>
-              <td></td>            <td>
-              
-            </td>
-            <td>::</td>
-            <td><strong>numroots</strong></td>
-            <td>
-
+<p>Array of determinant of the dispersion tensor.</p>
             </td>
         </tr>
         <tr>
@@ -1615,14 +1603,29 @@ modules which it uses.
               <span class="anchor" ></span>
               integer,
             </td>
-<td></td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>numroots</strong></td>
+            <td>
+<p>Number of roots.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              integer,
+            </td>
+<td>intent(out),</td>
               <td></td>            <td>
               dimension(1:2,1:numroots)
             </td>
             <td>::</td>
             <td><strong>iroots</strong></td>
             <td>
-
+<p>Indices of roots.</p>
             </td>
         </tr>
         <tr>
@@ -1637,7 +1640,7 @@ modules which it uses.
             <td>::</td>
             <td><strong>nroots</strong></td>
             <td>
-
+<p>Number of roots found.</p>
             </td>
         </tr>
     </tbody>
@@ -1652,7 +1655,7 @@ modules which it uses.
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>This subroutine determines the maximum required order of the Bessel functions in Eq. (2.9) of the code paper.</p>
 
   <h4>Arguments</h4>
     <em>None</em>
@@ -1665,7 +1668,7 @@ modules which it uses.
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>This subroutine defines the tasks for the individual processes. It uses the number of species and the required orders of the Bessel functions to define the splitting across the MPI processes.</p>
 
   <h4>Arguments</h4>
     <em>None</em>
@@ -1678,7 +1681,7 @@ modules which it uses.
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>This subroutine determines the array of Bessel functions that is used in the T-tensor of Eq. (2.10) of the code paper.</p>
 
   <h4>Arguments</h4>
     <em>None</em>

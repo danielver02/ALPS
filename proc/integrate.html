@@ -97,7 +97,7 @@
           <li id="statements"><i class="fa fa-list-ol"></i>
             <a data-toggle="tooltip"
                data-placement="bottom" data-html="true"
-               title=" 0.6% of total for procedures.">25 statements</a>
+               title=" 0.6% of total for procedures.">28 statements</a>
           </li>
 
         </ul>
@@ -280,6 +280,8 @@ modules which it uses.
     </div>
 
 
+    <p>This function performs the integral in Eq. (2.9) of the code paper, but without
+accounting for the Landau contour integral. It is called by <a>full_integral</a>.</p>
 
 
     <h3>Arguments</h3>
@@ -296,46 +298,46 @@ modules which it uses.
         <tr>
             <td>
               <span class="anchor" id="variable-om~3"></span>
-              double complex
+              double complex,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>om</strong></td>
             <td>
-                
+                <p>Complex wave frequency <script type="math/tex">\omega</script>.</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-nn~3"></span>
-              integer
+              <span class="anchor" id="variable-nn~4"></span>
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>nn</strong></td>
             <td>
-                
+                <p>Order of the Bessel function.</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-mode~3"></span>
-              integer
+              <span class="anchor" id="variable-mode~2"></span>
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>mode</strong></td>
             <td>
-                
+                <p>Index of the entries in the T-tensor of Eq. (2.10).</p>
             </td>
         </tr>
         <tr>
@@ -350,7 +352,7 @@ modules which it uses.
             <td>::</td>
             <td><strong>iparmin</strong></td>
             <td>
-                
+                <p>Minimum limit index of parallel momentum for integration.</p>
             </td>
         </tr>
         <tr>
@@ -365,7 +367,7 @@ modules which it uses.
             <td>::</td>
             <td><strong>iparmax</strong></td>
             <td>
-                
+                <p>Maximum limit index of parallel momentum for integration.</p>
             </td>
         </tr>
     </tbody>
@@ -373,7 +375,7 @@ modules which it uses.
 
       <h3>Return Value
         <small>
-          <span class="anchor" id="variable-integrate~2"></span>
+          <span class="anchor" id="variable-integrate~3"></span>
           doublecomplex
         </small>
       </h3>

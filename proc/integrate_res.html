@@ -97,7 +97,7 @@
           <li id="statements"><i class="fa fa-list-ol"></i>
             <a data-toggle="tooltip"
                data-placement="bottom" data-html="true"
-               title=" 3.7% of total for procedures.">165 statements</a>
+               title=" 4.0% of total for procedures.">182 statements</a>
           </li>
 
         </ul>
@@ -280,6 +280,7 @@ modules which it uses.
     </div>
 
 
+    <p>This function performs the integration near resonances as described in Section 3.1 of the code paper. It is only called if resonances are present in or near the integration domain.</p>
 
 
     <h3>Arguments</h3>
@@ -296,46 +297,46 @@ modules which it uses.
         <tr>
             <td>
               <span class="anchor" id="variable-om~4"></span>
-              double complex
+              double complex,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>om</strong></td>
             <td>
-                
+                <p>Complex wave frequency <script type="math/tex">\omega</script>.</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-nn~4"></span>
-              integer
+              <span class="anchor" id="variable-nn~5"></span>
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>nn</strong></td>
             <td>
-                
+                <p>Order of the Bessel function.</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-mode~4"></span>
-              integer
+              <span class="anchor" id="variable-mode~3"></span>
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>mode</strong></td>
             <td>
-                
+                <p>Index of the entries in the T-tensor of Eq. (2.10).</p>
             </td>
         </tr>
     </tbody>

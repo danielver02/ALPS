@@ -280,6 +280,7 @@ modules which it uses.
     </div>
 
 
+    <p>This function returns the T-tensor according to Eq. (2.10) of the code paper for the case in which it is evaluated at the complex resonance momentum.</p>
 
 
     <h3>Arguments</h3>
@@ -295,62 +296,62 @@ modules which it uses.
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-nn~9"></span>
-              integer
+              <span class="anchor" id="variable-nn~10"></span>
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>nn</strong></td>
             <td>
-                
+                <p>Order of the Bessel function.</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-iperp~10"></span>
-              integer
+              <span class="anchor" id="variable-iperp~14"></span>
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>iperp</strong></td>
             <td>
-                
+                <p>Index to loop over perpendicular momentum.</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-p_res"></span>
-              double complex
+              <span class="anchor" id="variable-p_res~3"></span>
+              double complex,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>p_res</strong></td>
             <td>
-                
+                <p>Complex resonance momentum.</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-mode~8"></span>
-              integer
+              <span class="anchor" id="variable-mode~7"></span>
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>mode</strong></td>
             <td>
-                
+                <p>Index of the entries in the T-tensor of Eq. (2.10).</p>
             </td>
         </tr>
     </tbody>

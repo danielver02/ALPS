@@ -97,7 +97,7 @@
           <li id="statements"><i class="fa fa-list-ol"></i>
             <a data-toggle="tooltip"
                data-placement="bottom" data-html="true"
-               title=" 1.7% of total for procedures.">78 statements</a>
+               title=" 1.8% of total for procedures.">84 statements</a>
           </li>
 
         </ul>
@@ -280,6 +280,8 @@ modules which it uses.
     </div>
 
 
+    <p>This subroutine calculates the relative electric and magnetic field amplitudes, the relative fluctuations in the density and velocity of all species, and the heating rates of the given solution.
+It is based on the calc_eigen routine by Greg Howes and Kris Klein.</p>
 
 
     <h3>Arguments</h3>
@@ -295,17 +297,17 @@ modules which it uses.
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-omega"></span>
-              double complex
+              <span class="anchor" id="variable-omega~2"></span>
+              double complex,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>omega</strong></td>
             <td>
-                
+                <p>Complex wave frequency <script type="math/tex">\omega</script>.</p>
             </td>
         </tr>
         <tr>
@@ -320,7 +322,7 @@ modules which it uses.
             <td>::</td>
             <td><strong>electric</strong></td>
             <td>
-                
+                <p>Relative electric field amplitude (eigenfunction).</p>
             </td>
         </tr>
         <tr>
@@ -335,7 +337,7 @@ modules which it uses.
             <td>::</td>
             <td><strong>magnetic</strong></td>
             <td>
-                
+                <p>Relative magnetic field amplitude (eigenfunction).</p>
             </td>
         </tr>
         <tr>
@@ -350,12 +352,12 @@ modules which it uses.
             <td>::</td>
             <td><strong>vmean</strong></td>
             <td>
-                
+                <p>Relative velocity-fluctuation amplitude (eigenfunction).</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-ds"></span>
+              <span class="anchor" id="variable-ds~2"></span>
               double complex,
             </td>
 <td>intent(out),</td>
@@ -365,12 +367,12 @@ modules which it uses.
             <td>::</td>
             <td><strong>ds</strong></td>
             <td>
-                
+                <p>Relative density-fluctuation amplitude (eigenfunction).</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-ps"></span>
+              <span class="anchor" id="variable-ps~2"></span>
               double precision,
             </td>
 <td>intent(out),</td>
@@ -380,37 +382,37 @@ modules which it uses.
             <td>::</td>
             <td><strong>Ps</strong></td>
             <td>
-                
+                <p>Relative heating rate of a given species.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" id="variable-eigen_l"></span>
-              logical
+              logical,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>eigen_L</strong></td>
             <td>
-                
+                <p>Check whether eigenfunction calculation is requested.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" id="variable-heat_l"></span>
-              logical
+              logical,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>heat_L</strong></td>
             <td>
-                
+                <p>Check whether eigenfunction calculation is requested.</p>
             </td>
         </tr>
     </tbody>
