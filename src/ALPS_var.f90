@@ -260,54 +260,89 @@ module alps_var
   !!\(M_P\), used for integrating near poles (see section 3.1).
 
   integer :: scan_option=1
-  !!!Select case for scans;
-  !!1) consecutive scans along input paths in wavevector space
+  !!!Select case for scans; 
+  !!1) consecutive scans along input paths in wavevector space,  
   !!2) double scans of two selected parameters
 
-  integer :: n_scan=0 !number of wavevector scans.
-  !must be set to 2 for scan_option=2
-  !must be 1 or larger for scan_option=1
-  !n_scan=0 turns off wavevector scans
+  integer :: n_scan=0
+  !!Number of wavevector scans.  
+  !Must be set to 2 for scan_option=2;  
+  !Must be 1 or larger for scan_option=1.  
+  !0 turns off wavevector scans.
 
-  logical, dimension(:), allocatable :: logfit ! Use logarithmic fitting?
+  logical, dimension(:), allocatable :: logfit
+  !! Use logarithmic fitting, (1:nspec).
 
-  logical, dimension(:), allocatable :: usebM ! Use bi-Maxwellian calculation from NHDS?
+  logical, dimension(:), allocatable :: usebM
+  !! Use bi-Maxwellian calculation from NHDS, (1:nspec)
 
-  integer, dimension(:), allocatable ::  bMnmaxs ! Maximum number of n for bi-Maxwellian calculation from NHDS
+  integer, dimension(:), allocatable ::  bMnmaxs
+  !! Maximum number of n for NHDS bi-Maxwellian calculation, (1:nspec).
 
-  double precision, dimension(:), allocatable ::  bMBessel_zeros ! Besser-zero for bi-Maxwellian calculation from NHDS
+  double precision, dimension(:), allocatable ::  bMBessel_zeros
+  !! Bessel-zero for NHDS bi-Maxwellian calculation (1:nspec).
 
-  double precision, dimension(:), allocatable ::  bMbetas ! Species beta for bi-Maxwellian calculation from NHDS
+  double precision, dimension(:), allocatable ::  bMbetas
+  !! Species beta \(\beta_{\parallel,j}\) for
+  !! NHDS bi-Maxwellian calculation (1:nspec).
 
-  double precision, dimension(:), allocatable ::  bMalphas ! Species temperature anisotropy for bi-Maxwellian calculation from NHDS
+  double precision, dimension(:), allocatable ::  bMalphas
+  !! Species temperature anisotropy \(T_{\perp,j}/T_{\parallel,j}\)
+  !! for NHDS bi-Maxwellian calculation.
 
-  double precision, dimension(:), allocatable ::  bMpdrifts ! Species drift momentum for bi-Maxwellian calculation from NHDS
-
+  double precision, dimension(:), allocatable ::  bMpdrifts
+  !! Species drift momentum for NHDS bi-Maxwellian calculation,
+  !! in units of \(m_p v_A\) (1:nspec).
 
   public :: scanner
-     type :: scanner
-        double precision :: range_i       !initial value
-        double precision :: range_f       !final value
-        logical :: log_scan   !T-> log, F-> linear scan
-        logical :: heat_s     !T-> heating calc; F-> no heating
-        logical :: eigen_s    !T-> eigen calc;   F-> no eigen
-        integer :: type_s     !Type of parameter scan
-        integer :: n_out     !Number of steps
-        integer :: n_res      !scan resolution
-        double precision :: diff, diff2 !step size for scanned parameter
-     end type scanner
-     !-=-=-=-=-=-=-=-=-
-     !Defines nature of parameter scans:
-     !     Type: 0 k_0-> k_1
-     !           1 theta_0 -> theta_1
-     !           2 k_fixed angle
-     !     Type: 3 kperp
-     !           4 kpar
-     !-=-=-=-=-=-=-=-=-
-  type (scanner), dimension (:), allocatable :: scan
+  type :: scanner
+     !! Description of wavevector scan behavior.
+     !! Read in from [[alps_io(module):scan_read(subroutine)]].
+     double precision :: range_i
+     !! Initial scan value.
+     double precision :: range_f
+     !! Final scan value.
+     logical :: log_scan
+     !! Use log (T) or linear (F) spacing.
+     logical :: heat_s
+     !! Calculates heating rates if true.
+     logical :: eigen_s    !
+     !! Calculates eigenfunctions if true.     
+     integer :: type_s
+     !!Type of parameter scan;  
+     !!0: Current value of \(\textbf{k}\) to
+     !! \(k_\perp\)=swi and \(k_\parallel \)=swf
+     !!1: \(\theta_0 \rightarrow \theta_1\) at fixed \(|k|\)
+     !! from current value of \(\theta=\atan(k_\perp/k_\parallel)\)
+     !! to swf.
+     !!2: Wavevector scan at fixed angle \(\theta_{k,B}\) to \(|k|\)=swf.
+     !!3: \(k_\perp\) scan with constant \(k_\parallel\).  
+     !!4: \(k_\parallel\) scan with constant \(k_\perp\).  
+     integer :: n_out
+     !Number of output scan values.
+     integer :: n_res
+     !!Resolution between output scan values.
+     double precision :: diff
+     !!step size for first wavevector variation.
+     double precision :: diff2
+     !!step size for second wavevector variation.
+  end type scanner
 
-  double precision :: kperp_last, kpar_last
-  double precision :: kperp_0, kpar_0
+  type (scanner), dimension (:), allocatable :: scan
+  !!Scan parameters for each wavevector scan.
+  !! Read in from [[alps_io(module):scan_read(subroutine)]].
+  
+  double precision :: kperp_last
+  !! Previous value of \(k_\perp\).
+  
+  double precision :: kpar_last
+  !! Previous value of \(k_\parallel\).
+  
+  double precision :: kperp_0
+  !! Current value of \(k_\perp\).
+
+  double precision :: kpar_0
+  !! Current value of \(k_\parallel\).
 
   public :: nproc, iproc, proc0, ierror
   public :: runname, foldername, writeOut
