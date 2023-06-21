@@ -115,7 +115,7 @@ It is based on the calc_eigen routine by Greg Howes and Kris Klein.</p></td></tr
 			   <tr><td><a href='../proc/check_parameters.html'>check_parameters</a></td><td><a href='../module/alps_check.html'>alps_check</a></td><td>Subroutine</td><td><p>Verifies input parameters and distributions.
 </p><a href="../proc/check_parameters.html" class="pull-right"><emph>Read more&hellip;</emph></a></td></tr>
 			   <tr><td><a href='../proc/derivative_f0.html'>derivative_f0</a></td><td><a href='../module/alps_fns.html'>alps_fns</a></td><td>Subroutine</td><td><p>This subroutine calculates the perpendicular and parallel derivatives of the background velocity distribution function f0.</p></td></tr>
-			   <tr><td><a href='../proc/derivative_f0_rel.html'>derivative_f0_rel</a></td><td><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></td><td>Subroutine</td><td></td></tr>
+			   <tr><td><a href='../proc/derivative_f0_rel.html'>derivative_f0_rel</a></td><td><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></td><td>Subroutine</td><td><p>This subroutine calculates the derivatives of the background velocity distribution function f0 for the relativistic calculation.</p></td></tr>
 			   <tr><td><a href='../proc/determine_bessel_array.html'>determine_bessel_array</a></td><td><a href='../module/alps_fns.html'>alps_fns</a></td><td>Subroutine</td><td><p>This subroutine determines the array of Bessel functions that is used in the T-tensor of Eq. (2.10) of the code paper.</p></td></tr>
 			   <tr><td><a href='../proc/determine_jt.html'>determine_JT</a></td><td><a href='../module/alps_analyt.html'>alps_analyt</a></td><td>Subroutine</td><td><p>This subroutine calculates the transposed Jacobian matrix of the fit function with respect to the
 fit parameter array.</p></td></tr>
@@ -123,7 +123,7 @@ fit parameter array.</p></td></tr>
 			   <tr><td><a href='../proc/determine_param_fit.html'>determine_param_fit</a></td><td><a href='../module/alps_analyt.html'>alps_analyt</a></td><td>Subroutine</td><td><p>This is the fitting routine for the hybrid analytic continuation. It determines
 the full field <a href="../module/alps_var.html#variable-param_fit">param_fit</a>.</p></td></tr>
 			   <tr><td><a href='../proc/determine_resonances.html'>determine_resonances</a></td><td><a href='../module/alps_fns.html'>alps_fns</a></td><td>Subroutine</td><td><p>This subroutine determines whether any kinetic resonances are located in the integration domain.</p></td></tr>
-			   <tr><td><a href='../proc/determine_sproc_rel.html'>determine_sproc_rel</a></td><td><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></td><td>Subroutine</td><td></td></tr>
+			   <tr><td><a href='../proc/determine_sproc_rel.html'>determine_sproc_rel</a></td><td><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></td><td>Subroutine</td><td><p>This subroutine determines sproc_rel for the given process.</p></td></tr>
 			   <tr><td><a href='../proc/disp.html'>disp</a></td><td><a href='../module/alps_fns.html'>alps_fns</a></td><td>Function</td><td><p>This function returns the determinant of the dispersion tensor for a given frequency om.</p></td></tr>
 			   <tr><td><a href='../proc/dispfunct.html'>dispfunct</a></td><td><a href='../module/alps_nhds.html'>alps_nhds</a></td><td>Function</td><td><p>Calculates the dispersion function based on the complex error function.</p></td></tr>
 			   <tr><td><a href='../proc/display_credits.html'>display_credits</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Subroutine</td><td><p>Writes the opening credits.</p></td></tr>
@@ -141,7 +141,7 @@ use <a href="../proc/eval_fit.html">eval_fit</a>.</p></td></tr>
 			   <tr><td><a href='../proc/fit_read.html'>fit_read</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Subroutine</td><td><p>Reads in fit parameters for component is.</p></td></tr>
 			   <tr><td><a href='../proc/full_integrate.html'>full_integrate</a></td><td><a href='../module/alps_fns.html'>alps_fns</a></td><td>Function</td><td><p>This function returns the full integral expression according to Eq. (2.9) in the code paper.</p></td></tr>
 			   <tr><td><a href='../proc/funct_g.html'>funct_g</a></td><td><a href='../module/alps_fns.html'>alps_fns</a></td><td>Function</td><td><p>This function returns the function <script type="math/tex">g</script> from Eq. (3.2) of the code paper.</p></td></tr>
-			   <tr><td><a href='../proc/funct_g_rel.html'>funct_g_rel</a></td><td><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></td><td>Function</td><td></td></tr>
+			   <tr><td><a href='../proc/funct_g_rel.html'>funct_g_rel</a></td><td><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></td><td>Function</td><td><p>This function returns the function <script type="math/tex">g</script> from Eq. (3.2) of the code paper for a relativistic calculation.</p></td></tr>
 			   <tr><td><a href='../proc/gamma.html'>Gamma</a></td><td><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></td><td>Function</td><td></td></tr>
 			   <tr><td><a href='../proc/get_indexed_double_namelist_unit.html'>get_indexed_double_namelist_unit</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Subroutine</td><td><p>A version of <a href="../proc/get_indexed_namelist_unit.html">get_indexed_namelist_unit</a>, extended
 to allow for double indexing in order to read in multiple fits
@@ -171,11 +171,11 @@ Only processor 0 calls this routine:</p></td></tr>
 			   <tr><td><a href='../proc/integrate.html'>integrate</a></td><td><a href='../module/alps_fns.html'>alps_fns</a></td><td>Function</td><td><p>This function performs the integral in Eq. (2.9) of the code paper, but without
 accounting for the Landau contour integral. It is called by <a>full_integral</a>.</p></td></tr>
 			   <tr><td><a href='../proc/integrate_res.html'>integrate_res</a></td><td><a href='../module/alps_fns.html'>alps_fns</a></td><td>Function</td><td><p>This function performs the integration near resonances as described in Section 3.1 of the code paper. It is only called if resonances are present in or near the integration domain.</p></td></tr>
-			   <tr><td><a href='../proc/integrate_res_rel.html'>integrate_res_rel</a></td><td><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></td><td>Function</td><td></td></tr>
-			   <tr><td><a href='../proc/integrate_resu_rel.html'>integrate_resU_rel</a></td><td><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></td><td>Function</td><td></td></tr>
+			   <tr><td><a href='../proc/integrate_res_rel.html'>integrate_res_rel</a></td><td><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></td><td>Function</td><td><p>This function performs the integration near resonances as described in Section 3.1 of the code paper for a relativistic calculation. It is only called if resonances are present in or near the integration domain.</p></td></tr>
+			   <tr><td><a href='../proc/integrate_resu_rel.html'>integrate_resU_rel</a></td><td><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></td><td>Function</td><td><p>This function evaluates the integral with the integrand proportional to <script type="math/tex">U</script> in Eq. (2.9) of the code paper for a relativistic calculation.</p></td></tr>
 			   <tr><td><a href='../proc/isnancheck.html'>isnancheck</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Function</td><td><p>Checks if double precision number input is NaN.</p></td></tr>
 			   <tr><td><a href='../proc/landau_integrate.html'>landau_integrate</a></td><td><a href='../module/alps_fns.html'>alps_fns</a></td><td>Function</td><td><p>This function evaluates the Landau contour according to Eqs. (3.8) and (3.9) of the code paper.</p></td></tr>
-			   <tr><td><a href='../proc/landau_integrate_rel.html'>landau_integrate_rel</a></td><td><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></td><td>Function</td><td></td></tr>
+			   <tr><td><a href='../proc/landau_integrate_rel.html'>landau_integrate_rel</a></td><td><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></td><td>Function</td><td><p>This function evaluates the Landau contour according to Eqs. (3.8) and (3.9) of the code paper for a relativistic calculation.</p></td></tr>
 			   <tr><td><a href='../proc/lm_nonlinear_fit.html'>LM_nonlinear_fit</a></td><td><a href='../module/alps_analyt.html'>alps_analyt</a></td><td>Subroutine</td><td><p>This subroutine processes the nonlinear Levenberg-Marquart algorithm and returns
 the one-dimensional array params at a given iperp.
 The variable quality is the sum of the squares of all residuals.</p></td></tr>
@@ -189,15 +189,21 @@ The variable quality is the sum of the squares of all residuals.</p></td></tr>
 FORTRAN function.</p></td></tr>
 			   <tr><td><a href='../proc/pass_distribution.html'>pass_distribution</a></td><td><a href='../module/alps_com.html'>alps_com</a></td><td>Subroutine</td><td><p>Passes distribution functions and associated parameters.</p></td></tr>
 			   <tr><td><a href='../proc/pass_instructions.html'>pass_instructions</a></td><td><a href='../module/alps_com.html'>alps_com</a></td><td>Subroutine</td><td><p>Passes information between processes.</p></td></tr>
-			   <tr><td><a href='../proc/polyharmonic_spline.html'>polyharmonic_spline</a></td><td>interpolation.f90</td><td>Subroutine</td><td><p>This soubroutine interpolates the grid with a polyharmonic thin-plate spline.
+			   <tr><td><a href='../proc/polyharmonic_spline~2.html'>polyharmonic_spline</a></td><td>interpolation.f90</td><td>Subroutine</td><td><p>This soubroutine interpolates the grid with a polyharmonic thin-plate spline.
 This subroutine needs the LUPACK and BLAS libraries to evoke the dgesv subroutine.
 The method uses the Thin Plate Spline.
 We use these resources:
 <a href="http://cseweb.ucsd.edu/~sjb/eccv_tps.pdf">http://cseweb.ucsd.edu/~sjb/eccv_tps.pdf</a>
 <a href="http://www.univie.ac.at/nuhag-php/bibtex/open_files/po94_M%20J%20D%20Powell%2003%2093.pdf">http://www.univie.ac.at/nuhag-php/bibtex/open_files/po94_M%20J%20D%20Powell%2003%2093.pdf</a>
 <a href="http://vision.ucsd.edu/sites/default/files/fulltext(4).pdf">http://vision.ucsd.edu/sites/default/files/fulltext(4).pdf</a></p></td></tr>
-			   <tr><td><a href='../proc/polyharmonic_spline~2.html'>polyharmonic_spline</a></td><td><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></td><td>Subroutine</td><td></td></tr>
-			   <tr><td><a href='../proc/principal_integral_rel.html'>principal_integral_rel</a></td><td><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></td><td>Function</td><td></td></tr>
+			   <tr><td><a href='../proc/polyharmonic_spline.html'>polyharmonic_spline</a></td><td><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></td><td>Subroutine</td><td><p>This soubroutine interpolates the grid with a polyharmonic thin-plate spline.
+This subroutine needs the LUPACK and BLAS libraries to evoke the dgesv subroutine.
+The method uses the Thin Plate Spline.
+We use these resources:
+<a href="http://cseweb.ucsd.edu/~sjb/eccv_tps.pdf">http://cseweb.ucsd.edu/~sjb/eccv_tps.pdf</a>
+<a href="http://www.univie.ac.at/nuhag-php/bibtex/open_files/po94_M%20J%20D%20Powell%2003%2093.pdf">http://www.univie.ac.at/nuhag-php/bibtex/open_files/po94_M%20J%20D%20Powell%2003%2093.pdf</a>
+<a href="http://vision.ucsd.edu/sites/default/files/fulltext(4).pdf">http://vision.ucsd.edu/sites/default/files/fulltext(4).pdf</a></p></td></tr>
+			   <tr><td><a href='../proc/principal_integral_rel.html'>principal_integral_rel</a></td><td><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></td><td>Function</td><td><p>This function performs the integration near resonances as described in Section 3.1 of the code paper for a relativistic calculation. It is only called if resonances are present in or near the integration domain.</p></td></tr>
 			   <tr><td><a href='../proc/read_f0.html'>read_f0</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Subroutine</td><td><p>Subroutine for reading in background distribution function</p></td></tr>
 			   <tr><td><a href='../proc/read_in_params.html'>read_in_params</a></td><td><a href='../program/interpolate.html'>interpolate</a></td><td>Subroutine</td><td><p>This subroutine reads in system parameters input file (namelist) as argument after executable:
  <code>./interpolate input.in</code></p></td></tr>
@@ -632,18 +638,18 @@ is the imaginary unit.</p></td></tr>
 <path fill="none" stroke="#000000" d="M650.53,-754.31C663.8,-758.56 676.32,-765.09 686,-775 744.55,-834.91 662.74,-900.8 722,-960 729.74,-967.73 739.42,-973.06 749.79,-976.68"/>
 <polygon fill="#000000" stroke="#000000" points="748.89,-980.06 759.47,-979.53 750.87,-973.35 748.89,-980.06"/>
 </g>
-<!-- proc~polyharmonic_spline~2 -->
-<g id="call~~graph~~CallGraph_node82" class="node">
-<title>proc~polyharmonic_spline~2</title>
-<g id="a_call~~graph~~CallGraph_node82"><a xlink:href=".././proc/polyharmonic_spline~2.html" xlink:title="alps_fns_rel::polyharmonic_spline">
+<!-- proc~polyharmonic_spline -->
+<g id="call~~graph~~CallGraph_node81" class="node">
+<title>proc~polyharmonic_spline</title>
+<g id="a_call~~graph~~CallGraph_node81"><a xlink:href=".././proc/polyharmonic_spline.html" xlink:title="alps_fns_rel::polyharmonic_spline">
 <polygon fill="#d9534f" stroke="#d9534f" points="927.5,-951 735.5,-951 735.5,-927 927.5,-927 927.5,-951"/>
 <text text-anchor="middle" x="831.5" y="-936.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_fns_rel::polyharmonic_spline</text>
 </a>
 </g>
 </g>
-<!-- proc~derivative_f0_rel&#45;&gt;proc~polyharmonic_spline~2 -->
+<!-- proc~derivative_f0_rel&#45;&gt;proc~polyharmonic_spline -->
 <g id="call~~graph~~CallGraph_edge23" class="edge">
-<title>proc~derivative_f0_rel&#45;&gt;proc~polyharmonic_spline~2</title>
+<title>proc~derivative_f0_rel&#45;&gt;proc~polyharmonic_spline</title>
 <path fill="none" stroke="#000000" d="M650.63,-755.02C663.73,-759.21 676.16,-765.55 686,-775 731.71,-818.91 676.73,-868.63 722,-913 725.49,-916.42 729.35,-919.42 733.46,-922.05"/>
 <polygon fill="#000000" stroke="#000000" points="731.81,-925.13 742.25,-926.94 735.21,-919.01 731.81,-925.13"/>
 </g>
@@ -1811,15 +1817,6 @@ is the imaginary unit.</p></td></tr>
 <path fill="none" stroke="#000000" d="M1126.65,-205.02C1160.65,-211.25 1201.21,-218.67 1231.15,-224.16"/>
 <polygon fill="#000000" stroke="#000000" points="1230.81,-227.65 1241.28,-226.01 1232.07,-220.76 1230.81,-227.65"/>
 </g>
-<!-- proc~polyharmonic_spline -->
-<g id="call~~graph~~CallGraph_node81" class="node">
-<title>proc~polyharmonic_spline</title>
-<g id="a_call~~graph~~CallGraph_node81"><a xlink:href=".././proc/polyharmonic_spline.html" xlink:title="interpolation.f90::polyharmonic_spline">
-<polygon fill="#d9534f" stroke="#d9534f" points="941,-129 722,-129 722,-105 941,-105 941,-129"/>
-<text text-anchor="middle" x="831.5" y="-114.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">interpolation.f90::polyharmonic_spline</text>
-</a>
-</g>
-</g>
 <!-- dgesv -->
 <g id="call~~graph~~CallGraph_node103" class="node">
 <title>dgesv</title>
@@ -1829,14 +1826,23 @@ is the imaginary unit.</p></td></tr>
 <!-- proc~polyharmonic_spline&#45;&gt;dgesv -->
 <g id="call~~graph~~CallGraph_edge120" class="edge">
 <title>proc~polyharmonic_spline&#45;&gt;dgesv</title>
-<path fill="none" stroke="#000000" d="M842.82,-129.35C878.65,-172.21 997.85,-314.84 1042.2,-367.89"/>
-<polygon fill="#000000" stroke="#000000" points="1039.78,-370.46 1048.88,-375.89 1045.15,-365.97 1039.78,-370.46"/>
+<path fill="none" stroke="#000000" d="M837.97,-926.89C854.17,-890.97 903.11,-781.74 941,-690 984.14,-585.57 1032.17,-459.24 1050.9,-409.55"/>
+<polygon fill="#000000" stroke="#000000" points="1054.2,-410.74 1054.44,-400.15 1047.65,-408.28 1054.2,-410.74"/>
+</g>
+<!-- proc~polyharmonic_spline~2 -->
+<g id="call~~graph~~CallGraph_node82" class="node">
+<title>proc~polyharmonic_spline~2</title>
+<g id="a_call~~graph~~CallGraph_node82"><a xlink:href=".././proc/polyharmonic_spline~2.html" xlink:title="interpolation.f90::polyharmonic_spline">
+<polygon fill="#d9534f" stroke="#d9534f" points="941,-129 722,-129 722,-105 941,-105 941,-129"/>
+<text text-anchor="middle" x="831.5" y="-114.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">interpolation.f90::polyharmonic_spline</text>
+</a>
+</g>
 </g>
 <!-- proc~polyharmonic_spline~2&#45;&gt;dgesv -->
 <g id="call~~graph~~CallGraph_edge121" class="edge">
 <title>proc~polyharmonic_spline~2&#45;&gt;dgesv</title>
-<path fill="none" stroke="#000000" d="M837.97,-926.89C854.17,-890.97 903.11,-781.74 941,-690 984.14,-585.57 1032.17,-459.24 1050.9,-409.55"/>
-<polygon fill="#000000" stroke="#000000" points="1054.2,-410.74 1054.44,-400.15 1047.65,-408.28 1054.2,-410.74"/>
+<path fill="none" stroke="#000000" d="M842.82,-129.35C878.65,-172.21 997.85,-314.84 1042.2,-367.89"/>
+<polygon fill="#000000" stroke="#000000" points="1039.78,-370.46 1048.88,-375.89 1045.15,-365.97 1039.78,-370.46"/>
 </g>
 <!-- proc~principal_integral_rel&#45;&gt;proc~funct_g_rel -->
 <g id="call~~graph~~CallGraph_edge122" class="edge">
@@ -2171,9 +2177,9 @@ is the imaginary unit.</p></td></tr>
 <path fill="none" stroke="#000000" d="M601.72,-75C636.88,-75 692.73,-75 740.45,-75"/>
 <polygon fill="#000000" stroke="#000000" points="740.5,-78.5 750.5,-75 740.5,-71.5 740.5,-78.5"/>
 </g>
-<!-- program~interpolate&#45;&gt;proc~polyharmonic_spline -->
+<!-- program~interpolate&#45;&gt;proc~polyharmonic_spline~2 -->
 <g id="call~~graph~~CallGraph_edge162" class="edge">
-<title>program~interpolate&#45;&gt;proc~polyharmonic_spline</title>
+<title>program~interpolate&#45;&gt;proc~polyharmonic_spline~2</title>
 <path fill="none" stroke="#000000" d="M601.72,-80.53C638.07,-86.33 696.52,-95.64 745.24,-103.41"/>
 <polygon fill="#000000" stroke="#000000" points="744.74,-106.87 755.16,-104.99 745.84,-99.96 744.74,-106.87"/>
 </g>

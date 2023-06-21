@@ -97,7 +97,7 @@
           <li id="statements"><i class="fa fa-list-ol"></i>
             <a data-toggle="tooltip"
                data-placement="bottom" data-html="true"
-               title="17.6% of total for modules and submodules.">761 statements</a>
+               title="19.1% of total for modules and submodules.">841 statements</a>
           </li>
 
         </ul>
@@ -165,7 +165,7 @@
       <div id="subs-0" class="panel-collapse collapse">
         <div class="list-group">
             <a class="list-group-item" href="../module/alps_fns_rel.html#proc-derivative_f0_rel">derivative_f0_rel</a>
-            <a class="list-group-item" href="../module/alps_fns_rel.html#proc-polyharmonic_spline~2">polyharmonic_spline</a>
+            <a class="list-group-item" href="../module/alps_fns_rel.html#proc-polyharmonic_spline">polyharmonic_spline</a>
             <a class="list-group-item" href="../module/alps_fns_rel.html#proc-determine_sproc_rel">determine_sproc_rel</a>
             <a class="list-group-item" href="../module/alps_fns_rel.html#proc-cbessj">CBESSJ</a>
         </div>
@@ -185,7 +185,8 @@
     </div>
 
     <div class="col-md-9" id='text'>
-      <hr>
+      <p>This module contains the relativistic numerical functions of ALPS.</p>
+<hr>
 <div class="codehilite"><pre><span></span><code>       FUNCTION  GAMMA(X)            *
 </code></pre></div>
 
@@ -418,7 +419,7 @@ modules which it uses.
       <div id="subs-1" class="panel-collapse collapse">
         <div class="list-group">
             <a class="list-group-item" href="../module/alps_fns_rel.html#proc-derivative_f0_rel">derivative_f0_rel</a>
-            <a class="list-group-item" href="../module/alps_fns_rel.html#proc-polyharmonic_spline~2">polyharmonic_spline</a>
+            <a class="list-group-item" href="../module/alps_fns_rel.html#proc-polyharmonic_spline">polyharmonic_spline</a>
             <a class="list-group-item" href="../module/alps_fns_rel.html#proc-determine_sproc_rel">determine_sproc_rel</a>
             <a class="list-group-item" href="../module/alps_fns_rel.html#proc-cbessj">CBESSJ</a>
         </div>
@@ -449,7 +450,7 @@ modules which it uses.
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>This function performs the integration near resonances as described in Section 3.1 of the code paper for a relativistic calculation. It is only called if resonances are present in or near the integration domain.</p>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
@@ -465,46 +466,46 @@ modules which it uses.
         <tr>
             <td>
               <span class="anchor" ></span>
-              double complex
+              double complex,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>om</strong></td>
             <td>
-
+<p>Complex wave frequency <script type="math/tex">\omega</script>.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>nn</strong></td>
             <td>
-
+<p>Order of the Bessel function.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>mode</strong></td>
             <td>
-
+<p>Index of the entries in the T-tensor of Eq. (2.10).</p>
             </td>
         </tr>
     </tbody>
@@ -524,7 +525,7 @@ modules which it uses.
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>This function evaluates the integral with the integrand proportional to <script type="math/tex">U</script> in Eq. (2.9) of the code paper for a relativistic calculation.</p>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
@@ -540,76 +541,76 @@ modules which it uses.
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>sproc_rel</strong></td>
             <td>
-
+<p>is_rel of the current process.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              double complex
+              double complex,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>om</strong></td>
             <td>
-
+<p>Complex wave frequency <script type="math/tex">\omega</script>.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>nn</strong></td>
             <td>
-
+<p>Order of the Bessel function.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>mode</strong></td>
             <td>
-
+<p>Index of the entries in the T-tensor of Eq. (2.10).</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>igamma</strong></td>
             <td>
-
+<p>Index to loop over <script type="math/tex">\Gamma</script>.</p>
             </td>
         </tr>
     </tbody>
@@ -629,7 +630,7 @@ modules which it uses.
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>This function performs the integration near resonances as described in Section 3.1 of the code paper for a relativistic calculation. It is only called if resonances are present in or near the integration domain.</p>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
@@ -645,106 +646,106 @@ modules which it uses.
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>sproc_rel</strong></td>
             <td>
-
+<p>is_rel of the current process.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              double complex
+              double complex,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>om</strong></td>
             <td>
-
+<p>Complex wave frequency <script type="math/tex">\omega</script>.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>nn</strong></td>
             <td>
-
+<p>Order of the Bessel function.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>mode</strong></td>
             <td>
-
+<p>Index of the entries in the T-tensor of Eq. (2.10).</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>igamma</strong></td>
             <td>
-
+<p>Index to loop over <script type="math/tex">\Gamma</script>.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>ipparbar_res</strong></td>
             <td>
-
+<p>Index of the nearest relativistic parallel momentum to the resonance.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>upperlimit</strong></td>
             <td>
-
+<p>Index of upper limit for integration according to Eq. (3.5).</p>
             </td>
         </tr>
     </tbody>
@@ -764,7 +765,7 @@ modules which it uses.
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>This function returns the function <script type="math/tex">g</script> from Eq. (3.2) of the code paper for a relativistic calculation.</p>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
@@ -780,91 +781,91 @@ modules which it uses.
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>sproc_rel</strong></td>
             <td>
-
+<p>is_rel of the current process.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              double precision
+              double precision,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>pparbar</strong></td>
             <td>
-
+<p>Relativistic parallel momentum.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>igamma</strong></td>
             <td>
-
+<p>Index of <script type="math/tex">\Gamma</script>.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              double complex
+              double complex,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>om</strong></td>
             <td>
-
+<p>Complex wave frequency <script type="math/tex">\omega</script>.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>nn</strong></td>
             <td>
-
+<p>Order of the Bessel function.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>mode</strong></td>
             <td>
-
+<p>Index of the entries in the T-tensor of Eq. (2.10).</p>
             </td>
         </tr>
     </tbody>
@@ -884,7 +885,7 @@ modules which it uses.
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>This function evaluates the Landau contour according to Eqs. (3.8) and (3.9) of the code paper for a relativistic calculation.</p>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
@@ -900,46 +901,46 @@ modules which it uses.
         <tr>
             <td>
               <span class="anchor" ></span>
-              double complex
+              double complex,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>om</strong></td>
             <td>
-
+<p>Complex wave frequency <script type="math/tex">\omega</script>.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>nn</strong></td>
             <td>
-
+<p>Order of the Bessel function.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>mode</strong></td>
             <td>
-
+<p>Index of the entries in the T-tensor of Eq. (2.10).</p>
             </td>
         </tr>
     </tbody>
@@ -1564,7 +1565,7 @@ modules which it uses.
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>This subroutine calculates the derivatives of the background velocity distribution function f0 for the relativistic calculation.</p>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
@@ -1580,31 +1581,31 @@ modules which it uses.
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>is</strong></td>
             <td>
-
+<p>Index of particle species.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>is_rel</strong></td>
             <td>
-
+<p>Index for relativistic species (if any).</p>
             </td>
         </tr>
     </tbody>
@@ -1615,11 +1616,17 @@ modules which it uses.
   </div>
 
               <div class="panel panel-default">
-    <div class="panel-heading codesum"><span class="anchor" id="proc-polyharmonic_spline~2"></span><h3>public  subroutine <a href='../proc/polyharmonic_spline~2.html'>polyharmonic_spline</a>(grid_coarse, gamma_coarse, pparbar_coarse, n_coarse, gamma_rel, pparbar, ngamma, npparbar, smoothing, f0_rel, is_rel, nspec_rel)  
+    <div class="panel-heading codesum"><span class="anchor" id="proc-polyharmonic_spline"></span><h3>public  subroutine <a href='../proc/polyharmonic_spline.html'>polyharmonic_spline</a>(grid_coarse, gamma_coarse, pparbar_coarse, n_coarse, gamma_rel, pparbar, ngamma, npparbar, smoothing, f0_rel, is_rel, nspec_rel)  
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>This soubroutine interpolates the grid with a polyharmonic thin-plate spline.
+This subroutine needs the LUPACK and BLAS libraries to evoke the dgesv subroutine.
+The method uses the Thin Plate Spline.
+We use these resources:
+<a href="http://cseweb.ucsd.edu/~sjb/eccv_tps.pdf">http://cseweb.ucsd.edu/~sjb/eccv_tps.pdf</a>
+<a href="http://www.univie.ac.at/nuhag-php/bibtex/open_files/po94_M%20J%20D%20Powell%2003%2093.pdf">http://www.univie.ac.at/nuhag-php/bibtex/open_files/po94_M%20J%20D%20Powell%2003%2093.pdf</a>
+<a href="http://vision.ucsd.edu/sites/default/files/fulltext(4).pdf">http://vision.ucsd.edu/sites/default/files/fulltext(4).pdf</a></p>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
@@ -1635,151 +1642,151 @@ modules which it uses.
         <tr>
             <td>
               <span class="anchor" ></span>
-              double precision
+              double precision,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>grid_coarse</strong>(n_coarse)</td>
             <td>
-
+<p>Coarse input grid for interpolation.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              double precision
+              double precision,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>gamma_coarse</strong>(n_coarse)</td>
             <td>
-
+<p>Coordinates of <script type="math/tex">\Gamma</script> on coarse grid.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              double precision
+              double precision,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>pparbar_coarse</strong>(n_coarse)</td>
             <td>
-
+<p>Coordinates of relativistic parallel momentum on coarse grid.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>n_coarse</strong></td>
             <td>
-
+<p>Number of entries in coarse grid.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              double precision
+              double precision,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>gamma_rel</strong>(nspec_rel,0:ngamma,0:npparbar)</td>
             <td>
-
+<p>Coordinates of <script type="math/tex">\Gamma</script> on fine grid.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              double precision
+              double precision,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>pparbar</strong>(nspec_rel,0:ngamma,0:npparbar)</td>
             <td>
-
+<p>Coordinates of relativistic parallel momentum on fine grid.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>ngamma</strong></td>
             <td>
-
+<p>Number of <script type="math/tex">\Gamma</script> steps on fine output grid.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>npparbar</strong></td>
             <td>
-
+<p>Number of parallel momentum steps on fine output grid.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              double precision
+              double precision,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>smoothing</strong></td>
             <td>
-
+<p>Smoothing parameter for spline interpolation.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              double precision
+              double precision,
             </td>
-<td></td>
+<td>intent(out)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>f0_rel</strong>(nspec_rel,0:ngamma,0:npparbar)</td>
             <td>
-
+<p>Fine output grid after interpolation.</p>
             </td>
         </tr>
         <tr>
@@ -1794,7 +1801,7 @@ modules which it uses.
             <td>::</td>
             <td><strong>is_rel</strong></td>
             <td>
-
+<p>Index for relativistic species (if any).</p>
             </td>
         </tr>
         <tr>
@@ -1809,7 +1816,7 @@ modules which it uses.
             <td>::</td>
             <td><strong>nspec_rel</strong></td>
             <td>
-
+<p>Number of relativistic species.</p>
             </td>
         </tr>
     </tbody>
@@ -1824,7 +1831,7 @@ modules which it uses.
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>This subroutine determines sproc_rel for the given process.</p>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
@@ -1840,16 +1847,16 @@ modules which it uses.
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(out)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>sproc_rel</strong></td>
             <td>
-
+<p>is_rel of the current process.</p>
             </td>
         </tr>
     </tbody>

@@ -97,12 +97,11 @@
           <li id="statements"><i class="fa fa-list-ol"></i>
             <a data-toggle="tooltip"
                data-placement="bottom" data-html="true"
-               title=" 1.2% of total for procedures.">54 statements</a>
+               title=" 1.3% of total for procedures.">60 statements</a>
           </li>
 
         </ul>
         <ol class="breadcrumb in-well text-right">
-              <li><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></li>
           <li class="active">polyharmonic_spline</li>
         </ol>
       </div>
@@ -146,10 +145,17 @@
     </div>
     
     <div class="col-md-9" id='text'>
-    <h2>public  subroutine polyharmonic_spline(grid_coarse, gamma_coarse, pparbar_coarse, n_coarse, gamma_rel, pparbar, ngamma, npparbar, smoothing, f0_rel, is_rel, nspec_rel)  
+    <h2> subroutine polyharmonic_spline(grid_coarse, pperp_coarse, ppar_coarse, n_coarse, pperp, ppar, nperp, npar, smoothing, grid_fine)  
 </h2>
     
 
+    <p>This soubroutine interpolates the grid with a polyharmonic thin-plate spline.
+This subroutine needs the LUPACK and BLAS libraries to evoke the dgesv subroutine.
+The method uses the Thin Plate Spline.
+We use these resources:
+<a href="http://cseweb.ucsd.edu/~sjb/eccv_tps.pdf">http://cseweb.ucsd.edu/~sjb/eccv_tps.pdf</a>
+<a href="http://www.univie.ac.at/nuhag-php/bibtex/open_files/po94_M%20J%20D%20Powell%2003%2093.pdf">http://www.univie.ac.at/nuhag-php/bibtex/open_files/po94_M%20J%20D%20Powell%2003%2093.pdf</a>
+<a href="http://vision.ucsd.edu/sites/default/files/fulltext(4).pdf">http://vision.ucsd.edu/sites/default/files/fulltext(4).pdf</a></p>
 
 
     <h3>Arguments</h3>
@@ -165,182 +171,152 @@
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-grid_coarse~3"></span>
-              double precision
+              <span class="anchor" id="variable-grid_coarse~4"></span>
+              double precision,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>grid_coarse</strong>(n_coarse)</td>
             <td>
-                
+                <p>Coarse input grid for interpolation.</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-gamma_coarse"></span>
-              double precision
+              <span class="anchor" id="variable-pperp_coarse~2"></span>
+              double precision,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
-            <td><strong>gamma_coarse</strong>(n_coarse)</td>
+            <td><strong>pperp_coarse</strong>(n_coarse)</td>
             <td>
-                
+                <p>Coordinates of perpendicular momentum on coarse grid.</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-pparbar_coarse"></span>
-              double precision
+              <span class="anchor" id="variable-ppar_coarse~2"></span>
+              double precision,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
-            <td><strong>pparbar_coarse</strong>(n_coarse)</td>
+            <td><strong>ppar_coarse</strong>(n_coarse)</td>
             <td>
-                
+                <p>Coordinates of parallel momentum on coarse grid.</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-n_coarse~3"></span>
-              integer
+              <span class="anchor" id="variable-n_coarse~4"></span>
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>n_coarse</strong></td>
             <td>
-                
+                <p>Number of entries in coarse grid.</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-gamma_rel~2"></span>
-              double precision
+              <span class="anchor" id="variable-pperp~3"></span>
+              double precision,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
-            <td><strong>gamma_rel</strong>(nspec_rel,0:ngamma,0:npparbar)</td>
+            <td><strong>pperp</strong>(0:nperp,0:npar)</td>
             <td>
-                
+                <p>Coordinates of perpendicular momentum on fine grid.</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-pparbar~3"></span>
-              double precision
+              <span class="anchor" id="variable-ppar~4"></span>
+              double precision,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
-            <td><strong>pparbar</strong>(nspec_rel,0:ngamma,0:npparbar)</td>
+            <td><strong>ppar</strong>(0:nperp,0:npar)</td>
             <td>
-                
+                <p>Coordinates of parallel momentum on fine grid.</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-ngamma~2"></span>
-              integer
+              <span class="anchor" id="variable-nperp~4"></span>
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
-            <td><strong>ngamma</strong></td>
+            <td><strong>nperp</strong></td>
             <td>
-                
+                <p>Number of perpendicular steps on fine output grid.</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-npparbar~2"></span>
-              integer
+              <span class="anchor" id="variable-npar~5"></span>
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
-            <td><strong>npparbar</strong></td>
+            <td><strong>npar</strong></td>
             <td>
-                
+                <p>Number of parallel steps on fine output grid.</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-smoothing~3"></span>
-              double precision
+              <span class="anchor" id="variable-smoothing~4"></span>
+              double precision,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>smoothing</strong></td>
             <td>
-                
+                <p>Smoothing parameter for spline interpolation.</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-f0_rel~2"></span>
-              double precision
+              <span class="anchor" id="variable-grid_fine~3"></span>
+              double precision,
             </td>
-<td></td>
+<td>intent(out)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
-            <td><strong>f0_rel</strong>(nspec_rel,0:ngamma,0:npparbar)</td>
+            <td><strong>grid_fine</strong>(0:nperp,0:npar)</td>
             <td>
-                
-            </td>
-        </tr>
-        <tr>
-            <td>
-              <span class="anchor" id="variable-is_rel~9"></span>
-              integer
-            </td>
-<td></td>
-              <td></td>            <td>
-              
-            </td>
-            <td>::</td>
-            <td><strong>is_rel</strong></td>
-            <td>
-                
-            </td>
-        </tr>
-        <tr>
-            <td>
-              <span class="anchor" id="variable-nspec_rel~3"></span>
-              integer
-            </td>
-<td></td>
-              <td></td>            <td>
-              
-            </td>
-            <td>::</td>
-            <td><strong>nspec_rel</strong></td>
-            <td>
-                
+                <p>Fine output grid after interpolation.</p>
             </td>
         </tr>
     </tbody>
@@ -358,28 +334,28 @@
 <!-- Generated by graphviz version 2.43.0 (0)
  -->
 <!-- Title: proc~~polyharmonic_spline~2~~CallsGraph Pages: 1 -->
-<svg id="procpolyharmonic_spline2CallsGraph" width="290pt" height="32pt"
- viewBox="0.00 0.00 290.00 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg id="procpolyharmonic_spline2CallsGraph" width="317pt" height="32pt"
+ viewBox="0.00 0.00 317.00 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <g id="proc~~polyharmonic_spline~2~~CallsGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
 <title>proc~~polyharmonic_spline~2~~CallsGraph</title>
-<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 286,-28 286,4 -4,4"/>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 313,-28 313,4 -4,4"/>
 <!-- proc~polyharmonic_spline~2 -->
 <g id="proc~~polyharmonic_spline~2~~CallsGraph_node1" class="node">
 <title>proc~polyharmonic_spline~2</title>
-<polygon fill="none" stroke="black" points="192,-24 0,-24 0,0 192,0 192,-24"/>
-<text text-anchor="middle" x="96" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">alps_fns_rel::polyharmonic_spline</text>
+<polygon fill="none" stroke="black" points="219,-24 0,-24 0,0 219,0 219,-24"/>
+<text text-anchor="middle" x="109.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">interpolation.f90::polyharmonic_spline</text>
 </g>
 <!-- dgesv -->
 <g id="proc~~polyharmonic_spline~2~~CallsGraph_node2" class="node">
 <title>dgesv</title>
-<polygon fill="#777777" stroke="#777777" points="282,-24 228,-24 228,0 282,0 282,-24"/>
-<text text-anchor="middle" x="255" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">dgesv</text>
+<polygon fill="#777777" stroke="#777777" points="309,-24 255,-24 255,0 309,0 309,-24"/>
+<text text-anchor="middle" x="282" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">dgesv</text>
 </g>
 <!-- proc~polyharmonic_spline~2&#45;&gt;dgesv -->
 <g id="proc~~polyharmonic_spline~2~~CallsGraph_edge1" class="edge">
 <title>proc~polyharmonic_spline~2&#45;&gt;dgesv</title>
-<path fill="none" stroke="#000000" d="M192.4,-12C201.32,-12 209.93,-12 217.75,-12"/>
-<polygon fill="#000000" stroke="#000000" points="217.86,-15.5 227.86,-12 217.86,-8.5 217.86,-15.5"/>
+<path fill="none" stroke="#000000" d="M219.45,-12C228.42,-12 237.01,-12 244.78,-12"/>
+<polygon fill="#000000" stroke="#000000" points="244.83,-15.5 254.83,-12 244.83,-8.5 244.83,-15.5"/>
 </g>
 </g>
 </svg>
@@ -467,69 +443,35 @@ implementation in a submodule of an interface in a parent module.
 <!-- Generated by graphviz version 2.43.0 (0)
  -->
 <!-- Title: proc~~polyharmonic_spline~2~~CalledByGraph Pages: 1 -->
-<svg id="procpolyharmonic_spline2CalledByGraph" width="641pt" height="31pt"
- viewBox="0.00 0.00 641.00 30.94" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<g id="proc~~polyharmonic_spline~2~~CalledByGraph" class="graph" transform="scale(1.03 1.03) rotate(0) translate(4 28)">
+<svg id="procpolyharmonic_spline2CalledByGraph" width="334pt" height="32pt"
+ viewBox="0.00 0.00 334.00 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~polyharmonic_spline~2~~CalledByGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
 <title>proc~~polyharmonic_spline~2~~CalledByGraph</title>
-<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 659,-28 659,4 -4,4"/>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 330,-28 330,4 -4,4"/>
 <!-- proc~polyharmonic_spline~2 -->
 <g id="proc~~polyharmonic_spline~2~~CalledByGraph_node1" class="node">
 <title>proc~polyharmonic_spline~2</title>
-<polygon fill="none" stroke="black" points="655,-24 463,-24 463,0 655,0 655,-24"/>
-<text text-anchor="middle" x="559" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">alps_fns_rel::polyharmonic_spline</text>
+<polygon fill="none" stroke="black" points="326,-24 107,-24 107,0 326,0 326,-24"/>
+<text text-anchor="middle" x="216.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">interpolation.f90::polyharmonic_spline</text>
 </g>
-<!-- proc~derivative_f0_rel -->
+<!-- program~interpolate -->
 <g id="proc~~polyharmonic_spline~2~~CalledByGraph_node2" class="node">
-<title>proc~derivative_f0_rel</title>
-<g id="a_proc~~polyharmonic_spline~2~~CalledByGraph_node2"><a xlink:href=".././proc/derivative_f0_rel.html" xlink:title="alps_fns_rel::derivative_f0_rel">
-<polygon fill="#d9534f" stroke="#d9534f" points="427,-24 258,-24 258,0 427,0 427,-24"/>
-<text text-anchor="middle" x="342.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_fns_rel::derivative_f0_rel</text>
+<title>program~interpolate</title>
+<g id="a_proc~~polyharmonic_spline~2~~CalledByGraph_node2"><a xlink:href=".././program/interpolate.html" xlink:title="interpolate">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="71,-24 0,-24 0,0 71,0 71,-24"/>
+<text text-anchor="middle" x="35.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">interpolate</text>
 </a>
 </g>
 </g>
-<!-- proc~derivative_f0_rel&#45;&gt;proc~polyharmonic_spline~2 -->
+<!-- program~interpolate&#45;&gt;proc~polyharmonic_spline~2 -->
 <g id="proc~~polyharmonic_spline~2~~CalledByGraph_edge1" class="edge">
-<title>proc~derivative_f0_rel&#45;&gt;proc~polyharmonic_spline~2</title>
-<path fill="none" stroke="#000000" d="M427.05,-12C435.5,-12 444.16,-12 452.81,-12"/>
-<polygon fill="#000000" stroke="#000000" points="452.93,-15.5 462.93,-12 452.93,-8.5 452.93,-15.5"/>
-</g>
-<!-- proc~derivative_f0 -->
-<g id="proc~~polyharmonic_spline~2~~CalledByGraph_node3" class="node">
-<title>proc~derivative_f0</title>
-<g id="a_proc~~polyharmonic_spline~2~~CalledByGraph_node3"><a xlink:href=".././proc/derivative_f0.html" xlink:title="alps_fns::derivative_f0">
-<polygon fill="#d9534f" stroke="#d9534f" points="222,-24 90,-24 90,0 222,0 222,-24"/>
-<text text-anchor="middle" x="156" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_fns::derivative_f0</text>
-</a>
-</g>
-</g>
-<!-- proc~derivative_f0&#45;&gt;proc~derivative_f0_rel -->
-<g id="proc~~polyharmonic_spline~2~~CalledByGraph_edge2" class="edge">
-<title>proc~derivative_f0&#45;&gt;proc~derivative_f0_rel</title>
-<path fill="none" stroke="#000000" d="M222.05,-12C230.4,-12 239.08,-12 247.77,-12"/>
-<polygon fill="#000000" stroke="#000000" points="247.97,-15.5 257.97,-12 247.97,-8.5 247.97,-15.5"/>
-</g>
-<!-- program~alps -->
-<g id="proc~~polyharmonic_spline~2~~CalledByGraph_node4" class="node">
-<title>program~alps</title>
-<g id="a_proc~~polyharmonic_spline~2~~CalledByGraph_node4"><a xlink:href=".././program/alps.html" xlink:title="alps">
-<polygon fill="#f0ad4e" stroke="#f0ad4e" points="54,-24 0,-24 0,0 54,0 54,-24"/>
-<text text-anchor="middle" x="27" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps</text>
-</a>
-</g>
-</g>
-<!-- program~alps&#45;&gt;proc~derivative_f0 -->
-<g id="proc~~polyharmonic_spline~2~~CalledByGraph_edge3" class="edge">
-<title>program~alps&#45;&gt;proc~derivative_f0</title>
-<path fill="none" stroke="#000000" d="M54.01,-12C61.73,-12 70.62,-12 79.84,-12"/>
-<polygon fill="#000000" stroke="#000000" points="79.94,-15.5 89.94,-12 79.94,-8.5 79.94,-15.5"/>
+<title>program~interpolate&#45;&gt;proc~polyharmonic_spline~2</title>
+<path fill="none" stroke="#000000" d="M71.01,-12C78.85,-12 87.6,-12 96.81,-12"/>
+<polygon fill="#000000" stroke="#000000" points="96.97,-15.5 106.97,-12 96.97,-8.5 96.97,-15.5"/>
 </g>
 </g>
 </svg>
-</div>                <script>
-                  var panprocpolyharmonic_spline2CalledByGraph = svgPanZoom('#procpolyharmonic_spline2CalledByGraph',
-                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
-                  );
-                </script>        <div><a type="button" class="graph-help" data-toggle="modal" href="#graph-help-text">Help</a></div>
+</div>        <div><a type="button" class="graph-help" data-toggle="modal" href="#graph-help-text">Help</a></div>
           <div class="modal fade" id="graph-help-text" tabindex="-1" role="dialog">
             <div class="modal-dialog modal-lg" role="document">
               <div class="modal-content">
