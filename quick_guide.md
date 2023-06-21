@@ -1,9 +1,5 @@
 # Quick Guide
 
-lorem $\sqrt{3x-1}+(1+x)^2$ ipsum
-
-$$ x = {-b \pm \sqrt{b^2-4ac} \over 2a} $$
-
 This is a quick guide that gives a reference for the key parameters used by ALPS.
 
 ## Namelists in input files.
@@ -191,16 +187,22 @@ $$F_{\kappa}(\hat{p}_\parallel)= u_1[1+u_2(\hat{p}_\parallel-u_3)^2+y \hat{p}_\p
 
 3. Juettner with $p_\perp,p_\parallel$,  
 $$F_{J}(\hat{p}_\perp,\hat{p}_\parallel)=
-u_1 \mathrm{exp}[-u_2].$$
+u_1 \mathrm{exp}[-u_2\sqrt{1+\frac{\hat{p}^2_\perp+(\hat{p}^2_\parallel-u_3)^2 v_A^2}{m_j^2 c^2}}].$$
 
 4. Juettner with variable $\Gamma$, constant $\bar{p}_\parallel$,  
 $$F_{J}(\Gamma)= u_1 \mathrm{exp}[-y \Gamma].$$
 
 5. Juettner with $p_\perp,p_\parallel$; variable $\bar{p}_\parallel$,  
-$$F_{\kappa}()= .$$
+$$F_{\kappa}(\hat{p}_\perp,\hat{p}_\parallel)=
+u_1\mathrm{exp}[-y \hat{p}_\perp]
+\mathrm{exp}[-u_2*(\hat{p}_\parallel+u_3)^2]
+.$$
 
 6. Bi-Moyal distribution  
-$$F_{\kappa}()= .$$
+$$F_{\kappa}(\hat{p}_\perp,\hat{p}_\parallel)=
+u_1 \mathrm{exp}[0.5 (y u_4 \hat{p}^2_perp +
+u_2 (\hat{p}_\parallel -u_3)^2 -
+\mathrm{exp}(y u_4 \hat{p}^2_perp + u_2 (\hat{p}_\parallel-u_3)^2) )].$$
 
 **`fit_1`-`fit_5`**  
 Fit parameters, $u_1$-$u_5$, defined in the above equations for each of the types of fit functions.
