@@ -322,9 +322,9 @@ module alps_var
      !Number of output scan values.
      integer :: n_res
      !!Resolution between output scan values.
-     double precision :: diff, diff2
+     double precision :: diff
      !!step size for first wavevector variation.
-     double precision :: diff, diff2
+     double precision :: diff2
      !!step size for second wavevector variation.
   end type scanner
 
