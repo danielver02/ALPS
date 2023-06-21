@@ -214,28 +214,55 @@ module alps_var
   !!Susceptibility Tensor (1:nspec,1:3,1:3).
 
   double precision, dimension(:,:), allocatable :: bessel_array
-  !! Array of Bessel functions; (nlim(1):nlim(2)+1,0:nperp)
+  !! Array of Bessel functions; (nlim(1):nlim(2)+1,0:nperp).
+
+  !Fit Parameters for Hybrid-Analytical Continuation Method:
+  integer, dimension(:), allocatable :: n_fits
+  !!Number of fitted functions, (1:nspec)
+
+  integer, dimension(:,:), allocatable :: fit_type
+  !! Type of analytic function to be fit, (1:nspec,1:maxval(nfits));
+  !! 1) Maxwellian,
+  !! 2) Kappa,
+  !! 3) Juettner with \(p_\perp,p_\parallel\),
+  !! 4) Juettner with \(\Gamma,\bar{p}_\parallel\), constant \(\bar{p}_\parallel\),
+  !! 5) Juettner with \(p_\perp,p_\parallel\); variable \(\bar{p}_\parallel\),
+  !! 6) Bi-Moyal distribution.
   
-  !Fit Parameters for Hybrid-Analytical Continuation Method
-  integer, dimension(:), allocatable :: n_fits !number of fitted functions, per species
-  integer, dimension(:,:), allocatable :: fit_type !type of analytic function to be fit
-  !fit_type(1:nspec,1:maxval(nfits))
-  integer :: maxsteps_fit=500 !maximum number of fitting iterations
-  double precision :: lambda_initial_fit=1.d0 !Inital Levenberg-Marquardt damping parameter
-  double precision :: lambdafac_fit=1.d1 !Adjustment factor for Levenberg-Marquardt damping parameter
-  double precision :: epsilon_fit=1.d-8 !Convergence for fit
-  !Fit output
-  !param_fit(1:nspec,nperp,4,maxval(n_fits))
+  integer :: maxsteps_fit=500
+  !!Maximum number of fitting iterations.
+  
+  double precision :: lambda_initial_fit=1.d0
+  !!Inital Levenberg-Marquardt damping parameter.
+  
+  double precision :: lambdafac_fit=1.d1
+  !!Adjustment factor for Levenberg-Marquardt damping parameter.
+  
+  double precision :: epsilon_fit=1.d-8
+  !!Convergence for Levenberg-Marquardt fit.
+
+  !Fit output:
   double precision, dimension(:,:,:,:), allocatable :: param_fit
+  !!Fit parameters, (1:nspec,0:nperp,4,maxval(n_fits)).
+  
   double precision, dimension(:,:), allocatable :: perp_correction
-  logical :: fit_check=.true. !T-> output fitted functions to ASCII file for each species
+  !!This parameter, \(y\) in Eqn. B1, compensates for the strong
+  !! \(p_\perp\) dependence of \(u_1\), making the fit more reliable.
+  
+  logical :: fit_check=.true.
+  !!If true, output fitted functions to ASCII file for each species.
 
-  logical :: determine_minima=.true. ! after map search, determine minima and refine?
-  integer :: n_resonance_interval=100 ! how many steps should be used to integrate around the resonance
+  logical :: determine_minima=.true.
+  !!If true, after map search, determine minima and refine solutions.
 
-  integer :: scan_option=1 !select case for scans.
-  !1: consecutive scans along input paths in wavevector space
-  !2: double scans of two selected parameters
+  integer :: n_resonance_interval=100
+  !! Mow many steps should be used to integrate around the resonance,
+  !!\(M_P\), used for integrating near poles (see section 3.1).
+
+  integer :: scan_option=1
+  !!!Select case for scans;
+  !!1) consecutive scans along input paths in wavevector space
+  !!2) double scans of two selected parameters
 
   integer :: n_scan=0 !number of wavevector scans.
   !must be set to 2 for scan_option=2
