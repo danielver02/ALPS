@@ -97,7 +97,7 @@
           <li id="statements"><i class="fa fa-list-ol"></i>
             <a data-toggle="tooltip"
                data-placement="bottom" data-html="true"
-               title="<p>100.0% of total for derived types.</p>Including implementation: 11 statements, 100.0% of total for derived types.">11 statements</a>
+               title="<p>100.0% of total for derived types.</p>Including implementation: 12 statements, 100.0% of total for derived types.">12 statements</a>
           </li>
 
         </ul>
@@ -168,7 +168,8 @@
     
     <div class="col-md-9" id='text'>
       <h2>type, public :: scanner</h2>
-    
+    <p>Description of wavevector scan behavior.
+Read in from <a href="../module/alps_io.html#proc-scan_read">scan_read</a>.</p>
     <br>
 
     <section class="visible-xs visible-sm hidden-md">
@@ -244,7 +245,7 @@
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Initial scan value.</p>
             </td>
         </tr>
         <tr>
@@ -261,7 +262,7 @@
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Final scan value.</p>
             </td>
         </tr>
         <tr>
@@ -278,7 +279,7 @@
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Use log (T) or linear (F) spacing.</p>
             </td>
         </tr>
         <tr>
@@ -295,7 +296,7 @@
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Calculates heating rates if true.</p>
             </td>
         </tr>
         <tr>
@@ -312,7 +313,7 @@
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Calculates eigenfunctions if true.     </p>
             </td>
         </tr>
         <tr>
@@ -329,7 +330,15 @@
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Type of parameter scan;<br>
+0: Current value of <script type="math/tex">\textbf{k}</script> to
+ <script type="math/tex">k_\perp</script>=swi and <script type="math/tex">k_\parallel </script>=swf
+1: <script type="math/tex">\theta_0 \rightarrow \theta_1</script> at fixed <script type="math/tex">|k|</script>
+ from current value of <script type="math/tex">\theta=\atan(k_\perp/k_\parallel)</script>
+ to swf.
+2: Wavevector scan at fixed angle <script type="math/tex">\theta_{k,B}</script> to <script type="math/tex">|k|</script>=swf.
+3: <script type="math/tex">k_\perp</script> scan with constant <script type="math/tex">k_\parallel</script>.<br>
+4: <script type="math/tex">k_\parallel</script> scan with constant <script type="math/tex">k_\perp</script>.  </p>
             </td>
         </tr>
         <tr>
@@ -363,7 +372,7 @@
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Resolution between output scan values.</p>
             </td>
         </tr>
         <tr>
@@ -380,7 +389,7 @@
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>step size for first wavevector variation.</p>
             </td>
         </tr>
         <tr>
@@ -397,7 +406,7 @@
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>step size for second wavevector variation.</p>
             </td>
         </tr>
     </tbody>
