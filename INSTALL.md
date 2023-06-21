@@ -1,4 +1,4 @@
-# A  L  P  S  Arbitrary Linear Plasma Solver
+# A  L  P  S: The Arbitrary Linear Plasma Solver
 
 These are the install instructions for the ALPS code: the Arbitrary Linear
 Plasma Solver.
