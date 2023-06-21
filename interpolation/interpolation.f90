@@ -17,27 +17,140 @@
 !===============================================================================
 
 program interpolate
+  !! This program includes the interpolation routine used by ALPS to fill a grid in momentum space.
+  !! It is based on the polyharmonic spline algorithm as described in the ALPS code paper.
 implicit none
 
-double precision, allocatable, dimension (:) :: grid_coarse,pperp_coarse,ppar_coarse
-double precision, allocatable, dimension (:,:) :: grid_fine,pperp,ppar
-double precision :: smoothing,pperp_min,pperp_max,ppar_min,ppar_max,threshold
-double precision :: mult_pperp,mult_ppar,mult_f
-double precision :: r_pperp,r_ppar,r_f,pperp_max_set,pperp_min_set,ppar_max_set,ppar_min_set
+double precision, allocatable, dimension (:) :: grid_coarse
+!! Coarse input grid for interpolation.
+!! (1:n_coarse)
 
-integer :: nperp,npar,n_coarse,mode
-integer :: i,j,io_error,status_read,i_coarse
-character(LEN=256) :: filename,output_file
-logical :: out_to_file,do_normalize
+double precision, allocatable, dimension (:) :: pperp_coarse
+!! Coordinates of perpendicular momentum on coarse grid.
+!! (1:n_coarse)
 
-!I/O values for namelist
-  integer :: unit
-  integer, parameter :: stdout_unit=6
-  integer, save :: input_unit_no, error_unit_no=stdout_unit
+double precision, allocatable, dimension (:) :: ppar_coarse
+!! Coordinates of parallel momentum on coarse grid.
+!! (1:n_coarse)
 
+double precision, allocatable, dimension (:,:) :: grid_fine
+!! Fine output grid after interpolation.
+!! (0:nperp,0:npar)
 
-!string for parameter input file
-character(50) :: runname
+double precision, allocatable, dimension (:,:) :: pperp
+!! Coordinates of perpendicular momentum on fine output grid.
+!! (0:nperp,0:npar)
+
+double precision, allocatable, dimension (:,:) :: ppar
+!! Coordinates of parallel momentum on fine output grid.
+!! (0:nperp,0:npar)
+
+double precision :: smoothing
+!! Smoothing parameter for spline interpolation.
+
+double precision :: pperp_min
+!! Minimum perpendicuar momentum.
+
+double precision :: pperp_max
+!! Maximum perpendicular momentum.
+
+double precision :: ppar_min
+!! Minimum parallel momentum.
+
+double precision :: ppar_max
+!! Maximum parallel momentum.
+
+double precision :: threshold
+!! Lower treshold for f0-values (coarse grid) to be included.
+
+double precision :: mult_pperp
+!! Scaling factor for perpendicular momentum.
+
+double precision :: mult_ppar
+!! Scaling factor for parallel momentum.
+
+double precision :: mult_f
+!! Scaling factor for f0.
+
+double precision :: r_pperp
+!! Read-in variable for perpendicular momentum.
+
+double precision :: r_ppar
+!! Read-in variable for parallel momentum.
+
+double precision :: r_f
+!! Read-in variable for f0.
+
+double precision :: pperp_max_set
+!! Forced maximum perpendicular momentum for output.
+
+double precision :: pperp_min_set
+!! Forced minimum perpendicular momentum for output.
+
+double precision :: ppar_max_set
+!! Forced maximum parallel momentum for output.
+
+double precision :: ppar_min_set
+!! Forced minimum perpendicular momentum for output.
+
+integer :: nperp
+!! Number of perpendicular steps on fine output grid.
+
+integer :: npar
+!! Number of parallel steps on fine output grid.
+
+integer :: n_coarse
+!! Number of entries in coarse grid.
+
+integer :: mode
+!! Format of input grid (order pperp/ppar).
+
+integer :: i
+!! Index for loops.
+
+integer :: j
+!! Index for loops.
+
+integer :: io_error
+!! Error flag for i/o.
+
+integer :: status_read
+!! Status flag for i/o.
+
+integer :: i_coarse
+!! Index to loop over the coarse grid entries.
+
+character(LEN=256) :: filename
+!! File name of input file for interpolation.
+
+character(LEN=256) :: output_file
+!! File name of output file in ALPS distribution format.
+
+logical :: out_to_file
+!! Check whether output should be written to file.
+
+logical :: do_normalize
+!! Check whether normalisation should be applied.
+
+!I/O values for namelist:
+integer :: unit
+!! Unit variable for opening namelist.
+
+integer, parameter :: stdout_unit=6
+!! Stdout unit for opening namelist.
+
+integer, save :: input_unit_no
+!! Unit index for opening namelist.
+
+integer, save :: error_unit_no=stdout_unit
+!! Error unit for opening namelist.
+
+character(500) :: runname
+!! String for parameter input file.
+
+character(500) :: foldername
+!! String for parameter input folder.
+
 
 call read_in_params
 
@@ -160,11 +273,9 @@ endif
 contains
 
 	subroutine read_in_params
-		!Read in system parameters
-		!input file is argument after executable:
-		!$ ./interpolate input.in
+		!! This subroutine reads in system parameters input file (namelist) as argument after executable:
+		!!  `./interpolate input.in`
 		implicit none
-		!Dummy values for reading in species parameters
 
 		nameList /system/ &
 				 filename, smoothing, nperp, npar, ppar_min_set, &
@@ -190,7 +301,7 @@ contains
 
 
 		call get_unused_unit (input_unit_no)
-		call get_runname(runname)
+		call get_runname(runname,foldername)
 		runname=trim(runname)//".in"
 		unit=input_unit_no
 		open (unit=unit,file=runname,status='old',action='read')
@@ -202,24 +313,28 @@ contains
 	end subroutine read_in_params
 
 
-	!-=-=-=-=-=-
-	!The following routines:
-	!    input_unit_exist
-	!    get_unused_unit
-	!    input_unit
-	!were all adopted from the Astrophysical Gyrokinetic Code (AGK)
-	!as a means of allowing arbitrary namelist group name input.
-	!A bit of hassle, but worth the effort.
-	!-=-=-=-=-=-
-
 
 	  function input_unit_exist (nml,exist)
+      !! This function checks whether a unit number exists. It is taken from the AstroGK code.
 	    implicit none
+
 	    character(*), intent (in) :: nml
+      !! Namelist identifier.
+
 	    logical, intent(out) :: exist
-	    integer :: input_unit_exist, iostat
+      !! Flags whether input unit exists.
+
+	    integer :: input_unit_exist
+      !! Unit number.
+
+      integer :: iostat
+      !! Flag for i/o.
+
 	    character(500) :: line
+      !! Read-in variable for namelist entries.
+
 	    intrinsic adjustl, trim
+
 	    input_unit_exist = input_unit_no
 	    exist = .true.
 	    if (input_unit_no > 0) then
@@ -239,11 +354,24 @@ contains
 	    exist = .false.
 	  end function input_unit_exist
 
+
+
 	  function input_unit (nml)
-	    implicit none
-	    character(*), intent (in) :: nml
-	    integer :: input_unit, iostat
+      !! This function returns a unit number for a namelist. It is taken from the AstroGK code.
+      implicit none
+
+      character(*), intent (in) :: nml
+      !! Namelist identifier.
+
+	    integer :: input_unit
+      !! Unit number for namelist.
+
+      integer :: iostat
+      !! Flag for i/o.
+
 	    character(500) :: line
+      !! Read-in variable for namelist entries.
+
 	    intrinsic adjustl, trim
 	    input_unit = input_unit_no
 	    if (input_unit_no > 0) then
@@ -267,9 +395,16 @@ contains
 
 
 	  subroutine get_unused_unit (unit)
+      !! This subroutine returns an available unit number. It is taken from the AstroGK code.
+
 	    implicit none
+
 	    integer, intent (out) :: unit
+      !! Unit number.
+
 	    logical :: od
+      !! Check whether unit has been opened.
+
 	    unit = 50
 	    do
 	       inquire (unit=unit, opened=od)
@@ -277,27 +412,42 @@ contains
 	       unit = unit + 1
 	    end do
 	  end subroutine get_unused_unit
-	!-=-=-=-=-=-
 
-	!---------------------------------------------------------------
-	! Get runname for output files from input argument
-	  subroutine get_runname(runname)
-	    implicit none
-	    integer       :: l
-	    character(50) :: arg
-	    character(50), intent(out) :: runname
 
-	    !Get the first argument of the program execution command
-	    call getarg(1,arg)
 
-	    !Check if this is the input file and trim .in extension to get runname
-	    l = len_trim (arg)
-	    if (l > 3 .and. arg(l-2:l) == ".in") then
-	       runname = arg(1:l-3)
-	    end if
-	  end subroutine get_runname
-	!------------------------------------------------------------------------------
+  subroutine get_runname(runname,foldername)
+    !! Get runname for output files from input argument.
+    implicit none
 
+    integer       :: l
+    !!Dummy Length.
+
+    integer       :: pathend
+    !!Directory divider.
+
+    character(500) :: arg
+    !!Input Argument.
+
+    character(500), intent(out) :: runname
+    !!Basename for file I/O.
+
+    character(500), intent(out) :: foldername
+    !!Directory in which input file is stored.
+
+    !Get the first argument of the program execution command:
+    call getarg(1,arg)
+    pathend=0
+
+    !Check if this is the input file and trim .in extension to get runname.
+    !Also remove any folder structure from the runname:
+    l = len_trim (arg)
+    pathend = scan(arg, "/", .true.)
+    if (l > 3 .and. arg(l-2:l) == ".in") then
+       runname = arg(pathend+1:l-3)
+       foldername = arg(1:pathend)
+    end if
+
+    end subroutine get_runname
 
 end program
 
@@ -306,12 +456,41 @@ end program
 
 
 subroutine normalize (pperp,ppar,grid_fine,nperp,npar)
+  !! This subroutine normalises the fine interpolation grid.
 implicit none
 
-integer :: nperp,npar,i,j
-double precision :: pperp(0:nperp,0:npar),ppar(0:nperp,0:npar),grid_fine(0:nperp,0:npar)
-double precision :: dpperp,dppar,integral
+double precision, intent(in) :: pperp(0:nperp,0:npar)
+!! Coordinates of perpendicular momentum on fine grid.
+
+double precision, intent(in) :: ppar(0:nperp,0:npar)
+!! Coordinates of parallel momentum on fine grid.
+
+double precision, intent(inout) :: grid_fine(0:nperp,0:npar)
+!! Fine output grid from interpolation.
+
+integer, intent(in) :: nperp
+!! Number of perpendicular steps on fine output grid.
+
+integer, intent(in) :: npar
+!! Number of parallel steps on fine output grid.
+
+integer :: i
+!! Index to loop over perpendicular momentum.
+
+integer :: j
+!! Index to loop over parallel momentum.
+
+double precision :: dpperp
+!! Inifinitesimal step in perpendicular momentum.
+
+double precision :: dppar
+!! Inifinitesimal step in parallel momentum.
+
+double precision :: integral
+!! Integral of the distribution function.
+
 double precision :: M_PI=2.d0*acos(0.d0)
+!! Pi
 
 dpperp=pperp(2,1)-pperp(1,1)
 dppar=ppar(1,2)-ppar(1,1)
@@ -329,47 +508,70 @@ end subroutine
 
 
 
-! Polyharmonic Spline:
-
 subroutine polyharmonic_spline(grid_coarse,pperp_coarse,ppar_coarse,n_coarse,pperp,ppar,nperp,npar,smoothing,grid_fine)
-!
-! This soubroutine interpolates the grid with a polyharmonic thin-plate spline.
-!
-! Input:
-! grid_coarse is a vector of length n_coarse that includes the values of f at each point i
-! pperp_coarse is a vector of length n_coarse that includes the values of pperp at each point i
-! ppar_coarse is a vector of length n_coarse that includes the values of ppar at each point i
-! n_coarse is the total number of points in the coarse grid (nperp_coarse * npar_coarse)
-!
-! pperp is the value of pperp in the fine grid. It is a field of rank (nperp, npar)
-! ppar is the value of ppar in the fine grid. It is a field of rank (nperp, npar)
-! nperp is the number of perpendicular data points in the fine grid
-! npar is the number of parallel data points in the fine grid
-!
-!
-! Output:
-! grid_fine is the interpolated grid. It is a field of rank (nperp, npar)
-!
-! This subroutine needs the LUPACK and BLAS libraries to evoke the dgesv subroutine
-!
-
-! This is the Thin Plate Spline:
-! We use these resources:
-! http://cseweb.ucsd.edu/~sjb/eccv_tps.pdf
-! http://www.univie.ac.at/nuhag-php/bibtex/open_files/po94_M%20J%20D%20Powell%2003%2093.pdf
-! http://vision.ucsd.edu/sites/default/files/fulltext(4).pdf
+!! This soubroutine interpolates the grid with a polyharmonic thin-plate spline.
+!! This subroutine needs the LUPACK and BLAS libraries to evoke the dgesv subroutine.
+!! The method uses the Thin Plate Spline.
+!! We use these resources:
+!! [http://cseweb.ucsd.edu/~sjb/eccv_tps.pdf](http://cseweb.ucsd.edu/~sjb/eccv_tps.pdf)
+!! [http://www.univie.ac.at/nuhag-php/bibtex/open_files/po94_M%20J%20D%20Powell%2003%2093.pdf](http://www.univie.ac.at/nuhag-php/bibtex/open_files/po94_M%20J%20D%20Powell%2003%2093.pdf)
+!! [http://vision.ucsd.edu/sites/default/files/fulltext(4).pdf](http://vision.ucsd.edu/sites/default/files/fulltext(4).pdf)
 implicit none
 
-integer :: i,j,k,permutation_index(n_coarse+3)
-integer :: nperp,npar,n_coarse
-double precision :: pperp_coarse(n_coarse),ppar_coarse(n_coarse)
-double precision :: grid_coarse(n_coarse),grid_fine(0:nperp,0:npar)
+double precision, intent(in) :: grid_coarse(n_coarse)
+!! Coarse input grid for interpolation.
+
+double precision, intent(in) :: pperp_coarse(n_coarse)
+!! Coordinates of perpendicular momentum on coarse grid.
+
+double precision, intent(in) :: ppar_coarse(n_coarse)
+!! Coordinates of parallel momentum on coarse grid.
+
+integer, intent(in) :: n_coarse
+!! Number of entries in coarse grid.
+
+double precision, intent(in) :: pperp(0:nperp,0:npar)
+
+double precision, intent(in) :: ppar(0:nperp,0:npar)
+
+integer, intent(in) :: nperp
+!! Number of perpendicular steps on fine output grid.
+
+integer, intent(in) :: npar
+!! Number of parallel steps on fine output grid.
+
+double precision, intent(out) :: grid_fine(0:nperp,0:npar)
+!! Fine output grid after interpolation.
+
+integer :: i
+!! Index to loop over n_coarse.
+
+integer :: j
+!! Index to loop over n_coarse.
+
+integer :: k
+!! Index to loop over n_coarse.
+
+integer :: permutation_index(n_coarse+3)
+!! Permutation index for [[dgesv]] from LUPACK/BLAS.
 
 double precision :: fullmatrix(n_coarse+3,n_coarse+3)
-double precision :: grid_vector(n_coarse+3),weight_param(n_coarse+3)
-double precision :: pperp(0:nperp,0:npar),ppar(0:nperp,0:npar)
-double precision :: r,smoothing
+!! K-matrix for spline interpolation.
+
+double precision :: grid_vector(n_coarse+3)
+!! Vector of the coarse grid. Required for 3 additional entries compared to grid_coarse.
+
+double precision :: weight_param(n_coarse+3)
+!! Weight parameter for spline interpolation.
+
+double precision :: r
+!! Distance between coarse and fine grid points.
+
+double precision :: smoothing
+!! Smoothing parameter for spline interpolation.
+
 double precision :: INFO
+!! Info flag for [[dgesv]] from LUPACK/BLAS.
 
 grid_vector=0.d0
 do i=1,n_coarse
@@ -429,8 +631,3 @@ enddo
 enddo
 
 end subroutine
-
-
-
-
-!
