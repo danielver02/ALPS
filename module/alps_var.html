@@ -97,7 +97,7 @@
           <li id="statements"><i class="fa fa-list-ol"></i>
             <a data-toggle="tooltip"
                data-placement="bottom" data-html="true"
-               title=" 2.6% of total for modules and submodules.">112 statements</a>
+               title=" 2.7% of total for modules and submodules.">113 statements</a>
           </li>
 
         </ul>
@@ -173,7 +173,7 @@
             <a class="list-group-item" href="../module/alps_var.html#variable-df0">df0</a>
             <a class="list-group-item" href="../module/alps_var.html#variable-df0_rel">df0_rel</a>
             <a class="list-group-item" href="../module/alps_var.html#variable-pp">pp</a>
-            <a class="list-group-item" href="../module/alps_var.html#variable-gamma_rel~2">gamma_rel</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-gamma_rel">gamma_rel</a>
             <a class="list-group-item" href="../module/alps_var.html#variable-pparbar_rel">pparbar_rel</a>
             <a class="list-group-item" href="../module/alps_var.html#variable-nmax~2">nmax</a>
             <a class="list-group-item" href="../module/alps_var.html#variable-nlim">nlim</a>
@@ -1363,7 +1363,7 @@ modules which it uses.
             <a class="list-group-item" href="../module/alps_var.html#variable-df0">df0</a>
             <a class="list-group-item" href="../module/alps_var.html#variable-df0_rel">df0_rel</a>
             <a class="list-group-item" href="../module/alps_var.html#variable-pp">pp</a>
-            <a class="list-group-item" href="../module/alps_var.html#variable-gamma_rel~2">gamma_rel</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-gamma_rel">gamma_rel</a>
             <a class="list-group-item" href="../module/alps_var.html#variable-pparbar_rel">pparbar_rel</a>
             <a class="list-group-item" href="../module/alps_var.html#variable-nmax~2">nmax</a>
             <a class="list-group-item" href="../module/alps_var.html#variable-nlim">nlim</a>
@@ -1959,7 +1959,7 @@ modules which it uses.
 <td> =</td>
                 <td>100</td>
             <td>
-                <p>Number of grid points in relativitic <script type="math/tex">\Gamma=\sqrt{1+\frac{p_\perp^2+p_\parallel^2}{m_j^2c^2}}</script>
+                <p>Number of grid points in relativitic <script type="math/tex">\Gamma=\sqrt{1+\frac{p_\perp^2+p_\parallel^2}{m_j^2c^2}}</script>,
 <script type="math/tex">N_\Gamma</script> (Eqn. 3.14).</p>
             </td>
         </tr>
@@ -1978,7 +1978,7 @@ modules which it uses.
                 <td>200</td>
             <td>
                 <p>Number of grid points in dimensionless paralell momentum
-<script type="math/tex">\bar{p}_\parallel = p_\parallel/m_j c</script>, (N_{\bar{p}_\parallel}).</p>
+<script type="math/tex">\bar{p}_\parallel = p_\parallel/m_j c</script>, <script type="math/tex">N_{\bar{p}_\parallel}</script>.</p>
             </td>
         </tr>
         <tr>
@@ -2150,10 +2150,8 @@ evaluating Eqn 3.6 and 3.7, <script type="math/tex">t_{\textrm{lim}}</script>.</
                 <td></td>
                 <td></td>
             <td>
-                <p>Background Distribution Function Array,
--(1:nspec)
--(0:nperp)
--(0:npar)</p>
+                <p>Background distribution function array <script type="math/tex">f_{0j}</script>;
+(1:nspec,0:nperp,0:npar).</p>
             </td>
         </tr>
         <tr>
@@ -2170,10 +2168,8 @@ evaluating Eqn 3.6 and 3.7, <script type="math/tex">t_{\textrm{lim}}</script>.</
                 <td></td>
                 <td></td>
             <td>
-                <p>Background Distribution Function Array,
--(1:nspec)
--(0:ngamma)
--(0:npparbar)</p>
+                <p>Relativistic background distribution function array <script type="math/tex">f_{0j}</script>;
+(1:nspec,0:ngamma,0:npparbar)</p>
             </td>
         </tr>
         <tr>
@@ -2190,7 +2186,10 @@ evaluating Eqn 3.6 and 3.7, <script type="math/tex">t_{\textrm{lim}}</script>.</
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Perpendicular and parallel derivatives of <script type="math/tex">f_{0j}</script>;
+(1:nspec,0:nperp,0:npar,1:2),
+with <script type="math/tex">\partial_{p_\perp} f_{0j} </script> index 1
+with <script type="math/tex">\partial_{p_\parallel} f_{0j} </script> index 2</p>
             </td>
         </tr>
         <tr>
@@ -2207,7 +2206,10 @@ evaluating Eqn 3.6 and 3.7, <script type="math/tex">t_{\textrm{lim}}</script>.</
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Derivatives of <script type="math/tex">f_{0j}</script>;
+(1:nspec,0:nperp,0:npar,1:2),
+with <script type="math/tex">\partial_{\Gamma} f_{0j} </script> index 1
+and <script type="math/tex">\partial_{\bar{p}_\parallel} f_{0j} </script> index 2.</p>
             </td>
         </tr>
         <tr>
@@ -2224,12 +2226,15 @@ evaluating Eqn 3.6 and 3.7, <script type="math/tex">t_{\textrm{lim}}</script>.</
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Momentum Space Array for <script type="math/tex">f_{0j}</script>;
+(1:nspec,0:nperp,0:npar,1:2)
+with <script type="math/tex">p_\parallel/m_p v_A</script> index 1
+and <script type="math/tex">p_\perp/m_p v_A</script> index 2.</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-gamma_rel~2"></span>
+              <span class="anchor" id="variable-gamma_rel"></span>
               double precision,
             </td>
               <td>public,</td>
@@ -2241,7 +2246,8 @@ evaluating Eqn 3.6 and 3.7, <script type="math/tex">t_{\textrm{lim}}</script>.</
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Relativistic momentum space array of <script type="math/tex">\Gamma</script>;
+(1:nspec,0:ngamma,0:npparbar).</p>
             </td>
         </tr>
         <tr>
@@ -2258,7 +2264,8 @@ evaluating Eqn 3.6 and 3.7, <script type="math/tex">t_{\textrm{lim}}</script>.</
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Relativistic momentum space array of <script type="math/tex">\bar{p}_\parallel</script>;
+(1:nspec,0:ngamma,0:npparbar).</p>
             </td>
         </tr>
         <tr>
@@ -2275,7 +2282,7 @@ evaluating Eqn 3.6 and 3.7, <script type="math/tex">t_{\textrm{lim}}</script>.</
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>number of n values to sum over, (1:nspec).</p>
             </td>
         </tr>
         <tr>
@@ -2292,7 +2299,7 @@ evaluating Eqn 3.6 and 3.7, <script type="math/tex">t_{\textrm{lim}}</script>.</
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Lower and Upper limits for n values for iproc to sum over.</p>
             </td>
         </tr>
         <tr>
@@ -2309,7 +2316,7 @@ evaluating Eqn 3.6 and 3.7, <script type="math/tex">t_{\textrm{lim}}</script>.</
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Ratio of species density to reference <script type="math/tex">n_j/n_p</script>, (1:nspec).</p>
             </td>
         </tr>
         <tr>
@@ -2326,7 +2333,7 @@ evaluating Eqn 3.6 and 3.7, <script type="math/tex">t_{\textrm{lim}}</script>.</
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Ratio of species charge to reference <script type="math/tex">q_j/q_p</script>, (1:nspec).</p>
             </td>
         </tr>
         <tr>
@@ -2343,7 +2350,7 @@ evaluating Eqn 3.6 and 3.7, <script type="math/tex">t_{\textrm{lim}}</script>.</
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Ratio of species mass to reference <script type="math/tex">m_j/m_p</script>, (1:nspec).</p>
             </td>
         </tr>
         <tr>
@@ -2360,7 +2367,7 @@ evaluating Eqn 3.6 and 3.7, <script type="math/tex">t_{\textrm{lim}}</script>.</
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Use relativistic treatment; (1:nspec).</p>
             </td>
         </tr>
         <tr>
@@ -2377,7 +2384,7 @@ evaluating Eqn 3.6 and 3.7, <script type="math/tex">t_{\textrm{lim}}</script>.</
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Wave Equation Tensor (1:3,1:3).</p>
             </td>
         </tr>
         <tr>
@@ -2394,7 +2401,7 @@ evaluating Eqn 3.6 and 3.7, <script type="math/tex">t_{\textrm{lim}}</script>.</
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Susceptibility Tensor (1:nspec,1:3,1:3).</p>
             </td>
         </tr>
         <tr>
@@ -2411,7 +2418,7 @@ evaluating Eqn 3.6 and 3.7, <script type="math/tex">t_{\textrm{lim}}</script>.</
                 <td></td>
                 <td></td>
             <td>
-                
+                <p>Array of Bessel functions; (nlim(1):nlim(2)+1,0:nperp)</p>
             </td>
         </tr>
         <tr>
