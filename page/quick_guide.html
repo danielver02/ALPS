@@ -106,6 +106,178 @@
     <div class="col-md-9 col-md-push-3" id='text'>
       <h1>Quick Guide</h1>
 <p>This is a quick guide that gives a reference for the key parameters used by ALPS.</p>
+<h2>Namelists in input files.</h2>
+<p>The following namelists and associated input parameters are read in by ALPS from the input file.</p>
+<h3><em>&amp;system</em></h3>
+<p>General system parameters.</p>
+<p><strong><code>kperp</code></strong><br>
+Initial perpendicular wavevector <script type="math/tex">k_\perp d_p</script>.</p>
+<p><strong><code>kpar</code></strong><br>
+Initial parallel wavevector <script type="math/tex">k_\parallel d_p</script>.</p>
+<p><strong><code>nspec</code></strong> <br>
+Number of plasma species.</p>
+<p><strong><code>nroots</code></strong> <br>
+Number of dispersion solutions to find and follow.</p>
+<p><strong><code>use_map</code></strong> <br>
+Choice of:<br>
+    -True: Searching for roots over a map in complex frequency space [see &amp;maps_1 namelist].<br>
+    -False: Input <code>nroots</code> guesses for solutions [see &amp;guess_* namelist].</p>
+<p><strong><code>writeOut</code></strong><br>
+Write or suppress output to screen.</p>
+<p><strong><code>nperp</code></strong><br>
+Perpendicular momentum space resolution, <script type="math/tex">N_\perp</script>.</p>
+<p><strong><code>npar</code></strong><br>
+Parallel momentum space resolution, <script type="math/tex">N_\parallel</script>.</p>
+<p><strong><code>ngamma</code></strong><br>
+Relativistic momentum space resolution, <script type="math/tex">N_Gamma</script>.</p>
+<p><strong><code>npparbar</code></strong><br>
+Relativistic parallel momentum space resolution, <script type="math/tex">N_{\bar{p}_\parallel}</script>.</p>
+<p><strong><code>vA</code></strong><br>
+Reference Alfven velocity, normalized to the speed of light, <script type="math/tex">v_{A}/c</script>.</p>
+<p><strong><code>arrayName</code></strong><br>
+Name of input array, located in 'distribution' folder.</p>
+<p><strong><code>Bessel_zero</code></strong><br>
+Maximum amplitude of Bessel function to determine <code>nmax</code>.</p>
+<p><strong><code>numiter</code></strong>
+Maximum number of iterations in secant method.</p>
+<p><strong><code>D_threshold</code></strong><br>
+Minimum threshold for secant method.</p>
+<p><strong><code>D_prec</code></strong>
+Size of bounding region for secant method.</p>
+<p><strong><code>D_gap</code></strong>
+Size of allowable difference between roots.</p>
+<p><strong><code>positions_principal</code></strong><br>
+Number of parallel momentum steps distant from the resonant momentum
+included in the numerical calculation of Eqn 3.5, <script type="math/tex">M_I</script>.</p>
+<p><strong><code>n_resonance_interval</code></strong><br>
+How many steps should be used to integrate around the resonance,
+<script type="math/tex">M_P</script>, used for integrating near poles (see section 3.1).</p>
+<p><strong><code>Tlim</code></strong><br>
+Threshold for analytical principal-value integration, <script type="math/tex">t_\textrm{lim}</script>.</p>
+<p><strong><code>maxsteps_fit=500</code></strong><br>
+Maximum number of fitting iterations.</p>
+<p><strong><code>lambda_initial_fit</code></strong>
+Inital Levenberg-Marquardt damping parameter.</p>
+<p><strong><code>lambdafac_fit</code></strong>
+Adjustment factor for Levenberg-Marquardt damping parameter.</p>
+<p><strong><code>epsilon_fit</code></strong>
+Convergence for Levenberg-Marquardt fit.</p>
+<p><strong><code>fit_check</code></strong>
+If true, output fitted functions for each species to file in distribution directory.</p>
+<p><strong><code>determine_minima</code></strong>
+If true, after map search, determine minima and refine solutions.</p>
+<p><strong><code>scan_option</code></strong><br>
+Select case for scans;<br>
+  -1 Consecutive scans along input paths in wavevector space,<br>
+  -2 Double scan over wavevector plane.</p>
+<p><strong><code>n_scan</code></strong>
+Number of wavevector scans.<br>
+Must be set to 2 for scan_option=2;<br>
+Must be 1 or larger for scan_option=1.<br>
+0 turns off wavevector scans.</p>
+<h3><em>&amp;guess_</em></h3>
+<p>Initial guess of complex frequency for first solution.<br>
+Only used when <code>use_map</code>=.false.<br>
+Need to have number of name lists equal to <code>nroots</code>.</p>
+<p><strong><code>g_om</code></strong>
+Guess for real solution <script type="math/tex">\omega_{\textrm{r}/\Omega_p </script>.</p>
+<p><strong><code>g_gam</code></strong>
+Guess for imaginary solution <script type="math/tex">\gamma/\Omega_p </script>.</p>
+<h3><em>&amp;maps_1</em></h3>
+<p>Range of complex frequencies for map_scan subroutine.<br>
+Only used when <code>use_map</code>=.true.</p>
+<p><strong><code>loggridw</code></strong>
+Linear (F) or Log (T) spacing for <script type="math/tex">\omega_{\textrm{r}}/\Omega_p</script> map search.</p>
+<p><strong><code>loggridg</code></strong>
+Linear (F) or Log (T) spacing for <script type="math/tex">\gamma/\Omega_p</script> map search.</p>
+<p><strong><code>omi</code></strong>
+Smallest <script type="math/tex">\omega_{\textrm{r}}/\Omega_p</script> value for complex map search.</p>
+<p><strong><code>omf</code></strong>
+Largest <script type="math/tex">\omega_{\textrm{r}}/\Omega_p</script> value for complex map search.</p>
+<p><strong><code>gami</code></strong>    <br>
+Smallest <script type="math/tex">\gamma/\Omega_p</script> value for complex map search.</p>
+<p><strong><code>gamf</code></strong>
+Largest <script type="math/tex">\gamma/\Omega_p</script> value for complex map search.</p>
+<p><strong><code>ni</code></strong><br>
+Number of <script type="math/tex">\gamma/\Omega_p</script> points in frequency grid.</p>
+<p><strong><code>nr</code></strong>
+Number of <script type="math/tex">\omega_{\textrm{r}}/\Omega_p</script> points in frequency grid.</p>
+<h3><em>&amp;spec_j</em></h3>
+<p>Species parameters list for species j.</p>
+<p><strong><code>nn</code></strong><br>
+Relative density for <script type="math/tex">f_j</script>, <script type="math/tex">n_j/n_p</script>.</p>
+<p><strong><code>qq</code></strong><br>
+Relative charge for <script type="math/tex">f_j</script>, <script type="math/tex">q_j/q_p</script>.</p>
+<p><strong><code>mm</code></strong><br>
+Relative mass for <script type="math/tex">f_j</script>, <script type="math/tex">m_j/m_p</script>.</p>
+<p><strong><code>ff</code></strong>
+Number of fitted functions for <script type="math/tex">f_j</script>.</p>
+<p><strong><code>relat</code></strong>
+Treat species as non-relativistic or relativistic.</p>
+<p><strong><code>log_fit</code></strong>
+Use linear or <script type="math/tex">\log_{10}</script> fitting routine.</p>
+<p><strong><code>use_bM</code></strong>
+Use actual numerical integration or bi-Maxwellian proxy via NHDS,
+with parameters read in from &amp;bM_spec_j namelist.</p>
+<h3><em>&amp;ffit_j_k</em></h3>
+<p>Initial Fit Values for species j, function k</p>
+<p><strong><code>fit_type_in</code></strong>
+Kind of fit function:<br>
+-0. Analytic function (KGK: Need to add details on this functionality).
+-1. Maxwellian, <script type="math/tex">F_M(\hat{p}_\parallel)=u_1
+\mathrm{exp}[-y \hat{p}^2_\perp-u_2(\hat{p}_\parallel-u_3)^2 ] </script>.
+-2. Kappa,<br>
+-3. Juettner with <script type="math/tex">p_\perp,p_\parallel</script>,<br>
+-4. Juettner with <script type="math/tex">\Gamma,\bar{p}_\parallel</script>, constant <script type="math/tex">\bar{p}_\parallel</script>,<br>
+-5. Juettner with <script type="math/tex">p_\perp,p_\parallel</script>; variable <script type="math/tex">\bar{p}_\parallel</script>,<br>
+-6. Bi-Moyal distribution.</p>
+<p><strong><code>fit_1</code>-<code>fit_5</code></strong><br>
+Fit parameters, <script type="math/tex">u_1</script>-<script type="math/tex">u_5</script>, defined in the above equations for each of the types of fit functions.
+Not all parameters will be used for all functions.<br>
+Suggested values for parameters generated by generate_distribution.</p>
+<p><strong><code>perpcorr</code></strong>
+This parameter, <script type="math/tex">y</script> in Eqn. B1, compensates for the strong
+<script type="math/tex">p_\perp</script> dependence of <script type="math/tex">u_1</script>, making the fit more reliable.</p>
+<h3><em>&amp;bM_spec_j</em></h3>
+<p>Bi-Maxwellian parameters; for species j.
+Only used if use_bM=T.</p>
+<p><strong><code>bM_nmaxs</code></strong>
+Maximum number of resonances to consider.</p>
+<p><strong><code>bM_Bessel</code></strong>
+Precision threshold for <script type="math/tex">I_n</script>.</p>
+<p><strong><code>bM_betas</code></strong>
+<script type="math/tex">\beta_{\parallel,j}</script> of biMaxwellian distribution <script type="math/tex">f_j</script>.</p>
+<p><strong><code>bM_alphas</code></strong>
+<script type="math/tex">T_{\perp,j}/T_{\parallel,j} </script> of biMaxwellian distribution <script type="math/tex">f_j</script>.</p>
+<p><strong><code>bM_pdrifts</code></strong>
+Relative drift of biMaxwellian distribution <script type="math/tex">f_j</script>,
+in units of <script type="math/tex">m_p v_{A,p}</script>.</p>
+<h3><em>&amp;scan_input_l</em></h3>
+<p>Inputs for scanning parameter space for l<script type="math/tex">^{\textrm{th}</script> scan.  </p>
+<p><strong><code>scan_type</code></strong>
+Type of parameter scan;<br>
+0: Current value of <script type="math/tex">\textbf{k}</script> to
+ <script type="math/tex">k_\perp</script>=range<script type="math/tex">_\textrm{i}</script> and <script type="math/tex">k_\parallel </script>=range<script type="math/tex">_\textrm{f}</script>. <br>
+1: <script type="math/tex">\theta_0 \rightarrow \theta_1</script> at fixed <script type="math/tex">|k|</script>
+ from current value of <script type="math/tex">\theta=\mathrm{atan}(k_\perp/k_\parallel)</script>
+ to range<script type="math/tex">_\textrm{f}</script>.<br>
+2: Wavevector scan at fixed angle <script type="math/tex">\theta_{k,B}</script> to <script type="math/tex">|k|</script>=range<script type="math/tex">_\textrm{f}</script>.<br>
+3: <script type="math/tex">k_\perp</script> scan with constant <script type="math/tex">k_\parallel</script>.<br>
+4: <script type="math/tex">k_\parallel</script> scan with constant <script type="math/tex">k_\perp</script>.  </p>
+<p><strong><code>swi</code></strong>
+Initial scan value.</p>
+<p><strong><code>swf</code></strong><br>
+Final scan value.</p>
+<p><strong><code>swlog</code></strong>
+Use log (T) or linear (F) spacing.</p>
+<p><strong><code>ns</code></strong>
+Number of output scan values.</p>
+<p><strong><code>nres</code></strong>
+Resolution between output scan values.</p>
+<p><strong><code>heating</code></strong>
+Calculates heating rates if true.</p>
+<p><strong><code>eigen</code></strong>  =.false.
+Calculates eigenfunctions if true.     </p>
     </div>
     <div class="col-md-3 col-md-pull-9">
       <hr class="visible-xs visible-sm">
