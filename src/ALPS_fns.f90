@@ -35,6 +35,7 @@ subroutine derivative_f0
   !! This subroutine calculates the perpendicular and parallel derivatives of the background velocity distribution function f0.
     use alps_var, only : f0, pp, df0, nperp, npar, nspec, arrayName, ns, qs, ms, bMpdrifts
     use alps_var, only : f0_rel, gamma_rel, pparbar_rel,nspec_rel,df0_rel,ngamma,npparbar
+    use alps_var, only : current_int
     use alps_var, only : writeOut, pi, relativistic, usebM
     use alps_io,  only : get_unused_unit
     use alps_fns_rel, only : derivative_f0_rel
@@ -75,16 +76,13 @@ subroutine derivative_f0
     !! Charge density.
     !! Zeroth index is sum over all species
 
-    double precision, dimension(0:nspec) :: current
-    !! Current density.
-    !! Zeroth index is sum over all species
-
     double precision :: dpperp
     !! Inifinitesimal step in perpendicular momentum.
 
     double precision :: dppar
     !! Inifinitesimal step in parallel momentum.
 
+    allocate(current_int(0:nspec)); current_int=0.d0
 
     if (writeOut) then
        write(*,'(a)')&
@@ -156,13 +154,13 @@ subroutine derivative_f0
     !End output
 
     charge=0.d0
-    current=0.d0
+    current_int=0.d0
 
     do is = 1, nspec
        if (usebM(is)) then
           integrate = 1.d0
           charge(is)=ns(is)*qs(is)
-          current(is)=ns(is)*qs(is)*&
+          current_int(is)=ns(is)*qs(is)*&
                bMpdrifts(is)/ms(is)
        else
        integrate = 0.d0
@@ -179,7 +177,7 @@ subroutine derivative_f0
                   ns(is)*qs(is)*pp(is,iperp,ipar,1) * f0(is,iperp,ipar) * &
                   2.d0 * pi * dpperp * dppar
 
-             current(is) = current(is) + &
+             current_int(is) = current_int(is) + &
                   (ns(is)*qs(is)/ms(is))*pp(is,iperp,ipar,1)*pp(is,iperp,ipar,2)*&
                   f0(is,iperp,ipar) * &
                   2.d0 * pi * dpperp * dppar
@@ -196,11 +194,11 @@ subroutine derivative_f0
        write(*,'(a, 2es14.4)') &
             ' Charge density:           ', charge(is)
        write(*,'(a, 2es14.4)') &
-            ' Parallel current density: ', current(is)
+            ' Parallel current density: ', current_int(is)
     enddo
     write(*,'(a)')         '-=-=-=-='
     write(*,'(a, es14.4)') ' Total charge density:           ', sum(charge(1:nspec))
-    write(*,'(a, es14.4)') ' Total parallel current density: ', sum(current(1:nspec))
+    write(*,'(a, es14.4)') ' Total parallel current density: ', sum(current_int(1:nspec))
     write(*,'(a)')         '-=-=-=-=-=-=-=-='
 
 
@@ -1981,7 +1979,7 @@ end subroutine om_scan
 subroutine calc_eigen(omega,electric,magnetic,vmean,ds,Ps,eigen_L,heat_L)
   !! This subroutine calculates the relative electric and magnetic field amplitudes, the relative fluctuations in the density and velocity of all species, and the heating rates of the given solution.
   !! It is based on the calc_eigen routine by Greg Howes and Kris Klein.
-  use ALPS_var, only : proc0, nspec, ns, qs, wave, chi0, kperp, kpar, vA
+  use ALPS_var, only : proc0, nspec, ns, qs, wave, chi0, kperp, kpar, vA, current_int
   implicit none
 
   double complex, intent(in) :: omega
@@ -2073,14 +2071,14 @@ subroutine calc_eigen(omega,electric,magnetic,vmean,ds,Ps,eigen_L,heat_L)
 
         ! Calculate relative density fluctuations:
         do jj=1,nspec
-           !ds(jj) = (vmean(1,jj)*kperp+vmean(3,jj)*kpar)/&
-           !     (omega-kpar * spec(jj)%vv_s)
+           ds(jj) = (vmean(1,jj)*kperp+vmean(3,jj)*kpar)/&
+                (omega-kpar * current_int(jj)/(ns(jj)*qs(jj)))
 
            !TO-DO:
            !add in correct effects of drift on density fluctuation
            !e.g. omega-kpar V_0
            !with a physically meaningful V_0 used.
-           ds(jj) = 0.d0
+           !ds(jj) = 0.d0
            !ds(jj) = (vmean(1,jj)*kperp+vmean(3,jj)*kpar)/&
            !     (omega)
         enddo
