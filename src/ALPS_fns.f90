@@ -180,7 +180,7 @@ subroutine derivative_f0
                   2.d0 * pi * dpperp * dppar
 
              current(is) = current(is) + &
-                  ns(is)*qs(is)*pp(is,iperp,ipar,1)*pp(is,iperp,ipar,2)*&
+                  (ns(is)*qs(is)/ms(is))*pp(is,iperp,ipar,1)*pp(is,iperp,ipar,2)*&
                   f0(is,iperp,ipar) * &
                   2.d0 * pi * dpperp * dppar
              
