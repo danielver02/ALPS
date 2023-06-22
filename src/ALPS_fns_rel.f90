@@ -1095,14 +1095,41 @@ end function landau_integrate_rel
 
 
 double complex function int_ee_rel(om)
+  !! This function returns the ee term in Eq. (2.9) for the relativistic calculation.
 	use alps_var, only : qs, ms,pi, f0_rel,df0_rel, vA, sproc, gamma_rel, pparbar_rel
 	use alps_var, only : ngamma, npparbar
 	implicit none
-	double complex :: om   !complex frequency
-	integer :: sproc_rel, igamma, ipparbar
-	integer :: ipparbar_lower, ipparbar_upper
-	double precision :: dgamma, dpparbar
-	logical :: found_lower, found_upper
+
+  double complex, intent(in) :: om
+  !! Complex wave frequency \(\omega\).
+
+  integer :: igamma
+  !! Index to loop over \(\Gamma\).
+
+  integer :: ipparbar
+  !! Index to loop over relativistic parallel momentum.
+
+  integer :: sproc_rel
+  !! is_rel of the current process.
+
+  integer :: ipparbar_lower
+  !! Lower boundary of resonance range in relativistic parallel momentum.
+
+  integer :: ipparbar_upper
+  !! Upper boundary of resonance range in relativistic parallel momentum.
+
+  double precision :: dgamma
+  !! Infinitesimal step in \(\Gamma\).
+
+  double precision :: dpparbar
+  !! Infinitesimal step in relativistic parallel momentum.
+
+  logical :: found_lower
+  !! Check whether resonance lies in lower range of relativistic parallel momentum.
+
+  logical :: found_upper
+  !! Check whether resonance lies in upper range of relativistic parallel momentum.
+
 
 	call determine_sproc_rel(sproc_rel)
 
@@ -1112,7 +1139,7 @@ double complex function int_ee_rel(om)
 
 	int_ee_rel = cmplx (0.d0, 0.d0,kind(1.d0))
 
-	! What are the relevant ranges in pparbar:
+	! Determine the relevant ranges in pparbar:
 	igamma = ngamma-1
 
 	found_lower=.FALSE.
@@ -1153,6 +1180,7 @@ double complex function int_ee_rel(om)
 	found_upper=.FALSE.
 	ipparbar_lower = 1
 	ipparbar_upper = npparbar - 1
+
 		do ipparbar=1,npparbar-1
 			if((.NOT.found_lower).AND.(f0_rel(sproc_rel,igamma,ipparbar-1).LE.-1.d0).AND.&
 				(f0_rel(sproc_rel,igamma,ipparbar).GT.-1.d0)) then
@@ -1165,7 +1193,6 @@ double complex function int_ee_rel(om)
 					found_upper=.TRUE.
 			endif
 		enddo
-
 
 	   do ipparbar = ipparbar_lower+1, ipparbar_upper-1
 		int_ee_rel = int_ee_rel + &
@@ -1189,22 +1216,28 @@ end function int_ee_rel
 
 
 
-!-=-=-=-=-=-=
-!Functions for resonant term in integral
-!-=-=-=-=-=-=
 
-!-=-=-=-=-=-=
-!Functions for resonant term in integral for the relativistic calculation:
-!-=-=-=-=-=-=
 double complex function resU_rel(sproc_rel,om, nn, igamma, ipparbar)
+  !! This function evaluates the term proportional to \(U\) in Eq. (2.9) of the code paper for the relativistic calculation.
 	use ALPS_var, only : kpar, ms, qs, df0_rel, vA, sproc, gamma_rel
 	use ALPS_var, only : pi, pparbar_rel
 	implicit none
-	!Passed
-	integer :: nn          !Bessel N
-	integer :: sproc_rel,igamma,ipparbar
-	double complex :: om   !complex frequency
-	!Local
+
+  integer, intent(in) :: sproc_rel
+  !! is_rel of the current process.
+
+  double complex, intent(in) :: om
+  !! Complex wave frequency \(\omega\).
+
+  integer, intent(in) :: nn
+  !! Order of the Bessel function.
+
+  integer, intent(in) :: igamma
+  !! Index to loop over \(\Gamma\).
+
+  integer, intent(in) :: ipparbar
+  !! Index to loop over relativistic parallel momentum.
+
 
 	resU_rel = -2.d0 * pi * (ms(sproc)/vA)**3 * (qs(sproc)*vA/(kpar*ms(sproc))) * &
 		(om*df0_rel(sproc_rel,igamma,ipparbar,1) + (kpar/(vA))*df0_rel(sproc_rel,igamma,ipparbar,2)) / &
@@ -1221,21 +1254,45 @@ end function resU_rel
 
 !Function to pass T_ij into integrator
 double complex function int_T_rel(sproc_rel,nn, igamma, ipparbar, mode)
+!! This function returns the T-tensor according to Eq. (2.10) of the code paper for the relativistic calculation.
 	use ALPS_var, only : kperp, qs, sproc, pparbar_rel, gamma_rel, vA, ms
 	implicit none
-	!Passed
-	integer :: nn, igamma, ipparbar , sproc_rel
-	integer :: mode        !index in T tensor
-	!Local
-	double precision :: z,zbar  !Bessel Argument
+
+  integer, intent(in) :: sproc_rel
+  !! is_rel of the current process.
+
+  integer, intent(in) :: nn
+  !! Order of the Bessel function.
+
+  integer, intent(in) :: igamma
+  !! Index to loop over \(\Gamma\).
+
+  integer, intent(in) :: ipparbar
+  !! Index to loop over relativistic parallel momentum.
+
+  integer, intent(in) :: mode
+  !! Index of the entries in the T-tensor of Eq. (2.10).
+
+	double precision :: z
+  !! Argument of the Bessel function.
+
+  double precision :: zbar
+  !! Argument of the Bessel function, renormalised.
+
 	double precision :: pperpbar
-	double precision :: bessel 	! Bessel function for nn and z
-	double precision :: besselP	! first derivative of Bessel function for nn and z
+  !! Relativistic parallel momentum.
+
+  double precision :: bessel
+  !! Bessel function.
+
+	double precision :: besselP
+  !! First derivative of the Bessel function.
+
 	double complex :: ii = cmplx(0.d0,1.d0,kind(1.d0))
+  !! Imaginary unit.
 
 
-
-	!Bessel Fn Argument
+	! Bessel function argument:
 	pperpbar = sqrt(gamma_rel(sproc_rel,igamma,ipparbar)**2-1.d0-pparbar_rel(sproc_rel,igamma,ipparbar)**2)
 	z= (kperp*ms(sproc)/(vA*qs(sproc)))*pperpbar
 	zbar = kperp*ms(sproc)/(vA*qs(sproc))
@@ -1247,7 +1304,7 @@ double complex function int_T_rel(sproc_rel,nn, igamma, ipparbar, mode)
 	   bessel=BESSJ(nn,z)
 	endif
 
-	! determine derivative of Bessel function:
+	! Determine derivative of Bessel function:
 	if (nn.GE.1) then
 		besselP = 0.5d0 * (BESSJ(nn-1,z) - BESSJ(nn+1,z))
 	else if (nn.LT.-1) then
@@ -1288,25 +1345,49 @@ end function int_T_rel
 
 
 
-!Function to pass T_ij into integrator
+
 double complex function int_T_res_rel(sproc_rel,nn, igamma, pparbar, mode)
+!! This function returns the T-tensor according to Eq. (2.10) of the code paper for the case in which it is evaluated at the complex resonance momentum for the relativistic calculation.
 	use ALPS_var, only : kperp, qs, sproc, gamma_rel, vA, ms
 	implicit none
-	!Passed
-	integer :: nn, igamma,sproc_rel
-	integer :: mode        !index in T tensor
-	!Local
-	double precision :: zbar
-	double complex :: z
+
+  integer, intent(in) :: sproc_rel
+  !! is_rel of the current process.
+
+  integer, intent(in) :: nn
+  !! Order of the Bessel function.
+
+  integer, intent(in) :: igamma
+  !! Index to loop over \(\Gamma\).
+
+  double complex, intent(in) :: pparbar
+  !! Relativistic parallel momentum.
+
+  integer, intent(in) :: mode
+  !! Index of the entries in the T-tensor of Eq. (2.10).
+
+  double complex :: z
+  !! Argument of the Bessel function.
+
+  double precision :: zbar
+  !! Argument of the Bessel function, renormalised.
+
 	double complex :: pperpbar
-	double complex :: bessel 	! Bessel function for nn and z
-	double complex :: besselP	! first derivative of Bessel function for nn and z
-	double complex :: besselH ! Help variable
+  !! Relativistic parallel momentum.
+
+  double complex :: bessel
+  !! Bessel function.
+
+	double complex :: besselP
+  !! First derivative of the Bessel function.
+
+	double complex :: besselH
+  !! Storage variable for Bessel function.
+
 	double complex :: ii = cmplx(0.d0,1.d0,kind(1.d0))
-	double complex :: pparbar
+  !! Imaginary unit.
 
-
-	!Bessel Fn Argument
+	! Bessel function argument:
 	pperpbar = sqrt(gamma_rel(sproc_rel,igamma,1)**2-1.d0-pparbar**2)
 	z= (kperp*ms(sproc)/(vA*qs(sproc)))*pperpbar
 	zbar = kperp*ms(sproc)/(vA*qs(sproc))
@@ -1319,7 +1400,7 @@ double complex function int_T_res_rel(sproc_rel,nn, igamma, pparbar, mode)
 	   call CBESSJ(z, nn, bessel)
 	endif
 
-	! determine derivative of Bessel function:
+	! Determine derivative of Bessel function:
 	if (nn.GE.1) then
 		call CBESSJ(z,nn-1,besselP)
 		call CBESSJ(z,nn+1,besselH)
@@ -1367,8 +1448,9 @@ end function int_T_res_rel
 
 
 
-! Calculate the complex Bessel function
+
 subroutine CBESSJ(z, nu, z1)
+!! This subroutine calculates the complex Bessel function. It is based on the CBESSJ function release 1.1 by J-P Moreau, Paris (www.jpmoreau.fr).
 !---------------------------------------------------
 !                       inf.     (-z^2/4)^k
 !   Jnu(z) = (z/2)^nu x Sum  ------------------
@@ -1377,34 +1459,62 @@ subroutine CBESSJ(z, nu, z1)
 !---------------------------------------------------
 implicit none
 
-  double complex :: z,z1
-  integer :: k, MAXK, nu
-  double complex :: sum,tmp
+  double complex, intent(in) :: z
+  !! Argument of the Bessel function.
+
+  integer, intent(in) :: nu
+  !! Order of Bessel function.
+
+  double complex, intent(out) :: z1
+  !! Resulting value of Bessel function.
+
+  integer :: k
+  !! Index to loop over sum.
+
+  integer :: MAXK
+  !! Maximum value of k.
+
+  double complex :: sum
+  !! Storage variable for sum in Bessel-function calculation.
+
+  double complex :: tmp
+  !! Storage variable for divising in routine.
+
   double precision :: ZERO
+  !! Defines zero parameter.
+
   parameter(MAXK=20,ZERO=0.d0)
   sum = cmplx(0.d0,0.d0,kind(1.d0))
   do k=0, MAXK
     !calculate (-z**2/4)**k
 	tmp = (-z*z/4.d0)**k
-    !divide by k!
+    ! divide by k!:
 	tmp = tmp / Fact(k)
-    !divide by Gamma(nu+k+1)
+    ! divide by Gamma(nu+k+1)
     tmp = tmp / Gamma(1.d0*(nu+k+1))
-    !actualize sum
+    ! actualize sum:
 	sum = sum + tmp
   end do
-  !calculate (z/2)**nu
+  ! calculate (z/2)**nu:
   tmp = (z/2.d0)**nu
-  !multiply (z/2)**nu by sum
+  ! multiply (z/2)**nu by sum
   z1 = tmp*sum
 return
 end subroutine
 
 
 double precision function Fact(K)
+  !! This function returns the factorial k! of its argument k.
 implicit none
-  integer :: i,k
+  integer, intent(in) :: k
+  !! Argument of the factorial.
+
+  integer :: i
+  !! Index to loop over in factorial calculation.
+
   double precision :: f
+  !! Resulting factorial.
+
     f=1.d0
     do i=2, k
 	  f=f*(1.d0*i)
@@ -1418,26 +1528,24 @@ end function
 
 
 DOUBLE PRECISION FUNCTION BESSJ (N,X)
-!double precision FUNCTION BESSJ (N,X)
-
-!     This subroutine calculates the first kind Bessel function
-!     of integer order N, for any REAL X. We use here the classical
-!     recursion formula, when X > N. For X < N, the Miller's algorithm
-!     is used to avoid overflows.
-!     REFERENCE:
-!     C.W.CLENSHAW, CHEBYSHEV SERIES FOR MATHEMATICAL FUNCTIONS,
-!     MATHEMATICAL TABLES, VOL.5, 1962.
-
+!! This function calculates the first kind Bessel function
+!! of integer order N, for any REAL X. We use here the classical
+!! recursion formula, when X > N. For X < N, Miller's algorithm
+!! is used to avoid overflows. Reference:
+!! C.W.Clenshaw, Chebyshev Series for Mathematical Functions, Mathematical Tables, Vol. 5, 1962.
       IMPLICIT NONE
+
+      integer, intent(in) :: N
+      !! Order of Bessel function.
+
+      double precision, intent(in) :: X
+      !! Argument of the Bessel function.
+
       INTEGER, PARAMETER :: IACC = 40
       REAL*8, PARAMETER :: BIGNO = 1.D10, BIGNI = 1.D-10
-      INTEGER M, N, J, JSUM
-      !REAL *8 X,BESSJ,TOX,BJM,BJ,BJP,SUM
-      REAL *8 X,TOX,BJM,BJ,BJP,SUM
-      !REAL *8 X,BESSJ0,BESSJ1,TOX,BJM,BJ,BJP,SUM
+      INTEGER M, J, JSUM
+      REAL *8 TOX,BJM,BJ,BJP,SUM
 
-!      REAL *8 X,BESSJ,BESSJ0,BESSJ1,TOX,BJM,BJ,BJP,SUM
-      !write(*,*)'z: ', x
       IF (N.EQ.0) THEN
       BESSJ = BESSJ0(X)
       RETURN
@@ -1489,19 +1597,18 @@ DOUBLE PRECISION FUNCTION BESSJ (N,X)
 
 
 
-      !double precision FUNCTION BESSJ0 (X)
-      DOUBLE PRECISION FUNCTION BESSJ0 (X)
-      IMPLICIT NONE
-      REAL *8 X,AX,FR,FS,Z,FP,FQ,XX
-      !REAL *8 X,BESSJ0,AX,FR,FS,Z,FP,FQ,XX
 
-!     This subroutine calculates the First Kind Bessel Function of
-!     order 0, for any real number X. The polynomial approximation by
-!     series of Chebyshev polynomials is used for 0<X<8 and 0<8/X<1.
-!     REFERENCES:
-!     M.ABRAMOWITZ,I.A.STEGUN, HANDBOOK OF MATHEMATICAL FUNCTIONS, 1965.
-!     C.W.CLENSHAW, NATIONAL PHYSICAL LABORATORY MATHEMATICAL TABLES,
-!     VOL.5, 1962.
+DOUBLE PRECISION FUNCTION BESSJ0 (X)
+!! This function calculates the first kind Bessel function
+!! of order 0, for any REAL X. The polynomial approximation by
+!! series of Chebyshev polynomials is used for 0<X<8 and 0<8/X<1. References:
+!! M.Abramowitz, I.A.Stegun, Handbook of Mathematical Functions, 1965. C.W.Clenshaw, Chebyshev Series for Mathematical Functions, Mathematical Tables, Vol. 5, 1962.
+      IMPLICIT NONE
+
+      double precision, intent(in) :: X
+      !! Argument of the Bessel function.
+
+      REAL *8 AX,FR,FS,Z,FP,FQ,XX
 
       REAL *8 Y,P1,P2,P3,P4,P5,R1,R2,R3,R4,R5,R6  &
                ,Q1,Q2,Q3,Q4,Q5,S1,S2,S3,S4,S5,S6
@@ -1533,19 +1640,22 @@ DOUBLE PRECISION FUNCTION BESSJ (N,X)
 1     BESSJ0 = 1.D0
       RETURN
     END FUNCTION BESSJ0
-! ---------------------------------------------------------------------------
-    !double precision FUNCTION BESSJ1 (X)
-     double precision FUNCTION BESSJ1 (X)
+
+
+
+
+double precision FUNCTION BESSJ1 (X)
+!! This subroutine calculates the First Kind Bessel Function of
+!! order 1, for any real number X. The polynomial approximation by
+!! series of Chebyshev polynomials is used for 0<X<8 and 0<8/X<1. References:
+!! M.Abramowitz, I.A.Stegun, Handbook of Mathematical Functions, 1965. C.W.Clenshaw, Chebyshev Series for Mathematical Functions, Mathematical Tables, Vol. 5, 1962.
       IMPLICIT NONE
-      !REAL *8 X,BESSJ1,AX,FR,FS,Z,FP,FQ,XX
-      REAL *8 X,AX,FR,FS,Z,FP,FQ,XX
-!     This subroutine calculates the First Kind Bessel Function of
-!     order 1, for any real number X. The polynomial approximation by
-!     series of Chebyshev polynomials is used for 0<X<8 and 0<8/X<1.
-!     REFERENCES:
-!     M.ABRAMOWITZ,I.A.STEGUN, HANDBOOK OF MATHEMATICAL FUNCTIONS, 1965.
-!     C.W.CLENSHAW, NATIONAL PHYSICAL LABORATORY MATHEMATICAL TABLES,
-!     VOL.5, 1962.
+
+      double precision, intent(in) :: X
+      !! Argument of the Bessel function.
+
+      REAL *8 AX,FR,FS,Z,FP,FQ,XX
+
       REAL *8 Y,P1,P2,P3,P4,P5,P6,R1,R2,R3,R4,R5,R6  &
                ,Q1,Q2,Q3,Q4,Q5,S1,S2,S3,S4,S5,S6
       DATA P1,P2,P3,P4,P5 /1.D0,.183105D-2,-.3516396496D-4,  &
@@ -1575,19 +1685,39 @@ DOUBLE PRECISION FUNCTION BESSJ (N,X)
     END FUNCTION BESSJ1
 
 
-!*******************************************
-!*           FUNCTION  GAMMA(X)            *
-!* --------------------------------------- *
-!* Returns the value of Gamma(x) in double *
-!* precision as EXP(LN(GAMMA(X))) for X>0. *
-!*******************************************
 double precision Function Gamma(xx)
+!! This function returns the Gamma-function.
 implicit none
 
-  double precision :: xx, ONE, FPF, HALF
+  double precision :: xx
+  !! Argument of the Gamma-function.
+
+  double precision :: ONE
+  !! Define variable for 1.0.
+
+  double precision :: FPF
+  !! Define variable for 5.5.
+
+  double precision :: HALF
+  !! Define variable for 0.5.
+
   double precision :: cof(6)
-  double precision :: stp,x,tmp,ser
+  !! Coefficients for approximation.
+
+  double precision :: stp
+  !! Parameter for approximation.
+
+  double precision :: x
+  !! Storage variable for approximation.
+
+  double precision :: tmp
+  !! Storage variable for approximation.
+
+  double precision :: ser
+  !! Variable for summation in approximation.
+
   integer :: j
+  !! Index to loop over.
 
 parameter(ONE=1.d0,FPF=5.5d0,HALF=0.5d0)
   cof(1)=76.18009173d0
