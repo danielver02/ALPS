@@ -760,7 +760,7 @@ subroutine output_fit(qualitytotal)
 	endif
 	enddo
 
-end subroutine
+end subroutine output_fit
 
 
 
