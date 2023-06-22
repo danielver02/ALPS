@@ -569,9 +569,6 @@ end subroutine determine_resonances
 
 
 
-!-=-=-=-=-=-=
-!THE INTEGRATOR
-!-=-=-=-=-=-=
 double complex function full_integrate(om, nn, mode, found_res)
   !! This function returns the full integral expression according to Eq. (2.9) in the code paper.
   use alps_var, only : npar, relativistic, sproc
@@ -1327,9 +1324,6 @@ end function int_ee
 
 
 
-!-=-=-=-=-=-=
-!Functions for resonant term in integral
-!-=-=-=-=-=-=
 
 double complex function resU(om, nn, iperp, ipar)
   !! This function evaluates the term proportional to \(U\) in Eq. (2.9) of the code paper.
@@ -1370,10 +1364,8 @@ double complex function resU(om, nn, iperp, ipar)
 end function resU
 
 
-!-=-=-=-=-=-=
-!Functions for Tij-
-!-=-=-=-=-=-=
-!Function to pass T_ij into integrator
+
+
 double complex function int_T(nn, iperp, ipar, mode)
 !! This function returns the T-tensor according to Eq. (2.10) of the code paper.
 	use ALPS_var, only : pp, kperp, qs, bessel_array, sproc
@@ -2831,10 +2823,9 @@ subroutine find_minima(val,numroots,iroots,nroots)
 
    end subroutine find_minima
 
-!-=-=-=-=-=-=
-!Bessel Functions
-!-=-=-=-=-=-=
-! determine nmax:
+
+
+
 subroutine determine_nmax()
 !! This subroutine determines the maximum required order of the Bessel functions in Eq. (2.9) of the code paper.
 use ALPS_var, only : pp, kperp, qs, Bessel_zero, nmax, ierror
