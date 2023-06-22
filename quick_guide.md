@@ -10,7 +10,7 @@ The following namelists and associated input parameters are read in by ALPS from
 General system parameters.
 
 **`kperp`**  
-Initial perpendicular wavevector $k_{\perp} d_{p}$.
+Initial perpendicular wavevector $ k_{\perp} d_{p} $.
 
 **`kpar`**  
 Initial parallel wavevector $k_{\parallel} d_{p}$.
@@ -97,8 +97,8 @@ Select case for wavevector scans;
 2. Double scan over wavevector plane.
   
 **`n_scan`**  
-Number of wavevector scans.
-0 turns off wavevector scans.
+Number of wavevector scans.  
+0 turns off wavevector scans.  
 Must be 1 or larger for `scan_option`=1.  
 Must be set to 2 for `scan_option`=2.  
 
@@ -238,16 +238,16 @@ in units of $m_{p} v_{A,p}$.
 
 
 ### *&scan_input_l*
-Inputs for scanning parameter space for l$^{\textrm{th}$ scan.  
+Inputs for scanning parameter space for $l^{\textrm{th}$ scan.  
 
 **`scan_type`**
 Type of parameter scan;  
 0: Current value of $\textbf{k}$ to
- $k_{\perp}$=range$_\textrm{i}$ and $k_{\parallel} $=range$_\textrm{f}$.   
+ $k_{\perp}$=range$_\textrm{i}$ and $k_{\parallel}$ =range$_\textrm{f}$.   
 1: $\theta_0 \rightarrow \theta_1$ at fixed $|k|$
  from current value of $\theta=\mathrm{atan}(k_{\perp}/k_{\parallel})$
  to range$_\textrm{f}$.  
-2: Wavevector scan at fixed angle $\theta_{k,B}$ to $|k|$=range$_\textrm{f}$.  
+2: Wavevector scan at fixed angle $\theta_{k,B}$ to $|k|$ =range$_\textrm{f}$.  
 3: $k_{\perp}$ scan with constant $k_{\parallel}$.  
 4: $k_{\parallel}$ scan with constant $k_{\perp}$.  
 

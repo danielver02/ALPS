@@ -183,6 +183,10 @@ module alps_var
   !!with \(p_\perp/m_p v_A\) in index 1  
   !!and \(p_\parallel/m_p v_A\) in index 2.
 
+  double precision, dimension(:), allocatable :: current_int
+  !! Current density, (0:nspec)
+  !! Zeroth index is sum over all species
+
   double precision, dimension(:,:,:), allocatable :: gamma_rel
   !!Relativistic momentum space array of \(\Gamma\);
   !!(1:nspec,0:ngamma,0:npparbar).
@@ -351,7 +355,7 @@ module alps_var
   public :: runname, foldername, writeOut
   public :: kperp, kpar, nspec, use_map, wroots
   public :: loggridw, loggridg, omi, omf, gami, gamf
-  public :: arrayName, nperp, npar, f0, pp, df0, bessel_array
+  public :: arrayName, nperp, npar, f0, pp, df0, bessel_array, current_int
   public :: nmax, nlim, wave, numiter, D_threshold, D_prec, D_gap, chi0
   public :: ns, qs, ms, vA, pi, Bessel_zero,sproc
   public :: ni, nr, positions_principal, Tlim
