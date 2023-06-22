@@ -111,9 +111,9 @@
 <h3><em>&amp;system</em></h3>
 <p>General system parameters.</p>
 <p><strong><code>kperp</code></strong><br>
-Initial perpendicular wavevector $k_\perp d_p$.</p>
+Initial perpendicular wavevector $k_{\perp} d_{p}$.</p>
 <p><strong><code>kpar</code></strong><br>
-Initial parallel wavevector $k_\parallel d_p$.</p>
+Initial parallel wavevector $k_{\parallel} d_{p}$.</p>
 <p><strong><code>nspec</code></strong> <br>
 Number of plasma species.</p>
 <p><strong><code>nroots</code></strong> <br>
@@ -125,13 +125,13 @@ Choice of:<br>
 <p><strong><code>writeOut</code></strong><br>
 Write or suppress output to screen.</p>
 <p><strong><code>nperp</code></strong><br>
-Perpendicular momentum space resolution, $N_\perp$.</p>
+Perpendicular momentum space resolution, $N_{\perp}$.</p>
 <p><strong><code>npar</code></strong><br>
-Parallel momentum space resolution, $N_\parallel$.</p>
+Parallel momentum space resolution, $N_{\parallel}$.</p>
 <p><strong><code>ngamma</code></strong><br>
-Relativistic momentum space resolution, $N_\Gamma$.</p>
+Relativistic momentum space resolution, $N_{\Gamma}$.</p>
 <p><strong><code>npparbar</code></strong><br>
-Relativistic parallel momentum space resolution, $N_{\bar{p}_\parallel}$.</p>
+Relativistic parallel momentum space resolution, $N_{\bar{p}_{\parallel}}$.</p>
 <p><strong><code>vA</code></strong><br>
 Reference Alfven velocity, normalized to the speed of light, $v_{A}/c$.</p>
 <p><strong><code>arrayName</code></strong><br>
@@ -148,12 +148,12 @@ Size of bounding region for secant method.</p>
 Size of allowable difference between roots.</p>
 <p><strong><code>positions_principal</code></strong><br>
 Number of parallel momentum steps distant from the resonant momentum
-included in the numerical calculation of Eqn 3.5, $M_I$.</p>
+included in the numerical calculation of Eqn 3.5, $M_{I}$.</p>
 <p><strong><code>n_resonance_interval</code></strong><br>
 How many steps should be used to integrate around the resonance,
-$M_P$, used for integrating near poles (see section 3.1).</p>
+$M_{P}$, used for integrating near poles (see section 3.1).</p>
 <p><strong><code>Tlim</code></strong><br>
-Threshold for analytical principal-value integration, $t_\textrm{lim}$.</p>
+Threshold for analytical principal-value integration, $t_{\textrm{lim}}$.</p>
 <p><strong><code>maxsteps_fit=500</code></strong><br>
 Maximum number of fitting iterations.</p>
 <p><strong><code>lambda_initial_fit</code></strong><br>
@@ -180,42 +180,42 @@ Must be set to 2 for <code>scan_option</code>=2.  </p>
 Only used when <code>use_map</code>=.false.<br>
 Need to have number of name lists equal to <code>nroots</code>.</p>
 <p><strong><code>g_om</code></strong><br>
-Guess for real solution $\omega_{\textrm{r}}/\Omega_p $.</p>
+Guess for real solution $\omega_{\textrm{r}}/\Omega_{p} $.</p>
 <p><strong><code>g_gam</code></strong><br>
-Guess for imaginary solution $\gamma/\Omega_p $.</p>
+Guess for imaginary solution $\gamma/\Omega_{p} $.</p>
 <h3><em>&amp;maps_1</em></h3>
 <p>Range of complex frequencies for map_scan subroutine.<br>
 Only used when <code>use_map</code>=.true.</p>
 <p><strong><code>loggridw</code></strong><br>
-Linear (F) or Log (T) spacing for $\omega_{\textrm{r}}/\Omega_p$ map search.
+Linear (F) or Log (T) spacing for $\omega_{\textrm{r}}/\Omega_{p}$ map search.
 Spacing automatically calculated between <code>omi</code> and <code>omf</code>.  </p>
 <p><strong><code>loggridg</code></strong><br>
-Linear (F) or Log (T) spacing for $\gamma/\Omega_p$ map search.
+Linear (F) or Log (T) spacing for $\gamma/\Omega_{p}$ map search.
 Spacing automatically calculated between <code>gami</code> and <code>gamf</code>  </p>
 <p><strong><code>omi</code></strong><br>
-Smallest $\omega_{\textrm{r}}/\Omega_p$ value for complex map search.</p>
+Smallest $\omega_{\textrm{r}}/\Omega_{p}$ value for complex map search.</p>
 <p><strong><code>omf</code></strong><br>
-Largest $\omega_{\textrm{r}}/\Omega_p$ value for complex map search.</p>
+Largest $\omega_{\textrm{r}}/\Omega_{p}$ value for complex map search.</p>
 <p><strong><code>gami</code></strong>    <br>
-Smallest $\gamma/\Omega_p$ value for complex map search.</p>
+Smallest $\gamma/\Omega_{p}$ value for complex map search.</p>
 <p><strong><code>gamf</code></strong><br>
-Largest $\gamma/\Omega_p$ value for complex map search.</p>
+Largest $\gamma/\Omega_{p}$ value for complex map search.</p>
 <p><strong><code>ni</code></strong><br>
-Number of $\gamma/\Omega_p$ points in frequency grid.</p>
+Number of $\gamma/\Omega_{p}$ points in frequency grid.</p>
 <p><strong><code>nr</code></strong><br>
-Number of $\omega_{\textrm{r}}/\Omega_p$ points in frequency grid.</p>
+Number of $\omega_{\textrm{r}}/\Omega_{p}$ points in frequency grid.</p>
 <h3><em>&amp;spec_j</em></h3>
-<p>Species parameters list for distribution $f_j$.</p>
+<p>Species parameters list for distribution $f_{j}$.</p>
 <p><strong><code>nn</code></strong><br>
-Relative density $n_j/n_p$.</p>
+Relative density $n_{j}/n_{p}$.</p>
 <p><strong><code>qq</code></strong><br>
-Relative charge $q_j/q_p$.</p>
+Relative charge $q_{j}/q_{p}$.</p>
 <p><strong><code>mm</code></strong><br>
-Relative mass $m_j/m_p$.</p>
+Relative mass $m_{j}/m_{p}$.</p>
 <p><strong><code>ff</code></strong><br>
 Number of fitted functions for analytical continuation calculation.</p>
 <p><strong><code>relat</code></strong><br>
-Treat $f_j$ as non-relativistic or relativistic.</p>
+Treat $f_{j}$ as non-relativistic or relativistic.</p>
 <p><strong><code>log_fit</code></strong><br>
 Use linear or $\log_{10}$ fitting routine.</p>
 <p><strong><code>use_bM</code></strong><br>
@@ -231,40 +231,40 @@ Kind of fit function:</p>
 </li>
 <li>
 <p>Maxwellian,<br>
-<script type="math/tex; mode=display">F_M(\hat{p}_\parallel)=
-u_1 \mathrm{exp}[-y \hat{p}^2_\perp-u_2(\hat{p}_\parallel-u_3)^2 ]. </script>
+<script type="math/tex; mode=display">F_M(\hat{p}_{\parallel})=
+u_1 \mathrm{exp}[-y \hat{p}^2_{\perp}-u_2(\hat{p}_{\parallel}-u_3)^2 ]. </script>
 </p>
 </li>
 <li>
 <p>Kappa,<br>
-<script type="math/tex; mode=display">F_{\kappa}(\hat{p}_\parallel)= u_1[1+u_2(\hat{p}_\parallel-u_3)^2+y \hat{p}_\perp^2]^{u_4}.</script>
+<script type="math/tex; mode=display">F_{\kappa}(\hat{p}_{\parallel})= u_1[1+u_2(\hat{p}_{\parallel}-u_3)^2+y \hat{p}_{\perp}^2]^{u_4}.</script>
 </p>
 </li>
 <li>
-<p>Juettner with $p_\perp,p_\parallel$,<br>
-<script type="math/tex; mode=display">F_{J}(\hat{p}_\perp,\hat{p}_\parallel)=
-u_1 \mathrm{exp}[-u_2\sqrt{1+\frac{\hat{p}^2_\perp+(\hat{p}^2_\parallel-u_3)^2 v_A^2}{m_j^2 c^2}}].</script>
+<p>Juettner with $p_{\perp},p_{\parallel}$,<br>
+<script type="math/tex; mode=display">F_{J}(\hat{p}_{\perp},\hat{p}_{\parallel})=
+u_1 \mathrm{exp}[-u_2\sqrt{1+\frac{\hat{p}^2_{\perp}+(\hat{p}^2_{\parallel}-u_3)^2 v_A^2}{m_{j}^2 c^2}}].</script>
 </p>
 </li>
 <li>
-<p>Juettner with variable $\Gamma$, constant $\bar{p}_\parallel$,<br>
+<p>Juettner with variable $\Gamma$, constant $\bar{p}_{\parallel}$,<br>
 <script type="math/tex; mode=display">F_{J}(\Gamma)= u_1 \mathrm{exp}[-y \Gamma].</script>
 </p>
 </li>
 <li>
-<p>Juettner with $p_\perp,p_\parallel$; variable $\bar{p}_\parallel$,<br>
-<script type="math/tex; mode=display">F_{\kappa}(\hat{p}_\perp,\hat{p}_\parallel)=
-u_1\mathrm{exp}[-y \hat{p}_\perp]
-\mathrm{exp}[-u_2*(\hat{p}_\parallel+u_3)^2]
+<p>Juettner with $p_{\perp},p_{\parallel}$; variable $\bar{p}_{\parallel}$,<br>
+<script type="math/tex; mode=display">F_{\kappa}(\hat{p}_{\perp},\hat{p}_{\parallel})=
+u_1\mathrm{exp}[-y \hat{p}_{\perp}]
+\mathrm{exp}[-u_2*(\hat{p}_{\parallel}+u_3)^2]
 .</script>
 </p>
 </li>
 <li>
 <p>Bi-Moyal distribution<br>
-<script type="math/tex; mode=display">F_{\kappa}(\hat{p}_\perp,\hat{p}_\parallel)=
-u_1 \mathrm{exp}[0.5 (y u_4 \hat{p}^2_perp +
-u_2 (\hat{p}_\parallel -u_3)^2 -
-\mathrm{exp}(y u_4 \hat{p}^2_perp + u_2 (\hat{p}_\parallel-u_3)^2) )].</script>
+<script type="math/tex; mode=display">F_{\kappa}(\hat{p}_{\perp},\hat{p}_{\parallel})=
+u_1 \mathrm{exp}[0.5 (y u_4 \hat{p}^2_{\perp} +
+u_2 (\hat{p}_{\parallel} -u_3)^2 -
+\mathrm{exp}(y u_4 \hat{p}^2_{\perp} + u_2 (\hat{p}_{\parallel}-u_3)^2) )].</script>
 </p>
 </li>
 </ol>
@@ -274,7 +274,7 @@ Not all parameters will be used for all functions.<br>
 Suggested values for parameters generated by generate_distribution.</p>
 <p><strong><code>perpcorr</code></strong><br>
 This parameter, $y$ in Eqn. B1, compensates for the strong
-$p_\perp$ dependence of $u_1$, making the fit more reliable.</p>
+$p_{\perp}$ dependence of $u_1$, making the fit more reliable.</p>
 <h3><em>&amp;bM_spec_j</em></h3>
 <p>Bi-Maxwellian parameters; for species j.
 Only used if use_bM=T.</p>
@@ -283,24 +283,24 @@ Maximum number of resonances to consider.</p>
 <p><strong><code>bM_Bessel</code></strong>
 Precision threshold for $I_n$.</p>
 <p><strong><code>bM_betas</code></strong>
-$\beta_{\parallel,j}$ of biMaxwellian distribution $f_j$.</p>
+$\beta_{\parallel,j}$ of biMaxwellian distribution $f_{j}$.</p>
 <p><strong><code>bM_alphas</code></strong>
-$T_{\perp,j}/T_{\parallel,j} $ of biMaxwellian distribution $f_j$.</p>
+$T_{\perp,j}/T_{\parallel,j} $ of biMaxwellian distribution $f_{j}$.</p>
 <p><strong><code>bM_pdrifts</code></strong>
-Relative drift of biMaxwellian distribution $f_j$,
-in units of $m_p v_{A,p}$.</p>
+Relative drift of biMaxwellian distribution $f_{j}$,
+in units of $m_{p} v_{A,p}$.</p>
 <h3><em>&amp;scan_input_l</em></h3>
 <p>Inputs for scanning parameter space for l$^{\textrm{th}$ scan.  </p>
 <p><strong><code>scan_type</code></strong>
 Type of parameter scan;<br>
 0: Current value of $\textbf{k}$ to
- $k_\perp$=range$<em>\textrm{i}$ and $k</em>\parallel $=range$<em>\textrm{f}$. <br>
+ $k_{\perp}$=range$<em _parallel="\parallel">\textrm{i}$ and $k</em> $=range$<em _perp="\perp">\textrm{f}$. <br>
 1: $\theta_0 \rightarrow \theta_1$ at fixed $|k|$
- from current value of $\theta=\mathrm{atan}(k</em>\perp/k_\parallel)$
+ from current value of $\theta=\mathrm{atan}(k</em>/k_{\parallel})$
  to range$<em k_B="k,B">\textrm{f}$.<br>
-2: Wavevector scan at fixed angle $\theta</em>$ to $|k|$=range$<em>\textrm{f}$.<br>
-3: $k</em>\perp$ scan with constant $k_\parallel$.<br>
-4: $k_\parallel$ scan with constant $k_\perp$.  </p>
+2: Wavevector scan at fixed angle $\theta</em>$ to $|k|$=range$<em _perp="\perp">\textrm{f}$.<br>
+3: $k</em>$ scan with constant $k_{\parallel}$.<br>
+4: $k_{\parallel}$ scan with constant $k_{\perp}$.  </p>
 <p><strong><code>swi</code></strong>
 Initial scan value.</p>
 <p><strong><code>swf</code></strong><br>
