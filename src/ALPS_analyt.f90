@@ -789,7 +789,8 @@ subroutine output_fit(qualitytotal)
              2.d0 * pi * dpperp * dppar
     charge(is) = charge(is) + qs(is)* ns(is)* pp(is,iperp,ipar,1) * real(eval_fit(is,iperp,ppar_comp)) * &
          2.d0 * pi * dpperp * dppar
-    current(is) = current(is) + qs(is)* ns(is)* pp(is,iperp,ipar,2) *pp(is,iperp,ipar,1) * real(eval_fit(is,iperp,ppar_comp)) * &
+    current(is) = current(is) + (qs(is)* ns(is)/ms(is))*&
+         pp(is,iperp,ipar,2) *pp(is,iperp,ipar,1) * real(eval_fit(is,iperp,ppar_comp)) * &
          2.d0 * pi * dpperp * dppar
         
 			enddo
