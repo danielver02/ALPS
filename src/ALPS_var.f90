@@ -180,8 +180,8 @@ module alps_var
   double precision, dimension(:,:,:,:), allocatable :: pp
   !!Momentum Space Array for \(f_{0j}\);
   !!(1:nspec,0:nperp,0:npar,1:2)  
-  !!with \(p_\parallel/m_p v_A\) in index 1  
-  !!and \(p_\perp/m_p v_A\) in index 2.
+  !!with \(p_\perp/m_p v_A\) in index 1  
+  !!and \(p_\parallel/m_p v_A\) in index 2.
 
   double precision, dimension(:,:,:), allocatable :: gamma_rel
   !!Relativistic momentum space array of \(\Gamma\);

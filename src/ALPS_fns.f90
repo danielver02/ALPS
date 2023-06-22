@@ -33,7 +33,7 @@ contains
 
 subroutine derivative_f0
   !! This subroutine calculates the perpendicular and parallel derivatives of the background velocity distribution function f0.
-    use alps_var, only : f0, pp, df0, nperp, npar, nspec, arrayName
+    use alps_var, only : f0, pp, df0, nperp, npar, nspec, arrayName, ns, qs, ms, bMpdrifts
     use alps_var, only : f0_rel, gamma_rel, pparbar_rel,nspec_rel,df0_rel,ngamma,npparbar
     use alps_var, only : writeOut, pi, relativistic, usebM
     use alps_io,  only : get_unused_unit
@@ -71,6 +71,14 @@ subroutine derivative_f0
     double precision :: integrate
     !! Integral of the distribution function.
 
+    double precision, dimension(0:nspec) :: charge
+    !! Charge density.
+    !! Zeroth index is sum over all species
+
+    double precision, dimension(0:nspec) :: current
+    !! Current density.
+    !! Zeroth index is sum over all species
+
     double precision :: dpperp
     !! Inifinitesimal step in perpendicular momentum.
 
@@ -106,7 +114,7 @@ subroutine derivative_f0
                   (pp(is,iperp,ipar+1,2) - pp(is,iperp,ipar-1,2))
           enddo
        enddo
-     endif
+    endif
 
     enddo
     write(*,*)'Derivatives calculated'
@@ -142,14 +150,21 @@ subroutine derivative_f0
              write(unit_f,*)
           enddo
           close(unit_f)
-        endif
+       endif
        enddo
     endif
     !End output
 
-
+    charge=0.d0
+    current=0.d0
 
     do is = 1, nspec
+       if (usebM(is)) then
+          integrate = 1.d0
+          charge(is)=ns(is)*qs(is)
+          current(is)=ns(is)*qs(is)*&
+               bMpdrifts(is)/ms(is)
+       else
        integrate = 0.d0
        dpperp = pp(is, 2, 2, 1) - pp(is, 1, 2, 1)
        dppar  = abs(pp(is, 2, 2, 2) - pp(is, 2, 1, 2))
@@ -159,10 +174,34 @@ subroutine derivative_f0
              integrate = integrate + &
                   pp(is,iperp,ipar,1) * f0(is,iperp,ipar) * &
                   2.d0 * pi * dpperp * dppar
+
+             charge(is) = charge(is) + &
+                  ns(is)*qs(is)*pp(is,iperp,ipar,1) * f0(is,iperp,ipar) * &
+                  2.d0 * pi * dpperp * dppar
+
+             current(is) = current(is) + &
+                  ns(is)*qs(is)*pp(is,iperp,ipar,1)*pp(is,iperp,ipar,2)*&
+                  f0(is,iperp,ipar) * &
+                  2.d0 * pi * dpperp * dppar
+             
           enddo
        enddo
-       write(*,'(a,i3,a, 2es14.4)') 'Integration of species', is,':', integrate
-     enddo
+    endif
+       write(*,'(a)')&
+            '-=-=-=-='
+       write(*,'(a,i3,a)')&
+            'Species ',is,':'
+       write(*,'(a, 2es14.4)') &
+            ' Integration:              ', integrate
+       write(*,'(a, 2es14.4)') &
+            ' Charge density:           ', charge(is)
+       write(*,'(a, 2es14.4)') &
+            ' Parallel current density: ', current(is)
+    enddo
+    write(*,'(a)')         '-=-=-=-='
+    write(*,'(a, es14.4)') ' Total charge density:           ', sum(charge(1:nspec))
+    write(*,'(a, es14.4)') ' Total parallel current density: ', sum(current(1:nspec))
+    write(*,'(a)')         '-=-=-=-=-=-=-=-='
 
 
     if (writeOut) write(*,'(a)') '-=-=-=-=-=-=-=-=-'

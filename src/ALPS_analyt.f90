@@ -339,10 +339,10 @@ subroutine determine_param_fit
 	do is=1,nspec
 
 		if (usebM(is)) then
-							write (*,'(a,i2)') ' Bi-Maxwellian calcuation: no fits necessary for species ',is
-							param_fit(is,:,:,:)=0.d0
-							fit_type(is,:)=1
-							perp_correction(is,:)=1.d0
+     write (*,'(a,i2)') ' Bi-Maxwellian calcuation: no fits necessary for species ',is
+     param_fit(is,:,:,:)=0.d0
+     fit_type(is,:)=1
+     perp_correction(is,:)=1.d0
 
 		 elseif (n_fits(is).EQ.0) then
 
@@ -606,7 +606,8 @@ subroutine output_fit(qualitytotal)
 	!! This subroutine outputs the fit parameters for iperp=0 to stdout to monitor the fit.
 	use alps_io, only : isnancheck, alps_error
 	use alps_var, only : fit_type, param_fit, n_fits, nspec, nperp, npar, pp, f0, pi, vA, runname
-	use alps_var, only : relativistic,gamma_rel,pparbar_rel,ngamma,npparbar,f0_rel, ms, usebM
+ use alps_var, only : relativistic,gamma_rel,pparbar_rel,ngamma,npparbar,f0_rel, ms, usebM
+ use alps_var, only : ns, qs, ms, bMpdrifts
 	implicit none
 
 	double precision, intent(in) :: qualitytotal
@@ -649,7 +650,15 @@ subroutine output_fit(qualitytotal)
 	!! Index for relativistic species (if any).
 
 	double precision :: integrate
-	!! Integration of fit result.
+ !! Integration of fit result.
+
+ 	double precision, dimension(0:nspec) :: charge
+  !! Charge Density of species.
+  !! Zeroth index is sum over all species
+
+   	double precision, dimension(0:nspec) :: current
+  !! Current Density of species.
+  !! Zeroth index is sum over all species.
 
 	double precision :: dpperp
 	!! Step size in pperp for integration of fit result.
@@ -694,10 +703,26 @@ subroutine output_fit(qualitytotal)
 
 	if (isnancheck(qualitytotal)) call alps_error(7)
 
+ charge=0.d0
+ current=0.d0
+ 
 	write (*,'(a)') ' Writing fit result to files'
 	do is=1,nspec
 
-		if (.not.usebM(is)) then
+    if (usebM(is)) then
+       charge(is)=ns(is)*qs(is)
+       current(is)=ns(is)*qs(is)*&
+            bMpdrifts(is)/ms(is)
+       write(*,'(a)')&
+            '-=-=-=-='
+       write(*,'(a,i3,a)')&
+            'Bi-Maxwellian Species ',is,':'
+       write(*,'(a, 2es14.4)') &
+            ' Charge density:           ', charge(is)
+       write(*,'(a, 2es14.4)') &
+            ' Parallel current density: ', current(is)
+          
+    else
 
 	  unit_spec=2000+is
 	  write(specwrite,'(i0)') is
@@ -735,6 +760,16 @@ subroutine output_fit(qualitytotal)
 						  integrate = integrate + &
                      gamma_rel(is_rel,igamma,ipparbar) * real(eval_fit(is,igamma,ppar_comp)) * &
                      2.d0 * pi * dgamma * dpparbar * (ms(is) / vA)**3
+
+        charge(is) = charge(is) + &
+             qs(is)* ns(is)* gamma_rel(is_rel,igamma,ipparbar) * real(eval_fit(is,igamma,ppar_comp)) * &
+             2.d0 * pi * dgamma * dpparbar * (ms(is) / vA)**3
+
+        !Relativistic current not yet implemented
+        !current(is) = current(is) + &
+        !     qs(is)* ns(is)* gamma_rel(is_rel,igamma,ipparbar) * real(eval_fit(is,igamma,ppar_comp)) * &
+        !     2.d0 * pi * dgamma * dpparbar * (ms(is) / vA)**3
+        
 			endif
 		 enddo
 		enddo
@@ -748,17 +783,41 @@ subroutine output_fit(qualitytotal)
 			do ipar=0,npar
 				ppar_comp=pp(is,iperp,ipar,2)
 				write (unit_spec,*) pp(is,iperp,ipar,1), pp(is,iperp,ipar,2), real(eval_fit(is,iperp,ppar_comp)), &
-						abs(real(eval_fit(is,iperp,ppar_comp))-f0(is,iperp,ipar))/f0(is,iperp,ipar)
-			     integrate = integrate + pp(is,iperp,ipar,1) * real(eval_fit(is,iperp,ppar_comp)) * &
-                     2.d0 * pi * dpperp * dppar
+         abs(real(eval_fit(is,iperp,ppar_comp))-f0(is,iperp,ipar))/f0(is,iperp,ipar)
+    
+    integrate = integrate + pp(is,iperp,ipar,1) * real(eval_fit(is,iperp,ppar_comp)) * &
+             2.d0 * pi * dpperp * dppar
+    charge(is) = charge(is) + qs(is)* ns(is)* pp(is,iperp,ipar,1) * real(eval_fit(is,iperp,ppar_comp)) * &
+         2.d0 * pi * dpperp * dppar
+    current(is) = current(is) + qs(is)* ns(is)* pp(is,iperp,ipar,2) *pp(is,iperp,ipar,1) * real(eval_fit(is,iperp,ppar_comp)) * &
+         2.d0 * pi * dpperp * dppar
+        
 			enddo
 		enddo
 	  endif
 	  close(unit_spec)
 
-       write(*,'(a,i3,a, 2es14.4)') ' Integration of fit/analytical function for species', is,':', integrate
-	endif
-	enddo
+   write(*,'(a)')&
+        '-=-=-=-='
+   write(*,'(a,i3,a)')&
+        'Species ',is,':'
+   write(*,'(a, 2es14.4)') &
+        ' Integration of fit/analytical function:              ', integrate
+   write(*,'(a, 2es14.4)') &
+        ' Charge density of fit/analytical function:           ', charge(is)
+   if (relativistic(is)) then
+      write(*,'(a)')'Relativistic parallel current density not yet implemented!'
+   else
+      write(*,'(a, 2es14.4)') &
+         ' Parallel current density of fit/analytical function: ', current(is)
+   endif
+   
+endif
+enddo
+write(*,'(a)')         '-=-=-=-='
+write(*,'(a, es14.4)') ' Total charge density of fit/analytical function:           ', sum(charge(1:nspec))
+write(*,'(a, es14.4)') ' Total parallel current density of fit/analytical function: ', sum(current(1:nspec))
+write(*,'(a)')         '-=-=-=-=-=-=-=-='
 
 end subroutine output_fit
 
