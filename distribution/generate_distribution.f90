@@ -17,39 +17,144 @@
 !===============================================================================
 
 program generate_distribution
+  !! This program generates distribution files for input into ALPS based on pre-defined functions.
   use alps_distribution_analyt, only : distribution_analyt
   implicit none
-  integer :: iperp,ipar !perp, par indices
-  integer :: nperp,npar !size of perp, par grids
-  integer :: nspec      !number of plasma species
-  integer :: is         !index for plasma species
-  integer, dimension(:), allocatable :: unit_out       !index for file output
-  character (50) :: writeName, outputName
-  double precision :: dpperp, dppar
-  double precision :: ppar_max, pperp_max
-  double precision :: iperpcorr,ifit_1,ifit_2,ifit_3,ifit_4,ifit_5
-  double precision :: ppar, pperp
+
+  integer :: iperp
+  !! Index to loop over perpendicular momentum.
+
+  integer :: ipar
+  !! Index to loop over parallel momentum.
+
+  integer :: nperp
+  !! Number of steps in perpendicular momentum.
+
+  integer :: npar
+  !! Number of steps in parallel momentum.
+
+  integer :: nspec
+  !! Total number of plasma species.
+
+  integer :: is
+  !! Index to loop over plasma species.
+
+  integer, dimension(:), allocatable :: unit_out
+  !! Index for unit for output. (1:nspec)
+
+  character (500) :: writeName
+  !! String for part of file name.
+
+  character (500) :: outputName
+  !! String for part of file name.
+
+  double precision :: dpperp
+  !! Inifinitesimal step in perpendicular momentum.
+
+  double precision :: dppar
+  !! Inifinitesimal step in parallel momentum.
+
+  double precision :: ppar_max
+  !! Maximum parallel momentum.
+
+  double precision :: pperp_max
+  !! Maximum perpendicular momentum.
+
+  double precision :: iperpcorr
+  !! Perpendicular correction \(y\).
+
+  double precision :: ifit_1
+  !! Ideal first fit parameter \(u_1\).
+
+  double precision :: ifit_2
+  !! Ideal second fit parameter \(u_2\).
+
+  double precision :: ifit_3
+  !! Ideal third fit parameter \(u_3\).
+
+  double precision :: ifit_4
+  !! Ideal fourth fit parameter \(u_4\).
+
+  double precision :: ifit_5
+  !! Ideal fifth fit parameter \(u_5\).
+
+  double precision :: ppar
+  !! Parallel momentum.
+
+  double precision :: pperp
+  !! Perpendicular momentum.
+
   double precision :: f0
-  double precision, dimension(:), allocatable :: ms, tau, alph, p_drift, kappa, maxPperp, maxPpar
+  !! Distribution function.
+
+  double precision, dimension(:), allocatable :: ms
+  !! Mass of species. (1:nspec)
+
+  double precision, dimension(:), allocatable :: tau
+  !! Parallel temperature ratio of species. (1:nspec)
+
+  double precision, dimension(:), allocatable :: alph
+  !! Temperature anisotropy of species. (1:nspec)
+
+  double precision, dimension(:), allocatable :: p_drift
+  !! Drift momentum of species. (1:nspec)
+
+  double precision, dimension(:), allocatable :: kappa
+  !! Kappa index of species. (1:nspec)
+
+  double precision, dimension(:), allocatable :: maxPperp
+  !! Maximum perpendicular momentum of species. (1:nspec)
+
+  double precision, dimension(:), allocatable ::  maxPpar
+  !! Maximum parallel momentum of species. (1:nspec)
+
   logical, dimension (:), allocatable :: autoscale
+  !! Flag for autoscaling of grid for species. (1:nspec)
+
   integer, dimension(:), allocatable :: distribution
+  !! Type of distribution for species. (1:nspec)
+
   double precision :: beta
+  !! Plasma beta.
+
   double precision :: vA
+  !! Ratio of Alfven speed to c.
+
   double precision :: maxP
+  !! Maximum momentum.
+
   double precision :: pi
+  !! Pi.
+
   double precision :: integrate
-  double precision :: norm, a
+  !! Integration variable.
+
+  double precision :: norm
+  !! Normalisation factor for f0.
+
+  double precision :: a
+  !! Helper variable for parts of distributions.
+
   double precision :: BESSK
+  !! Modified Bessel function.
+
   double complex :: ppar_C
+  !! Complex version of parallel momentum.
 
-
-  !I/O values for namelist
   integer :: unit
-  integer, parameter :: stdout_unit=6
-  integer, save :: input_unit_no, error_unit_no=stdout_unit
+  !! Unit for file i/o.
 
-  !string for parameter input file
-  character(50) :: runname
+  integer, parameter :: stdout_unit=6
+  !! Flag for file i/o.
+
+  integer, save :: input_unit_no
+  !! Saved input unit for use with multiple read in calls.
+
+  integer, save :: error_unit_no=stdout_unit
+  !! Error output unit.
+
+  character(500) :: runname
+  !! String parameter for input file.
 
   pi = atan(1.d0)*4.d0
 
@@ -66,7 +171,7 @@ program generate_distribution
      open(unit=unit_out(is),file=trim(outputName)//".array",status='replace')
 
 
-	! determine the normalization:
+	! Determine the normalization:
 	select case(distribution(is))
     case (0) ! The code will use distribution_analyt, no normalisation necessary
       norm=1.d0
@@ -114,7 +219,6 @@ program generate_distribution
       ifit_5=1.d0
       iperpcorr=1.d0/( tau(is) *beta * ms(is) * kappa(is) * a * a * alph(is))
 
-
 	  case (3) ! Juettner
 	    norm = vA/(2.d0*pi*sqrt(alph(is))*ms(is)**2 * beta * tau(is) )
 	    norm = norm / BESSK(2,2.d0 * ms(is)/(vA*vA*alph(is)*beta*tau(is)))
@@ -135,7 +239,6 @@ program generate_distribution
       ifit_4=0.d0
       ifit_5=0.d0
       iperpcorr=(2.d0*ms(is)/(vA*vA*beta*tau(is)*alph(is)))
-
 
     case (4) ! bi-Moyal
       norm = 1.d0
@@ -299,12 +402,11 @@ program generate_distribution
 
 contains
 
+
+
   subroutine read_in_params
-    !Read in system parameters
-    !input file is argument after executable:
-    !$ ./generate_distribution.e input.in
+!! This subroutine reads in the parameters for the generation of distribution functions for ALPS.
     implicit none
-    !Dummy values for reading in species parameters
 
 
     nameList /system/ &
@@ -328,9 +430,7 @@ contains
     allocate(maxPpar(1:nspec)); maxPpar = 0.d0
 
 
-    !Read in species parameters
-    !This is a bit of FORTRAN black magic borrowed from AGK.
-    !     which allows us to loop over iterative nml/groupnames
+    !Read in species parameters:
     do is = 1,nspec
        unit=input_unit_no
        call get_indexed_namelist_unit (unit, "spec", is)
@@ -342,14 +442,41 @@ contains
 
   end subroutine read_in_params
 
+
+
 subroutine spec_read(is)
+!!Subroutine for reading in species parameters.
   implicit none
-  !Passed
-  integer :: is !solution index
-  !Local
-  double precision :: tauS,mS_read,alphS,pS,kappaS,maxPperpS,maxPparS
+
+  integer, intent(in) :: is
+  !!Species index.
+
+  double precision :: tauS
+  !! Parallel temperature ratio of species.
+
+  double precision :: mS_read
+  !! Mass of species.
+
+  double precision :: alphS
+  !! Temperature anisotropy of species.
+
+  double precision :: pS
+  !! Drift momentum of species.
+
+  double precision :: kappaS
+  !! Kappa index of species.
+
+  double precision :: maxPperpS
+  !! Maximum perpendicular momentum of species.
+
+  double precision :: maxPparS
+  !! Maximum parallel momentum of species.
+
   integer :: distributionS
+  !! Type of distribution for species.
+
   logical :: autoscaleS
+  !! Flag for autoscaling of grid for species.
 
   nameList /spec/ &
        mS_read, tauS, alphS, pS, kappaS, distributionS, autoscaleS, maxPperpS, maxPparS
@@ -367,25 +494,40 @@ subroutine spec_read(is)
 
 end subroutine spec_read
 
-!-=-=-=-=-=-
-!The following routines:
-!    get_indexed_namelist_unit
-!    input_unit_exist
-!    get_unused_unit
-!    input_unit
-!were all adopted from the Astrophysical Gyrokinetic Code (AGK)
-!as a means of allowing arbitrary namelist group name input.
-!A bit of hassle, but worth the effort.
-!-=-=-=-=-=-
+
+
+
   subroutine get_indexed_namelist_unit (unit, nml, index_in)
+!! Determines unused I/O unit.
     implicit none
+
     integer, intent (out) :: unit
+    !!Unit to be defined.
+
     character (*), intent (in) :: nml
+    !!Character string for namelist to be read in.
+
     integer, intent (in) :: index_in
+    !!Index of namelist to be read in.
+
     character(500) :: line
-    integer :: iunit, iostat, in_file
+    !!I/O dummy variable.
+
+    integer :: iunit
+    !!I/O dummy index.
+
+    integer :: iostat
+    !!I/O dummy index.
+
+    integer :: in_file
+    !!I/O dummy index.
+
     integer :: ind_slash
+    !!I/O dummy index.
+
     logical :: exist
+    !!Check if namelist is open.
+
 
     call get_unused_unit (unit)
     ind_slash=index(runname,"/",.True.)
@@ -420,12 +562,29 @@ end subroutine spec_read
     rewind (unit=unit)
   end subroutine get_indexed_namelist_unit
 
+
+
+
   function input_unit_exist (nml,exist)
+    !! Determine if a particular namelist already opened.
     implicit none
+
     character(*), intent (in) :: nml
+    !!Namelist to be opened.
+
     logical, intent(out) :: exist
-    integer :: input_unit_exist, iostat
+    !!Determination if namelist is open.
+
+    integer :: input_unit_exist
+    !!I/O dummy index.
+
+    integer :: iostat
+    !!I/O dummy index.
+
     character(500) :: line
+    !!I/O dummy variable.
+
+
     intrinsic adjustl, trim
     input_unit_exist = input_unit_no
     exist = .true.
@@ -446,11 +605,28 @@ end subroutine spec_read
     exist = .false.
   end function input_unit_exist
 
+
+
+
+
+
   function input_unit (nml)
+  !!Assigns input unit for namelist opening.
     implicit none
+
     character(*), intent (in) :: nml
-    integer :: input_unit, iostat
+    !! Namelist string.
+
+    integer :: input_unit
+    !!I/O dummy index.
+
+    integer :: iostat
+    !!I/O dummy index.
+
     character(500) :: line
+    !!I/O dummy variable.
+
+
     intrinsic adjustl, trim
     input_unit = input_unit_no
     if (input_unit_no > 0) then
@@ -471,10 +647,21 @@ end subroutine spec_read
     write (unit=*, fmt="('Couldn''t find namelist: ',a)") nml
   end function input_unit
 
+
+
+
+
   subroutine get_unused_unit (unit)
+  !! Determine unused number for I/O index.
     implicit none
+
     integer, intent (out) :: unit
+    !!Unit to be assigned.
+
     logical :: od
+    !! Check whether unit is opened.
+
+
     unit = 50
     do
        inquire (unit=unit, opened=od)
@@ -482,15 +669,22 @@ end subroutine spec_read
        unit = unit + 1
     end do
   end subroutine get_unused_unit
-!-=-=-=-=-=-
 
-!---------------------------------------------------------------
-! Get runname for output files from input argument
+
+
+
   subroutine get_runname(runname)
+  !! Get runname for output files from input argument.
     implicit none
-    integer       :: l
-    character(50) :: arg
-    character(50), intent(out) :: runname
+
+    integer :: l
+    !! Dummy Length.
+
+    character(500) :: arg
+    !! Input Argument.
+
+    character(500), intent(out) :: runname
+    !! Basename for file I/O.
 
     !Get the first argument of the program execution command
     call getarg(1,arg)
@@ -501,7 +695,6 @@ end subroutine spec_read
        runname = arg(1:l-3)
     end if
   end subroutine get_runname
-!------------------------------------------------------------------------------
 
 
 end program generate_distribution
@@ -511,22 +704,20 @@ end program generate_distribution
 
 
       FUNCTION BESSK(N,X)
+        !! This function calculates the modified Bessel function of the third kind
+        !! of integer order N, for any REAL X. The classical recursion formula is used. Reference:
+        !! C.W.Clenshaw, Chebyshev Series for Mathematical Functions, Mathematical Tables, Vol. 5, 1962.
       IMPLICIT NONE
-      INTEGER N,J
-      REAL *8 X,BESSK,BESSK0,BESSK1,TOX,BK,BKM,BKP
-! ------------------------------------------------------------------------
-!     CE SOUS-PROGRAMME CALCULE LA FONCTION BESSEL MODIFIFIEE 3E ESPECE
-!     D'ORDRE N ENTIER POUR TOUT X REEL POSITIF > 0.  ON UTILISE ICI LA
-!     FORMULE DE RECURRENCE CLASSIQUE EN PARTANT DE BESSK0 ET BESSK1.
-!
-!     THIS ROUTINE CALCULATES THE MODIFIED BESSEL FUNCTION OF THE THIRD
-!     KIND OF INTEGER ORDER, N FOR ANY POSITIVE REAL ARGUMENT, X. THE
-!     CLASSICAL RECURSION FORMULA IS USED, STARTING FROM BESSK0 AND BESSK1.
-! ------------------------------------------------------------------------
-!     REFERENCE:
-!     C.W.CLENSHAW, CHEBYSHEV SERIES FOR MATHEMATICAL FUNCTIONS,
-!     MATHEMATICAL TABLES, VOL.5, 1962.
-! ------------------------------------------------------------------------
+
+      integer, intent(in) :: N
+      !! Order of Bessel function.
+
+      double precision, intent(in) :: X
+      !! Argument of the Bessel function.
+
+      INTEGER J
+      REAL *8 BESSK,BESSK0,BESSK1,TOX,BK,BKM,BKP
+
       IF (N.EQ.0) THEN
       BESSK = BESSK0(X)
       RETURN
@@ -550,16 +741,17 @@ end program generate_distribution
       BESSK = BK
       RETURN
       END
-! ----------------------------------------------------------------------
+
+
+
       FUNCTION BESSK0(X)
-!     CALCUL DE LA FONCTION BESSEL MODIFIEE DU 3EME ESPECE D'ORDRE 0
-!     POUR TOUT X REEL NON NUL.
-!
-!     CALCULATES THE THE MODIFIED BESSEL FUNCTION OF THE THIRD KIND OF
-!     ORDER ZERO FOR ANY POSITIVE REAL ARGUMENT, X.
-! ----------------------------------------------------------------------
+!! This function calculates the modified Bessel function of the third kind of order zero for any positive real argument x.
       IMPLICIT NONE
-      REAL*8 X,BESSK0,Y,AX,P1,P2,P3,P4,P5,P6,P7,Q1,Q2,Q3,Q4,Q5,Q6,Q7,    &
+
+      double precision, intent(in) :: X
+      !! Argument of the Bessel function.
+
+      REAL*8 BESSK0,Y,AX,P1,P2,P3,P4,P5,P6,P7,Q1,Q2,Q3,Q4,Q5,Q6,Q7,    &
       BESSI0
       DATA P1,P2,P3,P4,P5,P6,P7/-0.57721566D0,0.42278420D0,0.23069756D0, &
       0.3488590D-1,0.262698D-2,0.10750D-3,0.74D-5/
@@ -580,16 +772,19 @@ end program generate_distribution
       ENDIF
       RETURN
       END
-! ----------------------------------------------------------------------
+
+
+
+
+
       FUNCTION BESSK1(X)
-!     CALCUL DE LA FONCTION BESSEL MODIFIEE DE 3EME ESPECE D'ORDRE 1
-!     POUR TOUT X REEL POSITF NON NUL.
-!
-!     CALCULATES THE THE MODIFIED BESSEL FUNCTION OF THE THIRD KIND OF
-!     ORDER ONE FOR ANY POSITIVE REAL ARGUMENT, X.
-! ----------------------------------------------------------------------
+!! This function calculates the modified Bessel function of the third kind of order zero for any positive real argument x.
       IMPLICIT NONE
-      REAL*8 X,BESSK1,Y,AX,P1,P2,P3,P4,P5,P6,P7,Q1,Q2,Q3,Q4,Q5,Q6,Q7,BESSI1
+
+      double precision, intent(in) :: X
+      !! Argument of the Bessel function.
+
+      REAL*8 BESSK1,Y,AX,P1,P2,P3,P4,P5,P6,P7,Q1,Q2,Q3,Q4,Q5,Q6,Q7,BESSI1
       DATA P1,P2,P3,P4,P5,P6,P7/1.D0,0.15443144D0,-0.67278579D0,  &
       -0.18156897D0,-0.1919402D-1,-0.110404D-2,-0.4686D-4/
       DATA Q1,Q2,Q3,Q4,Q5,Q6,Q7/1.25331414D0,0.23498619D0,-0.3655620D-1, &
@@ -609,12 +804,19 @@ end program generate_distribution
       ENDIF
       RETURN
       END
-!
-!     Bessel Function of the 1st kind of order zero.
-!
+
+
+
+
+
       FUNCTION BESSI0(X)
+        !! This function calculates the modified Bessel function of the first kind of order zero for any positive real argument x.
       IMPLICIT NONE
-      REAL *8 X,BESSI0,Y,P1,P2,P3,P4,P5,P6,P7,Q1,Q2,Q3,Q4,Q5,Q6,Q7,Q8,Q9,AX,BX
+
+      double precision, intent(in) :: X
+      !! Argument of the Bessel function.
+
+      REAL *8 BESSI0,Y,P1,P2,P3,P4,P5,P6,P7,Q1,Q2,Q3,Q4,Q5,Q6,Q7,Q8,Q9,AX,BX
       DATA P1,P2,P3,P4,P5,P6,P7/1.D0,3.5156229D0,3.0899424D0,1.2067429D0,  &
       0.2659732D0,0.360768D-1,0.45813D-2/
       DATA Q1,Q2,Q3,Q4,Q5,Q6,Q7,Q8,Q9/0.39894228D0,0.1328592D-1,  &
@@ -632,12 +834,19 @@ end program generate_distribution
       ENDIF
       RETURN
       END
-!
-!     Bessel Function of the 1st kind of order one.
-!
+
+
+
+
+
       FUNCTION BESSI1(X)
+!! This function calculates the modified Bessel function of the first kind of order one for any positive real argument x.
       IMPLICIT NONE
-      REAL *8 X,BESSI1,Y,P1,P2,P3,P4,P5,P6,P7,Q1,Q2,Q3,Q4,Q5,Q6,Q7,Q8,Q9,AX,BX
+
+      double precision, intent(in) :: X
+      !! Argument of the Bessel function.
+
+      REAL *8 BESSI1,Y,P1,P2,P3,P4,P5,P6,P7,Q1,Q2,Q3,Q4,Q5,Q6,Q7,Q8,Q9,AX,BX
       DATA P1,P2,P3,P4,P5,P6,P7/0.5D0,0.87890594D0,0.51498869D0,  &
       0.15084934D0,0.2658733D-1,0.301532D-2,0.32411D-3/
       DATA Q1,Q2,Q3,Q4,Q5,Q6,Q7,Q8,Q9/0.39894228D0,-0.3988024D-1, &

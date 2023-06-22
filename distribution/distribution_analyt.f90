@@ -17,6 +17,10 @@
 !===============================================================================
 
 module alps_distribution_analyt
+  !! This module evaluates a pre-defined function for f0. This is an alternative
+  !! to the use of an f0 table or a bi-Maxwellian approximation.
+  !! This function can be used to define f0 for the integration or for the analytic
+  !! continuation (or both).
   implicit none
 
   public :: distribution_analyt
@@ -24,13 +28,29 @@ module alps_distribution_analyt
 contains
 
 double complex function distribution_analyt(is,pperp,ppar)
+!! This function returns the pre-defined function as f0.
   implicit none
-  integer :: is
-  double precision :: pperp
-  double complex :: ppar
-  double complex :: f0
 
-  double precision :: pi,beta,ms
+  integer, intent(in) :: is
+  !! Index of species.
+
+  double precision :: pperp
+  !! Perpendicular momentum.
+
+  double complex :: ppar
+  !! Parallel momentum.
+
+  double complex :: f0
+  !! Value of the distribution function.
+
+  double precision :: pi
+  !! Pi.
+
+  double precision :: beta
+  !! Plasma beta.
+
+  double precision :: ms
+  !! Mass of species.
 
   pi=atan(1.d0)*4.d0
 

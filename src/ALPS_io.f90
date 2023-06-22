@@ -22,13 +22,13 @@ module alps_io
 
   integer :: unit
   !!Index for file I/O.
-  
+
   integer, parameter :: stdout_unit=6
   !! Standard unit for I/O.
-  
+
   integer, save :: input_unit_no
   !! Saved input unit for use with multiple read in calls.
-  
+
   integer, save :: error_unit_no=stdout_unit
   !! Error output unit.
 
@@ -41,7 +41,7 @@ module alps_io
 contains
 
 
-  
+
   subroutine init_param
     !!Read in system parameters from *.in file.
     !!Only processor 0 calls this routine:
@@ -58,15 +58,15 @@ contains
 
     integer :: ik
     !!Solution index for iterating [[(solution_read(subroutine)]].
-    
+
     integer :: is
     !!Species index for iterating [[spec_read(subroutine)]],
     !![[read_f0(subroutine)]], [[bM_read(subroutine)]], and
     !![[fit_read(subroutine)]]
-    
+
     integer :: ifit
     !!Fit index for iterating [[fit_read(subroutine)]].
-    
+
     integer :: ip
     !!Index for iterating [[scan_read(subroutine)]] and
     !!internal looping in [[init_param(subroutine)]].
@@ -218,7 +218,7 @@ contains
           enddo
        endif
     enddo
-    
+
     !Read in selection for scan paramter:
     if (n_scan.gt.0) then
        write(*,'(a)')'-=-=-=-=-=-=-=-=-'
@@ -235,7 +235,7 @@ contains
   end subroutine init_param
 
 
-  
+
   subroutine map_read
     !!Reads in complex frequency map parameters.
     use alps_var, only : loggridw, loggridg
@@ -245,21 +245,22 @@ contains
     nameList /maps/ &
          loggridw, loggridg, omi, omf, gami, gamf, ni, nr
     read (unit=unit,nml=maps)
-    
+
   end subroutine map_read
 
 
-  
+
   subroutine solution_read(ik)
     !!Reads in initial guesses for dispersion solutions.
     use alps_var, only : wroots
     implicit none
-    integer :: ik 
+
+    integer, intent(in) :: ik
     !!Solution index.
-    
+
     double precision :: g_om
     !!Guess for real solution \(\omega_{\textrm{r}/\Omega_p \).
-    
+
     double precision :: g_gam
     !!Guess for imaginary solution \(\gamma/\Omega_p \).
 
@@ -270,36 +271,37 @@ contains
   end subroutine solution_read
 
 
-  
+
   subroutine spec_read(is)
     !!Subroutine for reading in species parameters
     use alps_var, only : ns, qs, ms, n_fits
     use alps_var, only : relativistic, logfit, usebM
     implicit none
-    integer :: is
+
+    integer,intent(in) :: is
     !!Species index.
-    
+
     double precision :: nn
     !! Read in value for relative density for \(f_j\).
-    
+
     double precision :: qq
     !! Read in value for charge for \(f_j\).
-    
+
     double precision :: mm
     !! Read in value for mass for \(f_j\).
-    
+
     integer :: ff
     !!Read in value for number of fitted functions.
-    
+
     logical :: relat=.false.
     !! Treat species as non-relativistic or relativistic.
-    
+
     logical :: log_fit=.true.
     !! Use linear or \(\log_{10}\) fitting routine.
-    
+
     logical :: use_bM=.false.
     !! Use actual numerical integration or bi-Maxwellian proxy via NHDS.
-    
+
     nameList /spec/ &
          nn,qq,mm,ff,relat,log_fit,use_bM
     read (unit=unit,nml=spec)
@@ -309,26 +311,27 @@ contains
   end subroutine spec_read
 
 
-  
+
   subroutine bM_read(is)
     !!Reads in bi-Maxwellian parameters.
     use alps_var, only : bMnmaxs,bMBessel_zeros,bMbetas
     use alps_var, only : bMalphas,bMpdrifts
     implicit none
-    integer :: is
+
+    integer,intent(in) :: is
     !!Species index.
-    
+
     integer :: bM_nmaxs
     !!Maximum number of resonances to consider.
-    
+
     double precision :: bM_Bessel_zeros
     !!Precision threshold for \(I_n\).
     double precision :: bM_betas
     !!\(\beta_{\parallel,j}\) of biMaxwellian distribution \(f_j\).
-    
+
     double precision :: bM_alphas
     !!\(T_{\perp,j}/T_{\parallel,j} \) of biMaxwellian distribution \(f_j\).
-    
+
     double precision :: bM_pdrifts
     !!Relative drift of biMaxwellian distribution \(f_j\),
     !!in units of \(m_p v_{A,p}\).
@@ -343,7 +346,7 @@ contains
   end subroutine bM_read
 
 
-  
+
   subroutine scan_read(is)
     !!The most important subroutine.
     !!Reads in wavevector scan parameters.
@@ -352,18 +355,18 @@ contains
   use alps_var, only : scan,kperp_last,kpar_last
   implicit none
 
-  integer :: is
+  integer, intent(in) :: is
   !!Scan index.
-  
+
   integer :: scan_type
   !!Determine kind of wavevector scan.
-  
+
   integer :: ns
   !!Number of output scan values.
 
   integer :: nres
   !!Resolution between output scan values.
-  
+
   double precision :: swi
   !!Initial Scan Value.
 
@@ -375,7 +378,7 @@ contains
 
   logical :: heating
   !!Activate heating calculation.
-  
+
   logical :: eigen
   !!Activate eigenfunction calculation.
 
@@ -481,11 +484,11 @@ subroutine fit_read(is,ifit)
   !!Reads in fit parameters for component is.
   use alps_var, only : fit_type, param_fit, perp_correction
   implicit none
-  
-  integer :: is
+
+  integer, intent(in) :: is
   !!Species index.
-  
-  integer :: ifit
+
+  integer, intent(in) :: ifit
   !Fit index.
 
   double precision :: fit_1
@@ -496,18 +499,18 @@ subroutine fit_read(is,ifit)
 
   double precision :: fit_3
   !! Read in values for fit component 3.
-  
+
   double precision :: fit_4
   !! Read in values for fit component 4.
 
   double precision :: fit_5
   !! Read in values for fit component 5.
-  
+
   double precision :: perpcorr
   !!Perpendicular correction to compensate for exponential
   !!dependency of drift to make fit more reliable
   !![\(y\) in Eqn B1 of Verscharen et al 2018].
-  
+
   integer :: fit_type_in
   !!Read in value for type of analytic function.
 
@@ -531,25 +534,26 @@ end subroutine fit_read
 subroutine get_runname(runname,foldername)
   !! Get runname for output files from input argument.
   implicit none
+
   integer       :: l
   !!Dummy Length.
-  
-  integer       :: pathend
+
+  integer :: pathend
   !!Directory divider.
-  
+
   character(500) :: arg
   !!Input Argument.
-  
+
   character(500), intent(out) :: runname
   !!Basename for file I/O.
-  
+
   character(500), intent(out) :: foldername
   !!Directory in which input file is stored.
-  
+
   !Get the first argument of the program execution command:
   call getarg(1,arg)
   pathend=0
-  
+
   !Check if this is the input file and trim .in extension to get runname.
   !Also remove any folder structure from the runname:
   l = len_trim (arg)
@@ -561,20 +565,20 @@ subroutine get_runname(runname,foldername)
 
   end subroutine get_runname
 
-  
-  
+
+
   subroutine read_f0
     !! Subroutine for reading in background distribution function
     use alps_var, only : nperp, npar, arrayName, f0, pp, nspec
     use alps_var, only : writeOut, usebM
     implicit none
-    
+
     integer :: ipar
     !Parallel index.
 
     integer :: iperp
     !!Perpendicular index.
-    
+
     integer :: is
     !!Species index.
 
@@ -613,42 +617,34 @@ subroutine get_runname(runname,foldername)
      enddo
 
 end subroutine read_f0
-!-=-=-=-=-
-!-=-=-=-=-
 
-!-=-=-=-=-=-
-!The following routines:
-!    get_indexed_namelist_unit
-!    input_unit_exist
-!    get_unused_unit
-!    input_unit
-!were all adopted from the Astrophysical Gyrokinetic Code (AGK)
-!as a means of allowing arbitrary namelist group name input.
-!-=-=-=-=-=-
+
+
+
 
 subroutine get_indexed_namelist_unit (unit, nml, index_in)
   !!Determines unused I/O unit.
   use alps_var, only : runname
   implicit none
-  
+
   integer, intent (out) :: unit
   !!Unit to be defined.
-  
+
   character (*), intent (in) :: nml
   !!Character string for namelist to be read in.
-  
+
   integer, intent (in) :: index_in
   !!Index of namelist to be read in.
-  
+
   character(500) :: line
   !!I/O dummy variable.
-  
+
   integer :: iunit, iostat, in_file
   !!I/O dummy indices.
 
   integer :: ind_slash
   !!I/O dummy index.
-  
+
   logical :: exist
   !!Check if namelist is open.
 
@@ -665,16 +661,16 @@ subroutine get_indexed_namelist_unit (unit, nml, index_in)
   write (line, *) index_in
   line = nml//"_"//trim(adjustl(line))
   in_file = input_unit_exist(trim(line), exist)
-  
+
   if (exist) then
      iunit = input_unit(trim(line))
   else
      call alps_error(1)
   end if
-  
+
   read (unit=iunit, fmt="(a)") line
   write (unit=unit, fmt="('&',a)") nml
-  
+
   do
      read (unit=iunit, fmt="(a)", iostat=iostat) line
      if (iostat /= 0 .or. trim(adjustl(line)) == "/") exit
@@ -685,37 +681,41 @@ subroutine get_indexed_namelist_unit (unit, nml, index_in)
 end subroutine get_indexed_namelist_unit
 
 
+
+
+
+
 subroutine get_indexed_double_namelist_unit (unit, nml, spec_in, index_in)
   !!A version of [[get_indexed_namelist_unit(subroutine)]], extended
   !!to allow for double indexing in order to read in multiple fits
   !!for a single species.
   use alps_var, only : runname
-  
+
   implicit none
   integer, intent (out) :: unit
   !!Unit to be defined.
-  
+
   character (*), intent (in) :: nml
   !!Character string for namelist to be read in.
 
   integer, intent (in) :: spec_in
   !!First index of namelist to be read in.
-  
+
   integer, intent (in) :: index_in
   !!Second index of namelist to be read in.
-    
+
   character(500) :: line,lines
   !!I/O dummy variable.
 
   integer :: iunit, iostat, in_file
   !!I/O dummy indices.
-  
+
   integer :: ind_slash
   !!I/O dummy index.
-  
+
   logical :: exist
   !!Check if namelist is open.
-  
+
   call get_unused_unit (unit)
   ind_slash=index(runname,"/",.True.)
   if (ind_slash.EQ.0) then !No slash in name
@@ -725,21 +725,21 @@ subroutine get_indexed_double_namelist_unit (unit, nml, spec_in, index_in)
      !General behaviour
      open (unit=unit, file=trim(runname(1:ind_slash))//"."//trim(runname(ind_slash+1:))//".scratch")
   endif
-  
+
   write (line, *) index_in
   write (lines, *) spec_in
   line = nml//"_"//trim(adjustl(lines))//"_"//trim(adjustl(line))
   in_file = input_unit_exist(trim(line), exist)
-  
+
   if (exist) then
      iunit = input_unit(trim(line))
   else
      call alps_error(1)
   end if
-  
+
   read (unit=iunit, fmt="(a)") line
   write (unit=unit, fmt="('&',a)") nml
-  
+
   do
      read (unit=iunit, fmt="(a)", iostat=iostat) line
      if (iostat /= 0 .or. trim(adjustl(line)) == "/") exit
@@ -751,22 +751,25 @@ end subroutine get_indexed_double_namelist_unit
 
 
 
+
+
+
 function input_unit_exist (nml,exist)
   !!Determine if a particular namelist already opened.
   implicit none
-  
+
   character(*), intent (in) :: nml
   !!Namelist to be opened.
-  
+
   logical, intent(out) :: exist
   !!Determination if namelist is open.
-  
+
   integer :: input_unit_exist, iostat
   !!I/O dummy indices.
-  
+
   character(500) :: line
   !!I/O dummy variable.
-  
+
     intrinsic adjustl, trim
     input_unit_exist = input_unit_no
     exist = .true.
@@ -788,20 +791,20 @@ function input_unit_exist (nml,exist)
   end function input_unit_exist
 
 
-  
+
   function input_unit (nml)
     !!Assigns input unit for namelist opening.
     implicit none
-    
+
     character(*), intent (in) :: nml
     !! Namelist string.
-    
+
     integer :: input_unit, iostat
     !!I/O dummy indices.
-    
+
     character(500) :: line
     !!I/O dummy variable.
-    
+
     intrinsic adjustl, trim
     input_unit = input_unit_no
     if (input_unit_no > 0) then
@@ -822,14 +825,17 @@ function input_unit_exist (nml,exist)
     write (unit=*, fmt="('Couldn''t find namelist: ',a)") nml
   end function input_unit
 
-  
+
+
+
+
   subroutine get_unused_unit (unit)
     !!Determine unused number for I/O index.
     implicit none
-    
+
     integer, intent (out) :: unit
     !!Unit to be assigned.
-    
+
     logical :: od
     unit = 50
     do
@@ -840,12 +846,14 @@ function input_unit_exist (nml,exist)
   end subroutine get_unused_unit
 
 
-  
+
+
+
   subroutine alps_error_init
     !!Open a file for the error log.
     use alps_var, only : unit_error, runname, foldername
     implicit none
-    
+
     call get_unused_unit(unit_error)
     !Get the run name, which comes from the name
     !of the input file appended after the executable:
@@ -856,7 +864,7 @@ function input_unit_exist (nml,exist)
   end subroutine alps_error_init
 
 
-  
+
   subroutine alps_error(error_id)
     !!Error catching subroutine.
     use alps_var, only : ierror,unit_error,nproc,scan_option
@@ -932,18 +940,22 @@ function input_unit_exist (nml,exist)
   end subroutine alps_error
 
 
-  
+
+
+
   logical function isnancheck(input)
     !!Checks if double precision number input is NaN.
     implicit none
+
     double precision :: input
     !! Variable to be checked.
 
     isnancheck=.FALSE.
     if (abs(input).GE.huge(1.d0)) isnancheck=.TRUE.
     if (input.NE.input) isnancheck=.TRUE.
-    
+
   end function isnancheck
+
 
 
 
@@ -951,29 +963,30 @@ function input_unit_exist (nml,exist)
     !!Outputs the date and time in a given format using intrinsic
     !!FORTRAN function.
     implicit none
+    
     character(8)  :: date
     !!Date.
-    
+
     character(10) :: time
     !!Time.
-    
+
     character(5)  :: zone
     !!Time Zone.
-    
+
     integer,dimension(8) :: value
     !!Output Time Values.
-    
+
     call date_and_time(date,time,zone,value)
     write (*,'(i4,a,i2.2,a,i2.2,a,i2.2,a,i2.2,a,i2.2)') value(1),"-",value(2),"-",value(3)," -- ",value(5),":",value(6),":",value(7)
-    
+
   end subroutine output_time
-  
-  
-  
+
+
+
   subroutine display_credits
     !!Writes the opening credits.
     implicit none
-    
+
     write (*,*) "==========================================================="
     write (*,*) "I                                                         I"
     write (*,*) "I                       A  L  P  S                        I"
@@ -988,5 +1001,5 @@ function input_unit_exist (nml,exist)
 
 
   end subroutine display_credits
-  
+
 end module alps_io
