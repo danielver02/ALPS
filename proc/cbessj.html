@@ -97,7 +97,7 @@
           <li id="statements"><i class="fa fa-list-ol"></i>
             <a data-toggle="tooltip"
                data-placement="bottom" data-html="true"
-               title=" 0.4% of total for procedures.">18 statements</a>
+               title=" 0.5% of total for procedures.">22 statements</a>
           </li>
 
         </ul>
@@ -150,6 +150,7 @@
 </h2>
     
 
+    <p>This subroutine calculates the complex Bessel function. It is based on the CBESSJ function release 1.1 by J-P Moreau, Paris (www.jpmoreau.fr).</p>
 
 
     <h3>Arguments</h3>
@@ -165,47 +166,47 @@
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-z~7"></span>
-              double complex
+              <span class="anchor" id="variable-z~3"></span>
+              double complex,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>z</strong></td>
             <td>
-                
+                <p>Argument of the Bessel function.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" id="variable-nu"></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>nu</strong></td>
             <td>
-                
+                <p>Order of Bessel function.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" id="variable-z1"></span>
-              double complex
+              double complex,
             </td>
-<td></td>
+<td>intent(out)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>z1</strong></td>
             <td>
-                
+                <p>Resulting value of Bessel function.</p>
             </td>
         </tr>
     </tbody>

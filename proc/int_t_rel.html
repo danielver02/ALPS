@@ -97,7 +97,7 @@
           <li id="statements"><i class="fa fa-list-ol"></i>
             <a data-toggle="tooltip"
                data-placement="bottom" data-html="true"
-               title=" 0.9% of total for procedures.">43 statements</a>
+               title=" 1.0% of total for procedures.">47 statements</a>
           </li>
 
         </ul>
@@ -280,6 +280,7 @@ modules which it uses.
     </div>
 
 
+    <p>This function returns the T-tensor according to Eq. (2.10) of the code paper for the relativistic calculation.</p>
 
 
     <h3>Arguments</h3>
@@ -295,77 +296,77 @@ modules which it uses.
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-sproc_rel~13"></span>
-              integer
+              <span class="anchor" id="variable-sproc_rel~8"></span>
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>sproc_rel</strong></td>
             <td>
-                
+                <p>is_rel of the current process.</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-nn~20"></span>
-              integer
+              <span class="anchor" id="variable-nn~7"></span>
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>nn</strong></td>
             <td>
-                
+                <p>Order of the Bessel function.</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-igamma~9"></span>
-              integer
+              <span class="anchor" id="variable-igamma~8"></span>
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>igamma</strong></td>
             <td>
-                
+                <p>Index to loop over <script type="math/tex">\Gamma</script>.</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-ipparbar~8"></span>
-              integer
+              <span class="anchor" id="variable-ipparbar~6"></span>
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>ipparbar</strong></td>
             <td>
-                
+                <p>Index to loop over relativistic parallel momentum.</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-mode~14"></span>
-              integer
+              <span class="anchor" id="variable-mode~6"></span>
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>mode</strong></td>
             <td>
-                
+                <p>Index of the entries in the T-tensor of Eq. (2.10).</p>
             </td>
         </tr>
     </tbody>

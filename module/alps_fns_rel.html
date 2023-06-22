@@ -97,7 +97,7 @@
           <li id="statements"><i class="fa fa-list-ol"></i>
             <a data-toggle="tooltip"
                data-placement="bottom" data-html="true"
-               title="19.2% of total for modules and submodules.">841 statements</a>
+               title="19.7% of total for modules and submodules.">869 statements</a>
           </li>
 
         </ul>
@@ -186,14 +186,6 @@
 
     <div class="col-md-9" id='text'>
       <p>This module contains the relativistic numerical functions of ALPS.</p>
-<hr>
-<div class="codehilite"><pre><span></span><code>       FUNCTION  GAMMA(X)            *
-</code></pre></div>
-
-<p>--------------------------------------- *
- Returns the value of Gamma(x) in double *
- precision as EXP(LN(GAMMA(X))) for X&gt;0. *</p>
-<hr>
 <br>      
           <div class="panel panel-default">
       <div class="panel-heading">
@@ -960,7 +952,7 @@ modules which it uses.
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>This function returns the ee term in Eq. (2.9) for the relativistic calculation.</p>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
@@ -976,16 +968,16 @@ modules which it uses.
         <tr>
             <td>
               <span class="anchor" ></span>
-              double complex
+              double complex,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>om</strong></td>
             <td>
-
+<p>Complex wave frequency <script type="math/tex">\omega</script>.</p>
             </td>
         </tr>
     </tbody>
@@ -1005,7 +997,7 @@ modules which it uses.
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>This function evaluates the term proportional to <script type="math/tex">U</script> in Eq. (2.9) of the code paper for the relativistic calculation.</p>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
@@ -1021,76 +1013,76 @@ modules which it uses.
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>sproc_rel</strong></td>
             <td>
-
+<p>is_rel of the current process.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              double complex
+              double complex,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>om</strong></td>
             <td>
-
+<p>Complex wave frequency <script type="math/tex">\omega</script>.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>nn</strong></td>
             <td>
-
+<p>Order of the Bessel function.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>igamma</strong></td>
             <td>
-
+<p>Index to loop over <script type="math/tex">\Gamma</script>.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>ipparbar</strong></td>
             <td>
-
+<p>Index to loop over relativistic parallel momentum.</p>
             </td>
         </tr>
     </tbody>
@@ -1110,7 +1102,7 @@ modules which it uses.
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>This function returns the T-tensor according to Eq. (2.10) of the code paper for the relativistic calculation.</p>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
@@ -1126,76 +1118,76 @@ modules which it uses.
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>sproc_rel</strong></td>
             <td>
-
+<p>is_rel of the current process.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>nn</strong></td>
             <td>
-
+<p>Order of the Bessel function.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>igamma</strong></td>
             <td>
-
+<p>Index to loop over <script type="math/tex">\Gamma</script>.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>ipparbar</strong></td>
             <td>
-
+<p>Index to loop over relativistic parallel momentum.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>mode</strong></td>
             <td>
-
+<p>Index of the entries in the T-tensor of Eq. (2.10).</p>
             </td>
         </tr>
     </tbody>
@@ -1215,7 +1207,7 @@ modules which it uses.
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>This function returns the T-tensor according to Eq. (2.10) of the code paper for the case in which it is evaluated at the complex resonance momentum for the relativistic calculation.</p>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
@@ -1231,76 +1223,76 @@ modules which it uses.
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>sproc_rel</strong></td>
             <td>
-
+<p>is_rel of the current process.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>nn</strong></td>
             <td>
-
+<p>Order of the Bessel function.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>igamma</strong></td>
             <td>
-
+<p>Index to loop over <script type="math/tex">\Gamma</script>.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              double complex
+              double complex,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>pparbar</strong></td>
             <td>
-
+<p>Relativistic parallel momentum.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>mode</strong></td>
             <td>
-
+<p>Index of the entries in the T-tensor of Eq. (2.10).</p>
             </td>
         </tr>
     </tbody>
@@ -1320,7 +1312,7 @@ modules which it uses.
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>This function returns the factorial k! of its argument k.</p>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
@@ -1336,16 +1328,16 @@ modules which it uses.
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>k</strong></td>
             <td>
-
+<p>Argument of the factorial.</p>
             </td>
         </tr>
     </tbody>
@@ -1365,7 +1357,11 @@ modules which it uses.
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>This function calculates the first kind Bessel function
+of integer order N, for any REAL X. We use here the classical
+recursion formula, when X &gt; N. For X &lt; N, Miller's algorithm
+is used to avoid overflows. Reference:
+C.W.Clenshaw, Chebyshev Series for Mathematical Functions, Mathematical Tables, Vol. 5, 1962.</p>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
@@ -1381,31 +1377,31 @@ modules which it uses.
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>N</strong></td>
             <td>
-
+<p>Order of Bessel function.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              real(kind=8)
+              double precision,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>X</strong></td>
             <td>
-
+<p>Argument of the Bessel function.</p>
             </td>
         </tr>
     </tbody>
@@ -1425,7 +1421,10 @@ modules which it uses.
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>This function calculates the first kind Bessel function
+of order 0, for any REAL X. The polynomial approximation by
+series of Chebyshev polynomials is used for 0&lt;X&lt;8 and 0&lt;8/X&lt;1. References:
+M.Abramowitz, I.A.Stegun, Handbook of Mathematical Functions, 1965. C.W.Clenshaw, Chebyshev Series for Mathematical Functions, Mathematical Tables, Vol. 5, 1962.</p>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
@@ -1441,16 +1440,16 @@ modules which it uses.
         <tr>
             <td>
               <span class="anchor" ></span>
-              real(kind=8)
+              double precision,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>X</strong></td>
             <td>
-
+<p>Argument of the Bessel function.</p>
             </td>
         </tr>
     </tbody>
@@ -1470,7 +1469,10 @@ modules which it uses.
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>This subroutine calculates the First Kind Bessel Function of
+order 1, for any real number X. The polynomial approximation by
+series of Chebyshev polynomials is used for 0&lt;X&lt;8 and 0&lt;8/X&lt;1. References:
+M.Abramowitz, I.A.Stegun, Handbook of Mathematical Functions, 1965. C.W.Clenshaw, Chebyshev Series for Mathematical Functions, Mathematical Tables, Vol. 5, 1962.</p>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
@@ -1486,16 +1488,16 @@ modules which it uses.
         <tr>
             <td>
               <span class="anchor" ></span>
-              real(kind=8)
+              double precision,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>X</strong></td>
             <td>
-
+<p>Argument of the Bessel function.</p>
             </td>
         </tr>
     </tbody>
@@ -1515,7 +1517,7 @@ modules which it uses.
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>This function returns the Gamma-function.</p>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
@@ -1540,7 +1542,7 @@ modules which it uses.
             <td>::</td>
             <td><strong>xx</strong></td>
             <td>
-
+<p>Argument of the Gamma-function.</p>
             </td>
         </tr>
     </tbody>
@@ -1871,7 +1873,7 @@ We use these resources:
 </h3></div>
     <div class="panel-body">
           
-  
+  <p>This subroutine calculates the complex Bessel function. It is based on the CBESSJ function release 1.1 by J-P Moreau, Paris (www.jpmoreau.fr).</p>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
@@ -1887,46 +1889,46 @@ We use these resources:
         <tr>
             <td>
               <span class="anchor" ></span>
-              double complex
+              double complex,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>z</strong></td>
             <td>
-
+<p>Argument of the Bessel function.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              integer
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>nu</strong></td>
             <td>
-
+<p>Order of Bessel function.</p>
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" ></span>
-              double complex
+              double complex,
             </td>
-<td></td>
+<td>intent(out)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>z1</strong></td>
             <td>
-
+<p>Resulting value of Bessel function.</p>
             </td>
         </tr>
     </tbody>

@@ -97,7 +97,7 @@
           <li id="statements"><i class="fa fa-list-ol"></i>
             <a data-toggle="tooltip"
                data-placement="bottom" data-html="true"
-               title=" 0.2% of total for procedures.">10 statements</a>
+               title=" 0.3% of total for procedures.">12 statements</a>
           </li>
 
         </ul>
@@ -280,6 +280,7 @@ modules which it uses.
     </div>
 
 
+    <p>This function evaluates the term proportional to <script type="math/tex">U</script> in Eq. (2.9) of the code paper for the relativistic calculation.</p>
 
 
     <h3>Arguments</h3>
@@ -295,77 +296,77 @@ modules which it uses.
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-sproc_rel~12"></span>
-              integer
+              <span class="anchor" id="variable-sproc_rel~7"></span>
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>sproc_rel</strong></td>
             <td>
-                
+                <p>is_rel of the current process.</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-om~18"></span>
-              double complex
+              <span class="anchor" id="variable-om~7"></span>
+              double complex,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>om</strong></td>
             <td>
-                
+                <p>Complex wave frequency <script type="math/tex">\omega</script>.</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-nn~19"></span>
-              integer
+              <span class="anchor" id="variable-nn~6"></span>
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>nn</strong></td>
             <td>
-                
+                <p>Order of the Bessel function.</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-igamma~8"></span>
-              integer
+              <span class="anchor" id="variable-igamma~7"></span>
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>igamma</strong></td>
             <td>
-                
+                <p>Index to loop over <script type="math/tex">\Gamma</script>.</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-ipparbar~7"></span>
-              integer
+              <span class="anchor" id="variable-ipparbar~5"></span>
+              integer,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>ipparbar</strong></td>
             <td>
-                
+                <p>Index to loop over relativistic parallel momentum.</p>
             </td>
         </tr>
     </tbody>

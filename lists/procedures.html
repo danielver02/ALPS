@@ -100,9 +100,19 @@ for any real X.</p></td></tr>
 			   <tr><td><a href='../proc/bessi0.html'>BESSI0</a></td><td><a href='../module/alps_nhds.html'>alps_nhds</a></td><td>Function</td><td><p>Auxiliary Bessel functions for N=0, N=1</p></td></tr>
 			   <tr><td><a href='../proc/bessi1~2.html'>BESSI1</a></td><td>generate_distribution.f90</td><td>Function</td><td></td></tr>
 			   <tr><td><a href='../proc/bessi1.html'>BESSI1</a></td><td><a href='../module/alps_nhds.html'>alps_nhds</a></td><td>Function</td><td><p>Modified Bessel function of order 1.</p></td></tr>
-			   <tr><td><a href='../proc/bessj.html'>BESSJ</a></td><td><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></td><td>Function</td><td></td></tr>
-			   <tr><td><a href='../proc/bessj0.html'>BESSJ0</a></td><td><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></td><td>Function</td><td></td></tr>
-			   <tr><td><a href='../proc/bessj1.html'>BESSJ1</a></td><td><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></td><td>Function</td><td></td></tr>
+			   <tr><td><a href='../proc/bessj.html'>BESSJ</a></td><td><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></td><td>Function</td><td><p>This function calculates the first kind Bessel function
+of integer order N, for any REAL X. We use here the classical
+recursion formula, when X &gt; N. For X &lt; N, Miller's algorithm
+is used to avoid overflows. Reference:
+C.W.Clenshaw, Chebyshev Series for Mathematical Functions, Mathematical Tables, Vol. 5, 1962.</p></td></tr>
+			   <tr><td><a href='../proc/bessj0.html'>BESSJ0</a></td><td><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></td><td>Function</td><td><p>This function calculates the first kind Bessel function
+of order 0, for any REAL X. The polynomial approximation by
+series of Chebyshev polynomials is used for 0&lt;X&lt;8 and 0&lt;8/X&lt;1. References:
+M.Abramowitz, I.A.Stegun, Handbook of Mathematical Functions, 1965. C.W.Clenshaw, Chebyshev Series for Mathematical Functions, Mathematical Tables, Vol. 5, 1962.</p></td></tr>
+			   <tr><td><a href='../proc/bessj1.html'>BESSJ1</a></td><td><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></td><td>Function</td><td><p>This subroutine calculates the First Kind Bessel Function of
+order 1, for any real number X. The polynomial approximation by
+series of Chebyshev polynomials is used for 0&lt;X&lt;8 and 0&lt;8/X&lt;1. References:
+M.Abramowitz, I.A.Stegun, Handbook of Mathematical Functions, 1965. C.W.Clenshaw, Chebyshev Series for Mathematical Functions, Mathematical Tables, Vol. 5, 1962.</p></td></tr>
 			   <tr><td><a href='../proc/bessk.html'>BESSK</a></td><td>generate_distribution.f90</td><td>Function</td><td></td></tr>
 			   <tr><td><a href='../proc/bessk0.html'>BESSK0</a></td><td>generate_distribution.f90</td><td>Function</td><td></td></tr>
 			   <tr><td><a href='../proc/bessk1.html'>BESSK1</a></td><td>generate_distribution.f90</td><td>Function</td><td></td></tr>
@@ -111,7 +121,7 @@ for any real X.</p></td></tr>
 			   <tr><td><a href='../proc/calc_eigen.html'>calc_eigen</a></td><td><a href='../module/alps_fns.html'>alps_fns</a></td><td>Subroutine</td><td><p>This subroutine calculates the relative electric and magnetic field amplitudes, the relative fluctuations in the density and velocity of all species, and the heating rates of the given solution.
 It is based on the calc_eigen routine by Greg Howes and Kris Klein.</p></td></tr>
 			   <tr><td><a href='../proc/calc_ypsilon.html'>calc_ypsilon</a></td><td><a href='../module/alps_nhds.html'>alps_nhds</a></td><td>Subroutine</td><td><p>Calculates the Y-tensor according to Stix for a bi-Maxwelling, using the NHDS calculation.</p></td></tr>
-			   <tr><td><a href='../proc/cbessj.html'>CBESSJ</a></td><td><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></td><td>Subroutine</td><td></td></tr>
+			   <tr><td><a href='../proc/cbessj.html'>CBESSJ</a></td><td><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></td><td>Subroutine</td><td><p>This subroutine calculates the complex Bessel function. It is based on the CBESSJ function release 1.1 by J-P Moreau, Paris (www.jpmoreau.fr).</p></td></tr>
 			   <tr><td><a href='../proc/derivative_f0.html'>derivative_f0</a></td><td><a href='../module/alps_fns.html'>alps_fns</a></td><td>Subroutine</td><td><p>This subroutine calculates the perpendicular and parallel derivatives of the background velocity distribution function f0.</p></td></tr>
 			   <tr><td><a href='../proc/derivative_f0_rel.html'>derivative_f0_rel</a></td><td><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></td><td>Subroutine</td><td><p>This subroutine calculates the derivatives of the background velocity distribution function f0 for the relativistic calculation.</p></td></tr>
 			   <tr><td><a href='../proc/determine_bessel_array.html'>determine_bessel_array</a></td><td><a href='../module/alps_fns.html'>alps_fns</a></td><td>Subroutine</td><td><p>This subroutine determines the array of Bessel functions that is used in the T-tensor of Eq. (2.10) of the code paper.</p></td></tr>
@@ -129,7 +139,7 @@ the full field <a href="../module/alps_var.html#variable-param_fit">param_fit</a
 			   <tr><td><a href='../proc/eval_fit.html'>eval_fit</a></td><td><a href='../module/alps_analyt.html'>alps_analyt</a></td><td>Function</td><td><p>This function evaluates the fit to f0 at and the complex parallel
 momentum ppar_valC. It requires the fit parameters that will be determined
 by the subroutine <a href="../proc/determine_param_fit.html">determine_param_fit</a>.</p></td></tr>
-			   <tr><td><a href='../proc/fact.html'>Fact</a></td><td><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></td><td>Function</td><td></td></tr>
+			   <tr><td><a href='../proc/fact.html'>Fact</a></td><td><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></td><td>Function</td><td><p>This function returns the factorial k! of its argument k.</p></td></tr>
 			   <tr><td><a href='../proc/find_minima.html'>find_minima</a></td><td><a href='../module/alps_fns.html'>alps_fns</a></td><td>Subroutine</td><td><p>This subroutine identifies the minima of the coarse map grid. It is called by <a href="../proc/map_search.html">map_search</a>.
 The code is based on a routine by Greg Howes, 2006.</p></td></tr>
 			   <tr><td><a href='../proc/fit_function.html'>fit_function</a></td><td><a href='../module/alps_analyt.html'>alps_analyt</a></td><td>Function</td><td><p>This function evaluates the fit to f0 at real pperp_val and complex ppar_val,
@@ -140,7 +150,7 @@ use <a href="../proc/eval_fit.html">eval_fit</a>.</p></td></tr>
 			   <tr><td><a href='../proc/full_integrate.html'>full_integrate</a></td><td><a href='../module/alps_fns.html'>alps_fns</a></td><td>Function</td><td><p>This function returns the full integral expression according to Eq. (2.9) in the code paper.</p></td></tr>
 			   <tr><td><a href='../proc/funct_g.html'>funct_g</a></td><td><a href='../module/alps_fns.html'>alps_fns</a></td><td>Function</td><td><p>This function returns the function <script type="math/tex">g</script> from Eq. (3.2) of the code paper.</p></td></tr>
 			   <tr><td><a href='../proc/funct_g_rel.html'>funct_g_rel</a></td><td><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></td><td>Function</td><td><p>This function returns the function <script type="math/tex">g</script> from Eq. (3.2) of the code paper for a relativistic calculation.</p></td></tr>
-			   <tr><td><a href='../proc/gamma.html'>Gamma</a></td><td><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></td><td>Function</td><td></td></tr>
+			   <tr><td><a href='../proc/gamma.html'>Gamma</a></td><td><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></td><td>Function</td><td><p>This function returns the Gamma-function.</p></td></tr>
 			   <tr><td><a href='../proc/get_indexed_double_namelist_unit.html'>get_indexed_double_namelist_unit</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Subroutine</td><td><p>A version of <a href="../proc/get_indexed_namelist_unit.html">get_indexed_namelist_unit</a>, extended
 to allow for double indexing in order to read in multiple fits
 for a single species.</p></td></tr>
@@ -161,11 +171,11 @@ Only processor 0 calls this routine:</p></td></tr>
 			   <tr><td><a href='../proc/input_unit_exist~2.html'>input_unit_exist</a></td><td><a href='../program/interpolate.html'>interpolate</a></td><td>Function</td><td><p>This function checks whether a unit number exists. It is taken from the AstroGK code.</p></td></tr>
 			   <tr><td><a href='../proc/input_unit_exist~3.html'>input_unit_exist</a></td><td><a href='../program/generate_distribution.html'>generate_distribution</a></td><td>Function</td><td></td></tr>
 			   <tr><td><a href='../proc/int_ee.html'>int_ee</a></td><td><a href='../module/alps_fns.html'>alps_fns</a></td><td>Function</td><td><p>This function returns the ee term in Eq. (2.9).</p></td></tr>
-			   <tr><td><a href='../proc/int_ee_rel.html'>int_ee_rel</a></td><td><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></td><td>Function</td><td></td></tr>
+			   <tr><td><a href='../proc/int_ee_rel.html'>int_ee_rel</a></td><td><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></td><td>Function</td><td><p>This function returns the ee term in Eq. (2.9) for the relativistic calculation.</p></td></tr>
 			   <tr><td><a href='../proc/int_t.html'>int_T</a></td><td><a href='../module/alps_fns.html'>alps_fns</a></td><td>Function</td><td><p>This function returns the T-tensor according to Eq. (2.10) of the code paper.</p></td></tr>
-			   <tr><td><a href='../proc/int_t_rel.html'>int_T_rel</a></td><td><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></td><td>Function</td><td></td></tr>
+			   <tr><td><a href='../proc/int_t_rel.html'>int_T_rel</a></td><td><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></td><td>Function</td><td><p>This function returns the T-tensor according to Eq. (2.10) of the code paper for the relativistic calculation.</p></td></tr>
 			   <tr><td><a href='../proc/int_t_res.html'>int_T_res</a></td><td><a href='../module/alps_fns.html'>alps_fns</a></td><td>Function</td><td><p>This function returns the T-tensor according to Eq. (2.10) of the code paper for the case in which it is evaluated at the complex resonance momentum.</p></td></tr>
-			   <tr><td><a href='../proc/int_t_res_rel.html'>int_T_res_rel</a></td><td><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></td><td>Function</td><td></td></tr>
+			   <tr><td><a href='../proc/int_t_res_rel.html'>int_T_res_rel</a></td><td><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></td><td>Function</td><td><p>This function returns the T-tensor according to Eq. (2.10) of the code paper for the case in which it is evaluated at the complex resonance momentum for the relativistic calculation.</p></td></tr>
 			   <tr><td><a href='../proc/integrate.html'>integrate</a></td><td><a href='../module/alps_fns.html'>alps_fns</a></td><td>Function</td><td><p>This function performs the integral in Eq. (2.9) of the code paper, but without
 accounting for the Landau contour integral. It is called by <a>full_integral</a>.</p></td></tr>
 			   <tr><td><a href='../proc/integrate_res.html'>integrate_res</a></td><td><a href='../module/alps_fns.html'>alps_fns</a></td><td>Function</td><td><p>This function performs the integration near resonances as described in Section 3.1 of the code paper. It is only called if resonances are present in or near the integration domain.</p></td></tr>
@@ -208,7 +218,7 @@ We use these resources:
 			   <tr><td><a href='../proc/read_in_params~2.html'>read_in_params</a></td><td><a href='../program/generate_distribution.html'>generate_distribution</a></td><td>Subroutine</td><td></td></tr>
 			   <tr><td><a href='../proc/refine_guess.html'>refine_guess</a></td><td><a href='../module/alps_fns.html'>alps_fns</a></td><td>Subroutine</td><td><p>This subroutine refines the guess at the starting point of the search for solutions to the dispersion relation when scanning. It is also used by <a href="../proc/map_search.html">map_search</a> to identify the roots on the map.</p></td></tr>
 			   <tr><td><a href='../proc/resu.html'>resU</a></td><td><a href='../module/alps_fns.html'>alps_fns</a></td><td>Function</td><td><p>This function evaluates the term proportional to <script type="math/tex">U</script> in Eq. (2.9) of the code paper.</p></td></tr>
-			   <tr><td><a href='../proc/resu_rel.html'>resU_rel</a></td><td><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></td><td>Function</td><td></td></tr>
+			   <tr><td><a href='../proc/resu_rel.html'>resU_rel</a></td><td><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></td><td>Function</td><td><p>This function evaluates the term proportional to <script type="math/tex">U</script> in Eq. (2.9) of the code paper for the relativistic calculation.</p></td></tr>
 			   <tr><td><a href='../proc/scan_read.html'>scan_read</a></td><td><a href='../module/alps_io.html'>alps_io</a></td><td>Subroutine</td><td><p>The most important subroutine.
 Reads in wavevector scan parameters.
 Defines <a href="../type/scanner.html">scanner</a>, which controls the

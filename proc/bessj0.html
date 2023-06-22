@@ -97,7 +97,7 @@
           <li id="statements"><i class="fa fa-list-ol"></i>
             <a data-toggle="tooltip"
                data-placement="bottom" data-html="true"
-               title=" 0.6% of total for procedures.">27 statements</a>
+               title=" 0.6% of total for procedures.">28 statements</a>
           </li>
 
         </ul>
@@ -150,6 +150,10 @@
 </h2>
     
 
+    <p>This function calculates the first kind Bessel function
+of order 0, for any REAL X. The polynomial approximation by
+series of Chebyshev polynomials is used for 0&lt;X&lt;8 and 0&lt;8/X&lt;1. References:
+M.Abramowitz, I.A.Stegun, Handbook of Mathematical Functions, 1965. C.W.Clenshaw, Chebyshev Series for Mathematical Functions, Mathematical Tables, Vol. 5, 1962.</p>
 
 
     <h3>Arguments</h3>
@@ -165,17 +169,17 @@
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-x~10"></span>
-              real(kind=8)
+              <span class="anchor" id="variable-x~2"></span>
+              double precision,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
             <td><strong>X</strong></td>
             <td>
-                
+                <p>Argument of the Bessel function.</p>
             </td>
         </tr>
     </tbody>
