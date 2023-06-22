@@ -167,29 +167,31 @@ If true, output fitted functions for each species to file in distribution direct
 <p><strong><code>determine_minima</code></strong><br>
 If true, after map search, determine minima and refine solutions.</p>
 <p><strong><code>scan_option</code></strong><br>
-Select case for scans;<br>
-  -1 Consecutive scans along input paths in wavevector space,<br>
-  -2 Double scan over wavevector plane.</p>
+Select case for wavevector scans;<br>
+1. Consecutive scans along input paths in wavevector space,<br>
+2. Double scan over wavevector plane.</p>
 <p><strong><code>n_scan</code></strong><br>
-Number of wavevector scans.<br>
-Must be set to 2 for scan_option=2;<br>
-Must be 1 or larger for scan_option=1.<br>
-0 turns off wavevector scans.</p>
+Number of wavevector scans.
+0 turns off wavevector scans.
+Must be 1 or larger for <code>scan_option</code>=1.<br>
+Must be set to 2 for <code>scan_option</code>=2.  </p>
 <h3><em>&amp;guess_m</em></h3>
 <p>Initial guess of complex frequency for $m^{\textrm{th}}$ solution.<br>
 Only used when <code>use_map</code>=.false.<br>
 Need to have number of name lists equal to <code>nroots</code>.</p>
 <p><strong><code>g_om</code></strong><br>
-Guess for real solution $\omega_{\textrm{r}/\Omega_p $.</p>
+Guess for real solution $\omega_{\textrm{r}}/\Omega_p $.</p>
 <p><strong><code>g_gam</code></strong><br>
 Guess for imaginary solution $\gamma/\Omega_p $.</p>
 <h3><em>&amp;maps_1</em></h3>
 <p>Range of complex frequencies for map_scan subroutine.<br>
 Only used when <code>use_map</code>=.true.</p>
 <p><strong><code>loggridw</code></strong><br>
-Linear (F) or Log (T) spacing for $\omega_{\textrm{r}}/\Omega_p$ map search.</p>
+Linear (F) or Log (T) spacing for $\omega_{\textrm{r}}/\Omega_p$ map search.
+Spacing automatically calculated between <code>omi</code> and <code>omf</code>.  </p>
 <p><strong><code>loggridg</code></strong><br>
-Linear (F) or Log (T) spacing for $\gamma/\Omega_p$ map search.</p>
+Linear (F) or Log (T) spacing for $\gamma/\Omega_p$ map search.
+Spacing automatically calculated between <code>gami</code> and <code>gamf</code>  </p>
 <p><strong><code>omi</code></strong><br>
 Smallest $\omega_{\textrm{r}}/\Omega_p$ value for complex map search.</p>
 <p><strong><code>omf</code></strong><br>
@@ -203,21 +205,21 @@ Number of $\gamma/\Omega_p$ points in frequency grid.</p>
 <p><strong><code>nr</code></strong><br>
 Number of $\omega_{\textrm{r}}/\Omega_p$ points in frequency grid.</p>
 <h3><em>&amp;spec_j</em></h3>
-<p>Species parameters list for species j.</p>
+<p>Species parameters list for distribution $f_j$.</p>
 <p><strong><code>nn</code></strong><br>
-Relative density for $f_j$, $n_j/n_p$.</p>
+Relative density $n_j/n_p$.</p>
 <p><strong><code>qq</code></strong><br>
-Relative charge for $f_j$, $q_j/q_p$.</p>
+Relative charge $q_j/q_p$.</p>
 <p><strong><code>mm</code></strong><br>
-Relative mass for $f_j$, $m_j/m_p$.</p>
+Relative mass $m_j/m_p$.</p>
 <p><strong><code>ff</code></strong><br>
-Number of fitted functions for $f_j$.</p>
+Number of fitted functions for analytical continuation calculation.</p>
 <p><strong><code>relat</code></strong><br>
-Treat species as non-relativistic or relativistic.</p>
+Treat $f_j$ as non-relativistic or relativistic.</p>
 <p><strong><code>log_fit</code></strong><br>
 Use linear or $\log_{10}$ fitting routine.</p>
 <p><strong><code>use_bM</code></strong><br>
-Use actual numerical integration or bi-Maxwellian proxy via NHDS,
+Use actual numerical integration (F) or bi-Maxwellian proxy via NHDS routines,
 with parameters read in from &amp;bM_spec_j namelist.</p>
 <h3><em>&amp;ffit_j_k</em></h3>
 <p>Initial Fit Values for species $j$, function $k$.</p>
