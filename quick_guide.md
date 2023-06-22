@@ -92,15 +92,15 @@ If true, output fitted functions for each species to file in distribution direct
 If true, after map search, determine minima and refine solutions.
 
 **`scan_option`**  
-Select case for scans;  
-  -1 Consecutive scans along input paths in wavevector space,  
-  -2 Double scan over wavevector plane.
+Select case for wavevector scans;  
+1. Consecutive scans along input paths in wavevector space,  
+2. Double scan over wavevector plane.
   
 **`n_scan`**  
-Number of wavevector scans.  
-Must be set to 2 for scan_option=2;  
-Must be 1 or larger for scan_option=1.  
+Number of wavevector scans.
 0 turns off wavevector scans.
+Must be 1 or larger for `scan_option`=1.  
+Must be set to 2 for `scan_option`=2.  
 
 
 ### *&guess_m*  
@@ -109,7 +109,7 @@ Only used when `use_map`=.false.
 Need to have number of name lists equal to `nroots`.
 
 **`g_om`**  
-Guess for real solution $\omega_{\textrm{r}/\Omega_p $.
+Guess for real solution $\omega_{\textrm{r}}/\Omega_p $.
 
 **`g_gam`**  
 Guess for imaginary solution $\gamma/\Omega_p $.
@@ -121,9 +121,11 @@ Only used when `use_map`=.true.
 
 **`loggridw`**  
 Linear (F) or Log (T) spacing for $\omega_{\textrm{r}}/\Omega_p$ map search.
+Spacing automatically calculated between `omi` and `omf`.  
 
 **`loggridg`**  
 Linear (F) or Log (T) spacing for $\gamma/\Omega_p$ map search.
+Spacing automatically calculated between `gami` and `gamf`  
 
 **`omi`**  
 Smallest $\omega_{\textrm{r}}/\Omega_p$ value for complex map search.
@@ -145,28 +147,28 @@ Number of $\omega_{\textrm{r}}/\Omega_p$ points in frequency grid.
 
 
 ### *&spec_j*  
-Species parameters list for species j.
+Species parameters list for distribution $f_j$.
 
 **`nn`**  
-Relative density for $f_j$, $n_j/n_p$.
+Relative density $n_j/n_p$.
 
 **`qq`**  
-Relative charge for $f_j$, $q_j/q_p$.
+Relative charge $q_j/q_p$.
 
 **`mm`**  
-Relative mass for $f_j$, $m_j/m_p$.
+Relative mass $m_j/m_p$.
 
 **`ff`**  
-Number of fitted functions for $f_j$.
+Number of fitted functions for analytical continuation calculation.
 
 **`relat`**  
-Treat species as non-relativistic or relativistic.
+Treat $f_j$ as non-relativistic or relativistic.
 
 **`log_fit`**  
 Use linear or $\log_{10}$ fitting routine.
 
 **`use_bM`**  
-Use actual numerical integration or bi-Maxwellian proxy via NHDS,
+Use actual numerical integration (F) or bi-Maxwellian proxy via NHDS routines,
 with parameters read in from &bM_spec_j namelist.
 
 
