@@ -204,7 +204,7 @@ perpcorr=3.33D-1   !renormalization factor
 
 You can recognise many of the parameters from our `test_ICW_dist.in` file, like the charge and the mass of the particle species The block `&ffit_1_1` includes the fit parameters for the hybrid-analytic continuation. As you can see, this file includes the suggestions for the ideal fit that `generate_distribution` has given us earlier.
 
-The key point about the fit parameters is that, for all damped solutions, you want to find a good representation of the distribution function so that the Landau-contour integral is precise. The procedure is described in the code paper in Section 3.2. If you have any closed mathematical expression to use, you can also input this for the analytic continuation as described [here](#6.-using-analytical-expressions-for-the-background-distribution).
+The key point about the fit parameters is that, for all damped solutions, you want to find a good representation of the distribution function so that the Landau-contour integral is precise. The procedure is described in the code paper in Section 3.2. If you have any closed mathematical expression to use, you can also input this for the analytic continuation as described [here](#6-using-analytical-expressions-for-the-background-distribution).
 
 Once we are happy with the parameters in `test_ICW.in`, let's run ALPS. Depending on your MPI configuration, you can run the code directly with the following commands (it's best to go back into the main folder of the ALPS directory structure):
 
