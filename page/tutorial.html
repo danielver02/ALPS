@@ -105,13 +105,26 @@
   <div class="row">
     <div class="col-md-9 col-md-push-3" id='text'>
       <h1>Tutorial</h1>
-<p>This is a tutorial for ALPS. It will guide you through the setting up of some basic input files, the running of the code, and the basic output. For more details, we refer to the <a href="quick_guide.md">Quick Guide</a> and the <a href="alps.space">ALPS Documentation</a>.</p>
+<p>This is a tutorial for ALPS. It will guide you through the setting up of some basic input files, the running of the code, and the basic output. For more details, we refer to the <a href="input.md">ALPS Input</a> page, the <a href="output.md">ALPS Output</a> page, and the <a href="http://alps.space">ALPS Documentation</a>.</p>
+<h2>Authors</h2>
+<p>Kristopher Klein   (kgklein@arizona.edu)<br>
+Daniel Verscharen  (d.verscharen@ucl.ac.uk)</p>
+<h2>Contents</h2>
+<ol>
+<li>Before getting started</li>
+<li>Installing ALPS</li>
+<li>Setting up input distributions</li>
+<li>Running ALPS on f0-tables</li>
+<li>Interpolation of input distributions</li>
+<li>Using analytical expressions for the background distribution</li>
+<li>Running bi-Maxwellian species</li>
+</ol>
 <h2>1. Before getting started</h2>
 <p>Before starting with the steps described in this tutorial, we recommend that you familiarise yourself with the code paper.</p>
 <p><a href="http://doi.org/10.1017/S0022377818000739">Verscharen, D., Klein, K. G., Chandran, B. D. G., Stevens, M. L., Salem, C. S.,
 and Bale, S. D.: ALPS: the Arbitrary Linear Plasma Solver, J. Plasma Phys. 84,
 905840403, 2018, doi: 10.1017/S0022377818000739</a></p>
-<p>You don't need to go through all details, but it is certainly helpful to know what ALPS does and doesn't calculate. The code paper also explains the numerical techniques used in the code, and the <a href="alps.space">ALPS Documentation</a> often refers explicitly to equations and sections in the code paper. We also recommend checking the <a href="README.md">Readme</a> file.</p>
+<p>You don't need to go through all details, but it is certainly helpful to know what ALPS does and doesn't calculate. The code paper also explains the numerical techniques used in the code, and the <a href="http://alps.space">ALPS Documentation</a> often refers explicitly to equations and sections in the code paper. We also recommend checking the <a href="README.md">Readme</a> file.</p>
 <h2>2. Installing ALPS</h2>
 <p>This tutorial assumes that you have a working copy of ALPS on your computer, including all the required dependencies. You can find the installation guide <a href="INSTALL.md">here</a>. Make sure you have a version of ALPS that compiled completely without error messages after typing</p>
 <blockquote>
@@ -138,7 +151,7 @@ make
 
 </blockquote>
 <p>where <em>dist_name</em> is the name that you want to give the distribution, and <em>N</em> is an integer number indicating the plasma species (e.g., 1 for protons, 2 for electrons).</p>
-<p>In some cases, you may need to interpolate distributions from an irregular momentum grid to a regular grid in the ALPS coordinates. ALPS comes with an interpolation routine, which is described <a href="#5.-interpolation-of-input-distributions">further below</a>.</p>
+<p>In some cases, you may need to interpolate distributions from an irregular momentum grid to a regular grid in the ALPS coordinates. ALPS comes with an interpolation routine, which is described <a href="#5-interpolation-of-input-distributions">further below</a>.</p>
 <p>In other cases, you may want to create an f0-table based on a pre-defined function (e.g., Maxwellian, bi-Maxwellian, or $\kappa$-distribution). For this tutorial, let's create a simple Maxwellian distribution and run this through ALPS.</p>
 <p>For this exercise, use your terminal to go into the ./distribution folder:</p>
 <blockquote>
@@ -212,7 +225,7 @@ Also ensure that the perpendicular momentum grid begins at a momentum of zero.</
 </code></pre></div>
 
 </blockquote>
-<p>The input file that we want to use is called <code>test_ICW.in</code>. The name of the input file doesn't need to be the same as the name of the f0-table files (<em>dist_name</em>), but it helps to use a consistent nomenclature. Let's open <code>test_ICW.in</code>. It includes all the parameters that ALPS needs to run. Like in the case of the file <code>test_ICW_dist.in</code> above, the input file is commented to help you understand the meaning of the parameters. For more details and a reference to all of the parameters, please have a look at our <a href="quick_guide.md">Quick Guide</a>.</p>
+<p>The input file that we want to use is called <code>test_ICW.in</code>. The name of the input file doesn't need to be the same as the name of the f0-table files (<em>dist_name</em>), but it helps to use a consistent nomenclature. Let's open <code>test_ICW.in</code>. It includes all the parameters that ALPS needs to run. Like in the case of the file <code>test_ICW_dist.in</code> above, the input file is commented to help you understand the meaning of the parameters. For more details and a reference to all of the parameters, please have a look at our <a href="input.md">ALPS Input</a> page.</p>
 <p>We focus on a few key entries here for now. First, it's important to give the code the correct <code>nperp</code> and <code>npar</code> values. They are defined in the same way as above. So, here is a reminder:</p>
 <blockquote>
 <p>If you have an f0-table of X-by-Y entries in momentum space, set <code>nperp=X-1</code> and <code>npar=Y-1</code> in ALPS.</p>
@@ -266,7 +279,7 @@ Also ensure that the perpendicular momentum grid begins at a momentum of zero.</
 </code></pre></div>
 
 <p>You can recognise many of the parameters from our <code>test_ICW_dist.in</code> file, like the charge and the mass of the particle species The block <code>&amp;ffit_1_1</code> includes the fit parameters for the hybrid-analytic continuation. As you can see, this file includes the suggestions for the ideal fit that <code>generate_distribution</code> has given us earlier.</p>
-<p>The key point about the fit parameters is that, for all damped solutions, you want to find a good representation of the distribution function so that the Landau-contour integral is precise. The procedure is described in the code paper in Section 3.2. If you have any closed mathematical expression to use, you can also input this for the analytic continuation as described <a href="#6.-using-analytical-expressions-for-the-background-distribution">here</a>.</p>
+<p>The key point about the fit parameters is that, for all damped solutions, you want to find a good representation of the distribution function so that the Landau-contour integral is precise. The procedure is described in the code paper in Section 3.2. If you have any closed mathematical expression to use, you can also input this for the analytic continuation as described <a href="#6-using-analytical-expressions-for-the-background-distribution">here</a>.</p>
 <p>Once we are happy with the parameters in <code>test_ICW.in</code>, let's run ALPS. Depending on your MPI configuration, you can run the code directly with the following commands (it's best to go back into the main folder of the ALPS directory structure):</p>
 <blockquote>
 <div class="codehilite"><pre><span></span><code>cd ../
@@ -321,7 +334,7 @@ mpirun -np 4 ./src/ALPS tests/test_ICW.in
 <span class="w"> </span><span class="n">D</span><span class="o">(</span><span class="w">    </span><span class="mf">1.5132</span><span class="n">E</span><span class="o">-</span><span class="mi">01</span><span class="w">   </span><span class="o">-</span><span class="mf">8.3974</span><span class="n">E</span><span class="o">-</span><span class="mi">06</span><span class="o">)=</span><span class="w">     </span><span class="mf">7.8943</span><span class="n">E</span><span class="o">-</span><span class="mi">19</span><span class="w">    </span><span class="mf">5.5227</span><span class="n">E</span><span class="o">-</span><span class="mi">19</span><span class="w"></span>
 </code></pre></div>
 
-<p>These lines tell us that the code is actually now finding solutions, as it scans through the wavevector space. The scan options had been defined in <code>test_ICW.in</code>, and details on how this works are given in our <a href="quick-guide.md">Quick Guide</a>.</p>
+<p>These lines tell us that the code is actually now finding solutions, as it scans through the wavevector space. The scan options had been defined in <code>test_ICW.in</code>, and details on how this works are given in our <a href="input.md">ALPS Input</a> page.</p>
 <p>When the code has finished, it has produced a number of output files, which you can find in the folder <code>./solution</code> in the ALPS directory structure. Let's look at the file <code>test_ICW.scan_kpara_1.root_1</code>. As the name suggests, this file contains the scan result for a scan along the parallel wavenumber $k_{\parallel}$ for root number 1 (we only scan along one root in this example).</p>
 <p>The file has the following format:</p>
 <div class="codehilite"><pre><span></span><code><span class="mf">1.0000E-03</span><span class="w">    </span><span class="mf">1.0000E-01</span><span class="w">    </span><span class="mf">1.4424E-01</span><span class="w">   </span><span class="o">-</span><span class="mf">1.0449E-05</span><span class="w"></span>
@@ -468,6 +481,27 @@ test_analytical.2.array
 </blockquote>
 <p>the code will fully calculate the dispersion relation based on the distribution function defined in <code>distribution_analyt.f90</code>.</p>
 <p>A particular strength is that you can use that distribution for the creation of the f0-table, the Landau-contour integral (analytic continuation), or for both. Sometimes, you may only want to use it for the f0-table and rely on ALPS's internal fitting. If that is the case, simply set <code>ff</code> to the corresponding number of fits and define the fits as usual. At other times, you may only want to use the function from <code>distribution_analyt.f90</code> as the fit function, but use a different f0-table. In that is the case, point ALPS to your usual f0-table files, but set <code>ff=0</code>.</p>
+<h2>7. Running bi-Maxwellian species</h2>
+<p>In some instances, it may be useful to assume a Maxwellian or bi-Maxwellian distribution for one or more species in the system. For example, you may want to calculate the proton susceptibilities based on an f0-table, but you're happy to work with a simple bi-Maxwellian electron population.</p>
+<p>In that case, ALPS includes an implementation of the <a href="https://github.com/danielver02/NHDS">NHDS code</a> to accelerate the calculation. ALPS then does not integrate over the bi-Maxwellian distribution explicitly but uses the known analytical approximations.</p>
+<p>The relevant option for a bi-Maxwellian calculation is the logical flag <code>use_bM</code> in the ALPS input file under the section for the corresponding species. If you set</p>
+<div class="codehilite"><pre><span></span><code>use_bM=T
+</code></pre></div>
+
+<p>for any species, its contributions to the dielectric tensor will be calculated with the NHDS routines. Also the Landau-contour integration will be done through NHDS.</p>
+<p>Once <code>use_bM</code> is set to true, ALPS will look for the parameters used to define the bi-Maxwellian properties of the corresponding species. These are given in a species-dependent block in the ALPS input file, which may look like this:</p>
+<div class="codehilite"><pre><span></span><code><span class="sx">!Bi-Maxwellian parameters; for species 1</span><span class="w"></span>
+<span class="sx">!Only used if use_bM=T</span><span class="w"></span>
+<span class="o">&amp;</span><span class="n">bM_spec_1</span><span class="w"></span>
+<span class="n">bM_nmaxs</span><span class="p">=</span><span class="mi">500</span><span class="w">           </span>!<span class="n">Maximum</span><span class="w"> </span><span class="n">number</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">resonaces</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">consider</span><span class="w"></span>
+<span class="n">bM_Bessel_zeros</span><span class="p">=</span><span class="mi">1</span><span class="p">.</span><span class="n">d</span><span class="o">-</span><span class="mi">50</span><span class="w"> </span>!<span class="n">Amplitude</span><span class="w"> </span><span class="n">limit</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">Bessel</span><span class="w"> </span><span class="k">function</span><span class="w"></span>
+<span class="n">bM_betas</span><span class="p">=</span><span class="mi">1</span><span class="p">.</span><span class="n">d0</span><span class="w">          </span>!<span class="n">Plasma</span><span class="w"> </span><span class="nb">beta</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">species</span><span class="w"> </span><span class="mi">1</span><span class="w"></span>
+<span class="n">bM_alphas</span><span class="p">=</span><span class="mi">1</span><span class="p">.</span><span class="n">d0</span><span class="w">         </span>!<span class="n">Tperp</span><span class="o">/</span><span class="n">Tpar</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">species</span><span class="w"> </span><span class="mi">1</span><span class="w"></span>
+<span class="n">bM_pdrifts</span><span class="p">=</span><span class="mi">0</span><span class="p">.</span><span class="n">d0</span><span class="w">        </span>!<span class="n">Momentum</span><span class="w"> </span><span class="n">drift</span><span class="p">,</span><span class="w"> </span><span class="nb">norm</span><span class="p">.</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">m_ref</span><span class="w"> </span><span class="n">v_A</span><span class="p">,</span><span class="n">ref</span><span class="w"></span>
+<span class="o">/</span><span class="w"></span>
+</code></pre></div>
+
+<p>The ALPS code suite includes a test case called <code>./tests/test_bimax.in</code> that uses the NHDS routines for a quick calculation of the dispersion relation for a bi-Maxwellian plasma.</p>
     </div>
     <div class="col-md-3 col-md-pull-9">
       <hr class="visible-xs visible-sm">
