@@ -17,8 +17,8 @@ The data is ordered in columns as
 1. $\omega_r$  
 2. $\gamma$   
 3. $|\mathcal{D}|$  
-4. Re$[\mathcal{D}]$  
-5. Im$[\mathcal{D}]$  
+4. Re $[|\mathcal{D}|]$  
+5. Im $[|\mathcal{D}|]$  
 
 The *&maps_1* namelist in *filename*.in determines the structure of *filename*.map.  
 The range of $\omega_{\textrm{r}}/\Omega_p$ is from `omi` to `omi` with `nr` steps. Logorithmic or linear spacing is selected with `loggridw`.
@@ -33,8 +33,8 @@ The data is ordered as
 2. $\omega_r$  
 3. $\gamma$   
 4. $|\mathcal{D}|$  
-5. Re$[\mathcal{D}]$  
-6. Im$[\mathcal{D}]$  
+5. Re $[|\mathcal{D}|]$  
+6. Im $[|\mathcal{D}|]$  
 
 The routine uses  either the coarse dispersion tensor map generated from the *map_search* subroutine (in the case of `use_map` = .true.)  
 or from the input guesses (for `use_map` = .false.).  
@@ -64,26 +64,26 @@ The data is ordered as
 2. $k_\parallel d_p$  
 3. $\omega_{\textrm{r}}/\Omega_p$   
 4. $\gamma/\Omega_p$   
-5. Re$[E_x]$ 
-6. Im$[E_x]$ 
-7. Re$[E_y]$ 
-8. Im$[E_y]$ 
-9. Re$[E_z]$ 
-10. Im$[E_z]$ 
-11. Re$[B_x]$ 
-12. Im$[B_x]$ 
-13. Re$[B_y]$ 
-14. Im$[B_y]$ 
-15. Re$[B_z]$ 
-16. Im$[B_z]$ 
-17+6(is-1). Re$[\delta U_{x,is}]$ 
-18+6(is-1). Im$[\delta U_{x,is}]$ 
-19+6(is-1). Re$[\delta U_{y,is}]$ 
-20+6(is-1). Im$[\delta U_{y,is}]$ 
-21+6(is-1). Re$[\delta U_{z,is}]$ 
-22+6(is-1). Im$[\delta U_{z,is}]$ 
-17+6(`nspec`)+2(is-1). Re$[\delta n_{is}]$ 
-18+6(`nspec`)+2(is-1). Im$[\delta n_{is}]$ 
+5. Re $[E_x]$ 
+6. Im $[E_x]$ 
+7. Re $[E_y]$ 
+8. Im $[E_y]$ 
+9. Re $[E_z]$ 
+10. Im $[E_z]$ 
+11. Re $[B_x]$ 
+12. Im $[B_x]$ 
+13. Re $[B_y]$ 
+14. Im $[B_y]$ 
+15. Re $[B_z]$ 
+16. Im $[B_z]$  
+17. [+6(is-1)] Re $[\delta U_{x,is}]$   
+18. [+6(is-1)] Im $[\delta U_{x,is}]$   
+19. [+6(is-1)] Re $[\delta U_{y,is}]$   
+20. [+6(is-1)] Im $[\delta U_{y,is}]$   
+21. [+6(is-1)] Re $[\delta U_{z,is}]$   
+22. [+6(is-1)] Im $[\delta U_{z,is}]$   
+17. [+6(`nspec`)+2(is-1)] Re $[\delta n_{is}]$   
+18. [+6(`nspec`)+2(is-1)] Im $[\delta n_{is}]$ 
 
 This same data structure is preserved for the output from `om_double_scan`.
 
@@ -97,6 +97,6 @@ The data is ordered as
 2. $k_\parallel d_p$  
 3. $\omega_{\textrm{r}}/\Omega_p$   
 4. $\gamma/\Omega_p$   
-5+(is-1). $\gamma_{is}/\omega$
+5. [+(is-1)] $\gamma_{is}/\omega$
 
 This same data structure is preserved for the output from `om_double_scan`.
