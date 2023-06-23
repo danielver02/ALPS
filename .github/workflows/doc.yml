@@ -33,11 +33,11 @@ jobs:
         echo 'title: Installing ALPS' > docs/INSTALL.md
         cat INSTALL.md >> docs/INSTALL.md
         echo 'title: ALPS Tutorial' > docs/tutorial.md
-        cat ./tutorial.md >> docs/tutorial.md
+        cat tutorial.md >> docs/tutorial.md
         echo 'title: ALPS Input' > docs/input.md
-        cat ./input.md >> docs/input.md
+        cat input.md >> docs/input.md
         echo 'title: ALPS Output' > docs/output.md
-        cat ./output.md >> docs/output.md
+        cat output.md >> docs/output.md
         ford ford_project.md
 
     - name: Deploy to GH pages
