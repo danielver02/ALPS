@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="Documentation for ALPS">
+    <meta name="author" content="Kristopher Klein, Daniel Verscharen" >
+    <link rel="icon" href="../../favicon.png">
+
+    <title>ALPS Input &ndash; ALPS</title>
+
+    <link href="../../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../css/pygments.css" rel="stylesheet">
+    <link href="../../css/font-awesome.min.css" rel="stylesheet">
+    <link href="../../css/local.css" rel="stylesheet">
+      <link  href="../../tipuesearch/tipuesearch.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+         <script src="../../js/jquery-2.1.3.min.js"></script>
+         <script src="../../js/svg-pan-zoom.min.js"></script>
+
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="../../index.html">ALPS </a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+              <li><a href='../../page/index.html'>Readme</a></li>
+            <li class="dropdown hidden-xs visible-sm visible-md hidden-lg">
+              <a href="#" class="dropdown-toggle"
+                 data-toggle="dropdown" role="button"
+                 aria-haspopup="true"
+                 aria-expanded="false">
+                 Contents <span class="caret"></span>
+              </a>
+              <ul class="dropdown-menu">
+                  <li><a href="../../lists/modules.html">Modules</a></li>
+                  <li><a href="../../lists/procedures.html">Procedures</a></li>
+                  <li><a href="../../lists/types.html">Derived Types</a></li>
+                  <li><a href="../../lists/programs.html">Programs</a></li>
+              </ul>
+            </li>
+              <li class="visible-xs hidden-sm visible-lg">
+                <a href="../../lists/modules.html">Modules</a>
+              </li>
+              <li class="visible-xs hidden-sm visible-lg">
+                <a href="../../lists/procedures.html">Procedures</a>
+              </li>
+              <li class="visible-xs hidden-sm visible-lg">
+                <a href="../../lists/types.html">Derived Types</a>
+              </li>
+              <li class="visible-xs hidden-sm visible-lg">
+                <a href="../../lists/programs.html">Programs</a>
+              </li>
+          </ul>
+            <form action="../../search.html" class="navbar-form navbar-right" role="search">
+              <div class="form-group">
+                <input type="text" class="form-control" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+              </div>
+              <!--
+                  <button type="submit" class="btn btn-default">Submit</button>
+                  -->
+            </form>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+
+    <div class="container">
+  <div class="row">
+    <h1>ALPS Input</h1>
+    <div class="row">
+    <div class="col-lg-12">
+    <div class="well well-sm" style="min-height: 40px;">
+      <ul class="list-inline" style="margin-bottom:0px; display:inline">
+<!--
+-->
+      </ul>
+        <ol class="breadcrumb in-well">
+         <li><a href='../../page/index.html'>Readme</a></li>
+         <li><a href='../../page/sub_doc/index.html'>Readme</a></li>
+         <li class="active">ALPS Input</li>
+      </ol>
+    </div>
+    </div>
+    </div>
+  </div>
+  
+  <div class="row">
+    <div class="col-md-9 col-md-push-3" id='text'>
+      <h1>ALPS Input</h1>
+<p>This is a reference for the key input parameters used by ALPS.</p>
+<h2>Namelists in input files.</h2>
+<p>The following namelists and associated input parameters are read in by ALPS from the input file.</p>
+<h3><em>&amp;system</em></h3>
+<p>General system parameters.</p>
+<p><strong><code>kperp</code></strong><br>
+Initial perpendicular wavevector $ k_{\perp} d_{p} $.</p>
+<p><strong><code>kpar</code></strong><br>
+Initial parallel wavevector $k_{\parallel} d_{p}$.</p>
+<p><strong><code>nspec</code></strong> <br>
+Number of plasma species.</p>
+<p><strong><code>nroots</code></strong> <br>
+Number of dispersion solutions to find and follow.</p>
+<p><strong><code>use_map</code></strong> <br>
+Choice of:<br>
+    -True: Searching for roots over a map in complex frequency space [see &amp;maps_1 namelist].<br>
+    -False: Input <code>nroots</code> guesses for solutions [see &amp;guess_* namelist].</p>
+<p><strong><code>writeOut</code></strong><br>
+Write or suppress output to screen.</p>
+<p><strong><code>nperp</code></strong><br>
+Perpendicular momentum space resolution, $N_{\perp}$.
+The input file must have $N_{\perp}+1$ values spanning parallel momentum space.</p>
+<p><strong><code>npar</code></strong><br>
+Parallel momentum space resolution, $N_{\parallel}$.
+The input file must have $N_{\parallel}+1$ values spanning parallel momentum space.</p>
+<p><strong><code>ngamma</code></strong><br>
+Relativistic momentum space resolution, $N_{\Gamma}$.</p>
+<p><strong><code>npparbar</code></strong><br>
+Relativistic parallel momentum space resolution, $N_{\bar{p}_{\parallel}}$.</p>
+<p><strong><code>vA</code></strong><br>
+Reference Alfven velocity, normalized to the speed of light, $v_{A}/c$.</p>
+<p><strong><code>arrayName</code></strong><br>
+Name of input array, located in 'distribution' folder.</p>
+<p><strong><code>Bessel_zero</code></strong><br>
+Maximum amplitude of Bessel function to determine <code>nmax</code>.</p>
+<p><strong><code>numiter</code></strong>
+Maximum number of iterations in secant method.</p>
+<p><strong><code>D_threshold</code></strong><br>
+Minimum threshold for secant method.</p>
+<p><strong><code>D_prec</code></strong><br>
+Size of bounding region for secant method.</p>
+<p><strong><code>D_gap</code></strong><br>
+Size of allowable difference between roots.</p>
+<p><strong><code>positions_principal</code></strong><br>
+Number of parallel momentum steps distant from the resonant momentum
+included in the numerical calculation of Eqn 3.5, $M_{I}$.</p>
+<p><strong><code>n_resonance_interval</code></strong><br>
+How many steps should be used to integrate around the resonance,
+$M_{P}$, used for integrating near poles (see section 3.1).</p>
+<p><strong><code>Tlim</code></strong><br>
+Threshold for analytical principal-value integration, $t_{\textrm{lim}}$.</p>
+<p><strong><code>maxsteps_fit=500</code></strong><br>
+Maximum number of fitting iterations.</p>
+<p><strong><code>lambda_initial_fit</code></strong><br>
+Inital Levenberg-Marquardt damping parameter.</p>
+<p><strong><code>lambdafac_fit</code></strong><br>
+Adjustment factor for Levenberg-Marquardt damping parameter.</p>
+<p><strong><code>epsilon_fit</code></strong><br>
+Convergence for Levenberg-Marquardt fit.</p>
+<p><strong><code>fit_check</code></strong><br>
+If true, output fitted functions for each species to file in distribution directory.</p>
+<p><strong><code>determine_minima</code></strong><br>
+If true, after map search, determine minima and refine solutions.</p>
+<p><strong><code>scan_option</code></strong><br>
+Select case for wavevector scans;<br>
+1. Consecutive scans along input paths in wavevector space,<br>
+2. Double scan over wavevector plane.</p>
+<p><strong><code>n_scan</code></strong><br>
+Number of wavevector scans.<br>
+0 turns off wavevector scans.<br>
+Must be 1 or larger for <code>scan_option</code>=1.<br>
+Must be set to 2 for <code>scan_option</code>=2.  </p>
+<h3><em>&amp;guess_m</em></h3>
+<p>Initial guess of complex frequency for $m^{\textrm{th}}$ solution.<br>
+Only used when <code>use_map</code>=.false.<br>
+Need to have number of name lists equal to <code>nroots</code>.</p>
+<p><strong><code>g_om</code></strong><br>
+Guess for real solution $\omega_{\textrm{r}}/\Omega_{p} $.</p>
+<p><strong><code>g_gam</code></strong><br>
+Guess for imaginary solution $\gamma/\Omega_{p} $.</p>
+<h3><em>&amp;maps_1</em></h3>
+<p>Range of complex frequencies for map_scan subroutine.<br>
+Only used when <code>use_map</code>=.true.</p>
+<p><strong><code>loggridw</code></strong><br>
+Linear (F) or Log (T) spacing for $\omega_{\textrm{r}}/\Omega_{p}$ map search.
+Spacing automatically calculated between <code>omi</code> and <code>omf</code>.  </p>
+<p><strong><code>loggridg</code></strong><br>
+Linear (F) or Log (T) spacing for $\gamma/\Omega_{p}$ map search.
+Spacing automatically calculated between <code>gami</code> and <code>gamf</code>  </p>
+<p><strong><code>omi</code></strong><br>
+Smallest $\omega_{\textrm{r}}/\Omega_{p}$ value for complex map search.</p>
+<p><strong><code>omf</code></strong><br>
+Largest $\omega_{\textrm{r}}/\Omega_{p}$ value for complex map search.</p>
+<p><strong><code>gami</code></strong>    <br>
+Smallest $\gamma/\Omega_{p}$ value for complex map search.</p>
+<p><strong><code>gamf</code></strong><br>
+Largest $\gamma/\Omega_{p}$ value for complex map search.</p>
+<p><strong><code>ni</code></strong><br>
+Number of $\gamma/\Omega_{p}$ points in frequency grid.</p>
+<p><strong><code>nr</code></strong><br>
+Number of $\omega_{\textrm{r}}/\Omega_{p}$ points in frequency grid.</p>
+<h3><em>&amp;spec_j</em></h3>
+<p>Species parameters list for distribution $f_{j}$.</p>
+<p><strong><code>nn</code></strong><br>
+Relative density $n_{j}/n_{p}$.</p>
+<p><strong><code>qq</code></strong><br>
+Relative charge $q_{j}/q_{p}$.</p>
+<p><strong><code>mm</code></strong><br>
+Relative mass $m_{j}/m_{p}$.</p>
+<p><strong><code>ff</code></strong><br>
+Number of fitted functions for analytical continuation calculation.</p>
+<p><strong><code>relat</code></strong><br>
+Treat $f_{j}$ as non-relativistic or relativistic.</p>
+<p><strong><code>log_fit</code></strong><br>
+Use linear or $\log_{10}$ fitting routine.</p>
+<p><strong><code>use_bM</code></strong><br>
+Use actual numerical integration (F) or bi-Maxwellian proxy via NHDS routines,
+with parameters read in from &amp;bM_spec_j namelist.</p>
+<h3><em>&amp;ffit_j_k</em></h3>
+<p>Initial Fit Values for species $j$, function $k$.</p>
+<p><strong><code>fit_type_in</code></strong><br>
+Kind of fit function:</p>
+<ol>
+<li>
+<p>Analytic function (KGK: Need to add details on this functionality).  </p>
+</li>
+<li>
+<p>Maxwellian,<br>
+<script type="math/tex; mode=display">F_M(\hat{p}_{\parallel})=
+u_1 \mathrm{exp}[-y \hat{p}^2_{\perp}-u_2(\hat{p}_{\parallel}-u_3)^2 ]. </script>
+</p>
+</li>
+<li>
+<p>Kappa,<br>
+<script type="math/tex; mode=display">F_{\kappa}(\hat{p}_{\parallel})= u_1[1+u_2(\hat{p}_{\parallel}-u_3)^2+y \hat{p}_{\perp}^2]^{u_4}.</script>
+</p>
+</li>
+<li>
+<p>Juettner with $p_{\perp},p_{\parallel}$,<br>
+<script type="math/tex; mode=display">F_{J}(\hat{p}_{\perp},\hat{p}_{\parallel})=
+u_1 \mathrm{exp}[-u_2\sqrt{1+\frac{\hat{p}^2_{\perp}+(\hat{p}^2_{\parallel}-u_3)^2 v_A^2}{m_{j}^2 c^2}}].</script>
+</p>
+</li>
+<li>
+<p>Juettner with variable $\Gamma$, constant $\bar{p}_{\parallel}$,<br>
+<script type="math/tex; mode=display">F_{J}(\Gamma)= u_1 \mathrm{exp}[-y \Gamma].</script>
+</p>
+</li>
+<li>
+<p>Juettner with $p_{\perp},p_{\parallel}$; variable $\bar{p}_{\parallel}$,<br>
+<script type="math/tex; mode=display">F_{\kappa}(\hat{p}_{\perp},\hat{p}_{\parallel})=
+u_1\mathrm{exp}[-y \hat{p}_{\perp}]
+\mathrm{exp}[-u_2*(\hat{p}_{\parallel}+u_3)^2]
+.</script>
+</p>
+</li>
+<li>
+<p>Bi-Moyal distribution<br>
+<script type="math/tex; mode=display">F_{\kappa}(\hat{p}_{\perp},\hat{p}_{\parallel})=
+u_1 \mathrm{exp}[0.5 (y u_4 \hat{p}^2_{\perp} +
+u_2 (\hat{p}_{\parallel} -u_3)^2 -
+\mathrm{exp}(y u_4 \hat{p}^2_{\perp} + u_2 (\hat{p}_{\parallel}-u_3)^2) )].</script>
+</p>
+</li>
+</ol>
+<p><strong><code>fit_1</code>-<code>fit_5</code></strong><br>
+Fit parameters, $u_1$-$u_5$, defined in the above equations for each of the types of fit functions.
+Not all parameters will be used for all functions.<br>
+Suggested values for parameters generated by generate_distribution.</p>
+<p><strong><code>perpcorr</code></strong><br>
+This parameter, $y$ in Eqn. B1, compensates for the strong
+$p_{\perp}$ dependence of $u_1$, making the fit more reliable.</p>
+<h3><em>&amp;bM_spec_j</em></h3>
+<p>Bi-Maxwellian parameters; for species j.
+Only used if use_bM=T.</p>
+<p><strong><code>bM_nmaxs</code></strong>
+Maximum number of resonances to consider.</p>
+<p><strong><code>bM_Bessel</code></strong>
+Precision threshold for $I_n$.</p>
+<p><strong><code>bM_betas</code></strong>
+$\beta_{\parallel,j}$ of biMaxwellian distribution $f_{j}$.</p>
+<p><strong><code>bM_alphas</code></strong>
+$T_{\perp,j}/T_{\parallel,j} $ of biMaxwellian distribution $f_{j}$.</p>
+<p><strong><code>bM_pdrifts</code></strong>
+Relative drift of biMaxwellian distribution $f_{j}$,
+in units of $m_{p} v_{A,p}$.</p>
+<h3><em>&amp;scan_input_l</em></h3>
+<p>Inputs for scanning parameter space for $l^{\textrm{th}$ scan.  </p>
+<p><strong><code>scan_type</code></strong>
+Type of parameter scan;<br>
+0: Current value of $\textbf{k}$ to
+ $k_{\perp}$=range$<em _parallel="\parallel">\textrm{i}$ and $k</em>$ =range$<em _perp="\perp">\textrm{f}$. <br>
+1: $\theta_0 \rightarrow \theta_1$ at fixed $|k|$
+ from current value of $\theta=\mathrm{atan}(k</em>/k_{\parallel})$
+ to range$<em k_B="k,B">\textrm{f}$.<br>
+2: Wavevector scan at fixed angle $\theta</em>$ to $|k|$ =range$<em _perp="\perp">\textrm{f}$.<br>
+3: $k</em>$ scan with constant $k_{\parallel}$.<br>
+4: $k_{\parallel}$ scan with constant $k_{\perp}$.  </p>
+<p><strong><code>swi</code></strong>
+Initial scan value.</p>
+<p><strong><code>swf</code></strong><br>
+Final scan value.</p>
+<p><strong><code>swlog</code></strong>
+Use $\mathrm{log}_{10}$ (T) or linear (F) spacing.</p>
+<p><strong><code>ns</code></strong>
+Number of output scan values.</p>
+<p><strong><code>nres</code></strong>
+Resolution between output scan values.</p>
+<p><strong><code>heating</code></strong>
+Calculates heating rates if true.</p>
+<p><strong><code>eigen</code></strong>  =.false.
+Calculates eigenfunctions if true.     </p>
+    </div>
+    <div class="col-md-3 col-md-pull-9">
+      <hr class="visible-xs visible-sm">
+        <div class="well toc">
+          <ul class="nav nav-stacked nav-pills">
+            <li role="presentation" class="title"><a href='../../page/index.html'>Readme</a></li>
+          </ul>
+          <hr>
+          <ul class="nav nav-stacked nav-pills">
+            <li role="presentation">
+            <a href='../../page/./INSTALL.html'>Installing ALPS</a>
+            </li>
+            <li role="presentation">
+            <a href='../../page/sub_doc/index.html'>Readme</a>
+            <ul class="nav nav-stacked nav-pills">
+                          <li role="presentation" class="disabled">
+            <a href='../../page/sub_doc/input.html'>ALPS Input</a>
+            </li>
+            <li role="presentation">
+            <a href='../../page/sub_doc/output.html'>ALPS Output</a>
+            </li>
+            <li role="presentation">
+            <a href='../../page/sub_doc/tutorial.html'>ALPS Tutorial</a>
+            </li>
+
+            </ul>
+            </li>
+          </ul>
+        </div>
+    </div>
+  </div>
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row">
+          <div class="col-xs-6 col-md-6"><p>ALPS was developed by Kristopher Klein, Daniel Verscharen<br>&copy; 2023 
+</p>
+          </div>
+          <div class="col-xs-6 col-md-6">
+            <p class="text-right">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+            </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+
+    <!-- Bootstrap core JavaScript
+         ================================================== -->
+         <!-- Placed at the end of the document so the pages load faster -->
+    <!--
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        -->
+        <script src="../../js/bootstrap.min.js"></script>
+        <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+        <script src="../../js/ie10-viewport-bug-workaround.js"></script>
+
+        <!-- MathJax JavaScript
+             ================================================== -->
+             <!-- Placed at the end of the document so the pages load faster -->
+        <script type="text/x-mathjax-config">
+          MathJax.Hub.Config({
+          TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
+          jax: ['input/TeX','input/MathML','output/HTML-CSS'],
+          extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
+          });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+          <script src="../../tipuesearch/tipuesearch_content.js"></script>
+          <script src="../../tipuesearch/tipuesearch_set.js"></script>
+          <script src="../../tipuesearch/tipuesearch.js"></script>
+
+  </body>
+</html>
