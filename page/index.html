@@ -107,52 +107,46 @@
   
   <div class="row">
     <div class="col-md-9 col-md-push-3" id='text'>
-      <h1>A  L  P  S  Arbitrary Linear Plasma Solver</h1>
+      <h1>ALPS: The Arbitrary Linear Plasma Solver</h1>
 <p>This is the ALPS code: the Arbitrary Linear Plasma Solver.</p>
+<p><img src="./ALPS_logo.png" alt="drawing" width="200"/></p>
 <h2>Authors</h2>
-<p>Kristopher Klein   (kgklein@arizona.edu)
+<p>Kristopher Klein   (kgklein@arizona.edu)<br>
 Daniel Verscharen  (d.verscharen@ucl.ac.uk)</p>
-<h2>WARNING</h2>
-<p>IN ITS CURRENT FORM, THE CODE IS STILL UNDER DEVELOPMENT. WE RECOMMEND THAT YOU
-USE IT VERY CAREFULLY OR ONLY IN DIRECT COMMUNICATION WITH THE CODE DEVELOPMENT
-TEAM. THE CODE WILL BE MADE MORE USEABLE AND SUSTAINABLE IN THE FUTURE.</p>
-<h2>CONTENTS</h2>
+<h2>Contents</h2>
 <ol>
 <li>What is ALPS?</li>
 <li>Acknowledgements</li>
 <li>Installing the ALPS Code</li>
 <li>Running the ALPS Code</li>
-<li>Documentation for Input/Output Data</li>
-<li>List of Error Codes</li>
 <li>License</li>
 </ol>
-<h2>WHAT IS ALPS?</h2>
+<h2>1. What is ALPS?</h2>
 <p>ALPS is a parallelised numerical code that solves the Vlasov-Maxwell dispersion
 relation in hot (even relativistic) magnetised plasma. ALPS allows for any
-number of particle species with arbitrary gyrotropic equilibrium distribution
+number of particle species with arbitrary gyrotropic background distribution
 functions supporting waves with any direction of propagation with respect to
 the background magnetic field.</p>
 <p>If you use the code for a science publication, please provide the code website
-on github.com/danielver02/ALPS and cite the code paper:</p>
-<p>Verscharen, D., Klein, K. G., Chandran, B. D. G., Stevens, M. L., Salem, C. S.,
+<a href="github.com/danielver02/ALPS">github.com/danielver02/ALPS</a> in the acknowledgements of your publication and cite the code paper:</p>
+<p><a href="http://doi.org/10.1017/S0022377818000739">Verscharen, D., Klein, K. G., Chandran, B. D. G., Stevens, M. L., Salem, C. S.,
 and Bale, S. D.: ALPS: the Arbitrary Linear Plasma Solver, J. Plasma Phys. 84,
-905840403, 2018, doi: 10.1017/S0022377818000739</p>
-<h2>ACKNOWLEDGEMENTS</h2>
-<p>The development of the ALPS code was supported by NASA Grant NNX16AG81G. We will
-present document more details about the numerics on the website
-http://www.alps.space. The code developers appreciate support from the UK Science
+905840403, 2018, doi: 10.1017/S0022377818000739</a></p>
+<p>The documentation of the code can be found on <a href="www.alps.space">www.alps.space</a>.</p>
+<h2>2. Acknowledgements</h2>
+<p>The development of the ALPS code was supported by NASA Grant NNX16AG81G. The code developers appreciate support from the UK Science
 and Technology Facilities Council (STFC) Ernest Rutherford Fellowship ST/P003826/1,
 STFC Consolidated Grants ST/S000240/1 and ST/W001004/1, and the Open Source
 Software Sustainability Funding programme from UCL's Advanced Research Computing
 Centre and UCL's eResearch Domain. We appreciate software engineering support by
-David Stansby (UCL).</p>
-<h2>INSTALLING THE ALPS CODE</h2>
+David Stansby and Tuomas Koskela from UCL.</p>
+<h2>3. Installing the ALPS code</h2>
 <p>For advice on the installation of the code, please check <a href="./INSTALL.md"><code>INSTALL.md</code></a></p>
-<h2>RUNNING THE ALPS CODE</h2>
+<h2>4. Running the ALPS code</h2>
 <p>ALPS works with input files that specify the plasma and numerical parameters for
 the calculation. We recommend that you start by checking out the provided test
 cases as a guidance for the creation of input files. These test cases are listed
-in the scripts <code>run_test.sh</code> and <code>run_test_suite.sh</code>. All associated input files have
+in the scripts <code>run_test.sh</code> and <code>run_test_suite.sh</code> in the subfolder <code>./tests</code>. All associated input files have
 a name starting with <code>test_</code>.</p>
 <p>You can execute the ALPS code through the following command:</p>
 <div class="codehilite"><pre><span></span><code>mpirun -np &lt;NP&gt; ./src/ALPS &lt;input_file.in&gt;
@@ -166,75 +160,8 @@ required. In this case, the above command must be replaced with</p>
 <div class="codehilite"><pre><span></span><code>mpirun -np &lt;NP&gt; --oversubscribe ./src/ALPS &lt;input_file.in&gt;
 </code></pre></div>
 
-<h2>DOCUMENTATION FOR INPUT/OUTPUT DATA</h2>
-<h3>Input Velocity Distribution Function</h3>
-<ul>
-<li>folder: <code>./distribution</code></li>
-<li>(optionally created by subroutine generate_distribution
-      <code>distribution/generate_distribution.f90</code>)</li>
-<li>file: <code>distribution/&lt;arrayName&gt;.&lt;is&gt;.array</code></li>
-<li>data: <code>pp(is,iperp,ipar,1:2)</code>,<code>f0(is,iperp,ipar)</code></li>
-</ul>
-<h3>Fit Parameters for Hybrid Analytic Continuation</h3>
-<ul>
-<li>folder: <code>./distribution</code></li>
-<li>created by subroutine <code>determine_fit_parameters</code> (<code>ALPS_analyt.f90</code>)</li>
-<li>file: <code>distribution/&lt;runname&gt;.fit_parameters.&lt;is&gt;.out</code></li>
-<li>data: <code>iperp</code>, <code>params</code></li>
-</ul>
-<h3>Result from Fit Routine for Hybrid Analytic Continuation</h3>
-<ul>
-<li>folder: <code>./distribution</code></li>
-<li>created by <code>subroutine output_fit</code> (<code>ALPS_analyt.f90</code>)</li>
-<li>file: <code>distribution/&lt;runname&gt;.fit_parameters.&lt;is&gt;.out</code></li>
-<li>data: <code>pp(is,iperp,ipar,1:2)</code>,<code>fit_result(is,iperp,ipar)</code>,
-      <code>abs(fit_result(is,iperp,ipar,1:2)- f0(is,iperp,ipar))/f0(is,iperp,ipar)</code></li>
-</ul>
-<h3>Map (grid in omega,gamma) of Dispersion Solutions</h3>
-<ul>
-<li>created by <code>subroutine map_search</code> (<code>ALPS_fns.f90</code>)</li>
-<li>file: <code>solution/&lt;runname&gt;.map</code></li>
-<li>data: <code>ir</code>,<code>ii</code>,<code>om(ir,ii)</code>,<code>log10(val(ir,ii))</code>,<code>cal(ir,ii)</code></li>
-</ul>
-<h3>Listing of Roots</h3>
-<ul>
-<li>created by <code>subroutine refine_guess</code> (<code>ALPS_fns.f90</code>)</li>
-<li>file: <code>solution/&lt;runname&gt;.roots</code></li>
-<li>data: <code>iw</code>,<code>wroots(iw)</code>,<code>log10(abs(tmpDisp))</code>,<code>tmpDisp</code></li>
-</ul>
-<h3>Scans of the Dispersion Solutions through k-space</h3>
-<ul>
-<li>created by <code>subroutine om_scan</code> (<code>ALPS_fns.f90</code>)</li>
-<li>file: <code>solution/&lt;runname&gt;.scan_&lt;option&gt;.root_&lt;rootnumber&gt;</code></li>
-<li>data: <code>kperp</code>,<code>kpar</code>,<code>om(ir,ii)</code></li>
-</ul>
-<h3>Evaluation of the Eigen Vectors</h3>
-<ul>
-<li>created by <code>subroutine om_scan</code> (<code>ALPS_fns.f90</code>)</li>
-<li>file: <code>solution/&lt;runname&gt;.eigen_&lt;option&gt;.root_&lt;rootnumber&gt;</code></li>
-<li>data: <code>kperp</code>,<code>kpar</code>,<code>om(ir,ii)</code>,<code>ef</code>,<code>bf</code>,<code>Us</code>,<code>ds</code></li>
-</ul>
-<h3>Evaluation of the Heating Rates</h3>
-<ul>
-<li>created by <code>subroutine om_scan</code> (<code>ALPS_fns.f90</code>)</li>
-<li>file: <code>solution/&lt;runname&gt;.heat_&lt;option&gt;.root_&lt;rootnumber&gt;</code></li>
-<li>data: <code>kperp</code>,<code>kpar</code>,<code>om(ir,ii)</code>,<code>Ps</code></li>
-</ul>
-<h2>LIST OF ERROR CODES</h2>
-<div class="codehilite"><pre><span></span><code><span class="nv">error_id</span><span class="o">=</span><span class="mi">0</span>
-   <span class="o">-</span> <span class="k">if</span> <span class="nv">mod</span><span class="ss">(</span><span class="nv">nproc</span>,<span class="mi">2</span><span class="ss">)</span> .<span class="nv">ne</span>. <span class="mi">0</span>
-<span class="nv">error_id</span><span class="o">=</span><span class="mi">1</span>
-   <span class="o">-</span> <span class="nv">Does</span> <span class="nv">requested</span> <span class="nv">input</span> <span class="nv">namelist</span> <span class="nv">exist</span>?
-<span class="nv">error_id</span><span class="o">=</span><span class="mi">2</span>
-   <span class="o">-</span> <span class="k">if</span> <span class="ss">((</span><span class="mi">1</span><span class="o">+</span><span class="nv">npar</span><span class="ss">)</span>.<span class="nv">LT</span>.<span class="nv">n_params</span><span class="ss">)</span>
-</code></pre></div>
-
-<h3>ERRORS TO ADD:</h3>
-<ul>
-<li>if the size of the input distribution function array is not equal to
-the allocated distribution function array in ALPS</li>
-</ul>
-<h2>LICENSE</h2>
+<p>For first-time users, we recommend working through our <a href="tutorial.md">ALPS Tutorial</a>. The output format of ALPS is described on the <a href="output.md">ALPS Output</a> page.</p>
+<h2>5. License</h2>
 <p>BSD 2-Clause License</p>
 <p>Copyright (c) 2023, Kristopher G. Klein and Daniel Verscharen
 All rights reserved.</p>

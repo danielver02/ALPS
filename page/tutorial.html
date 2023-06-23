@@ -108,15 +108,17 @@
 <p>This is a tutorial for ALPS. It will guide you through the setting up of some basic input files, the running of the code, and the basic output. For more details, we refer to the <a href="quick_guide.md">Quick Guide</a> and the <a href="alps.space">ALPS Documentation</a>.</p>
 <h2>1. Before getting started</h2>
 <p>Before starting with the steps described in this tutorial, we recommend that you familiarise yourself with the code paper.</p>
-<p>Verscharen, D., Klein, K. G., Chandran, B. D. G., Stevens, M. L., Salem, C. S.,
+<p><a href="http://doi.org/10.1017/S0022377818000739">Verscharen, D., Klein, K. G., Chandran, B. D. G., Stevens, M. L., Salem, C. S.,
 and Bale, S. D.: ALPS: the Arbitrary Linear Plasma Solver, J. Plasma Phys. 84,
-905840403, 2018, doi: 10.1017/S0022377818000739</p>
+905840403, 2018, doi: 10.1017/S0022377818000739</a></p>
 <p>You don't need to go through all details, but it is certainly helpful to know what ALPS does and doesn't calculate. The code paper also explains the numerical techniques used in the code, and the <a href="alps.space">ALPS Documentation</a> often refers explicitly to equations and sections in the code paper. We also recommend checking the <a href="README.md">Readme</a> file.</p>
 <h2>2. Installing ALPS</h2>
 <p>This tutorial assumes that you have a working copy of ALPS on your computer, including all the required dependencies. You can find the installation guide <a href="INSTALL.md">here</a>. Make sure you have a version of ALPS that compiled completely without error messages after typing</p>
 <blockquote>
-<p>./configure
-   make</p>
+<div class="codehilite"><pre><span></span><code>./configure  
+make
+</code></pre></div>
+
 </blockquote>
 <h2>3. Setting up input distributions</h2>
 <h3>3.1 The format of f0-tables</h3>
@@ -125,79 +127,84 @@ and Bale, S. D.: ALPS: the Arbitrary Linear Plasma Solver, J. Plasma Phys. 84,
 <ol>
 <li>Perpendicular momentum $p_{\perp}$ normalised to $m_{\mathrm p}v_{\mathrm A}$</li>
 <li>Parallel momentum $p_{\parallel}$ normalised to $m_{\mathrm p}v_{\mathrm A}$</li>
-<li>Value of the background distribution function $f_{0j}$ at momentum $(p_{\perp},p_{\parallel}$ normalised to $(m_{\mathrm p}v_{\mathrm A})^{-3}$</li>
+<li>Value of the background distribution function $f_{0j}$ at momentum $(p_{\perp},p_{\parallel})$ normalised to $(m_{\mathrm p}v_{\mathrm A})^{-3}$</li>
 </ol>
 <p>In these definitions, $m_{\mathrm p}$ is the proton mass and $v_{\mathrm A}$ is the proton Alfvén speed. The distribution function $f_{0j}$ must be normalised to one if integrated over cylindrical momentum space.</p>
 <h3>3.2 Generating f0-tables</h3>
 <p>In most cases, you may want to use an f0-table generated from observations or numerical simulations. If you can create such a table directly in the ALPS format, that would be ideal. Simply store it in an ASCII file with the following format:</p>
 <blockquote>
-<p><em>dist_name</em>.<em>N</em>.array</p>
+<div class="codehilite"><pre><span></span><code>dist_name.N.array
+</code></pre></div>
+
 </blockquote>
 <p>where <em>dist_name</em> is the name that you want to give the distribution, and <em>N</em> is an integer number indicating the plasma species (e.g., 1 for protons, 2 for electrons).</p>
-<p>In some cases, you may need to interpolate distributions from an irregular momentum grid to a regular grid in the ALPS coordinates. ALPS comes with an interpolation routine, which is described <a href="#5interpolation-of-input-distributions">further below</a>.</p>
-<p>In other cases, you may want to create an f0-table based on a pre-defined function (e.g., Maxwellian, bi-Maxwellian, or $\kappa$-distribution). For this tutorial, let's create a bi-Maxwellian distribution and run this through ALPS.</p>
+<p>In some cases, you may need to interpolate distributions from an irregular momentum grid to a regular grid in the ALPS coordinates. ALPS comes with an interpolation routine, which is described <a href="#5.-interpolation-of-input-distributions">further below</a>.</p>
+<p>In other cases, you may want to create an f0-table based on a pre-defined function (e.g., Maxwellian, bi-Maxwellian, or $\kappa$-distribution). For this tutorial, let's create a simple Maxwellian distribution and run this through ALPS.</p>
 <p>For this exercise, use your terminal to go into the ./distribution folder:</p>
 <blockquote>
-<p>cd ./distribution</p>
+<div class="codehilite"><pre><span></span><code>cd ./distribution
+</code></pre></div>
+
 </blockquote>
-<p>In the standard ALPS package, you'll find a number of input files to generate distributions. Let's open the file <code>test_bimax_dist.in</code> which includes all parameters needed to create a bi-Maxwellian f0-table for the protons and a Maxwellian f0-table for the electrons. The various parameters are explained in comments in this input file. Feel free to modify some of these parameters if you want to experiment with it a bit. In general, it's a good idea to use one of the test files as the basis to create new input files for your purposes.</p>
+<p>In the standard ALPS package, you'll find a number of input files to generate distributions. Let's open the file <code>test_ICW_dist.in</code> which includes all parameters needed to create Maxwellian f0-tables for the protons and for the electrons. The various parameters are explained in comments in this input file. Feel free to modify some of these parameters if you want to experiment with it a bit. In general, it's a good idea to use one of the test files as the basis to create new input files for your purposes.</p>
 <p>When a quantity has the index <code>ref</code> added to it, this refers to the reference species. For example, <code>m_j/m_ref</code> stands for the mass of the current species <em>j</em> in units of the mass of the reference species, which in the example case is the protons.</p>
 <p>Let's generate the distributions for this example. Simply execute the command</p>
 <blockquote>
-<p>./generate_distribution test_bimax_dist.in</p>
+<div class="codehilite"><pre><span></span><code>./generate_distribution test_ICW_dist.in
+</code></pre></div>
+
 </blockquote>
 <p>The code now generates the following output:</p>
-<blockquote>
-<p>Species  1<br>
-Integration:       9.9973E-01<br>
-Norm:              1.7959E-01<br>
-pperp_max:         6.0000E+00<br>
-ppar_max:          6.0000E+00  </p>
-<p>Fit type:          1<br>
-ideal fit_1:       1.7959E-01<br>
-ideal fit_2:       1.0000E+00<br>
-ideal fit_3:       0.0000E+00<br>
-ideal perpcorr:    1.0000E+00<br>
-============================<br>
-Species  2<br>
-Integration:       9.9973E-01<br>
-Norm:              1.4128E+04<br>
-pperp_max:         1.4003E-01<br>
-ppar_max:          1.4003E-01  </p>
-<p>Fit type:          1<br>
-ideal fit_1:       1.4128E+04<br>
-ideal fit_2:       1.8360E+03<br>
-ideal fit_3:       0.0000E+00<br>
-ideal perpcorr:    1.8360E+03<br>
-============================  </p>
-</blockquote>
+<div class="codehilite"><pre><span></span><code>Species  1
+ Integration:       9.9958E-01
+ Norm:              5.9862E-02
+ pperp_max:         1.0392E+01
+ ppar_max:          6.0000E+00
+
+ Fit type:          1
+ ideal fit_1:       5.9862E-02
+ ideal fit_2:       1.0000E+00
+ ideal fit_3:       0.0000E+00
+ ideal perpcorr:    3.3333E-01
+============================
+Species  2
+ Integration:       9.9958E-01
+ Norm:              1.4128E+04
+ pperp_max:         1.4003E-01
+ ppar_max:          1.4003E-01
+
+ Fit type:          1
+ ideal fit_1:       1.4128E+04
+ ideal fit_2:       1.8360E+03
+ ideal fit_3:       0.0000E+00
+ ideal perpcorr:    1.8360E+03
+============================
+</code></pre></div>
+
 <p>Species 1 corresponds to the protons, and species 2 corresponds to the electrons in this case. The output gives us some information about the integration and normalisation of $f_{0j}$ as well as some suggestions for the fit parameters (<em>ideal fit</em> and <em>ideal perpcorr</em>) that will become important later for the hybrid-analytic continuation.</p>
-<p>In addition to this output, the code has also created two files: <code>test_bimax.1.array</code> and <code>test_bimax.2.array</code>. These are the the two f0-tables, which now include the pre-defined bi-Maxwellian distribution for the protons and the pre-defined Maxwellian distribution for the electrons. Let's open the proton file <code>test_bimax.1.array</code> and have a look:</p>
+<p>In addition to this output, the code has also created two files: <code>test_ICW.1.array</code> and <code>test_ICW.2.array</code>. These are the the two f0-tables, which now include the pre-defined Maxwellian distributions for the protons and electrons. Let's open the proton file <code>test_ICW.1.array</code> and have a look:</p>
+<div class="codehilite"><pre><span></span><code><span class="mf">0.0000000000000000</span><span class="w">       </span><span class="o">-</span><span class="mf">6.0000000000000000</span><span class="w">        </span><span class="mf">1.3885214326235464E-017</span><span class="w"></span>
+<span class="mf">0.0000000000000000</span><span class="w">       </span><span class="o">-</span><span class="mf">5.9500000000000002</span><span class="w">        </span><span class="mf">2.5237337794355358E-017</span><span class="w"></span>
+<span class="mf">0.0000000000000000</span><span class="w">       </span><span class="o">-</span><span class="mf">5.9000000000000004</span><span class="w">        </span><span class="mf">4.5641827072255333E-017</span><span class="w"></span>
+<span class="mf">0.0000000000000000</span><span class="w">       </span><span class="o">-</span><span class="mf">5.8499999999999996</span><span class="w">        </span><span class="mf">8.2131741067563143E-017</span><span class="w"></span>
+<span class="mf">0.0000000000000000</span><span class="w">       </span><span class="o">-</span><span class="mf">5.7999999999999998</span><span class="w">        </span><span class="mf">1.4705763083579771E-016</span><span class="w"></span>
+<span class="mf">0.0000000000000000</span><span class="w">       </span><span class="o">-</span><span class="mf">5.7500000000000000</span><span class="w">        </span><span class="mf">2.6199477385677698E-016</span><span class="w"></span>
+<span class="mf">0.0000000000000000</span><span class="w">       </span><span class="o">-</span><span class="mf">5.7000000000000002</span><span class="w">        </span><span class="mf">4.6443636702139106E-016</span><span class="w"></span>
+<span class="mf">0.0000000000000000</span><span class="w">       </span><span class="o">-</span><span class="mf">5.6500000000000004</span><span class="w">        </span><span class="mf">8.1919697073946868E-016</span><span class="w"></span>
+<span class="mf">...</span><span class="w">                      </span><span class="mf">...</span><span class="w">                        </span><span class="mf">...</span><span class="w"></span>
+</code></pre></div>
+
+<p>As discussed above, the first column is the normalised perpendicular momentum, the second column is the normalised parallel momentum, and the third column is the value of the distribution function. The file contains 29,161 lines, which is just the combination of all perpendicular and parallel momentum steps. These have been defined by the lines</p>
+<div class="codehilite"><pre><span></span><code>nperp=120  
+npar=240
+</code></pre></div>
+
+<p>in the file <code>test_ICW_dist.in</code>. Actually, the number 29,161 corresponds to 121*241, which is greater than 120*240 due to the inner and outer boundaries of the integration space. The variables <code>nperp</code> and <code>npar</code> refer to the integration domain only, which is one step smaller in each dimension than the f0-table. This is an important point to consider when setting up f0-tables:</p>
 <blockquote>
-<p>0.0000000000000000       -6.0000000000000000        4.1655642978706390E-017<br>
-0.0000000000000000       -5.9600000000000000        6.7210994657347584E-017<br>
-0.0000000000000000       -5.9199999999999999        1.0809785104455212E-016<br>
-0.0000000000000000       -5.8799999999999999        1.7330219198109109E-016<br>
-0.0000000000000000       -5.8399999999999999        2.7694996140414367E-016<br>
-0.0000000000000000       -5.7999999999999998        4.4117289250739315E-016<br>
-0.0000000000000000       -5.7599999999999998        7.0052975741086750E-016<br>
-0.0000000000000000       -5.7199999999999998        1.1088035666639441E-015<br>
-0.0000000000000000       -5.6799999999999997        1.7494152095823311E-015<br>
-0.0000000000000000       -5.6399999999999997        2.7513221174751753E-015<br>
-0.0000000000000000       -5.5999999999999996        4.3132063753922528E-015<br>
-...                      ...                        ...</p>
-</blockquote>
-<p>As discussed above, the first column is the normalised perpendicular momentum, the second column is the normalised parallel momentum, and the third column is the value of the distribution function. The file contains 45451 lines, which is just the combination of all perpendicular and parallel momentum steps. These have been defined by the lines</p>
-<blockquote>
-<p>nperp=150
-   npar=300</p>
-</blockquote>
-<p>in the file <code>test_bimax_dist.in</code>. Actually, the number 45451 corresponds to 151*301, which is greater than 150*300 due to the inner and outer boundaries of the integration space. The variables <code>nperp</code> and <code>npar</code> refer to the integration domain only, which is one step smaller in each dimension than the f0-table. This is an important point to consider when setting up f0-tables:</p>
-<blockquote>
-<p>If you have an f0-table of X-by-Y entries in momentum space, set <code>nperp=X-1</code> and <code>npar=Y-1</code> in ALPS.
+<p>If you have an f0-table of X-by-Y entries in momentum space, set <code>nperp=X-1</code> and <code>npar=Y-1</code> in ALPS.<br>
 Also ensure that the perpendicular momentum grid begins at a momentum of zero.</p>
 </blockquote>
-<p>Now that we have two f0-tables in the correct design, let's run ALPS on these!</p>
+<p>Now that we have two f0-tables in the correct format, let's run ALPS on these!</p>
 <h2>4. Running ALPS on f0-tables</h2>
 <p>Like for the generation of the input distribution above, we will run one of the test input files for this tutorial to demonstrate the running of ALPS. You can find this test input in the folder <code>./tests</code> within the ALPS directory structure. Assuming that your terminal is still in <code>./distribution</code>, let's change directory to <code>./tests</code>:</p>
 <blockquote>
@@ -205,117 +212,127 @@ Also ensure that the perpendicular momentum grid begins at a momentum of zero.</
 </code></pre></div>
 
 </blockquote>
-<p>The input file that we want to use is called <code>test_bimax.in</code>. The name of the input file doesn't need to be the same as the name of the f0-table files (<em>dist_name</em>), but it helps to use a consistent nomenclature. Let's open <code>test_bimax.in</code>. It includes all the parameters that ALPS needs to run. Like in the case of the file <code>test_bimax_dist.in</code> above, the input file is commented to help you understand the meaning of the parameters. For more details and a reference to all of the parameters, please have a look at our <a href="quick_guide.md">Quick Guide</a>.</p>
+<p>The input file that we want to use is called <code>test_ICW.in</code>. The name of the input file doesn't need to be the same as the name of the f0-table files (<em>dist_name</em>), but it helps to use a consistent nomenclature. Let's open <code>test_ICW.in</code>. It includes all the parameters that ALPS needs to run. Like in the case of the file <code>test_ICW_dist.in</code> above, the input file is commented to help you understand the meaning of the parameters. For more details and a reference to all of the parameters, please have a look at our <a href="quick_guide.md">Quick Guide</a>.</p>
 <p>We focus on a few key entries here for now. First, it's important to give the code the correct <code>nperp</code> and <code>npar</code> values. They are defined in the same way as above. So, here is a reminder:</p>
 <blockquote>
 <p>If you have an f0-table of X-by-Y entries in momentum space, set <code>nperp=X-1</code> and <code>npar=Y-1</code> in ALPS.</p>
 </blockquote>
-<p>In the example file, we see that <code>nperp=150</code> and <code>npar=300</code>, which are the correct entries for our example.</p>
+<p>In the example file, we see that <code>nperp=120</code> and <code>npar=240</code>, which are the correct entries for our example.</p>
 <p>Further down, you find the line</p>
+<div class="codehilite"><pre><span></span><code>arrayName=&#39;test_ICW&#39;
+</code></pre></div>
+
+<p>This line defines the name of the f0-tables that ALPS will use. Since we tell ALPS to work with two species (from the line <code>nspec=2</code>), the code will look for two files</p>
 <blockquote>
-<div class="codehilite"><pre><span></span><code>arrayName=&#39;test_bimax&#39;
+<div class="codehilite"><pre><span></span><code>./distribution/test_ICW.1.array  
+./distribution/test_ICW.2.array
 </code></pre></div>
 
 </blockquote>
-<p>This line defines the name of the f0-tables that ALPS will use. Since we tell ALPS to work with two species (from the line <code>nspec=2</code>), the code will look for two files</p>
-<blockquote>
-<p>./distribution/test_bimax.1.array<br>
-./distribution/test_bimax.2.array</p>
-</blockquote>
 <p>which we had created earlier.</p>
 <p>If you scroll further down, you'll find the following block:</p>
-<blockquote>
-<p>&amp;guess_1<br>
-   g_om=3.d-2   !real frequency<br>
-   g_gam=-1.d-5 !imaginary frequency  </p>
-</blockquote>
+<div class="codehilite"><pre><span></span><code><span class="sx">!Initial guess of complex frequency for first solution</span><span class="w"></span>
+<span class="sx">!Only used when use_map=.false.</span><span class="w"></span>
+<span class="sx">!Need to have # of name lists equal to nroots</span><span class="w"></span>
+<span class="o">&amp;</span><span class="n">guess_1</span><span class="w"></span>
+<span class="n">g_om</span><span class="p">=</span><span class="mi">1</span><span class="p">.</span>5508<span class="n">d</span><span class="o">-</span><span class="mi">01</span><span class="w">   </span>!<span class="nb">real</span><span class="w"> </span><span class="n">frequency</span><span class="w"></span>
+<span class="n">g_gam</span><span class="p">=</span><span class="o">-</span><span class="mi">1</span><span class="p">.</span>3429<span class="n">d</span><span class="o">-</span><span class="mi">05</span><span class="w"> </span>!<span class="n">imaginary</span><span class="w"> </span><span class="n">frequency</span><span class="w"></span>
+<span class="o">/</span><span class="w"></span>
+</code></pre></div>
+
 <p>This block defines the <em>initial guess</em> for the frequency that the code will use to search for solutions. By picking the appropriate guess, you can select which plasma mode the code should follow. Remember that all frequencies are normalised to the gyro-frequency of the protons.</p>
 <p>Further down, you can find definitions for the species. The first species is defined through the following:</p>
-<blockquote>
-<p>!Species parameters list; species 1
-   &amp;spec_1
-   nn=1.d0  !relative density; n_j/n_ref
-   qq=1.d0  !relative charge;  q_j/q_ref
-   mm=1.d0  !relative mass;    m_j/m_ref
-   ff=1     !# of fits to be used.
-   relat=F  !relativistic (T) or non-relativistic (F) species
-   log_fit=T!log (T) or linear (F) fit
-   use_bM=T !numerically integrate array (F) or use bi-Maxwellian (T)
-   /</p>
-<p>!Initial Fit Values; species 1, function 1
-   &amp;ffit_1_1
-   fit_type_in=1   !Kind of fit function (see documentation)
-   fit_1=1.7959D-1 !Suggested values for parameters,
-   fit_2=1.d0      !e.g. generated by generate_distribution
-   fit_3=0.d0
-   fit_4=0.d0
-   fit_5=0.d0
-   perpcorr=1.D0   !renormalization factor
-   /</p>
-</blockquote>
-<p>You can recognise many of the parameters from our <code>test_bimax_dist.in</code> file, like the charge and the mass of the particle species The block <code>&amp;ffit_1_1</code> includes the fit parameters for the hybrid-analytic continuation. As you can see, this file includes the suggestions for the ideal fit that <code>generate_distribution</code> has given us earlier.</p>
-<p>The key point about the fit parameters is that, for all damped solutions, you want to find a good representation of the distribution function so that the Landau-contour integral is precise. The procedure is described in the code paper in Section 3.2. If you have any closed mathematical expression to use, you can also input this for the analytic continuation as described <a href="#6using-analytical-expressions-for-the-background-distribution">here</a>.</p>
-<p>Once we are happy with the parameters in <code>test_bimax.in</code>, let's run ALPS. Depending on your MPI configuration, you can run the code directly with the following commands (it's best to go back into the main folder of the ALPS directory structure):</p>
+<div class="codehilite"><pre><span></span><code><span class="sx">!Species parameters list; species 1</span><span class="w"></span>
+<span class="o">&amp;</span><span class="n">spec_1</span><span class="w"></span>
+<span class="n">nn</span><span class="p">=</span><span class="mi">1</span><span class="p">.</span><span class="n">d0</span><span class="w">  </span>!<span class="n">relative</span><span class="w"> </span><span class="n">density</span><span class="p">;</span><span class="w"> </span><span class="n">n_j</span><span class="o">/</span><span class="n">n_ref</span><span class="w"></span>
+<span class="n">qq</span><span class="p">=</span><span class="mi">1</span><span class="p">.</span><span class="n">d0</span><span class="w">  </span>!<span class="n">relative</span><span class="w"> </span><span class="n">charge</span><span class="p">;</span><span class="w">  </span><span class="n">q_j</span><span class="o">/</span><span class="n">q_ref</span><span class="w"></span>
+<span class="n">mm</span><span class="p">=</span><span class="mi">1</span><span class="p">.</span><span class="n">d0</span><span class="w">  </span>!<span class="n">relative</span><span class="w"> </span><span class="n">mass</span><span class="p">;</span><span class="w">    </span><span class="n">m_j</span><span class="o">/</span><span class="n">m_ref</span><span class="w"></span>
+<span class="n">ff</span><span class="p">=</span><span class="mi">1</span><span class="w">     </span>!#<span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">fits</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="n">used</span><span class="p">.</span><span class="w"></span>
+<span class="n">relat</span><span class="p">=</span><span class="n">F</span><span class="w">  </span>!<span class="n">relativistic</span><span class="w"> </span><span class="p">(</span><span class="n">T</span><span class="p">)</span><span class="w"> </span><span class="n">or</span><span class="w"> </span><span class="n">non</span><span class="o">-</span><span class="n">relativistic</span><span class="w"> </span><span class="p">(</span><span class="n">F</span><span class="p">)</span><span class="w"> </span><span class="n">species</span><span class="w"></span>
+<span class="n">log_fit</span><span class="p">=</span><span class="n">T</span>!<span class="nb">log</span><span class="w"> </span><span class="p">(</span><span class="n">T</span><span class="p">)</span><span class="w"> </span><span class="n">or</span><span class="w"> </span><span class="n">linear</span><span class="w"> </span><span class="p">(</span><span class="n">F</span><span class="p">)</span><span class="w"> </span><span class="n">fit</span><span class="w"></span>
+<span class="n">use_bM</span><span class="p">=</span><span class="n">F</span><span class="w"> </span>!<span class="n">numerically</span><span class="w"> </span><span class="n">integrate</span><span class="w"> </span><span class="n">array</span><span class="w"> </span><span class="p">(</span><span class="n">F</span><span class="p">)</span><span class="w"> </span><span class="n">or</span><span class="w"> </span><span class="n">use</span><span class="w"> </span><span class="n">bi</span><span class="o">-</span><span class="n">Maxwellian</span><span class="w"> </span><span class="p">(</span><span class="n">T</span><span class="p">)</span><span class="w"></span>
+<span class="o">/</span><span class="w"></span>
+
+<span class="sx">!Initial Fit Values; species 1, function 1</span><span class="w"></span>
+<span class="o">&amp;</span><span class="n">ffit_1_1</span><span class="w"></span>
+<span class="n">fit_type_in</span><span class="p">=</span><span class="mi">1</span><span class="w">   </span>!<span class="n">Kind</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">fit</span><span class="w"> </span><span class="k">function</span><span class="w"> </span><span class="p">(</span><span class="n">see</span><span class="w"> </span><span class="n">documentation</span><span class="p">)</span><span class="w"></span>
+<span class="n">fit_1</span><span class="p">=</span><span class="mi">5</span><span class="p">.</span>986<span class="n">D</span><span class="o">-</span><span class="mi">2</span><span class="w">  </span>!<span class="n">Suggested</span><span class="w"> </span><span class="nb">values</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">parameters</span><span class="p">,</span><span class="w"></span>
+<span class="n">fit_2</span><span class="p">=</span><span class="mi">1</span><span class="p">.</span><span class="n">d0</span><span class="w">      </span>!<span class="n">e</span><span class="p">.</span><span class="n">g</span><span class="p">.</span><span class="w"> </span><span class="n">generated</span><span class="w"> </span><span class="n">by</span><span class="w"> </span><span class="n">generate_distribution</span><span class="w"></span>
+<span class="n">fit_3</span><span class="p">=</span><span class="mi">0</span><span class="p">.</span><span class="n">d0</span><span class="w"></span>
+<span class="n">fit_4</span><span class="p">=</span><span class="mi">0</span><span class="p">.</span><span class="n">d0</span><span class="w"></span>
+<span class="n">fit_5</span><span class="p">=</span><span class="mi">0</span><span class="p">.</span><span class="n">d0</span><span class="w"></span>
+<span class="n">perpcorr</span><span class="p">=</span><span class="mi">3</span><span class="p">.</span>33<span class="n">D</span><span class="o">-</span><span class="mi">1</span><span class="w">   </span>!<span class="n">renormalization</span><span class="w"> </span><span class="nb">factor</span><span class="w"></span>
+<span class="o">/</span><span class="w"></span>
+</code></pre></div>
+
+<p>You can recognise many of the parameters from our <code>test_ICW_dist.in</code> file, like the charge and the mass of the particle species The block <code>&amp;ffit_1_1</code> includes the fit parameters for the hybrid-analytic continuation. As you can see, this file includes the suggestions for the ideal fit that <code>generate_distribution</code> has given us earlier.</p>
+<p>The key point about the fit parameters is that, for all damped solutions, you want to find a good representation of the distribution function so that the Landau-contour integral is precise. The procedure is described in the code paper in Section 3.2. If you have any closed mathematical expression to use, you can also input this for the analytic continuation as described <a href="#6.-using-analytical-expressions-for-the-background-distribution">here</a>.</p>
+<p>Once we are happy with the parameters in <code>test_ICW.in</code>, let's run ALPS. Depending on your MPI configuration, you can run the code directly with the following commands (it's best to go back into the main folder of the ALPS directory structure):</p>
 <blockquote>
 <div class="codehilite"><pre><span></span><code>cd ../
-mpirun -np 4 ./src/ALPS tests/test_bimax.in
+mpirun -np 4 ./src/ALPS tests/test_ICW.in
 </code></pre></div>
 
 </blockquote>
 <p>This command will run 4 instances of ALPS via MPI. Depending on your computer and the MPI setup, you may need to add the option <code>--oversubscribe</code> to ensure that 4 instances of MPI can actually be executed. The ALPS binary (<code>./src/ALPS</code>) expectes only one command-line argument: the name of the input file to run on. The number of processes (in this case 4), must always be an even number greater than 2, even if your computer doesn't have four or more cores. In those cases, the <code>--oversubscribe</code> option is particularly important. In general, the code scales quite well, especially for calculations of the dispersion relation with many plasma species and high perpendicular wavenumbers (compared to the species gyro-radii).</p>
 <p>If everything was successful so far, you'll now start to get the ALPS standard output:</p>
-<blockquote>
-<p>===========================================================<br>
-I                                                         I<br>
-I                       A  L  P  S                        I<br>
-I              Arbitrary Linear Plasma Solver             I<br>
-I                                                         I<br>
-I                       Version X.X                       I<br>
-I                                                         I<br>
-I  Kristopher Klein   (kgklein@arizone.edu)               I<br>
-I  Daniel Verscharen  (d.verscharen@ucl.ac.uk)            I<br>
-I                                                         I<br>
-===========================================================<br>
-All processes are up and running.<br>
-Reading from Input File: test_bimax<br>
-GUESS ROUTINE: <br>
-Intial Guess   1 :     3.0000E-02   -1.0000E-05<br>
-SPECIES PARAMETERS: <br>
-Species   1 : <br>
-ns/nREF =  1.0000E+00 | qs/qREF =  1.0000E+00 | ms/mREF =  1.0000E+00<br>
-Number of fitted functions =    1<br>
-Relativistic effects = F<br>
-Species   2 : <br>
-ns/nREF =  1.0000E+00 | qs/qREF = -1.0000E+00 | ms/mREF =  5.4466E-04<br>
-Number of fitted functions =    1<br>
-Relativistic effects = F<br>
--=-=-=-=-=-=-=-=-<br>
-..</p>
-</blockquote>
+<div class="codehilite"><pre><span></span><code><span class="o">===========================================================</span><span class="w"></span>
+<span class="n">I</span><span class="w">                                                         </span><span class="n">I</span><span class="w"></span>
+<span class="n">I</span><span class="w">                       </span><span class="n">A</span><span class="w">  </span><span class="n">L</span><span class="w">  </span><span class="n">P</span><span class="w">  </span><span class="n">S</span><span class="w">                        </span><span class="n">I</span><span class="w"></span>
+<span class="n">I</span><span class="w">              </span><span class="n">Arbitrary</span><span class="w"> </span><span class="n">Linear</span><span class="w"> </span><span class="n">Plasma</span><span class="w"> </span><span class="n">Solver</span><span class="w">             </span><span class="n">I</span><span class="w"></span>
+<span class="n">I</span><span class="w">                                                         </span><span class="n">I</span><span class="w"></span>
+<span class="n">I</span><span class="w">                       </span><span class="n">Version</span><span class="w"> </span><span class="n">X</span><span class="p">.</span><span class="n">X</span><span class="w">                       </span><span class="n">I</span><span class="w"></span>
+<span class="n">I</span><span class="w">                                                         </span><span class="n">I</span><span class="w"></span>
+<span class="n">I</span><span class="w">  </span><span class="n">Kristopher</span><span class="w"> </span><span class="n">Klein</span><span class="w">   </span><span class="p">(</span><span class="n">kgklein</span><span class="nv">@arizone</span><span class="p">.</span><span class="n">edu</span><span class="p">)</span><span class="w">               </span><span class="n">I</span><span class="w"></span>
+<span class="n">I</span><span class="w">  </span><span class="n">Daniel</span><span class="w"> </span><span class="n">Verscharen</span><span class="w">  </span><span class="p">(</span><span class="n">d</span><span class="p">.</span><span class="n">verscharen</span><span class="nv">@ucl</span><span class="p">.</span><span class="n">ac</span><span class="p">.</span><span class="n">uk</span><span class="p">)</span><span class="w">            </span><span class="n">I</span><span class="w"></span>
+<span class="n">I</span><span class="w">                                                         </span><span class="n">I</span><span class="w"></span>
+<span class="o">===========================================================</span><span class="w"></span>
+<span class="ow">All</span><span class="w"> </span><span class="n">processes</span><span class="w"> </span><span class="k">are</span><span class="w"> </span><span class="n">up</span><span class="w"> </span><span class="ow">and</span><span class="w"> </span><span class="n">running</span><span class="p">.</span><span class="w"></span>
+<span class="n">Reading</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="k">Input</span><span class="w"> </span><span class="k">File</span><span class="err">:</span><span class="w"> </span><span class="n">test_ICW</span><span class="w"></span>
+<span class="n">GUESS</span><span class="w"> </span><span class="k">ROUTINE</span><span class="err">:</span><span class="w"></span>
+<span class="n">Intial</span><span class="w"> </span><span class="n">Guess</span><span class="w">   </span><span class="mi">1</span><span class="w"> </span><span class="err">:</span><span class="w">     </span><span class="mf">1.5508E-01</span><span class="w">   </span><span class="o">-</span><span class="mf">1.3429E-05</span><span class="w"></span>
+<span class="n">SPECIES</span><span class="w"> </span><span class="k">PARAMETERS</span><span class="err">:</span><span class="w"></span>
+<span class="n">Species</span><span class="w">   </span><span class="mi">1</span><span class="w"> </span><span class="err">:</span><span class="w"></span>
+<span class="n">ns</span><span class="o">/</span><span class="n">nREF</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="mf">1.0000E+00</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">qs</span><span class="o">/</span><span class="n">qREF</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="mf">1.0000E+00</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">ms</span><span class="o">/</span><span class="n">mREF</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="mf">1.0000E+00</span><span class="w"></span>
+<span class="n">Number</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="n">fitted</span><span class="w"> </span><span class="n">functions</span><span class="w"> </span><span class="o">=</span><span class="w">    </span><span class="mi">1</span><span class="w"></span>
+<span class="n">Relativistic</span><span class="w"> </span><span class="n">effects</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">F</span><span class="w"></span>
+<span class="n">Species</span><span class="w">   </span><span class="mi">2</span><span class="w"> </span><span class="err">:</span><span class="w"></span>
+<span class="n">ns</span><span class="o">/</span><span class="n">nREF</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="mf">1.0000E+00</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">qs</span><span class="o">/</span><span class="n">qREF</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">-</span><span class="mf">1.0000E+00</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">ms</span><span class="o">/</span><span class="n">mREF</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="mf">5.4466E-04</span><span class="w"></span>
+<span class="n">Number</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="n">fitted</span><span class="w"> </span><span class="n">functions</span><span class="w"> </span><span class="o">=</span><span class="w">    </span><span class="mi">1</span><span class="w"></span>
+<span class="n">Relativistic</span><span class="w"> </span><span class="n">effects</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">F</span><span class="w"></span>
+<span class="o">-=-=-=-=-=-=-=-=-</span><span class="w"></span>
+</code></pre></div>
+
 <p>This output summarises a lot of the information that is useful. We recommend that you read this output carefully, or even that you pipe the output into a log file for later reference by using</p>
 <blockquote>
-<div class="codehilite"><pre><span></span><code>mpirun -np 4 ./src/ALPS tests/test_bimax.in &gt; test_bimax.output &amp;
+<div class="codehilite"><pre><span></span><code>mpirun -np 4 ./src/ALPS tests/test_ICW.in &gt; test_ICW.output &amp;
 </code></pre></div>
 
 </blockquote>
 <p>Further down in the ALPS standard output, you'll find lines similar to this:</p>
-<blockquote>
-<p>kperp:     1.0000E-03 kpar:     3.0271E-02<br>
- Converged after iteration    7<br>
- D(    3.0677E-02   -1.1597E-05)=    -7.9835E-15   -3.6558E-15<br>
-kperp:     1.0000E-03 kpar:     3.0545E-02<br>
- Converged after iteration    7<br>
- D(    3.0962E-02   -1.1479E-05)=    -5.1450E-15   -5.0175E-15  </p>
-</blockquote>
-<p>These lines tell us that the code is actually now finding solutions, as it scans through the wavevector space. The scan options had been defined in <code>test_bimax.in</code>, and details on how this works are given in our <a href="quick-guide.md">Quick Guide</a>.</p>
-<p>When the code has finished, it has produced a number of output files, which you can find in the folder <code>./solution</code> in the ALPS directory structure. Let's look at the file <code>test_bimax.scan_kpara_1.root_1</code>. As the name suggests, this file contains the scan result for a scan along the parallel wavenumber $k_{\parallel}$ for root number 1 (we only scan along one root in this example).</p>
+<div class="codehilite"><pre><span></span><code><span class="n">kperp</span><span class="o">:</span><span class="w">     </span><span class="mf">1.0000</span><span class="n">E</span><span class="o">-</span><span class="mi">03</span><span class="w"> </span><span class="n">kpar</span><span class="o">:</span><span class="w">     </span><span class="mf">1.0275</span><span class="n">E</span><span class="o">-</span><span class="mi">01</span><span class="w"></span>
+<span class="w"> </span><span class="n">Converged</span><span class="w"> </span><span class="n">after</span><span class="w"> </span><span class="n">iteration</span><span class="w">    </span><span class="mi">7</span><span class="w"></span>
+<span class="w"> </span><span class="n">D</span><span class="o">(</span><span class="w">    </span><span class="mf">1.4337</span><span class="n">E</span><span class="o">-</span><span class="mi">01</span><span class="w">   </span><span class="o">-</span><span class="mf">8.9137</span><span class="n">E</span><span class="o">-</span><span class="mi">06</span><span class="o">)=</span><span class="w">    </span><span class="o">-</span><span class="mf">2.0138</span><span class="n">E</span><span class="o">-</span><span class="mi">18</span><span class="w">   </span><span class="o">-</span><span class="mf">1.2447</span><span class="n">E</span><span class="o">-</span><span class="mi">18</span><span class="w"></span>
+<span class="n">kperp</span><span class="o">:</span><span class="w">     </span><span class="mf">1.0000</span><span class="n">E</span><span class="o">-</span><span class="mi">03</span><span class="w"> </span><span class="n">kpar</span><span class="o">:</span><span class="w">     </span><span class="mf">1.0557</span><span class="n">E</span><span class="o">-</span><span class="mi">01</span><span class="w"></span>
+<span class="w"> </span><span class="n">Converged</span><span class="w"> </span><span class="n">after</span><span class="w"> </span><span class="n">iteration</span><span class="w">    </span><span class="mi">8</span><span class="w"></span>
+<span class="w"> </span><span class="n">D</span><span class="o">(</span><span class="w">    </span><span class="mf">1.4729</span><span class="n">E</span><span class="o">-</span><span class="mi">01</span><span class="w">   </span><span class="o">-</span><span class="mf">8.6524</span><span class="n">E</span><span class="o">-</span><span class="mi">06</span><span class="o">)=</span><span class="w">    </span><span class="o">-</span><span class="mf">2.9456</span><span class="n">E</span><span class="o">-</span><span class="mi">19</span><span class="w">   </span><span class="o">-</span><span class="mf">1.6708</span><span class="n">E</span><span class="o">-</span><span class="mi">19</span><span class="w"></span>
+<span class="n">kperp</span><span class="o">:</span><span class="w">     </span><span class="mf">1.0000</span><span class="n">E</span><span class="o">-</span><span class="mi">03</span><span class="w"> </span><span class="n">kpar</span><span class="o">:</span><span class="w">     </span><span class="mf">1.0846</span><span class="n">E</span><span class="o">-</span><span class="mi">01</span><span class="w"></span>
+<span class="w"> </span><span class="n">Converged</span><span class="w"> </span><span class="n">after</span><span class="w"> </span><span class="n">iteration</span><span class="w">    </span><span class="mi">8</span><span class="w"></span>
+<span class="w"> </span><span class="n">D</span><span class="o">(</span><span class="w">    </span><span class="mf">1.5132</span><span class="n">E</span><span class="o">-</span><span class="mi">01</span><span class="w">   </span><span class="o">-</span><span class="mf">8.3974</span><span class="n">E</span><span class="o">-</span><span class="mi">06</span><span class="o">)=</span><span class="w">     </span><span class="mf">7.8943</span><span class="n">E</span><span class="o">-</span><span class="mi">19</span><span class="w">    </span><span class="mf">5.5227</span><span class="n">E</span><span class="o">-</span><span class="mi">19</span><span class="w"></span>
+</code></pre></div>
+
+<p>These lines tell us that the code is actually now finding solutions, as it scans through the wavevector space. The scan options had been defined in <code>test_ICW.in</code>, and details on how this works are given in our <a href="quick-guide.md">Quick Guide</a>.</p>
+<p>When the code has finished, it has produced a number of output files, which you can find in the folder <code>./solution</code> in the ALPS directory structure. Let's look at the file <code>test_ICW.scan_kpara_1.root_1</code>. As the name suggests, this file contains the scan result for a scan along the parallel wavenumber $k_{\parallel}$ for root number 1 (we only scan along one root in this example).</p>
 <p>The file has the following format:</p>
-<blockquote>
-<p>1.0000E-03    3.0000E-02    3.0394E-02   -1.1721E-05<br>
-1.0000E-03    3.0271E-02    3.0677E-02   -1.1597E-05<br>
-1.0000E-03    3.0545E-02    3.0962E-02   -1.1479E-05<br>
-1.0000E-03    3.0821E-02    3.1250E-02   -1.1363E-05  </p>
-</blockquote>
+<div class="codehilite"><pre><span></span><code><span class="mf">1.0000E-03</span><span class="w">    </span><span class="mf">1.0000E-01</span><span class="w">    </span><span class="mf">1.4424E-01</span><span class="w">   </span><span class="o">-</span><span class="mf">1.0449E-05</span><span class="w"></span>
+<span class="mf">1.0000E-03</span><span class="w">    </span><span class="mf">1.0275E-01</span><span class="w">    </span><span class="mf">1.4337E-01</span><span class="w">   </span><span class="o">-</span><span class="mf">8.9137E-06</span><span class="w"></span>
+<span class="mf">1.0000E-03</span><span class="w">    </span><span class="mf">1.0557E-01</span><span class="w">    </span><span class="mf">1.4729E-01</span><span class="w">   </span><span class="o">-</span><span class="mf">8.6524E-06</span><span class="w"></span>
+<span class="mf">1.0000E-03</span><span class="w">    </span><span class="mf">1.0846E-01</span><span class="w">    </span><span class="mf">1.5132E-01</span><span class="w">   </span><span class="o">-</span><span class="mf">8.3974E-06</span><span class="w"></span>
+<span class="mf">1.0000E-03</span><span class="w">    </span><span class="mf">1.1144E-01</span><span class="w">    </span><span class="mf">1.5546E-01</span><span class="w">   </span><span class="o">-</span><span class="mf">8.1484E-06</span><span class="w"></span>
+<span class="mf">1.0000E-03</span><span class="w">    </span><span class="mf">1.1450E-01</span><span class="w">    </span><span class="mf">1.5971E-01</span><span class="w">   </span><span class="o">-</span><span class="mf">7.9055E-06</span><span class="w"></span>
+<span class="mf">...</span><span class="w">           </span><span class="mf">...</span><span class="w">           </span><span class="mf">...</span><span class="w">          </span><span class="mf">...</span><span class="w"></span>
+</code></pre></div>
+
 <p>The format of the columns is as follows:</p>
 <ol>
 <li>Wavenumber $k_{\perp}$ perpendicular to the background magnetic field in units of $\Omega_{\mathrm p}/v_{\mathrm A}$</li>
@@ -324,116 +341,130 @@ kperp:     1.0000E-03 kpar:     3.0545E-02<br>
 <li>Imaginary part of the wave frequency $\omega$ in units of $\Omega_{\mathrm p}$</li>
 </ol>
 <p>In these definitions, $\Omega_{\mathrm p}$ is the proton gyro-frequency.</p>
-<p>Congratulations! You have found the solutions to the bi-Maxwellian example case. Now you can also experiment with the other test cases in the folders <code>./distribution</code> and <code>./tests</code>. The code also includes a full test suite which you can launch with</p>
+<p>Congratulations! You have found the solutions to the Maxwellian example case for the ion-cyclotron wave. Now you can also experiment with the other test cases in the folders <code>./distribution</code> and <code>./tests</code>. The code also includes a full test suite which you can launch with</p>
 <blockquote>
-<p>cd ./tests
-   ./run_test_suite.sh</p>
+<div class="codehilite"><pre><span></span><code>cd ./tests  
+./run_test_suite.sh
+</code></pre></div>
+
 </blockquote>
 <p>The given test cases cover a range of typical applications, so there should be good starting points for your purposes.</p>
+<p>The code also creates additional output files for the heating contributions and for the eigenfunctions of the solutions. The general output format of ALPS is described on our <a href="output.md">ALPS Output</a> page.</p>
 <h2>5. Interpolation of input distributions</h2>
 <p>In many cases, you may want to use an f0-table based on a data file that is not in the same format as the ALPS format (e.g., from spacecraft observations) or isn't equally spaced in momentum space as required by ALPS. For those cases, ALPS provides an interpolation routine, which you can find in the folder <code>./interpolation</code>. The ALPS code also comes with a test case to illustrate the the use of the interpolation routine. We'll go through this example here.</p>
 <p>Let's have a look at the file <code>test_interp_coarse.array</code>. This file includes a table of the distribution function, but not in the format as needed by ALPS:</p>
-<blockquote>
-<p>3.48994945E-04   9.99390800E-03  0.999899983    <br>
-3.67403193E-03   9.30061750E-03  0.999899983   <br>
-6.57521421E-03   7.53435818E-03  0.999899983  <br>
-8.71784426E-03   4.89889691E-03  0.999899983  <br>
-9.85473860E-03   1.69827254E-03  0.999899983  <br>
-9.85473767E-03  -1.69827335E-03  0.999899983  <br>
-...              ...             ...  </p>
-</blockquote>
+<div class="codehilite"><pre><span></span><code><span class="mf">3.48994945E-04</span><span class="w">   </span><span class="mf">9.99390800E-03</span><span class="w">  </span><span class="mf">0.999899983</span><span class="w">      </span>
+<span class="mf">3.67403193E-03</span><span class="w">   </span><span class="mf">9.30061750E-03</span><span class="w">  </span><span class="mf">0.999899983</span><span class="w">     </span>
+<span class="mf">6.57521421E-03</span><span class="w">   </span><span class="mf">7.53435818E-03</span><span class="w">  </span><span class="mf">0.999899983</span><span class="w">    </span>
+<span class="mf">8.71784426E-03</span><span class="w">   </span><span class="mf">4.89889691E-03</span><span class="w">  </span><span class="mf">0.999899983</span><span class="w">    </span>
+<span class="mf">9.85473860E-03</span><span class="w">   </span><span class="mf">1.69827254E-03</span><span class="w">  </span><span class="mf">0.999899983</span><span class="w">    </span>
+<span class="mf">9.85473767E-03</span><span class="w">  </span><span class="o">-</span><span class="mf">1.69827335E-03</span><span class="w">  </span><span class="mf">0.999899983</span><span class="w">    </span>
+<span class="mf">...</span><span class="w">              </span><span class="mf">...</span><span class="w">             </span><span class="mf">...</span><span class="w">  </span>
+</code></pre></div>
+
 <p>The overall format is the same as in the f0-table files above in terms of the meaning of the columns:</p>
 <ol>
 <li>Perpendicular momentum $p_{\perp}$ normalised to $m_{\mathrm p}v_{\mathrm A}$</li>
 <li>Parallel momentum $p_{\parallel}$ normalised to $m_{\mathrm p}v_{\mathrm A}$</li>
-<li>Value of the background distribution function $f_{0j}$ at momentum $(p_{\perp},p_{\parallel}$ normalised to $(m_{\mathrm p}v_{\mathrm A})^{-3}$</li>
+<li>Value of the background distribution function $f_{0j}$ at momentum $(p_{\perp},p_{\parallel})$ normalised to $(m_{\mathrm p}v_{\mathrm A})^{-3}$</li>
 </ol>
 <p>Now let's look at the input file <code>test_interp.in</code> for the interpolation routine. This file includes a number of comments to help you with the setting up of the interpolation parameters. The file asks the interpolation routine to take the irregular table from <code>test_interp_coarse.array</code> and to interpolate it onto a grid in the ALPS format with <code>nperp=50</code> and <code>npar=100</code>. If needed, the code can also re-normalise and scale the distribution function depending on your needs.</p>
 <p>Let's run the interpolation routine on the input file:</p>
 <blockquote>
-<p>./interpolation test_interp.in</p>
+<div class="codehilite"><pre><span></span><code>./interpolation test_interp.in
+</code></pre></div>
+
 </blockquote>
 <p>If successful, we will get the following output:</p>
-<blockquote>
-<p>Number of points in the coarse grid:          700  </p>
-<p>Properties of the fine grid:<br>
-Number of grid points in nperp:                50<br>
-Number of grid points in npar:                100<br>
-Maximum Pperp:                         2.9663E+00<br>
-Minimum Pperp:                         0.0000E+00<br>
-Maximum Ppar:                          3.0082E+00<br>
-Minimum Ppar:                         -3.0082E+00  </p>
-<p>Writing output to file test_interp.in.array     </p>
-</blockquote>
+<div class="codehilite"><pre><span></span><code>Number of points in the coarse grid:          700
+
+Properties of the fine grid:
+Number of grid points in nperp:                50
+Number of grid points in npar:                100
+Maximum Pperp:                         2.9663E+00
+Minimum Pperp:                         0.0000E+00
+Maximum Ppar:                          3.0082E+00
+Minimum Ppar:                         -3.0082E+00
+
+Writing output to file test_interp.in.array   
+</code></pre></div>
+
 <p>At the same time, the folder now includes a new file <code>test_interp.in.array</code>, which includes the interpolated f0-table in the correct format for ALPS:</p>
-<blockquote>
-<p>0.0000000000000000       -3.0081663100000000        2.5699885852486149E-005<br>
-0.0000000000000000       -2.9480029837999999        3.4671386965111912E-005<br>
-0.0000000000000000       -2.8878396575999998        4.7473668668616121E-005<br>
-0.0000000000000000       -2.8276763314000002        6.5558031421796410E-005<br>
-0.0000000000000000       -2.7675130052000001        9.0732738996456109E-005<br>
-0.0000000000000000       -2.7073496790000000        1.2528393376824723E-004<br>
-0.0000000000000000       -2.6471863527999999        1.7212176003060674E-004<br>
-0.0000000000000000       -2.5870230265999998        2.3495069283188794E-004<br>
-0.0000000000000000       -2.5268597004000002        3.1846300082066743E-004<br>
-...                       ...                       ...</p>
-</blockquote>
+<div class="codehilite"><pre><span></span><code><span class="mf">0.0000000000000000</span><span class="w">       </span><span class="o">-</span><span class="mf">3.0081663100000000</span><span class="w">        </span><span class="mf">2.5699885852486149E-005</span><span class="w"></span>
+<span class="mf">0.0000000000000000</span><span class="w">       </span><span class="o">-</span><span class="mf">2.9480029837999999</span><span class="w">        </span><span class="mf">3.4671386965111912E-005</span><span class="w"></span>
+<span class="mf">0.0000000000000000</span><span class="w">       </span><span class="o">-</span><span class="mf">2.8878396575999998</span><span class="w">        </span><span class="mf">4.7473668668616121E-005</span><span class="w"></span>
+<span class="mf">0.0000000000000000</span><span class="w">       </span><span class="o">-</span><span class="mf">2.8276763314000002</span><span class="w">        </span><span class="mf">6.5558031421796410E-005</span><span class="w"></span>
+<span class="mf">0.0000000000000000</span><span class="w">       </span><span class="o">-</span><span class="mf">2.7675130052000001</span><span class="w">        </span><span class="mf">9.0732738996456109E-005</span><span class="w"></span>
+<span class="mf">0.0000000000000000</span><span class="w">       </span><span class="o">-</span><span class="mf">2.7073496790000000</span><span class="w">        </span><span class="mf">1.2528393376824723E-004</span><span class="w"></span>
+<span class="mf">0.0000000000000000</span><span class="w">       </span><span class="o">-</span><span class="mf">2.6471863527999999</span><span class="w">        </span><span class="mf">1.7212176003060674E-004</span><span class="w"></span>
+<span class="mf">0.0000000000000000</span><span class="w">       </span><span class="o">-</span><span class="mf">2.5870230265999998</span><span class="w">        </span><span class="mf">2.3495069283188794E-004</span><span class="w"></span>
+<span class="mf">0.0000000000000000</span><span class="w">       </span><span class="o">-</span><span class="mf">2.5268597004000002</span><span class="w">        </span><span class="mf">3.1846300082066743E-004</span><span class="w"></span>
+<span class="mf">...</span><span class="w">                       </span><span class="mf">...</span><span class="w">                       </span><span class="mf">...</span><span class="w"></span>
+</code></pre></div>
+
 <p>You can copy this file over into the <code>./distribution</code> folder and give it the appropriate naming with the convention given above. Then ALPS can use this interpolated file for the calculation.</p>
 <h2>6. Using analytical expressions for the background distribution</h2>
 <p>In some instances, you may have an analytical expression for the distribution function (which is not covered by <code>generate_distribution</code>) that you want to run through ALPS. For example, you may want to analyse the instability of a model distribution that was derived analytical from a model. ALPS can also do this.</p>
 <p>For such a calculation, we need to define the background distribution in the code directly. Let's open the file <code>./solution/distribution_analyt.f90</code>. This is a Fortran file that allows you to feed an analytical expression for the background distribution into ALPS.</p>
 <p>If you have the standard version of ALPS from the repository, this f90 file already contains some variable declarations and an example case. Let's scroll down to the following part:</p>
-<blockquote>
-<p>select case(is)</p>
-<div class="codehilite"><pre><span></span><code> case(1) ! Species 1
+<div class="codehilite"><pre><span></span><code>select case(is)
 
-   ! The example below illustrates how to set up a Maxwellian with beta = 1:
-   beta=1.d0
-   ms=1.d0
+  case(1) ! Species 1
 
-   f0=(pi**(-1.5d0) /((ms * beta )**(3.d0/2.d0) )) * exp( -( ppar**2/( beta * ms)&amp;
-     + (pperp**2)/( beta * ms ) ) )
+    ! The example below illustrates how to set up a Maxwellian with beta = 1:
+    beta=1.d0
+    ms=1.d0
 
- case(2) ! Species 2
-      ...
+    f0=(pi**(-1.5d0) /((ms * beta )**(3.d0/2.d0) )) * exp( -( ppar**2/( beta * ms)&amp;
+      + (pperp**2)/( beta * ms ) ) )
+
+  case(2) ! Species 2
+     ...
 </code></pre></div>
 
-</blockquote>
 <p>The different <em>cases</em> here refer to the species. This allows you to use different equations for, say, electrons and protons. Whatever is defined as the variable <code>f0</code> as a function of the variables <code>pperp</code> and <code>ppar</code> inside these <em>cases</em> defines the f0-table. If you require additional variables or functions to define your model distribution, please feel free to define them locally in this Fortran function.</p>
 <p><strong>Important</strong>: You must ensure that the defined background distribution function is normalised to one. The code doesn't automatically normalise the distribution. However, the ALPS standard output will list the integration of the distribution, so that you can double check.</p>
 <p>The example above defines a simple Maxwellian for the protons and for the electrons as a simple example.</p>
 <p>Once you have defined the background distribution in <code>distribution_analyt.f90</code>, it's important to re-compile the code, so that it includes the defined function:</p>
 <blockquote>
-<p>cd ../
-   make</p>
+<div class="codehilite"><pre><span></span><code>cd ../  
+make
+</code></pre></div>
+
 </blockquote>
 <p>For the next step, we need to create the f0-table based on the defined function. This is done with <code>generate_distribution</code> as for the other analytical cases. We have an example input file <code>./distribution/test_analytical_dist.in</code>, which does exactly that. For both species, this file defines the distribution type as zero in the lines:</p>
-<blockquote>
-<p>distributions=0  !Type of distribution (see documentation)</p>
-</blockquote>
+<div class="codehilite"><pre><span></span><code>distributions=0  !Type of distribution (see documentation)
+</code></pre></div>
+
 <p>If you set <code>distributions=0</code>, the function <code>generate_distribution</code> will use the function defined in <code>distribution_analyt.f90</code> to create an f0-table. Let's run</p>
 <blockquote>
-<p>cd ./distribution
-   ./generate_distribution test_analytical_dist.in</p>
+<div class="codehilite"><pre><span></span><code>cd ./distribution    
+./generate_distribution test_analytical_dist.in
+</code></pre></div>
+
 </blockquote>
 <p>The standard output explains a couple of details, which we had already encountered above. Most importantly, the programme now creates two new files:</p>
 <blockquote>
-<p>test_analytical.1.array
-   test_analytical.2.array</p>
+<div class="codehilite"><pre><span></span><code>test_analytical.1.array   
+test_analytical.2.array
+</code></pre></div>
+
 </blockquote>
 <p>These files include the f0-tables according to the analytical function.</p>
 <p>Now it's important to tell ALPS to use the defined distribution functions. This happens in the ALPS input file. In the folder <code>./tests</code>, there is an example file called <code>test_analytical.in</code>, which we will use in this example. As expected, it commands ALPS to use the f0-tables that we have just created:</p>
-<blockquote>
-<p>arrayName='test_analytical'</p>
-</blockquote>
+<div class="codehilite"><pre><span></span><code>arrayName=&#39;test_analytical&#39;
+</code></pre></div>
+
 <p>It also makes sense to use the pre-defined background distribution function from <code>distribution_analyt.f90</code> also for the analytical continuation. You can achieve this by setting</p>
-<blockquote>
-<p>ff=0</p>
-</blockquote>
+<div class="codehilite"><pre><span></span><code>ff=0
+</code></pre></div>
+
 <p>in the block of the corresponding species. If you set <code>ff=0</code>, the code will look up the function in <code>distribution_analyt.f90</code> to evaluate the Landau-contour integral.</p>
 <p>If you now run this test case through</p>
 <blockquote>
-<p>mpirun -np 4 ./src/ALPS ./tests/test_analytical.in</p>
+<div class="codehilite"><pre><span></span><code>mpirun -np 4 ./src/ALPS ./tests/test_analytical.in
+</code></pre></div>
+
 </blockquote>
 <p>the code will fully calculate the dispersion relation based on the distribution function defined in <code>distribution_analyt.f90</code>.</p>
 <p>A particular strength is that you can use that distribution for the creation of the f0-table, the Landau-contour integral (analytic continuation), or for both. Sometimes, you may only want to use it for the f0-table and rely on ALPS's internal fitting. If that is the case, simply set <code>ff</code> to the corresponding number of fits and define the fits as usual. At other times, you may only want to use the function from <code>distribution_analyt.f90</code> as the fit function, but use a different f0-table. In that is the case, point ALPS to your usual f0-table files, but set <code>ff=0</code>.</p>
