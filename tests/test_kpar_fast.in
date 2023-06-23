@@ -161,8 +161,8 @@ swf=1.0d-2
 swlog=.true.    !log (T) or linear (F) steps
 ns=32           !# of scan steps
 nres=1          !# of scan substeps
-heating=.false. !Calculate heating rates
-eigen=.false.   !Calculate eigenfunctions
+heating=.true. !Calculate heating rates
+eigen=.true.   !Calculate eigenfunctions
 /
 
 

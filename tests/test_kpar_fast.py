@@ -9,16 +9,23 @@ def read_roots(path=".", filename="test_kpar_fast.scan_kpara_1.root_1"):
     data = np.loadtxt(path_to_file)
     return data
 
-@pytest.mark.parametrize("path", ["../solution"])
-@pytest.mark.parametrize("column", range(4))
-def test_check_outputs(path, column):
+@pytest.mark.parametrize("filename", ["test_kpar_fast.scan_kpara_1.root_1",
+                                      "test_kpar_fast.eigen_kpara_1.root_1",
+                                      "test_kpar_fast.heat_kpara_1.root_1"])
+def test_check_outputs(filename):
+    '''
+    tests that the contents of the file solution/<filename> matches the file
+    ./<filename> to a relative tolerance of 1e-4. Will do this for each file
+    in the parameter list.
+    '''
 
+    path = "../solution"
     ref_path = "."
-    
-    ref_data = read_roots(ref_path)
-    test_data = read_roots(path)
 
-    np.testing.assert_almost_equal(ref_data[:, column],
-                                   test_data[:, column],
-                                   decimal = 4,
-                                   verbose = True)
+    ref_data = read_roots(ref_path, filename)
+    test_data = read_roots(path, filename)
+
+    np.testing.assert_allclose(ref_data,
+                               test_data,
+                               rtol = 1e-4,
+                               verbose = True)
