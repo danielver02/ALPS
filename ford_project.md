@@ -22,8 +22,10 @@ src_dir:  ./src
           ./interpolation
           ./distribution
 favicon: favicon.ico
-project_website: http://alps.space
+
 ---
+
+## The Arbitrary Linear Plasma Solver
 
 <img src="./page/ALPS_logo.png" alt="drawing" width="200"/>
 <img src="./page/qrcode_alps_github.png" alt="drawing" width="200"/>
@@ -43,8 +45,8 @@ and Bale, S. D.: ALPS: the Arbitrary Linear Plasma Solver, J. Plasma Phys. 84,
 
 ---
 
-For first-time users, we recommend working through our [ALPS Tutorial](tutorial.md).
+For first-time users, we recommend working through our [ALPS Tutorial](./page/tutorial.md).
 
-The key input parameters for ALPS are described on the [ALPS Input](input.md) page.
+The key input parameters for ALPS are described on the [ALPS Input](./page/input.md) page.
 
-The output format of ALPS is described on the [ALPS Output](output.md) page.
+The output format of ALPS is described on the [ALPS Output](./page/output.md) page.
