@@ -3,6 +3,7 @@
 This is the ALPS code: the Arbitrary Linear Plasma Solver.
 
 <img src="./ALPS_logo.png" alt="drawing" width="200"/>
+<img src="./qrcode_alps_github.png" alt="drawing" width="200"/>
 
 ## Authors
 

@@ -1,6 +1,6 @@
 # Tutorial
 
-This is a tutorial for ALPS. It will guide you through the setting up of some basic input files, the running of the code, and the basic output. For more details, we refer to the [Quick Guide](quick_guide.md) and the [ALPS Documentation](alps.space).
+This is a tutorial for ALPS. It will guide you through the setting up of some basic input files, the running of the code, and the basic output. For more details, we refer to the [ALPS Input](input.md) page, the [ALPS Output](output.md) page, and the [ALPS Documentation](alps.space).
 
 ## Authors
 
@@ -15,6 +15,7 @@ Daniel Verscharen  (d.verscharen@ucl.ac.uk)
 4. Running ALPS on f0-tables
 5. Interpolation of input distributions
 6. Using analytical expressions for the background distribution
+7. Running bi-Maxwellian species
 
 
 ## 1. Before getting started
@@ -140,7 +141,7 @@ Like for the generation of the input distribution above, we will run one of the 
 
 >     cd ../tests
 
-The input file that we want to use is called `test_ICW.in`. The name of the input file doesn't need to be the same as the name of the f0-table files (*dist_name*), but it helps to use a consistent nomenclature. Let's open `test_ICW.in`. It includes all the parameters that ALPS needs to run. Like in the case of the file `test_ICW_dist.in` above, the input file is commented to help you understand the meaning of the parameters. For more details and a reference to all of the parameters, please have a look at our [Quick Guide](quick_guide.md).
+The input file that we want to use is called `test_ICW.in`. The name of the input file doesn't need to be the same as the name of the f0-table files (*dist_name*), but it helps to use a consistent nomenclature. Let's open `test_ICW.in`. It includes all the parameters that ALPS needs to run. Like in the case of the file `test_ICW_dist.in` above, the input file is commented to help you understand the meaning of the parameters. For more details and a reference to all of the parameters, please have a look at our [ALPS Input](input.md) page.
 
 We focus on a few key entries here for now. First, it's important to give the code the correct `nperp` and `npar` values. They are defined in the same way as above. So, here is a reminder:
 
@@ -260,7 +261,7 @@ kperp:     1.0000E-03 kpar:     1.0846E-01
  D(    1.5132E-01   -8.3974E-06)=     7.8943E-19    5.5227E-19
 ```
 
-These lines tell us that the code is actually now finding solutions, as it scans through the wavevector space. The scan options had been defined in `test_ICW.in`, and details on how this works are given in our [Quick Guide](quick-guide.md).
+These lines tell us that the code is actually now finding solutions, as it scans through the wavevector space. The scan options had been defined in `test_ICW.in`, and details on how this works are given in our [ALPS Input](input.md) page.
 
 When the code has finished, it has produced a number of output files, which you can find in the folder `./solution` in the ALPS directory structure. Let's look at the file `test_ICW.scan_kpara_1.root_1`. As the name suggests, this file contains the scan result for a scan along the parallel wavenumber $k_{\parallel}$ for root number 1 (we only scan along one root in this example).
 
@@ -432,3 +433,32 @@ If you now run this test case through
 the code will fully calculate the dispersion relation based on the distribution function defined in `distribution_analyt.f90`.
 
 A particular strength is that you can use that distribution for the creation of the f0-table, the Landau-contour integral (analytic continuation), or for both. Sometimes, you may only want to use it for the f0-table and rely on ALPS's internal fitting. If that is the case, simply set `ff` to the corresponding number of fits and define the fits as usual. At other times, you may only want to use the function from `distribution_analyt.f90` as the fit function, but use a different f0-table. In that is the case, point ALPS to your usual f0-table files, but set `ff=0`.
+
+
+## 7. Running bi-Maxwellian species
+
+In some instances, it may be useful to assume a Maxwellian or bi-Maxwellian distribution for one or more species in the system. For example, you may want to calculate the proton susceptibilities based on an f0-table, but you're happy to work with a simple bi-Maxwellian electron population.
+
+In that case, ALPS includes an implementation of the [NHDS code](github.com/danielver02/NHDS) to accelerate the calculation. ALPS then does not integrate over the bi-Maxwellian distribution explicitly but uses the known analytical approximations.
+
+The relevant option for a bi-Maxwellian calculation is the logical flag `use_bM` in the ALPS input file under the section for the corresponding species. If you set
+```
+use_bM=T
+```
+for any species, its contributions to the dielectric tensor will be calculated with the NHDS routines. Also the Landau-contour integration will be done through NHDS.
+
+Once `use_bM` is set to true, ALPS will look for the parameters used to define the bi-Maxwellian properties of the corresponding species. These are given in a species-dependent block in the ALPS input file, which may look like this:
+
+```
+!Bi-Maxwellian parameters; for species 1
+!Only used if use_bM=T
+&bM_spec_1
+bM_nmaxs=500           !Maximum number of resonaces to consider
+bM_Bessel_zeros=1.d-50 !Amplitude limit for Bessel function
+bM_betas=1.d0          !Plasma beta for species 1
+bM_alphas=1.d0         !Tperp/Tpar for species 1
+bM_pdrifts=0.d0        !Momentum drift, norm. to m_ref v_A,ref
+/
+```
+
+The ALPS code suite includes a test case called `./tests/test_bimax.in` that uses the NHDS routines for a quick calculation of the dispersion relation for a bi-Maxwellian plasma.
