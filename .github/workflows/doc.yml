@@ -31,9 +31,11 @@ jobs:
         echo 'title: Readme' > docs/index.md
         cat README.md >> docs/index.md
         echo 'title: Tutorial' > docs/tutorial.md
-        cat tutorial.md >> docs/tutorial.md
-        echo 'title: Quick Guide' > docs/quick_guide.md
-        cat quick_guide.md >> docs/quick_guide.md
+        cat ./doc/tutorial.md >> docs/tutorial.md
+        echo 'title: Input' > docs/input.md
+        cat ./doc/input.md >> docs/input.md
+        echo 'title: Output' > docs/output.md
+        cat ./doc/output.md >> docs/output.md
         echo 'title: Install' > docs/INSTALL.md
         cat INSTALL.md >> docs/INSTALL.md
         ford ford_project.md
