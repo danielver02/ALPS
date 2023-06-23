@@ -5,7 +5,7 @@ author: Kristopher Klein, Daniel Verscharen
 email: kgklein@arizona.edu, d.verscharen@ucl.ac.uk
 srd_dir: src
 page_dir: docs
-output_dir: docs
+output_dir: docs_out
 fpp_extensions: f90
 base_url: http://www.alps.space
 ordered_subpage: INSTALL.md
@@ -21,11 +21,12 @@ incl_src: false
 src_dir:  ./src
           ./interpolation
           ./distribution
-
+favicon: favicon.ico
+project_website: http://alps.space
 ---
 
-<img src="./ALPS_logo.png" alt="drawing" width="200"/>
-<img src="./qrcode_alps_github.png" alt="drawing" width="200"/>
+<img src="./page/ALPS_logo.png" alt="drawing" width="200"/>
+<img src="./page/qrcode_alps_github.png" alt="drawing" width="200"/>
 
 ALPS is a parallelised numerical code that solves the Vlasov-Maxwell dispersion
 relation in hot (even relativistic) magnetised plasma. ALPS allows for any
