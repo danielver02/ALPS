@@ -39,3 +39,11 @@ If you use the code for a science publication, please provide the code website
 [Verscharen, D., Klein, K. G., Chandran, B. D. G., Stevens, M. L., Salem, C. S.,
 and Bale, S. D.: ALPS: the Arbitrary Linear Plasma Solver, J. Plasma Phys. 84,
 905840403, 2018, doi: 10.1017/S0022377818000739](http://doi.org/10.1017/S0022377818000739)
+
+---
+
+For first-time users, we recommend working through our [ALPS Tutorial](tutorial.md).
+
+The key input parameters for ALPS are described on the [ALPS Input](input.md) page.
+
+The output format of ALPS is described on the [ALPS Output](output.md) page.
