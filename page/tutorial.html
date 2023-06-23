@@ -105,7 +105,7 @@
   <div class="row">
     <div class="col-md-9 col-md-push-3" id='text'>
       <h1>ALPS Tutorial</h1>
-<p>This is a tutorial for ALPS. It will guide you through the setting up of some basic input files, the running of the code, and the basic output. For more details, we refer to the <a href="input.md">ALPS Input</a> page, the <a href="output.md">ALPS Output</a> page, and the <a href="http://alps.space">ALPS Documentation</a>.</p>
+<p>This is a tutorial for ALPS. It will guide you through the setting up of some basic input files, the running of the code, and the basic output. For more details, we refer to the <a href="input.html">ALPS Input</a> page, the <a href="output.html">ALPS Output</a> page, and the <a href="http://alps.space">ALPS Documentation</a>.</p>
 <h2>Authors</h2>
 <p>Kristopher Klein   (kgklein@arizona.edu)<br>
 Daniel Verscharen  (d.verscharen@ucl.ac.uk)</p>
@@ -124,9 +124,9 @@ Daniel Verscharen  (d.verscharen@ucl.ac.uk)</p>
 <p><a href="http://doi.org/10.1017/S0022377818000739">Verscharen, D., Klein, K. G., Chandran, B. D. G., Stevens, M. L., Salem, C. S.,
 and Bale, S. D.: ALPS: the Arbitrary Linear Plasma Solver, J. Plasma Phys. 84,
 905840403, 2018, doi: 10.1017/S0022377818000739</a></p>
-<p>You don't need to go through all details, but it is certainly helpful to know what ALPS does and doesn't calculate. The code paper also explains the numerical techniques used in the code, and the <a href="http://alps.space">ALPS Documentation</a> often refers explicitly to equations and sections in the code paper. We also recommend checking the <a href="../README.md">Readme</a> file.</p>
+<p>You don't need to go through all details, but it is certainly helpful to know what ALPS does and doesn't calculate. The code paper also explains the numerical techniques used in the code, and the <a href="http://alps.space">ALPS Documentation</a> often refers explicitly to equations and sections in the code paper. We also recommend checking the <a href="../README.html">Readme</a> file.</p>
 <h2>2. Installing ALPS</h2>
-<p>This tutorial assumes that you have a working copy of ALPS on your computer, including all the required dependencies. You can find the installation guide <a href="../INSTALL.md">here</a>. Make sure you have a version of ALPS that compiled completely without error messages after typing</p>
+<p>This tutorial assumes that you have a working copy of ALPS on your computer, including all the required dependencies. You can find the installation guide <a href="../INSTALL.html">here</a>. Make sure you have a version of ALPS that compiled completely without error messages after typing</p>
 <blockquote>
 <div class="codehilite"><pre><span></span><code>./configure  
 make
@@ -225,7 +225,7 @@ Also ensure that the perpendicular momentum grid begins at a momentum of zero.</
 </code></pre></div>
 
 </blockquote>
-<p>The input file that we want to use is called <code>test_ICW.in</code>. The name of the input file doesn't need to be the same as the name of the f0-table files (<em>dist_name</em>), but it helps to use a consistent nomenclature. Let's open <code>test_ICW.in</code>. It includes all the parameters that ALPS needs to run. Like in the case of the file <code>test_ICW_dist.in</code> above, the input file is commented to help you understand the meaning of the parameters. For more details and a reference to all of the parameters, please have a look at our <a href="input.md">ALPS Input</a> page.</p>
+<p>The input file that we want to use is called <code>test_ICW.in</code>. The name of the input file doesn't need to be the same as the name of the f0-table files (<em>dist_name</em>), but it helps to use a consistent nomenclature. Let's open <code>test_ICW.in</code>. It includes all the parameters that ALPS needs to run. Like in the case of the file <code>test_ICW_dist.in</code> above, the input file is commented to help you understand the meaning of the parameters. For more details and a reference to all of the parameters, please have a look at our <a href="input.html">ALPS Input</a> page.</p>
 <p>We focus on a few key entries here for now. First, it's important to give the code the correct <code>nperp</code> and <code>npar</code> values. They are defined in the same way as above. So, here is a reminder:</p>
 <blockquote>
 <p>If you have an f0-table of X-by-Y entries in momentum space, set <code>nperp=X-1</code> and <code>npar=Y-1</code> in ALPS.</p>
@@ -334,7 +334,7 @@ mpirun -np 4 ./src/ALPS tests/test_ICW.in
 <span class="w"> </span><span class="n">D</span><span class="o">(</span><span class="w">    </span><span class="mf">1.5132</span><span class="n">E</span><span class="o">-</span><span class="mi">01</span><span class="w">   </span><span class="o">-</span><span class="mf">8.3974</span><span class="n">E</span><span class="o">-</span><span class="mi">06</span><span class="o">)=</span><span class="w">     </span><span class="mf">7.8943</span><span class="n">E</span><span class="o">-</span><span class="mi">19</span><span class="w">    </span><span class="mf">5.5227</span><span class="n">E</span><span class="o">-</span><span class="mi">19</span><span class="w"></span>
 </code></pre></div>
 
-<p>These lines tell us that the code is actually now finding solutions, as it scans through the wavevector space. The scan options had been defined in <code>test_ICW.in</code>, and details on how this works are given in our <a href="input.md">ALPS Input</a> page.</p>
+<p>These lines tell us that the code is actually now finding solutions, as it scans through the wavevector space. The scan options had been defined in <code>test_ICW.in</code>, and details on how this works are given in our <a href="input.html">ALPS Input</a> page.</p>
 <p>When the code has finished, it has produced a number of output files, which you can find in the folder <code>./solution</code> in the ALPS directory structure. Let's look at the file <code>test_ICW.scan_kpara_1.root_1</code>. As the name suggests, this file contains the scan result for a scan along the parallel wavenumber $k_{\parallel}$ for root number 1 (we only scan along one root in this example).</p>
 <p>The file has the following format:</p>
 <div class="codehilite"><pre><span></span><code><span class="mf">1.0000E-03</span><span class="w">    </span><span class="mf">1.0000E-01</span><span class="w">    </span><span class="mf">1.4424E-01</span><span class="w">   </span><span class="o">-</span><span class="mf">1.0449E-05</span><span class="w"></span>
@@ -362,7 +362,7 @@ mpirun -np 4 ./src/ALPS tests/test_ICW.in
 
 </blockquote>
 <p>The given test cases cover a range of typical applications, so there should be good starting points for your purposes.</p>
-<p>The code also creates additional output files for the heating contributions and for the eigenfunctions of the solutions. The general output format of ALPS is described on our <a href="output.md">ALPS Output</a> page.</p>
+<p>The code also creates additional output files for the heating contributions and for the eigenfunctions of the solutions. The general output format of ALPS is described on our <a href="output.html">ALPS Output</a> page.</p>
 <h2>5. Interpolation of input distributions</h2>
 <p>In many cases, you may want to use an f0-table based on a data file that is not in the same format as the ALPS format (e.g., from spacecraft observations) or isn't equally spaced in momentum space as required by ALPS. For those cases, ALPS provides an interpolation routine, which you can find in the folder <code>./interpolation</code>. The ALPS code also comes with a test case to illustrate the the use of the interpolation routine. We'll go through this example here.</p>
 <p>Let's have a look at the file <code>test_interp_coarse.array</code>. This file includes a table of the distribution function, but not in the format as needed by ALPS:</p>

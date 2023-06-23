@@ -198,15 +198,15 @@ be piped into the .out and .error files in the home directory.</p>
 <p>ALPS uses <a href="https://forddocs.readthedocs.io/en/latest/">Ford</a> to build its documentation. The documentation is automatically built and deployed to <a href="https://danielver02.github.io/ALPS/">github.io</a> by the <a href="https://github.com/danielver02/ALPS/blob/master/.github/workflows/doc.yml">doc workflow</a>. To build the documentation locally, follow the <a href="https://github.com/danielver02/ALPS/blob/07a4f8dc996ff76729edeedf5c2a0dc1a5c3028b/.github/workflows/doc.yml#L25-L32">Build documentation</a> step in the workflow, summarized here:
 1. Install <code>ford</code> by e.g. <code>pip install ford</code>. See <a href="https://forddocs.readthedocs.io/en/latest/">Ford documentation</a> for details
 2. Create a <code>docs</code> directory by <code>mkdir docs</code>
-3. Add a line <code>title: Readme</code> to the top of <a href="./README.md">README.md</a> and copy it to <code>docs/index.md</code>
-4. Add a line <code>title: Install</code> to the top of <a href="./INSTALL.md">INSTALL.md</a> and copy it to <code>docs/INSTALL.md</code>
+3. Add a line <code>title: Readme</code> to the top of <a href="./README.html">README.md</a> and copy it to <code>docs/index.md</code>
+4. Add a line <code>title: Install</code> to the top of <a href="./INSTALL.html">INSTALL.md</a> and copy it to <code>docs/INSTALL.md</code>
 5. Run <code>ford ford_project.md</code>
 6. Open <code>docs/index.html</code> in a browser to view the documentation</p>
 <h3>Adding static pages to documentation</h3>
-<p>The <a href="./README.md">README.md</a> and <a href="./INSTALL.md">INSTALL.md</a> files are added to the <a href="https://danielver02.github.io/ALPS/">Ford documentation</a> as static pages. You can add more static pages to the documentation by
+<p>The <a href="./README.html">README.md</a> and <a href="./INSTALL.html">INSTALL.md</a> files are added to the <a href="https://danielver02.github.io/ALPS/">Ford documentation</a> as static pages. You can add more static pages to the documentation by
 1. Add the content in a markdown file to the repository.
 2. Add a <code>title:</code> line to the beginning of the file and copy it to <code>docs/</code> in the <a href="https://github.com/danielver02/ALPS/blob/master/.github/workflows/doc.yml">doc workflow</a>. See steps 3-4 in the previous section, or the <a href="https://github.com/danielver02/ALPS/blob/07a4f8dc996ff76729edeedf5c2a0dc1a5c3028b/.github/workflows/doc.yml#L25-L32">Build documentation</a> step in the workflow.
-3. Add the name of the markdown file as a new line under <code>ordered_subpage</code> in <a href="./ford_project.md">ford_project.md</a></p>
+3. Add the name of the markdown file as a new line under <code>ordered_subpage</code> in <a href="./ford_project.html">ford_project.md</a></p>
     </div>
     <div class="col-md-3 col-md-pull-9">
       <hr class="visible-xs visible-sm">
