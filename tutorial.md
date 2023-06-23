@@ -342,11 +342,7 @@ At the same time, the folder now includes a new file `test_interp.in.array`, whi
 You can copy this file over into the `./distribution` folder and give it the appropriate naming with the convention given above. Then ALPS can use this interpolated file for the calculation.
 
 
-
-
-
-
-## 6. Using analytical expressions for the background distribution
+## 6. Using analytical expressions for the background distribution
 
 In some instances, you may have an analytical expression for the distribution function (which is not covered by `generate_distribution`) that you want to run through ALPS. For example, you may want to analyse the instability of a model distribution that was derived analytical from a model. ALPS can also do this.
 
