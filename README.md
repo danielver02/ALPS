@@ -30,9 +30,26 @@ number of particle species with arbitrary gyrotropic background distribution
 functions supporting waves with any direction of propagation with respect to
 the background magnetic field.
 
-If you use the code for a science publication, please provide the code website
-[github.com/danielver02/ALPS](https://github.com/danielver02/ALPS) in the acknowledgements of your publication and cite the code paper:
-
+If you use the code for a science publication,
+1. please provide the code website [github.com/danielver02/ALPS](https://github.com/danielver02/ALPS) in the acknowledgements,
+2. cite the DOI of the code:
+```
+@software{alps_2023_8075682,
+  author       = {{Klein}, K. G. and
+                  {Verscharen}, D. and
+                  {Koskela}, T. and
+                  {Stansby}, D.},
+  title        = {danielver02/ALPS: Zenodo release},
+  month        = jun,
+  year         = 2023,
+  publisher    = {Zenodo},
+  version      = {v1.0.1},
+  doi          = {10.5281/zenodo.8075682},
+  url          = {https://doi.org/10.5281/zenodo.8075682}
+}
+```
+3. and cite the code paper:
+   
 [Verscharen, D., Klein, K. G., Chandran, B. D. G., Stevens, M. L., Salem, C. S.,
 and Bale, S. D.: ALPS: the Arbitrary Linear Plasma Solver, J. Plasma Phys. 84,
 905840403, 2018, doi: 10.1017/S0022377818000739](http://doi.org/10.1017/S0022377818000739)
