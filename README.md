@@ -1,3 +1,6 @@
+[![DOI](https://zenodo.org/badge/243310181.svg)](https://zenodo.org/badge/latestdoi/243310181)
+
+
 # ALPS: The Arbitrary Linear Plasma Solver
 
 This is the ALPS code: the Arbitrary Linear Plasma Solver.
