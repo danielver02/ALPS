@@ -26,11 +26,11 @@ Before starting with the steps described in this tutorial, we recommend that you
 and Bale, S. D.: ALPS: the Arbitrary Linear Plasma Solver, J. Plasma Phys. 84,
 905840403, 2018, doi: 10.1017/S0022377818000739](http://doi.org/10.1017/S0022377818000739)
 
-You don't need to go through all details, but it is certainly helpful to know what ALPS does and doesn't calculate. The code paper also explains the numerical techniques used in the code, and the [ALPS Documentation](http://alps.space) often refers explicitly to equations and sections in the code paper. We also recommend checking the [Readme](README.md) file.
+You don't need to go through all details, but it is certainly helpful to know what ALPS does and doesn't calculate. The code paper also explains the numerical techniques used in the code, and the [ALPS Documentation](http://alps.space) often refers explicitly to equations and sections in the code paper. We also recommend checking the [Readme](../README.md) file.
 
 ## 2. Installing ALPS
 
-This tutorial assumes that you have a working copy of ALPS on your computer, including all the required dependencies. You can find the installation guide [here](INSTALL.md). Make sure you have a version of ALPS that compiled completely without error messages after typing
+This tutorial assumes that you have a working copy of ALPS on your computer, including all the required dependencies. You can find the installation guide [here](../INSTALL.md). Make sure you have a version of ALPS that compiled completely without error messages after typing
 
 >     ./configure  
 >     make

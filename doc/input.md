@@ -1,6 +1,6 @@
-# Quick Guide
+# ALPS Input
 
-This is a quick guide that gives a reference for the key parameters used by ALPS.
+This is a reference for the key input parameters used by ALPS.
 
 ## Namelists in input files.
 
@@ -97,7 +97,7 @@ If true, after map search, determine minima and refine solutions.
 Select case for wavevector scans;  
 1. Consecutive scans along input paths in wavevector space,  
 2. Double scan over wavevector plane.
-  
+
 **`n_scan`**  
 Number of wavevector scans.  
 0 turns off wavevector scans.  
@@ -273,7 +273,3 @@ Calculates heating rates if true.
 
 **`eigen`**  =.false.
 Calculates eigenfunctions if true.     
-
-
-
-
