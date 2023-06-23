@@ -37,7 +37,7 @@ In these definitions, $m_{\mathrm p}$ is the proton mass and $v_{\mathrm A}$ is 
 
 In most cases, you may want to use an f0-table generated from observations or numerical simulations. If you can create such a table directly in the ALPS format, that would be ideal. Simply store it in an ASCII file with the following format:
 
->     *dist_name*.*N*.array
+>     dist_name.N.array
 
 where *dist_name* is the name that you want to give the distribution, and *N* is an integer number indicating the plasma species (e.g., 1 for protons, 2 for electrons).
 
@@ -47,7 +47,7 @@ In other cases, you may want to create an f0-table based on a pre-defined functi
 
 For this exercise, use your terminal to go into the ./distribution folder:
 
->    cd ./distribution
+>     cd ./distribution
 
 In the standard ALPS package, you'll find a number of input files to generate distributions. Let's open the file `test_bimax_dist.in` which includes all parameters needed to create a bi-Maxwellian f0-table for the protons and a Maxwellian f0-table for the electrons. The various parameters are explained in comments in this input file. Feel free to modify some of these parameters if you want to experiment with it a bit. In general, it's a good idea to use one of the test files as the basis to create new input files for your purposes.
 
