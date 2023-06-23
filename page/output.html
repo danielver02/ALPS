@@ -8,7 +8,7 @@
     <meta name="author" content="Kristopher Klein, Daniel Verscharen" >
     <link rel="icon" href="../favicon.png">
 
-    <title>Readme &ndash; ALPS</title>
+    <title>Output &ndash; ALPS</title>
 
     <link href="../css/bootstrap.min.css" rel="stylesheet">
     <link href="../css/pygments.css" rel="stylesheet">
@@ -85,21 +85,17 @@
 
     <div class="container">
   <div class="row">
-    <h1>Readme</h1>
+    <h1>Output</h1>
     <div class="row">
     <div class="col-lg-12">
     <div class="well well-sm" style="min-height: 40px;">
       <ul class="list-inline" style="margin-bottom:0px; display:inline">
 <!--
-        <li><i class="fa fa-sitemap"></i> Subsections:</li>
-        <li><a href='../page/./INSTALL.html'>Install</a></li>
-        <li><a href='../page/./input.html'>Input</a></li>
-        <li><a href='../page/./output.html'>Output</a></li>
-        <li><a href='../page/./tutorial.html'>Tutorial</a></li>
 -->
       </ul>
         <ol class="breadcrumb in-well">
-         <li class="active">Readme</li>
+         <li><a href='../page/index.html'>Readme</a></li>
+         <li class="active">Output</li>
       </ol>
     </div>
     </div>
@@ -108,94 +104,93 @@
   
   <div class="row">
     <div class="col-md-9 col-md-push-3" id='text'>
-      <h1>ALPS: The Arbitrary Linear Plasma Solver</h1>
-<p>This is the ALPS code: the Arbitrary Linear Plasma Solver.</p>
-<p><img src="./doc/ALPS_logo.png" alt="drawing" width="200"/>
-<img src="./doc/qrcode_alps_github.png" alt="drawing" width="200"/></p>
-<h2>Authors</h2>
-<p>Kristopher Klein   (kgklein@arizona.edu)<br>
-Daniel Verscharen  (d.verscharen@ucl.ac.uk)</p>
-<h2>Contents</h2>
-<ol>
-<li>What is ALPS?</li>
-<li>Acknowledgements</li>
-<li>Installing the ALPS Code</li>
-<li>Running the ALPS Code</li>
-<li>License</li>
-</ol>
-<h2>1. What is ALPS?</h2>
-<p>ALPS is a parallelised numerical code that solves the Vlasov-Maxwell dispersion
-relation in hot (even relativistic) magnetised plasma. ALPS allows for any
-number of particle species with arbitrary gyrotropic background distribution
-functions supporting waves with any direction of propagation with respect to
-the background magnetic field.</p>
-<p>If you use the code for a science publication, please provide the code website
-<a href="https://github.com/danielver02/ALPS">github.com/danielver02/ALPS</a> in the acknowledgements of your publication and cite the code paper:</p>
-<p><a href="http://doi.org/10.1017/S0022377818000739">Verscharen, D., Klein, K. G., Chandran, B. D. G., Stevens, M. L., Salem, C. S.,
-and Bale, S. D.: ALPS: the Arbitrary Linear Plasma Solver, J. Plasma Phys. 84,
-905840403, 2018, doi: 10.1017/S0022377818000739</a></p>
-<p>The documentation of the code can be found on <a href="http://alps.space">alps.space</a>.</p>
-<h2>2. Acknowledgements</h2>
-<p>The development of the ALPS code was supported by NASA Grant NNX16AG81G. The code developers appreciate support from the UK Science
-and Technology Facilities Council (STFC) Ernest Rutherford Fellowship ST/P003826/1,
-STFC Consolidated Grants ST/S000240/1 and ST/W001004/1, and the Open Source
-Software Sustainability Funding programme from UCL's Advanced Research Computing
-Centre and UCL's eResearch Domain. We appreciate software engineering support by
-David Stansby and Tuomas Koskela from UCL.</p>
-<h2>3. Installing the ALPS code</h2>
-<p>For advice on the installation of the code, please check <a href="./INSTALL.md"><code>INSTALL.md</code></a></p>
-<h2>4. Running the ALPS code</h2>
-<p>ALPS works with input files that specify the plasma and numerical parameters for
-the calculation. We recommend that you start by checking out the provided test
-cases as a guidance for the creation of input files. These test cases are listed
-in the scripts <code>run_test.sh</code> and <code>run_test_suite.sh</code> in the subfolder <code>./tests</code>. All associated input files have
-a name starting with <code>test_</code>.</p>
-<p>You can execute the ALPS code through the following command:</p>
-<div class="codehilite"><pre><span></span><code>mpirun -np &lt;NP&gt; ./src/ALPS &lt;input_file.in&gt;
+      <h1>ALPS Output</h1>
+<p>ALPS writes output solutions to the <code>/solution</code> directory.<br>
+All output file names start with the name of the input file used in running ALPS, e.g. </p>
+<div class="codehilite"><pre><span></span><code>mpirun -np 4 ./src/ALPS filename.in
 </code></pre></div>
 
-<p>where <code>&lt;NP&gt;</code> is the number of processors you want to use. This number must be greater
-than or equal to 4, and it must be an even number. <code>&lt;input_file.in&gt;</code> is the input file
-that includes all parameters for your run.</p>
-<p>On some systems, depending on the MPI configuration, the oversubscribe flag is
-required. In this case, the above command must be replaced with</p>
-<div class="codehilite"><pre><span></span><code>mpirun -np &lt;NP&gt; --oversubscribe ./src/ALPS &lt;input_file.in&gt;
-</code></pre></div>
-
-<p>For first-time users, we recommend working through our <a href="./doc/tutorial.md">ALPS Tutorial</a>. The key input parameters for ALPS are described on the <a href="./doc/input.md">ALPS Input</a> page. The output format of ALPS is described on the <a href="./doc/output.md">ALPS Output</a> page.</p>
-<h2>5. License</h2>
-<p>BSD 2-Clause License</p>
-<p>Copyright (c) 2023, Kristopher G. Klein and Daniel Verscharen
-All rights reserved.</p>
-<p>Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:</p>
-<ol>
-<li>
-<p>Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer.</p>
-</li>
-<li>
-<p>Redistributions in binary form must reproduce the above copyright notice,
-   this list of conditions and the following disclaimer in the documentation
-   and/or other materials provided with the distribution.</p>
-</li>
-</ol>
-<p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
+<p>will produce output files all starting with the string <em>filename</em>.</p>
+<h2><em>filename</em>.map</h2>
+<p>Value of the dispersion tensor $\mathcal{D}(\omega_{\textrm{r}},\gamma)$ on a defined complex frequency grid.<br>
+Solutions to the dispersion relation satisfy $|\mathcal{D}|  =0$.
+This file is generated from the <em>map_search</em> subroutine in ALPS_fns.f90, and invoked when <code>use_map</code> =.true. .  </p>
+<p>The data is ordered in columns as<br>
+1. $\omega_r$<br>
+2. $\gamma$ <br>
+3. $|\mathcal{D}|$<br>
+4. Re$[\mathcal{D}]$<br>
+5. Im$[\mathcal{D}]$  </p>
+<p>The <em>&amp;maps_1</em> namelist in <em>filename</em>.in determines the structure of <em>filename</em>.map.<br>
+The range of $\omega_{\textrm{r}}/\Omega_p$ is from <code>omi</code> to <code>omi</code> with <code>nr</code> steps. Logorithmic or linear spacing is selected with <code>loggridw</code>.
+The range of $\gamma_{\textrm{r}}/\Omega_p$ is from <code>gami</code> to <code>gami</code> with <code>ni</code> steps. Logorithmic or linear spacing is selected with <code>loggridg</code>.</p>
+<h2><em>filename</em>.roots</h2>
+<p>Identified solutions to the dispersion relation $|\mathcal{D}|  =0$, calculated using <em>refine_guess</em> in ALPS_fns.f90 when <code>determine_minima</code> is set to true.  </p>
+<p>The data is ordered as<br>
+1. Solution number
+2. $\omega_r$<br>
+3. $\gamma$ <br>
+4. $|\mathcal{D}|$<br>
+5. Re$[\mathcal{D}]$<br>
+6. Im$[\mathcal{D}]$  </p>
+<p>The routine uses  either the coarse dispersion tensor map generated from the <em>map_search</em> subroutine (in the case of <code>use_map</code> = .true.)<br>
+or from the input guesses (for <code>use_map</code> = .false.).<br>
+Only the first <code>nroots</code> solutions will be identified and written to file.</p>
+<h2><em>filename</em>.scan_<em>scan_type_l</em>.root_m</h2>
+<p>The complex frequencies associated with solution <em>m</em> calculated from <code>om_scan</code><br>
+in the <em>&amp;scan_input_l</em> namelist.</p>
+<p>The data is ordered as<br>
+1. $k_\perp d_p$
+2. $k_\parallel d_p$<br>
+3. $\omega_{\textrm{r}}/\Omega_p$ <br>
+4. $\gamma/\Omega_p$   </p>
+<p>See the <em>&amp;scan_input</em> namelist description in the Quick Guide for details on determining the kind of wavevector scan.<br>
+This same data structure is preserved for the output from <code>om_double_scan</code>.</p>
+<h2><em>filename</em>.eigen_<em>scan_type_l</em>.root_m</h2>
+<p>The eigenfunctions associated with solution <em>m</em> calculated from <code>om_scan</code> when <code>eigen</code> is set to .true.
+in the <em>&amp;scan_input_l</em> namelist.</p>
+<p>The data is ordered as<br>
+1. $k_\perp d_p$
+2. $k_\parallel d_p$<br>
+3. $\omega_{\textrm{r}}/\Omega_p$ <br>
+4. $\gamma/\Omega_p$ <br>
+5. Re$[E_x]$ 
+6. Im$[E_x]$ 
+7. Re$[E_y]$ 
+8. Im$[E_y]$ 
+9. Re$[E_z]$ 
+10. Im$[E_z]$ 
+11. Re$[B_x]$ 
+12. Im$[B_x]$ 
+13. Re$[B_y]$ 
+14. Im$[B_y]$ 
+15. Re$[B_z]$ 
+16. Im$[B_z]$ 
+17+6(is-1). Re$[\delta U_{x,is}]$ 
+18+6(is-1). Im$[\delta U_{x,is}]$ 
+19+6(is-1). Re$[\delta U_{y,is}]$ 
+20+6(is-1). Im$[\delta U_{y,is}]$ 
+21+6(is-1). Re$[\delta U_{z,is}]$ 
+22+6(is-1). Im$[\delta U_{z,is}]$ 
+17+6(<code>nspec</code>)+2(is-1). Re$[\delta n_{is}]$ 
+18+6(<code>nspec</code>)+2(is-1). Im$[\delta n_{is}]$ </p>
+<p>This same data structure is preserved for the output from <code>om_double_scan</code>.</p>
+<h2><em>filename</em>.heat_<em>scan_type_l</em>.root_m</h2>
+<p>The heating rates associated with solution <em>m</em> calculated from <code>om_scan</code> when <code>heating</code> is set to .true.
+in the <em>&amp;scan_input_l</em> namelist.</p>
+<p>The data is ordered as<br>
+1. $k_\perp d_p$
+2. $k_\parallel d_p$<br>
+3. $\omega_{\textrm{r}}/\Omega_p$ <br>
+4. $\gamma/\Omega_p$ <br>
+5+(is-1). $\gamma_{is}/\omega$</p>
+<p>This same data structure is preserved for the output from <code>om_double_scan</code>.</p>
     </div>
     <div class="col-md-3 col-md-pull-9">
       <hr class="visible-xs visible-sm">
         <div class="well toc">
           <ul class="nav nav-stacked nav-pills">
-            <li role="presentation" class="title disabled"><a href='../page/index.html'>Readme</a></li>
+            <li role="presentation" class="title"><a href='../page/index.html'>Readme</a></li>
           </ul>
           <hr>
           <ul class="nav nav-stacked nav-pills">
@@ -205,7 +200,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
             <li role="presentation">
             <a href='../page/./input.html'>Input</a>
             </li>
-            <li role="presentation">
+            <li role="presentation" class="disabled">
             <a href='../page/./output.html'>Output</a>
             </li>
             <li role="presentation">
