@@ -27,7 +27,12 @@ jobs:
 
     - name: Build documentation
       run: |
+        # Ford converts the markdown files to html files, we need to change
+        # the file extension before building to make links work.
+        for fn in $(ls *.md) do; sed -i 's/.md)/.html)/g' $fn; done
+        # Ford will grab files from docs to build into the documentation
         mkdir docs
+        # Ford expects a title: line on top of each file, add it before building
         echo 'title: Readme' > docs/index.md
         cat README.md >> docs/index.md
         echo 'title: Installing ALPS' > docs/INSTALL.md
