@@ -57,7 +57,7 @@ In most cases, you may want to use an f0-table generated from observations or nu
 
 where *dist_name* is the name that you want to give the distribution, and *N* is an integer number indicating the plasma species (e.g., 1 for protons, 2 for electrons).
 
-In some cases, you may need to interpolate distributions from an irregular momentum grid to a regular grid in the ALPS coordinates. ALPS comes with an interpolation routine, which is described [further below](#5.-interpolation-of-input-distributions).
+In some cases, you may need to interpolate distributions from an irregular momentum grid to a regular grid in the ALPS coordinates. ALPS comes with an interpolation routine, which is described [further below](#interpolation-of-input-distributions).
 
 In other cases, you may want to create an f0-table based on a pre-defined function (e.g., Maxwellian, bi-Maxwellian, or $\kappa$-distribution). For this tutorial, let's create a simple Maxwellian distribution and run this through ALPS.
 
@@ -296,7 +296,7 @@ The given test cases cover a range of typical applications, so there should be g
 The code also creates additional output files for the heating contributions and for the eigenfunctions of the solutions. The general output format of ALPS is described on our [ALPS Output](output.md) page.
 
 
-## 5. Interpolation of input distributions
+## 5. [Interpolation of input distributions]
 
 In many cases, you may want to use an f0-table based on a data file that is not in the same format as the ALPS format (e.g., from spacecraft observations) or isn't equally spaced in momentum space as required by ALPS. For those cases, ALPS provides an interpolation routine, which you can find in the folder `./interpolation`. The ALPS code also comes with a test case to illustrate the the use of the interpolation routine. We'll go through this example here.
 
