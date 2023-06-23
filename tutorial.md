@@ -1,6 +1,6 @@
 # Tutorial
 
-This is a tutorial for ALPS. It will guide you through the setting up of some basic input files, the running of the code, and the basic output. For more details, we refer to the [ALPS Input](input.md) page, the [ALPS Output](output.md) page, and the [ALPS Documentation](alps.space).
+This is a tutorial for ALPS. It will guide you through the setting up of some basic input files, the running of the code, and the basic output. For more details, we refer to the [ALPS Input](input.md) page, the [ALPS Output](output.md) page, and the [ALPS Documentation](https://alps.space).
 
 ## Authors
 
@@ -26,7 +26,7 @@ Before starting with the steps described in this tutorial, we recommend that you
 and Bale, S. D.: ALPS: the Arbitrary Linear Plasma Solver, J. Plasma Phys. 84,
 905840403, 2018, doi: 10.1017/S0022377818000739](http://doi.org/10.1017/S0022377818000739)
 
-You don't need to go through all details, but it is certainly helpful to know what ALPS does and doesn't calculate. The code paper also explains the numerical techniques used in the code, and the [ALPS Documentation](alps.space) often refers explicitly to equations and sections in the code paper. We also recommend checking the [Readme](README.md) file.
+You don't need to go through all details, but it is certainly helpful to know what ALPS does and doesn't calculate. The code paper also explains the numerical techniques used in the code, and the [ALPS Documentation](https://alps.space) often refers explicitly to equations and sections in the code paper. We also recommend checking the [Readme](README.md) file.
 
 ## 2. Installing ALPS
 
@@ -439,7 +439,7 @@ A particular strength is that you can use that distribution for the creation of 
 
 In some instances, it may be useful to assume a Maxwellian or bi-Maxwellian distribution for one or more species in the system. For example, you may want to calculate the proton susceptibilities based on an f0-table, but you're happy to work with a simple bi-Maxwellian electron population.
 
-In that case, ALPS includes an implementation of the [NHDS code](github.com/danielver02/NHDS) to accelerate the calculation. ALPS then does not integrate over the bi-Maxwellian distribution explicitly but uses the known analytical approximations.
+In that case, ALPS includes an implementation of the [NHDS code](https://github.com/danielver02/NHDS) to accelerate the calculation. ALPS then does not integrate over the bi-Maxwellian distribution explicitly but uses the known analytical approximations.
 
 The relevant option for a bi-Maxwellian calculation is the logical flag `use_bM` in the ALPS input file under the section for the corresponding species. If you set
 ```
