@@ -2,6 +2,21 @@
 
 This is a tutorial for ALPS. It will guide you through the setting up of some basic input files, the running of the code, and the basic output. For more details, we refer to the [Quick Guide](quick_guide.md) and the [ALPS Documentation](alps.space).
 
+## Authors
+
+Kristopher Klein   (kgklein@arizona.edu)  
+Daniel Verscharen  (d.verscharen@ucl.ac.uk)
+
+## Contents
+
+1. Before getting started
+2. Installing ALPS
+3. Setting up input distributions
+4. Running ALPS on f0-tables
+5. Interpolation of input distributions
+6. Using analytical expressions for the background distribution
+
+
 ## 1. Before getting started
 
 Before starting with the steps described in this tutorial, we recommend that you familiarise yourself with the code paper.
