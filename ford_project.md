@@ -22,6 +22,7 @@ src_dir:  ./src
           ./interpolation
           ./distribution
 favicon: favicon.ico
+project_website: https://ui.adsabs.harvard.edu/public-libraries/vPWlMyiDRq-YfZ2bGDWS7Q
 
 ---
 
