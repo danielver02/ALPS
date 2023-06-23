@@ -6,9 +6,9 @@ This is a tutorial for ALPS. It will guide you through the setting up of some ba
 
 Before starting with the steps described in this tutorial, we recommend that you familiarise yourself with the code paper.
 
-Verscharen, D., Klein, K. G., Chandran, B. D. G., Stevens, M. L., Salem, C. S.,
+[Verscharen, D., Klein, K. G., Chandran, B. D. G., Stevens, M. L., Salem, C. S.,
 and Bale, S. D.: ALPS: the Arbitrary Linear Plasma Solver, J. Plasma Phys. 84,
-905840403, 2018, doi: 10.1017/S0022377818000739
+905840403, 2018, doi: 10.1017/S0022377818000739](http://doi.org/10.1017/S0022377818000739)
 
 You don't need to go through all details, but it is certainly helpful to know what ALPS does and doesn't calculate. The code paper also explains the numerical techniques used in the code, and the [ALPS Documentation](alps.space) often refers explicitly to equations and sections in the code paper. We also recommend checking the [Readme](README.md) file.
 
@@ -16,7 +16,7 @@ You don't need to go through all details, but it is certainly helpful to know wh
 
 This tutorial assumes that you have a working copy of ALPS on your computer, including all the required dependencies. You can find the installation guide [here](INSTALL.md). Make sure you have a version of ALPS that compiled completely without error messages after typing
 
->    ./configure
+>    ./configure  
 >    make
 
 ## 3. Setting up input distributions
@@ -29,7 +29,7 @@ All f0-tables for ALPS are stored in the folder `./distribution` within the ALPS
 
 1. Perpendicular momentum $p_{\perp}$ normalised to $m_{\mathrm p}v_{\mathrm A}$
 2. Parallel momentum $p_{\parallel}$ normalised to $m_{\mathrm p}v_{\mathrm A}$
-3. Value of the background distribution function $f_{0j}$ at momentum $(p_{\perp},p_{\parallel}$ normalised to $(m_{\mathrm p}v_{\mathrm A})^{-3}$
+3. Value of the background distribution function $f_{0j}$ at momentum $(p_{\perp},p_{\parallel})$ normalised to $(m_{\mathrm p}v_{\mathrm A})^{-3}$
 
 In these definitions, $m_{\mathrm p}$ is the proton mass and $v_{\mathrm A}$ is the proton Alfvén speed. The distribution function $f_{0j}$ must be normalised to one if integrated over cylindrical momentum space.
 
@@ -59,59 +59,59 @@ Let's generate the distributions for this example. Simply execute the command
 
 The code now generates the following output:
 
->Species  1  
-> Integration:       9.9973E-01  
-> Norm:              1.7959E-01  
-> pperp_max:         6.0000E+00  
-> ppar_max:          6.0000E+00  
->    
-> Fit type:          1  
-> ideal fit_1:       1.7959E-01  
-> ideal fit_2:       1.0000E+00  
-> ideal fit_3:       0.0000E+00  
-> ideal perpcorr:    1.0000E+00  
->============================  
->Species  2  
-> Integration:       9.9973E-01  
-> Norm:              1.4128E+04  
-> pperp_max:         1.4003E-01  
-> ppar_max:          1.4003E-01  
->    
-> Fit type:          1  
-> ideal fit_1:       1.4128E+04  
-> ideal fit_2:       1.8360E+03  
-> ideal fit_3:       0.0000E+00  
-> ideal perpcorr:    1.8360E+03  
->============================  
+>    Species  1  
+>     Integration:       9.9973E-01  
+>     Norm:              1.7959E-01  
+>     pperp_max:         6.0000E+00  
+>     ppar_max:          6.0000E+00  
+>        
+>     Fit type:          1  
+>     ideal fit_1:       1.7959E-01  
+>     ideal fit_2:       1.0000E+00  
+>     ideal fit_3:       0.0000E+00  
+>     ideal perpcorr:    1.0000E+00  
+>    ============================  
+>    Species  2  
+>     Integration:       9.9973E-01  
+>     Norm:              1.4128E+04  
+>     pperp_max:         1.4003E-01  
+>     ppar_max:          1.4003E-01  
+>        
+>     Fit type:          1  
+>     ideal fit_1:       1.4128E+04  
+>     ideal fit_2:       1.8360E+03  
+>     ideal fit_3:       0.0000E+00  
+>     ideal perpcorr:    1.8360E+03  
+>    ============================  
 
 Species 1 corresponds to the protons, and species 2 corresponds to the electrons in this case. The output gives us some information about the integration and normalisation of $f_{0j}$ as well as some suggestions for the fit parameters (*ideal fit* and *ideal perpcorr*) that will become important later for the hybrid-analytic continuation.
 
 In addition to this output, the code has also created two files: `test_bimax.1.array` and `test_bimax.2.array`. These are the the two f0-tables, which now include the pre-defined bi-Maxwellian distribution for the protons and the pre-defined Maxwellian distribution for the electrons. Let's open the proton file `test_bimax.1.array` and have a look:
 
-> 0.0000000000000000       -6.0000000000000000        4.1655642978706390E-017  
-> 0.0000000000000000       -5.9600000000000000        6.7210994657347584E-017  
-> 0.0000000000000000       -5.9199999999999999        1.0809785104455212E-016  
-> 0.0000000000000000       -5.8799999999999999        1.7330219198109109E-016  
-> 0.0000000000000000       -5.8399999999999999        2.7694996140414367E-016  
-> 0.0000000000000000       -5.7999999999999998        4.4117289250739315E-016  
-> 0.0000000000000000       -5.7599999999999998        7.0052975741086750E-016  
-> 0.0000000000000000       -5.7199999999999998        1.1088035666639441E-015  
-> 0.0000000000000000       -5.6799999999999997        1.7494152095823311E-015  
-> 0.0000000000000000       -5.6399999999999997        2.7513221174751753E-015  
-> 0.0000000000000000       -5.5999999999999996        4.3132063753922528E-015  
-> ...                      ...                        ...
+>     0.0000000000000000       -6.0000000000000000        4.1655642978706390E-017  
+>     0.0000000000000000       -5.9600000000000000        6.7210994657347584E-017  
+>     0.0000000000000000       -5.9199999999999999        1.0809785104455212E-016  
+>     0.0000000000000000       -5.8799999999999999        1.7330219198109109E-016  
+>     0.0000000000000000       -5.8399999999999999        2.7694996140414367E-016  
+>     0.0000000000000000       -5.7999999999999998        4.4117289250739315E-016  
+>     0.0000000000000000       -5.7599999999999998        7.0052975741086750E-016  
+>     0.0000000000000000       -5.7199999999999998        1.1088035666639441E-015  
+>     0.0000000000000000       -5.6799999999999997        1.7494152095823311E-015    
+>     0.0000000000000000       -5.6399999999999997        2.7513221174751753E-015  
+>     0.0000000000000000       -5.5999999999999996        4.3132063753922528E-015  
+>     ...                      ...                        ...
 
 As discussed above, the first column is the normalised perpendicular momentum, the second column is the normalised parallel momentum, and the third column is the value of the distribution function. The file contains 45451 lines, which is just the combination of all perpendicular and parallel momentum steps. These have been defined by the lines
 
->    nperp=150
+>    nperp=150  
 >    npar=300
 
 in the file `test_bimax_dist.in`. Actually, the number 45451 corresponds to 151\*301, which is greater than 150\*300 due to the inner and outer boundaries of the integration space. The variables `nperp` and `npar` refer to the integration domain only, which is one step smaller in each dimension than the f0-table. This is an important point to consider when setting up f0-tables:
 
-> If you have an f0-table of X-by-Y entries in momentum space, set `nperp=X-1` and `npar=Y-1` in ALPS.
+> If you have an f0-table of X-by-Y entries in momentum space, set `nperp=X-1` and `npar=Y-1` in ALPS.  
 > Also ensure that the perpendicular momentum grid begins at a momentum of zero.
 
-Now that we have two f0-tables in the correct design, let's run ALPS on these!
+Now that we have two f0-tables in the correct format, let's run ALPS on these!
 
 ## 4. Running ALPS on f0-tables
 
@@ -140,35 +140,35 @@ which we had created earlier.
 
 If you scroll further down, you'll find the following block:
 
->    &guess_1  
->    g_om=3.d-2   !real frequency  
->    g_gam=-1.d-5 !imaginary frequency  
+>     &guess_1  
+>     g_om=3.d-2   !real frequency  
+>     g_gam=-1.d-5 !imaginary frequency  
 
 This block defines the *initial guess* for the frequency that the code will use to search for solutions. By picking the appropriate guess, you can select which plasma mode the code should follow. Remember that all frequencies are normalised to the gyro-frequency of the protons.
 
 Further down, you can find definitions for the species. The first species is defined through the following:
 
->    !Species parameters list; species 1
->    &spec_1
->    nn=1.d0  !relative density; n_j/n_ref
->    qq=1.d0  !relative charge;  q_j/q_ref
->    mm=1.d0  !relative mass;    m_j/m_ref
->    ff=1     !# of fits to be used.
->    relat=F  !relativistic (T) or non-relativistic (F) species
->    log_fit=T!log (T) or linear (F) fit
->    use_bM=T !numerically integrate array (F) or use bi-Maxwellian (T)
->    /
->    
->    !Initial Fit Values; species 1, function 1
->    &ffit_1_1
->    fit_type_in=1   !Kind of fit function (see documentation)
->    fit_1=1.7959D-1 !Suggested values for parameters,
->    fit_2=1.d0      !e.g. generated by generate_distribution
->    fit_3=0.d0
->    fit_4=0.d0
->    fit_5=0.d0
->    perpcorr=1.D0   !renormalization factor
->    /
+>     !Species parameters list; species 1
+>     &spec_1
+>     nn=1.d0  !relative density; n_j/n_ref
+>     qq=1.d0  !relative charge;  q_j/q_ref
+>     mm=1.d0  !relative mass;    m_j/m_ref
+>     ff=1     !# of fits to be used.
+>     relat=F  !relativistic (T) or non-relativistic (F) species
+>     log_fit=T!log (T) or linear (F) fit
+>     use_bM=T !numerically integrate array (F) or use bi-Maxwellian (T)
+>     /
+>     
+>     !Initial Fit Values; species 1, function 1
+>     &ffit_1_1
+>     fit_type_in=1   !Kind of fit function (see documentation)
+>     fit_1=1.7959D-1 !Suggested values for parameters,
+>     fit_2=1.d0      !e.g. generated by generate_distribution
+>     fit_3=0.d0
+>     fit_4=0.d0
+>     fit_5=0.d0
+>     perpcorr=1.D0   !renormalization factor
+
 
 You can recognise many of the parameters from our `test_bimax_dist.in` file, like the charge and the mass of the particle species The block `&ffit_1_1` includes the fit parameters for the hybrid-analytic continuation. As you can see, this file includes the suggestions for the ideal fit that `generate_distribution` has given us earlier.
 
@@ -182,32 +182,32 @@ Once we are happy with the parameters in `test_bimax.in`, let's run ALPS. Depend
 This command will run 4 instances of ALPS via MPI. Depending on your computer and the MPI setup, you may need to add the option `--oversubscribe` to ensure that 4 instances of MPI can actually be executed. The ALPS binary (`./src/ALPS`) expectes only one command-line argument: the name of the input file to run on. The number of processes (in this case 4), must always be an even number greater than 2, even if your computer doesn't have four or more cores. In those cases, the `--oversubscribe` option is particularly important. In general, the code scales quite well, especially for calculations of the dispersion relation with many plasma species and high perpendicular wavenumbers (compared to the species gyro-radii).
 
 If everything was successful so far, you'll now start to get the ALPS standard output:
-> ===========================================================  
-> I                                                         I  
-> I                       A  L  P  S                        I  
-> I              Arbitrary Linear Plasma Solver             I  
-> I                                                         I  
-> I                       Version X.X                       I  
-> I                                                         I  
-> I  Kristopher Klein   (kgklein@arizone.edu)               I  
-> I  Daniel Verscharen  (d.verscharen@ucl.ac.uk)            I  
-> I                                                         I  
-> ===========================================================  
-> All processes are up and running.  
-> Reading from Input File: test_bimax  
-> GUESS ROUTINE:   
-> Intial Guess   1 :     3.0000E-02   -1.0000E-05  
-> SPECIES PARAMETERS:   
-> Species   1 :   
-> ns/nREF =  1.0000E+00 | qs/qREF =  1.0000E+00 | ms/mREF =  1.0000E+00  
-> Number of fitted functions =    1  
-> Relativistic effects = F  
-> Species   2 :   
-> ns/nREF =  1.0000E+00 | qs/qREF = -1.0000E+00 | ms/mREF =  5.4466E-04  
-> Number of fitted functions =    1  
-> Relativistic effects = F  
-> -=-=-=-=-=-=-=-=-  
-> ..
+>   ===========================================================  
+>   I                                                         I  
+>   I                       A  L  P  S                        I  
+>   I              Arbitrary Linear Plasma Solver             I  
+>   I                                                         I  
+>   I                       Version X.X                       I  
+>   I                                                         I  
+>   I  Kristopher Klein   (kgklein@arizone.edu)               I  
+>   I  Daniel Verscharen  (d.verscharen@ucl.ac.uk)            I  
+>   I                                                         I  
+>   ===========================================================  
+>   All processes are up and running.  
+>     Reading from Input File: test_bimax  
+>     GUESS ROUTINE:   
+>     Intial Guess   1 :     3.0000E-02   -1.0000E-05  
+>    SPECIES PARAMETERS:   
+>     Species   1 :   
+>     ns/nREF =  1.0000E+00 | qs/qREF =  1.0000E+00 | ms/mREF =  1.0000E+00  
+>     Number of fitted functions =    1  
+>     Relativistic effects = F  
+>     Species   2 :   
+>     ns/nREF =  1.0000E+00 | qs/qREF = -1.0000E+00 | ms/mREF =  5.4466E-04  
+>     Number of fitted functions =    1  
+>     Relativistic effects = F  
+>     -=-=-=-=-=-=-=-=-  
+>    ...
 
 This output summarises a lot of the information that is useful. We recommend that you read this output carefully, or even that you pipe the output into a log file for later reference by using
 
@@ -215,12 +215,12 @@ This output summarises a lot of the information that is useful. We recommend tha
 
 Further down in the ALPS standard output, you'll find lines similar to this:
 
-> kperp:     1.0000E-03 kpar:     3.0271E-02  
->  Converged after iteration    7  
->  D(    3.0677E-02   -1.1597E-05)=    -7.9835E-15   -3.6558E-15  
-> kperp:     1.0000E-03 kpar:     3.0545E-02  
->  Converged after iteration    7  
->  D(    3.0962E-02   -1.1479E-05)=    -5.1450E-15   -5.0175E-15  
+>    kperp:     1.0000E-03 kpar:     3.0271E-02  
+>     Converged after iteration    7  
+>     D(    3.0677E-02   -1.1597E-05)=    -7.9835E-15   -3.6558E-15  
+>    kperp:     1.0000E-03 kpar:     3.0545E-02  
+>     Converged after iteration    7  
+>     D(    3.0962E-02   -1.1479E-05)=    -5.1450E-15   -5.0175E-15  
 
 These lines tell us that the code is actually now finding solutions, as it scans through the wavevector space. The scan options had been defined in `test_bimax.in`, and details on how this works are given in our [Quick Guide](quick-guide.md).
 
@@ -228,10 +228,11 @@ When the code has finished, it has produced a number of output files, which you 
 
 The file has the following format:
 
-> 1.0000E-03    3.0000E-02    3.0394E-02   -1.1721E-05  
-> 1.0000E-03    3.0271E-02    3.0677E-02   -1.1597E-05  
-> 1.0000E-03    3.0545E-02    3.0962E-02   -1.1479E-05  
-> 1.0000E-03    3.0821E-02    3.1250E-02   -1.1363E-05  
+>    1.0000E-03    3.0000E-02    3.0394E-02   -1.1721E-05  
+>    1.0000E-03    3.0271E-02    3.0677E-02   -1.1597E-05  
+>    1.0000E-03    3.0545E-02    3.0962E-02   -1.1479E-05  
+>    1.0000E-03    3.0821E-02    3.1250E-02   -1.1363E-05  
+>    ...           ...           ...          ...
 
 The format of the columns is as follows:
 
@@ -244,8 +245,8 @@ In these definitions, $\Omega_{\mathrm p}$ is the proton gyro-frequency.
 
 Congratulations! You have found the solutions to the bi-Maxwellian example case. Now you can also experiment with the other test cases in the folders `./distribution` and `./tests`. The code also includes a full test suite which you can launch with
 
->    cd ./tests
->    ./run_test_suite.sh
+>        cd ./tests  
+>        ./run_test_suite.sh
 
 The given test cases cover a range of typical applications, so there should be good starting points for your purposes.
 
@@ -255,52 +256,52 @@ In many cases, you may want to use an f0-table based on a data file that is not 
 
 Let's have a look at the file `test_interp_coarse.array`. This file includes a table of the distribution function, but not in the format as needed by ALPS:
 
-> 3.48994945E-04   9.99390800E-03  0.999899983      
-> 3.67403193E-03   9.30061750E-03  0.999899983     
-> 6.57521421E-03   7.53435818E-03  0.999899983    
-> 8.71784426E-03   4.89889691E-03  0.999899983    
-> 9.85473860E-03   1.69827254E-03  0.999899983    
-> 9.85473767E-03  -1.69827335E-03  0.999899983    
-> ...              ...             ...  
+>    3.48994945E-04   9.99390800E-03  0.999899983      
+>    3.67403193E-03   9.30061750E-03  0.999899983     
+>    6.57521421E-03   7.53435818E-03  0.999899983    
+>    8.71784426E-03   4.89889691E-03  0.999899983    
+>    9.85473860E-03   1.69827254E-03  0.999899983    
+>    9.85473767E-03  -1.69827335E-03  0.999899983    
+>    ...              ...             ...  
 
 The overall format is the same as in the f0-table files above in terms of the meaning of the columns:
 
 1. Perpendicular momentum $p_{\perp}$ normalised to $m_{\mathrm p}v_{\mathrm A}$
 2. Parallel momentum $p_{\parallel}$ normalised to $m_{\mathrm p}v_{\mathrm A}$
-3. Value of the background distribution function $f_{0j}$ at momentum $(p_{\perp},p_{\parallel}$ normalised to $(m_{\mathrm p}v_{\mathrm A})^{-3}$
+3. Value of the background distribution function $f_{0j}$ at momentum $(p_{\perp},p_{\parallel})$ normalised to $(m_{\mathrm p}v_{\mathrm A})^{-3}$
 
 Now let's look at the input file `test_interp.in` for the interpolation routine. This file includes a number of comments to help you with the setting up of the interpolation parameters. The file asks the interpolation routine to take the irregular table from `test_interp_coarse.array` and to interpolate it onto a grid in the ALPS format with `nperp=50` and `npar=100`. If needed, the code can also re-normalise and scale the distribution function depending on your needs.
 
 Let's run the interpolation routine on the input file:
 
->    ./interpolation test_interp.in
+>        ./interpolation test_interp.in
 
 If successful, we will get the following output:
 
-> Number of points in the coarse grid:          700  
->     
-> Properties of the fine grid:  
-> Number of grid points in nperp:                50  
-> Number of grid points in npar:                100  
-> Maximum Pperp:                         2.9663E+00  
-> Minimum Pperp:                         0.0000E+00  
-> Maximum Ppar:                          3.0082E+00  
-> Minimum Ppar:                         -3.0082E+00  
->     
-> Writing output to file test_interp.in.array     
+>    Number of points in the coarse grid:          700  
+>        
+>    Properties of the fine grid:  
+>    Number of grid points in nperp:                50  
+>    Number of grid points in npar:                100  
+>    Maximum Pperp:                         2.9663E+00  
+>    Minimum Pperp:                         0.0000E+00  
+>    Maximum Ppar:                          3.0082E+00  
+>    Minimum Ppar:                         -3.0082E+00  
+>         
+>    Writing output to file test_interp.in.array     
 
 At the same time, the folder now includes a new file `test_interp.in.array`, which includes the interpolated f0-table in the correct format for ALPS:
 
-> 0.0000000000000000       -3.0081663100000000        2.5699885852486149E-005  
-> 0.0000000000000000       -2.9480029837999999        3.4671386965111912E-005  
-> 0.0000000000000000       -2.8878396575999998        4.7473668668616121E-005  
-> 0.0000000000000000       -2.8276763314000002        6.5558031421796410E-005  
-> 0.0000000000000000       -2.7675130052000001        9.0732738996456109E-005  
-> 0.0000000000000000       -2.7073496790000000        1.2528393376824723E-004  
-> 0.0000000000000000       -2.6471863527999999        1.7212176003060674E-004  
-> 0.0000000000000000       -2.5870230265999998        2.3495069283188794E-004  
-> 0.0000000000000000       -2.5268597004000002        3.1846300082066743E-004  
-> ...                       ...                       ...
+>    0.0000000000000000       -3.0081663100000000        2.5699885852486149E-005  
+>    0.0000000000000000       -2.9480029837999999        3.4671386965111912E-005  
+>    0.0000000000000000       -2.8878396575999998        4.7473668668616121E-005  
+>    0.0000000000000000       -2.8276763314000002        6.5558031421796410E-005  
+>    0.0000000000000000       -2.7675130052000001        9.0732738996456109E-005  
+>    0.0000000000000000       -2.7073496790000000        1.2528393376824723E-004  
+>    0.0000000000000000       -2.6471863527999999        1.7212176003060674E-004  
+>    0.0000000000000000       -2.5870230265999998        2.3495069283188794E-004  
+>    0.0000000000000000       -2.5268597004000002        3.1846300082066743E-004  
+>    ...                       ...                       ...
 
 You can copy this file over into the `./distribution` folder and give it the appropriate naming with the convention given above. Then ALPS can use this interpolated file for the calculation.
 
@@ -334,39 +335,39 @@ The example above defines a simple Maxwellian for the protons and for the electr
 
 Once you have defined the background distribution in `distribution_analyt.f90`, it's important to re-compile the code, so that it includes the defined function:
 
->    cd ../
->    make
+>   cd ../  
+>   make
 
 For the next step, we need to create the f0-table based on the defined function. This is done with `generate_distribution` as for the other analytical cases. We have an example input file `./distribution/test_analytical_dist.in`, which does exactly that. For both species, this file defines the distribution type as zero in the lines:
 
->    distributions=0  !Type of distribution (see documentation)
+>   distributions=0  !Type of distribution (see documentation)
 
 If you set `distributions=0`, the function `generate_distribution` will use the function defined in `distribution_analyt.f90` to create an f0-table. Let's run
 
->    cd ./distribution
->    ./generate_distribution test_analytical_dist.in
+>   cd ./distribution  
+>   ./generate_distribution test_analytical_dist.in
 
 The standard output explains a couple of details, which we had already encountered above. Most importantly, the programme now creates two new files:
 
->    test_analytical.1.array
->    test_analytical.2.array
+>   test_analytical.1.array  
+>   test_analytical.2.array
 
 These files include the f0-tables according to the analytical function.
 
 
 Now it's important to tell ALPS to use the defined distribution functions. This happens in the ALPS input file. In the folder `./tests`, there is an example file called `test_analytical.in`, which we will use in this example. As expected, it commands ALPS to use the f0-tables that we have just created:
 
->    arrayName='test_analytical'
+>   arrayName='test_analytical'
 
 It also makes sense to use the pre-defined background distribution function from `distribution_analyt.f90` also for the analytical continuation. You can achieve this by setting
 
->    ff=0
+>   ff=0
 
 in the block of the corresponding species. If you set `ff=0`, the code will look up the function in `distribution_analyt.f90` to evaluate the Landau-contour integral.
 
 If you now run this test case through
 
->    mpirun -np 4 ./src/ALPS ./tests/test_analytical.in
+>   mpirun -np 4 ./src/ALPS ./tests/test_analytical.in
 
 the code will fully calculate the dispersion relation based on the distribution function defined in `distribution_analyt.f90`.
 
