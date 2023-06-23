@@ -6,7 +6,7 @@ This is the ALPS code: the Arbitrary Linear Plasma Solver.
 
 ## Authors
 
-Kristopher Klein   (kgklein@arizona.edu)
+Kristopher Klein   (kgklein@arizona.edu)  
 Daniel Verscharen  (d.verscharen@ucl.ac.uk)
 
 ## Contents
@@ -26,7 +26,7 @@ functions supporting waves with any direction of propagation with respect to
 the background magnetic field.
 
 If you use the code for a science publication, please provide the code website
-on github.com/danielver02/ALPS in the acknowledgements and cite the code paper:
+[github.com/danielver02/ALPS](github.com/danielver02/ALPS) in the acknowledgements of your publication and cite the code paper:
 
 [Verscharen, D., Klein, K. G., Chandran, B. D. G., Stevens, M. L., Salem, C. S.,
 and Bale, S. D.: ALPS: the Arbitrary Linear Plasma Solver, J. Plasma Phys. 84,
@@ -73,7 +73,7 @@ required. In this case, the above command must be replaced with
 mpirun -np <NP> --oversubscribe ./src/ALPS <input_file.in>
 ```
 
-For first-time users, we recommend working through our [ALPS Tutorial](tutorial.md).
+For first-time users, we recommend working through our [ALPS Tutorial](tutorial.md). The output format of ALPS is described on the [ALPS Output](output.md) page.
 
 
 ## 5. License
