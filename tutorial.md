@@ -41,7 +41,7 @@ In most cases, you may want to use an f0-table generated from observations or nu
 
 where *dist_name* is the name that you want to give the distribution, and *N* is an integer number indicating the plasma species (e.g., 1 for protons, 2 for electrons).
 
-In some cases, you may need to interpolate distributions from an irregular momentum grid to a regular grid in the ALPS coordinates. ALPS comes with an interpolation routine, which is described [further below](#5interpolation-of-input-distributions).
+In some cases, you may need to interpolate distributions from an irregular momentum grid to a regular grid in the ALPS coordinates. ALPS comes with an interpolation routine, which is described [further below](#5.-interpolation-of-input-distributions).
 
 In other cases, you may want to create an f0-table based on a pre-defined function (e.g., Maxwellian, bi-Maxwellian, or $\kappa$-distribution). For this tutorial, let's create a simple Maxwellian distribution and run this through ALPS.
 
@@ -104,8 +104,10 @@ In addition to this output, the code has also created two files: `test_ICW.1.arr
 
 As discussed above, the first column is the normalised perpendicular momentum, the second column is the normalised parallel momentum, and the third column is the value of the distribution function. The file contains 29,161 lines, which is just the combination of all perpendicular and parallel momentum steps. These have been defined by the lines
 
->     nperp=120  
->     npar=240
+```
+nperp=120  
+npar=240
+```
 
 in the file `test_ICW_dist.in`. Actually, the number 29,161 corresponds to 121\*241, which is greater than 120\*240 due to the inner and outer boundaries of the integration space. The variables `nperp` and `npar` refer to the integration domain only, which is one step smaller in each dimension than the f0-table. This is an important point to consider when setting up f0-tables:
 
@@ -133,7 +135,9 @@ In the example file, we see that `nperp=120` and `npar=240`, which are the corre
 
 Further down, you find the line
 
->     arrayName='test_ICW'
+```
+arrayName='test_ICW'
+```
 
 This line defines the name of the f0-tables that ALPS will use. Since we tell ALPS to work with two species (from the line `nspec=2`), the code will look for two files
 
@@ -184,7 +188,7 @@ perpcorr=3.33D-1   !renormalization factor
 
 You can recognise many of the parameters from our `test_ICW_dist.in` file, like the charge and the mass of the particle species The block `&ffit_1_1` includes the fit parameters for the hybrid-analytic continuation. As you can see, this file includes the suggestions for the ideal fit that `generate_distribution` has given us earlier.
 
-The key point about the fit parameters is that, for all damped solutions, you want to find a good representation of the distribution function so that the Landau-contour integral is precise. The procedure is described in the code paper in Section 3.2. If you have any closed mathematical expression to use, you can also input this for the analytic continuation as described [here](#6-using-analytical-expressions-for-the-background-distribution).
+The key point about the fit parameters is that, for all damped solutions, you want to find a good representation of the distribution function so that the Landau-contour integral is precise. The procedure is described in the code paper in Section 3.2. If you have any closed mathematical expression to use, you can also input this for the analytic continuation as described [here](#6.-using-analytical-expressions-for-the-background-distribution).
 
 Once we are happy with the parameters in `test_ICW.in`, let's run ALPS. Depending on your MPI configuration, you can run the code directly with the following commands (it's best to go back into the main folder of the ALPS directory structure):
 
@@ -282,13 +286,15 @@ In many cases, you may want to use an f0-table based on a data file that is not 
 
 Let's have a look at the file `test_interp_coarse.array`. This file includes a table of the distribution function, but not in the format as needed by ALPS:
 
->     3.48994945E-04   9.99390800E-03  0.999899983      
->     3.67403193E-03   9.30061750E-03  0.999899983     
->     6.57521421E-03   7.53435818E-03  0.999899983    
->     8.71784426E-03   4.89889691E-03  0.999899983    
->     9.85473860E-03   1.69827254E-03  0.999899983    
->     9.85473767E-03  -1.69827335E-03  0.999899983    
->     ...              ...             ...  
+```
+3.48994945E-04   9.99390800E-03  0.999899983      
+3.67403193E-03   9.30061750E-03  0.999899983     
+6.57521421E-03   7.53435818E-03  0.999899983    
+8.71784426E-03   4.89889691E-03  0.999899983    
+9.85473860E-03   1.69827254E-03  0.999899983    
+9.85473767E-03  -1.69827335E-03  0.999899983    
+...              ...             ...  
+```
 
 The overall format is the same as in the f0-table files above in terms of the meaning of the columns:
 
@@ -377,7 +383,9 @@ Once you have defined the background distribution in `distribution_analyt.f90`, 
 
 For the next step, we need to create the f0-table based on the defined function. This is done with `generate_distribution` as for the other analytical cases. We have an example input file `./distribution/test_analytical_dist.in`, which does exactly that. For both species, this file defines the distribution type as zero in the lines:
 
->     distributions=0  !Type of distribution (see documentation)
+```
+distributions=0  !Type of distribution (see documentation)
+```
 
 If you set `distributions=0`, the function `generate_distribution` will use the function defined in `distribution_analyt.f90` to create an f0-table. Let's run
 
@@ -394,11 +402,15 @@ These files include the f0-tables according to the analytical function.
 
 Now it's important to tell ALPS to use the defined distribution functions. This happens in the ALPS input file. In the folder `./tests`, there is an example file called `test_analytical.in`, which we will use in this example. As expected, it commands ALPS to use the f0-tables that we have just created:
 
->     arrayName='test_analytical'
+```
+arrayName='test_analytical'
+```
 
 It also makes sense to use the pre-defined background distribution function from `distribution_analyt.f90` also for the analytical continuation. You can achieve this by setting
 
->     ff=0
+```
+ff=0
+```
 
 in the block of the corresponding species. If you set `ff=0`, the code will look up the function in `distribution_analyt.f90` to evaluate the Landau-contour integral.
 
