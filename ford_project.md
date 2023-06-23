@@ -25,6 +25,9 @@ favicon: favicon.ico
 
 ---
 
+[![DOI](https://zenodo.org/badge/243310181.svg)](https://zenodo.org/badge/latestdoi/243310181)
+[![build](https://github.com/danielver02/ALPS/actions/workflows/tests.yml/badge.svg)](https://github.com/danielver02/ALPS/actions/workflows/tests.yml)
+
 ## The Arbitrary Linear Plasma Solver
 
 <img src="./page/ALPS_logo.png" alt="drawing" width="200"/>
