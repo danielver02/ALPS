@@ -16,8 +16,8 @@ You don't need to go through all details, but it is certainly helpful to know wh
 
 This tutorial assumes that you have a working copy of ALPS on your computer, including all the required dependencies. You can find the installation guide [here](INSTALL.md). Make sure you have a version of ALPS that compiled completely without error messages after typing
 
->    ./configure  
->    make
+>   ./configure  
+>   make
 
 ## 3. Setting up input distributions
 
