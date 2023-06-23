@@ -1,4 +1,5 @@
 [![DOI](https://zenodo.org/badge/243310181.svg)](https://zenodo.org/badge/latestdoi/243310181)
+[![build](https://github.com/danielver02/ALPS/actions/workflows/tests.yml/badge.svg)](https://github.com/danielver02/ALPS/actions/workflows/tests.yml)
 
 
 # ALPS: The Arbitrary Linear Plasma Solver
