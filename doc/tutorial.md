@@ -1,4 +1,4 @@
-# Tutorial
+# ALPS Tutorial
 
 This is a tutorial for ALPS. It will guide you through the setting up of some basic input files, the running of the code, and the basic output. For more details, we refer to the [ALPS Input](input.md) page, the [ALPS Output](output.md) page, and the [ALPS Documentation](http://alps.space).
 
