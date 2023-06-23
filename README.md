@@ -2,7 +2,7 @@
 
 This is the ALPS code: the Arbitrary Linear Plasma Solver.
 
-![image info](./ALPS_logo.png)
+<img src="./ALPS_logo.png" alt="drawing" width="200"/>
 
 ## Authors
 
