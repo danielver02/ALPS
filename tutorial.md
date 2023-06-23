@@ -43,37 +43,37 @@ where *dist_name* is the name that you want to give the distribution, and *N* is
 
 In some cases, you may need to interpolate distributions from an irregular momentum grid to a regular grid in the ALPS coordinates. ALPS comes with an interpolation routine, which is described [further below](#5interpolation-of-input-distributions).
 
-In other cases, you may want to create an f0-table based on a pre-defined function (e.g., Maxwellian, bi-Maxwellian, or $\kappa$-distribution). For this tutorial, let's create a bi-Maxwellian distribution and run this through ALPS.
+In other cases, you may want to create an f0-table based on a pre-defined function (e.g., Maxwellian, bi-Maxwellian, or $\kappa$-distribution). For this tutorial, let's create a simple Maxwellian distribution and run this through ALPS.
 
 For this exercise, use your terminal to go into the ./distribution folder:
 
 >     cd ./distribution
 
-In the standard ALPS package, you'll find a number of input files to generate distributions. Let's open the file `test_bimax_dist.in` which includes all parameters needed to create a bi-Maxwellian f0-table for the protons and a Maxwellian f0-table for the electrons. The various parameters are explained in comments in this input file. Feel free to modify some of these parameters if you want to experiment with it a bit. In general, it's a good idea to use one of the test files as the basis to create new input files for your purposes.
+In the standard ALPS package, you'll find a number of input files to generate distributions. Let's open the file `test_ICW_dist.in` which includes all parameters needed to create Maxwellian f0-tables for the protons and for the electrons. The various parameters are explained in comments in this input file. Feel free to modify some of these parameters if you want to experiment with it a bit. In general, it's a good idea to use one of the test files as the basis to create new input files for your purposes.
 
 When a quantity has the index `ref` added to it, this refers to the reference species. For example, `m_j/m_ref` stands for the mass of the current species *j* in units of the mass of the reference species, which in the example case is the protons.
 
 Let's generate the distributions for this example. Simply execute the command
 
->     ./generate_distribution test_bimax_dist.in
+>     ./generate_distribution test_ICW_dist.in
 
 The code now generates the following output:
 
 ```
 Species  1
- Integration:       9.9973E-01
- Norm:              1.7959E-01
- pperp_max:         6.0000E+00
+ Integration:       9.9958E-01
+ Norm:              5.9862E-02
+ pperp_max:         1.0392E+01
  ppar_max:          6.0000E+00
 
  Fit type:          1
- ideal fit_1:       1.7959E-01
+ ideal fit_1:       5.9862E-02
  ideal fit_2:       1.0000E+00
  ideal fit_3:       0.0000E+00
- ideal perpcorr:    1.0000E+00
+ ideal perpcorr:    3.3333E-01
 ============================
 Species  2
- Integration:       9.9973E-01
+ Integration:       9.9958E-01
  Norm:              1.4128E+04
  pperp_max:         1.4003E-01
  ppar_max:          1.4003E-01
@@ -88,32 +88,34 @@ Species  2
 
 Species 1 corresponds to the protons, and species 2 corresponds to the electrons in this case. The output gives us some information about the integration and normalisation of $f_{0j}$ as well as some suggestions for the fit parameters (*ideal fit* and *ideal perpcorr*) that will become important later for the hybrid-analytic continuation.
 
-In addition to this output, the code has also created two files: `test_bimax.1.array` and `test_bimax.2.array`. These are the the two f0-tables, which now include the pre-defined bi-Maxwellian distribution for the protons and the pre-defined Maxwellian distribution for the electrons. Let's open the proton file `test_bimax.1.array` and have a look:
+In addition to this output, the code has also created two files: `test_ICW.1.array` and `test_ICW.2.array`. These are the the two f0-tables, which now include the pre-defined Maxwellian distributions for the protons and electrons. Let's open the proton file `test_ICW.1.array` and have a look:
 
->     0.0000000000000000       -6.0000000000000000        4.1655642978706390E-017  
->     0.0000000000000000       -5.9600000000000000        6.7210994657347584E-017  
->     0.0000000000000000       -5.9199999999999999        1.0809785104455212E-016  
->     0.0000000000000000       -5.8799999999999999        1.7330219198109109E-016  
->     0.0000000000000000       -5.8399999999999999        2.7694996140414367E-016  
->     0.0000000000000000       -5.7999999999999998        4.4117289250739315E-016  
->     0.0000000000000000       -5.7599999999999998        7.0052975741086750E-016  
->     0.0000000000000000       -5.7199999999999998        1.1088035666639441E-015  
->     0.0000000000000000       -5.6799999999999997        1.7494152095823311E-015    
->     0.0000000000000000       -5.6399999999999997        2.7513221174751753E-015  
->     0.0000000000000000       -5.5999999999999996        4.3132063753922528E-015  
->     ...                      ...                        ...
+```
+0.0000000000000000       -6.0000000000000000        1.3885214326235464E-017
+0.0000000000000000       -5.9500000000000002        2.5237337794355358E-017
+0.0000000000000000       -5.9000000000000004        4.5641827072255333E-017
+0.0000000000000000       -5.8499999999999996        8.2131741067563143E-017
+0.0000000000000000       -5.7999999999999998        1.4705763083579771E-016
+0.0000000000000000       -5.7500000000000000        2.6199477385677698E-016
+0.0000000000000000       -5.7000000000000002        4.6443636702139106E-016
+0.0000000000000000       -5.6500000000000004        8.1919697073946868E-016
+...                      ...                        ...
+```
 
-As discussed above, the first column is the normalised perpendicular momentum, the second column is the normalised parallel momentum, and the third column is the value of the distribution function. The file contains 45451 lines, which is just the combination of all perpendicular and parallel momentum steps. These have been defined by the lines
+As discussed above, the first column is the normalised perpendicular momentum, the second column is the normalised parallel momentum, and the third column is the value of the distribution function. The file contains 29,161 lines, which is just the combination of all perpendicular and parallel momentum steps. These have been defined by the lines
 
->     nperp=150  
->     npar=300
+>     nperp=120  
+>     npar=240
 
-in the file `test_bimax_dist.in`. Actually, the number 45451 corresponds to 151\*301, which is greater than 150\*300 due to the inner and outer boundaries of the integration space. The variables `nperp` and `npar` refer to the integration domain only, which is one step smaller in each dimension than the f0-table. This is an important point to consider when setting up f0-tables:
+in the file `test_ICW_dist.in`. Actually, the number 29,161 corresponds to 121\*241, which is greater than 120\*240 due to the inner and outer boundaries of the integration space. The variables `nperp` and `npar` refer to the integration domain only, which is one step smaller in each dimension than the f0-table. This is an important point to consider when setting up f0-tables:
 
 > If you have an f0-table of X-by-Y entries in momentum space, set `nperp=X-1` and `npar=Y-1` in ALPS.  
 > Also ensure that the perpendicular momentum grid begins at a momentum of zero.
 
 Now that we have two f0-tables in the correct format, let's run ALPS on these!
+
+
+
 
 ## 4. Running ALPS on f0-tables
 
@@ -121,22 +123,22 @@ Like for the generation of the input distribution above, we will run one of the 
 
 >     cd ../tests
 
-The input file that we want to use is called `test_bimax.in`. The name of the input file doesn't need to be the same as the name of the f0-table files (*dist_name*), but it helps to use a consistent nomenclature. Let's open `test_bimax.in`. It includes all the parameters that ALPS needs to run. Like in the case of the file `test_bimax_dist.in` above, the input file is commented to help you understand the meaning of the parameters. For more details and a reference to all of the parameters, please have a look at our [Quick Guide](quick_guide.md).
+The input file that we want to use is called `test_ICW.in`. The name of the input file doesn't need to be the same as the name of the f0-table files (*dist_name*), but it helps to use a consistent nomenclature. Let's open `test_ICW.in`. It includes all the parameters that ALPS needs to run. Like in the case of the file `test_ICW_dist.in` above, the input file is commented to help you understand the meaning of the parameters. For more details and a reference to all of the parameters, please have a look at our [Quick Guide](quick_guide.md).
 
 We focus on a few key entries here for now. First, it's important to give the code the correct `nperp` and `npar` values. They are defined in the same way as above. So, here is a reminder:
 
 > If you have an f0-table of X-by-Y entries in momentum space, set `nperp=X-1` and `npar=Y-1` in ALPS.
 
-In the example file, we see that `nperp=150` and `npar=300`, which are the correct entries for our example.
+In the example file, we see that `nperp=120` and `npar=240`, which are the correct entries for our example.
 
 Further down, you find the line
 
->     arrayName='test_bimax'
+>     arrayName='test_ICW'
 
 This line defines the name of the f0-tables that ALPS will use. Since we tell ALPS to work with two species (from the line `nspec=2`), the code will look for two files
 
->     ./distribution/test_bimax.1.array  
->     ./distribution/test_bimax.2.array
+>     ./distribution/test_ICW.1.array  
+>     ./distribution/test_ICW.2.array
 
 which we had created earlier.
 
@@ -147,8 +149,8 @@ If you scroll further down, you'll find the following block:
 !Only used when use_map=.false.
 !Need to have # of name lists equal to nroots
 &guess_1
-g_om=3.d-2   !real frequency
-g_gam=-1.d-5 !imaginary frequency
+g_om=1.5508d-01   !real frequency
+g_gam=-1.3429d-05 !imaginary frequency
 /
 ```
 
@@ -165,29 +167,29 @@ mm=1.d0  !relative mass;    m_j/m_ref
 ff=1     !# of fits to be used.
 relat=F  !relativistic (T) or non-relativistic (F) species
 log_fit=T!log (T) or linear (F) fit
-use_bM=T !numerically integrate array (F) or use bi-Maxwellian (T)
+use_bM=F !numerically integrate array (F) or use bi-Maxwellian (T)
 /
 
 !Initial Fit Values; species 1, function 1
 &ffit_1_1
 fit_type_in=1   !Kind of fit function (see documentation)
-fit_1=1.7959D-1 !Suggested values for parameters,
+fit_1=5.986D-2  !Suggested values for parameters,
 fit_2=1.d0      !e.g. generated by generate_distribution
 fit_3=0.d0
 fit_4=0.d0
 fit_5=0.d0
-perpcorr=1.D0   !renormalization factor
+perpcorr=3.33D-1   !renormalization factor
 /
 ```
 
-You can recognise many of the parameters from our `test_bimax_dist.in` file, like the charge and the mass of the particle species The block `&ffit_1_1` includes the fit parameters for the hybrid-analytic continuation. As you can see, this file includes the suggestions for the ideal fit that `generate_distribution` has given us earlier.
+You can recognise many of the parameters from our `test_ICW_dist.in` file, like the charge and the mass of the particle species The block `&ffit_1_1` includes the fit parameters for the hybrid-analytic continuation. As you can see, this file includes the suggestions for the ideal fit that `generate_distribution` has given us earlier.
 
-The key point about the fit parameters is that, for all damped solutions, you want to find a good representation of the distribution function so that the Landau-contour integral is precise. The procedure is described in the code paper in Section 3.2. If you have any closed mathematical expression to use, you can also input this for the analytic continuation as described [here](#6using-analytical-expressions-for-the-background-distribution).
+The key point about the fit parameters is that, for all damped solutions, you want to find a good representation of the distribution function so that the Landau-contour integral is precise. The procedure is described in the code paper in Section 3.2. If you have any closed mathematical expression to use, you can also input this for the analytic continuation as described [here](#6-using-analytical-expressions-for-the-background-distribution).
 
-Once we are happy with the parameters in `test_bimax.in`, let's run ALPS. Depending on your MPI configuration, you can run the code directly with the following commands (it's best to go back into the main folder of the ALPS directory structure):
+Once we are happy with the parameters in `test_ICW.in`, let's run ALPS. Depending on your MPI configuration, you can run the code directly with the following commands (it's best to go back into the main folder of the ALPS directory structure):
 
 >     cd ../
->     mpirun -np 4 ./src/ALPS tests/test_bimax.in
+>     mpirun -np 4 ./src/ALPS tests/test_ICW.in
 
 This command will run 4 instances of ALPS via MPI. Depending on your computer and the MPI setup, you may need to add the option `--oversubscribe` to ensure that 4 instances of MPI can actually be executed. The ALPS binary (`./src/ALPS`) expectes only one command-line argument: the name of the input file to run on. The number of processes (in this case 4), must always be an even number greater than 2, even if your computer doesn't have four or more cores. In those cases, the `--oversubscribe` option is particularly important. In general, the code scales quite well, especially for calculations of the dispersion relation with many plasma species and high perpendicular wavenumbers (compared to the species gyro-radii).
 
@@ -199,16 +201,16 @@ I                                                         I
 I                       A  L  P  S                        I
 I              Arbitrary Linear Plasma Solver             I
 I                                                         I
-I                       Version 1.0                       I
+I                       Version X.X                       I
 I                                                         I
 I  Kristopher Klein   (kgklein@arizone.edu)               I
 I  Daniel Verscharen  (d.verscharen@ucl.ac.uk)            I
 I                                                         I
 ===========================================================
 All processes are up and running.
-Reading from Input File: test_bimax
+Reading from Input File: test_ICW
 GUESS ROUTINE:
-Intial Guess   1 :     3.0000E-02   -1.0000E-05
+Intial Guess   1 :     1.5508E-01   -1.3429E-05
 SPECIES PARAMETERS:
 Species   1 :
 ns/nREF =  1.0000E+00 | qs/qREF =  1.0000E+00 | ms/mREF =  1.0000E+00
@@ -223,30 +225,37 @@ Relativistic effects = F
 
 This output summarises a lot of the information that is useful. We recommend that you read this output carefully, or even that you pipe the output into a log file for later reference by using
 
->     mpirun -np 4 ./src/ALPS tests/test_bimax.in > test_bimax.output &
+>     mpirun -np 4 ./src/ALPS tests/test_ICW.in > test_ICW.output &
 
 Further down in the ALPS standard output, you'll find lines similar to this:
 
 ```
-kperp:     1.0000E-03 kpar:     3.0271E-02
+kperp:     1.0000E-03 kpar:     1.0275E-01
  Converged after iteration    7
- D(    3.0677E-02   -1.1597E-05)=    -7.9835E-15   -3.6558E-15
-kperp:     1.0000E-03 kpar:     3.0545E-02
- Converged after iteration    7
- D(    3.0962E-02   -1.1479E-05)=    -5.1450E-15   -5.0175E-15
+ D(    1.4337E-01   -8.9137E-06)=    -2.0138E-18   -1.2447E-18
+kperp:     1.0000E-03 kpar:     1.0557E-01
+ Converged after iteration    8
+ D(    1.4729E-01   -8.6524E-06)=    -2.9456E-19   -1.6708E-19
+kperp:     1.0000E-03 kpar:     1.0846E-01
+ Converged after iteration    8
+ D(    1.5132E-01   -8.3974E-06)=     7.8943E-19    5.5227E-19
 ```
 
-These lines tell us that the code is actually now finding solutions, as it scans through the wavevector space. The scan options had been defined in `test_bimax.in`, and details on how this works are given in our [Quick Guide](quick-guide.md).
+These lines tell us that the code is actually now finding solutions, as it scans through the wavevector space. The scan options had been defined in `test_ICW.in`, and details on how this works are given in our [Quick Guide](quick-guide.md).
 
-When the code has finished, it has produced a number of output files, which you can find in the folder `./solution` in the ALPS directory structure. Let's look at the file `test_bimax.scan_kpara_1.root_1`. As the name suggests, this file contains the scan result for a scan along the parallel wavenumber $k_{\parallel}$ for root number 1 (we only scan along one root in this example).
+When the code has finished, it has produced a number of output files, which you can find in the folder `./solution` in the ALPS directory structure. Let's look at the file `test_ICW.scan_kpara_1.root_1`. As the name suggests, this file contains the scan result for a scan along the parallel wavenumber $k_{\parallel}$ for root number 1 (we only scan along one root in this example).
 
 The file has the following format:
 
->     1.0000E-03    3.0000E-02    3.0394E-02   -1.1721E-05  
->     1.0000E-03    3.0271E-02    3.0677E-02   -1.1597E-05  
->     1.0000E-03    3.0545E-02    3.0962E-02   -1.1479E-05  
->     1.0000E-03    3.0821E-02    3.1250E-02   -1.1363E-05  
->     ...           ...           ...          ...
+```
+1.0000E-03    1.0000E-01    1.4424E-01   -1.0449E-05
+1.0000E-03    1.0275E-01    1.4337E-01   -8.9137E-06
+1.0000E-03    1.0557E-01    1.4729E-01   -8.6524E-06
+1.0000E-03    1.0846E-01    1.5132E-01   -8.3974E-06
+1.0000E-03    1.1144E-01    1.5546E-01   -8.1484E-06
+1.0000E-03    1.1450E-01    1.5971E-01   -7.9055E-06
+...           ...           ...          ...
+```
 
 The format of the columns is as follows:
 
@@ -257,12 +266,15 @@ The format of the columns is as follows:
 
 In these definitions, $\Omega_{\mathrm p}$ is the proton gyro-frequency.
 
-Congratulations! You have found the solutions to the bi-Maxwellian example case. Now you can also experiment with the other test cases in the folders `./distribution` and `./tests`. The code also includes a full test suite which you can launch with
+Congratulations! You have found the solutions to the Maxwellian example case for the ion-cyclotron wave. Now you can also experiment with the other test cases in the folders `./distribution` and `./tests`. The code also includes a full test suite which you can launch with
 
 >     cd ./tests  
 >     ./run_test_suite.sh
 
 The given test cases cover a range of typical applications, so there should be good starting points for your purposes.
+
+
+
 
 ## 5. Interpolation of input distributions
 
@@ -322,6 +334,11 @@ At the same time, the folder now includes a new file `test_interp.in.array`, whi
 ```
 
 You can copy this file over into the `./distribution` folder and give it the appropriate naming with the convention given above. Then ALPS can use this interpolated file for the calculation.
+
+
+
+
+
 
 ## 6. Using analytical expressions for the background distribution
 
