@@ -2,8 +2,8 @@
 
 This is the ALPS code: the Arbitrary Linear Plasma Solver.
 
-<img src="./doc/ALPS_logo.png" alt="drawing" width="200"/>
-<img src="./doc/qrcode_alps_github.png" alt="drawing" width="200"/>
+<img src="./sub_doc/ALPS_logo.png" alt="drawing" width="200"/>
+<img src="./sub_doc/qrcode_alps_github.png" alt="drawing" width="200"/>
 
 ## Authors
 
@@ -74,7 +74,7 @@ required. In this case, the above command must be replaced with
 mpirun -np <NP> --oversubscribe ./src/ALPS <input_file.in>
 ```
 
-For first-time users, we recommend working through our [ALPS Tutorial](./doc/tutorial.md). The key input parameters for ALPS are described on the [ALPS Input](./doc/input.md) page. The output format of ALPS is described on the [ALPS Output](./doc/output.md) page.
+For first-time users, we recommend working through our [ALPS Tutorial](./sub_doc/tutorial.md). The key input parameters for ALPS are described on the [ALPS Input](./sub_doc/input.md) page. The output format of ALPS is described on the [ALPS Output](./sub_doc/output.md) page.
 
 
 ## 5. License
