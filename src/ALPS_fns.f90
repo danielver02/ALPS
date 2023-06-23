@@ -181,7 +181,7 @@ subroutine derivative_f0
                   (ns(is)*qs(is)/ms(is))*pp(is,iperp,ipar,1)*pp(is,iperp,ipar,2)*&
                   f0(is,iperp,ipar) * &
                   2.d0 * pi * dpperp * dppar
-             
+
           enddo
        enddo
     endif
@@ -657,7 +657,7 @@ end function full_integrate
 
 double complex function integrate(om, nn, mode, iparmin, iparmax)
   !! This function performs the integral in Eq. (2.9) of the code paper, but without
-  !! accounting for the Landau contour integral. It is called by [[full_integral]].
+  !! accounting for the Landau contour integral. It is called by [[full_integrate(function)]].
   use alps_var, only : nperp, pp, pi, sproc
   implicit none
 
@@ -2321,11 +2321,11 @@ subroutine om_double_scan
         call get_unused_unit(scan_unit(in))
         open(unit=scan_unit(in),file=trim(scanName(in)),status='replace')
         close(scan_unit(in))
-                
+
      enddo
 
   endif
-  
+
   if ((scan(1)%eigen_s).or.(scan(1)%heat_s)) then
 
      do in=1,nroots
@@ -2358,7 +2358,7 @@ subroutine om_double_scan
               close(heat_unit(in))
            endif
         endif
-           
+
      enddo
 
   endif
@@ -2440,7 +2440,7 @@ subroutine om_double_scan
 
      ! Second scan:
      do it2 = 0, nt2
-        
+
         ! Scan through wavevector space:
         !if (it2==1) then
         if (it2==0) then
@@ -2488,8 +2488,8 @@ subroutine om_double_scan
               kpar=kpari+scan(2)%diff*it2
            endif
         end select
-        
-        if (scan(2)%type_s.ne.4) then           
+
+        if (scan(2)%type_s.ne.4) then
            ! Scan types with varying kperp require a re-call of split_processes:
            call determine_nmax
            call split_processes
@@ -2497,7 +2497,7 @@ subroutine om_double_scan
         endif
 
         call mpi_barrier(mpi_comm_world,ierror)
-        
+
         if (proc0) write(*,'(a,es14.4,a,es14.4)')'kperp: ',kperp,' kpar: ',kpar
 
           do in = 1,nroots
@@ -2531,7 +2531,7 @@ subroutine om_double_scan
               endif
            endif
            call mpi_barrier(mpi_comm_world,ierror)
-                
+
            ! Output:
            if (proc0) then
 
@@ -2575,7 +2575,7 @@ subroutine om_double_scan
                          kperp,kpar,wroots(in),Ps
                     close(heat_unit(in))
                  endif
-                 
+
               endif
 
            endif
@@ -2590,7 +2590,7 @@ subroutine om_double_scan
      enddo
 
   enddo
-  
+
   if ((proc0).and.(mod(it,scan(1)%n_res)==0)) then
      do in = 1,nroots
         open(unit=scan_unit(in),file=trim(scanName(in)),&
@@ -2616,9 +2616,9 @@ subroutine om_double_scan
 
   kperp=kperp_last
   kpar=kpar_last
-  
+
 enddo
-  
+
 if (proc0) then
    deallocate(scan_unit)
    deallocate(scanName)
