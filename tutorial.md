@@ -55,34 +55,36 @@ When a quantity has the index `ref` added to it, this refers to the reference sp
 
 Let's generate the distributions for this example. Simply execute the command
 
->    ./generate_distribution test_bimax_dist.in
+>     ./generate_distribution test_bimax_dist.in
 
 The code now generates the following output:
 
->    Species  1  
->     Integration:       9.9973E-01  
->     Norm:              1.7959E-01  
->     pperp_max:         6.0000E+00  
->     ppar_max:          6.0000E+00  
->        
->     Fit type:          1  
->     ideal fit_1:       1.7959E-01  
->     ideal fit_2:       1.0000E+00  
->     ideal fit_3:       0.0000E+00  
->     ideal perpcorr:    1.0000E+00  
->    ============================  
->    Species  2  
->     Integration:       9.9973E-01  
->     Norm:              1.4128E+04  
->     pperp_max:         1.4003E-01  
->     ppar_max:          1.4003E-01  
->        
->     Fit type:          1  
->     ideal fit_1:       1.4128E+04  
->     ideal fit_2:       1.8360E+03  
->     ideal fit_3:       0.0000E+00  
->     ideal perpcorr:    1.8360E+03  
->    ============================  
+```
+Species  1
+ Integration:       9.9973E-01
+ Norm:              1.7959E-01
+ pperp_max:         6.0000E+00
+ ppar_max:          6.0000E+00
+
+ Fit type:          1
+ ideal fit_1:       1.7959E-01
+ ideal fit_2:       1.0000E+00
+ ideal fit_3:       0.0000E+00
+ ideal perpcorr:    1.0000E+00
+============================
+Species  2
+ Integration:       9.9973E-01
+ Norm:              1.4128E+04
+ pperp_max:         1.4003E-01
+ ppar_max:          1.4003E-01
+
+ Fit type:          1
+ ideal fit_1:       1.4128E+04
+ ideal fit_2:       1.8360E+03
+ ideal fit_3:       0.0000E+00
+ ideal perpcorr:    1.8360E+03
+============================
+```
 
 Species 1 corresponds to the protons, and species 2 corresponds to the electrons in this case. The output gives us some information about the integration and normalisation of $f_{0j}$ as well as some suggestions for the fit parameters (*ideal fit* and *ideal perpcorr*) that will become important later for the hybrid-analytic continuation.
 
