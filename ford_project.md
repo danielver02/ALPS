@@ -24,8 +24,8 @@ src_dir:  ./src
 
 ---
 
-<img src="./sub_doc/ALPS_logo.png" alt="drawing" width="200"/>
-<img src="./sub_doc/qrcode_alps_github.png" alt="drawing" width="200"/>
+<img src="./ALPS_logo.png" alt="drawing" width="200"/>
+<img src="./qrcode_alps_github.png" alt="drawing" width="200"/>
 
 ALPS is a parallelised numerical code that solves the Vlasov-Maxwell dispersion
 relation in hot (even relativistic) magnetised plasma. ALPS allows for any
