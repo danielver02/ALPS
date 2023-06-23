@@ -31,13 +31,14 @@ jobs:
         mkdir docs/sub_doc
         echo 'title: Readme' > docs/index.md
         cat README.md >> docs/index.md
-        echo 'title: Install' > docs/INSTALL.md
+        cp docs/index.md docs/sub_doc
+        echo 'title: Installing ALPS' > docs/INSTALL.md
         cat INSTALL.md >> docs/INSTALL.md
-        echo 'title: Tutorial' > docs/sub_doc/tutorial.md
+        echo 'title: ALPS Tutorial' > docs/sub_doc/tutorial.md
         cat ./sub_doc/tutorial.md >> docs/sub_doc/tutorial.md
-        echo 'title: Input' > docs/sub_doc/input.md
+        echo 'title: ALPS Input' > docs/sub_doc/input.md
         cat ./sub_doc/input.md >> docs/sub_doc/input.md
-        echo 'title: Output' > docs/sub_doc/output.md
+        echo 'title: ALPS Output' > docs/sub_doc/output.md
         cat ./sub_doc/output.md >> docs/sub_doc/output.md
         ford ford_project.md
 
