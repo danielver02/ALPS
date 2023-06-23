@@ -2154,8 +2154,8 @@ subroutine om_double_scan
   !! This subroutine scans along a prescribed plane in wavevector space to map out \(\omega\) in this space. It is required that n_scan=2.
   use ALPS_var, only : proc0, nroots, runname, ierror, wroots, scan, sproc
   use ALPS_var, only : kperp,kpar,kperp_last,kpar_last, D_gap
-  use ALPS_var, only : ierror
-  use ALPS_io,  only : get_unused_unit, alps_error
+  use ALPS_var, only : ierror, nspec
+  use ALPS_io,  only : get_unused_unit, alps_error, isnancheck
   use mpi
   implicit none
 
@@ -2177,6 +2177,12 @@ subroutine om_double_scan
 
   character(500), dimension(:), allocatable :: scanName
   !! Output file name for scan.
+
+  character(500), dimension(:), allocatable :: heatName
+  !! Output file name for heating-rate calculation.
+
+  character(500), dimension(:), allocatable :: eigenName
+  !! Output file name for eigenfunction calculation.
 
   character(6) :: scan_ID
   !! ID tags for scan types for first scan.
@@ -2205,7 +2211,7 @@ subroutine om_double_scan
   double precision :: kpari
   !! Parallel wavenumber of step i.
 
-  double precision, dimension(:), allocatable :: om_tmp
+  double complex, dimension(:), allocatable :: om_tmp
   !! Storage variable for frequency omega. (1:nroots)
 
   double complex :: omega
@@ -2214,8 +2220,11 @@ subroutine om_double_scan
   integer, dimension(:), allocatable :: scan_unit
   !! File unit for scan output. (1:nroots)
 
-  double precision :: tmp
-  !! Storage variable for determinant of dispersion tensor.
+  integer, dimension(:), allocatable :: heat_unit
+  !! File unit for heating-rate output. (1:nroots)
+
+  integer, dimension(:), allocatable :: eigen_unit
+  !! File unit for eigenfunction output. (1:nroots)
 
   integer :: imm
   !! Index to check for root jumps.
@@ -2223,7 +2232,32 @@ subroutine om_double_scan
   logical, dimension(:),allocatable :: jump
   !! Check whether a jump should be applied. (1:nroots)
 
+  logical :: alljump
+  !! Check whether any root has jumped.
 
+  double complex :: tmp
+  !! Storage variable for determinant of dispersion tensor.
+
+  double complex, dimension(1:3) :: ef
+  !! Relative electric field amplitude (eigenfunction).
+
+  double complex, dimension(1:3) :: bf
+  !! Relative magnetic field amplitude (eigenfunction).
+
+  double complex, dimension(1:nspec) :: ds
+  !! Relative density-fluctuation amplitude (eigenfunction).
+
+  double complex, dimension(1:3,1:nspec) :: Us
+  !! Relative velocity-fluctuation amplitude (eigenfunction).
+
+  double precision, dimension(1:nspec) :: Ps
+  !! Relative heating rate of a given species.
+
+  character (50) :: fmt_eigen
+  !! Format string for eigenfunction output.
+
+  character (50) :: fmt_heat
+  !! Format string for heating-rate output.
 
   allocate(jump(1:nroots)); jump=.true.
 
@@ -2238,7 +2272,6 @@ subroutine om_double_scan
   allocate(om_tmp(nroots))
 
   if (proc0) then
-
      allocate(scan_unit(nroots))
      allocate(scanName(nroots))
 
@@ -2270,17 +2303,67 @@ subroutine om_double_scan
         write(scan_ID2,'(a)')'kpara'
      end select
 
+     if (scan(1)%eigen_s) then
+        write(fmt_eigen,'(a,i0,a)') '(4es14.4,12es14.4,',nspec*8,'es14.4)'
+        allocate(eigen_unit(nroots))
+        allocate(eigenName(nroots))
+     endif
+     if (scan(1)%heat_s) then
+        write(fmt_heat,'(a,i0,a)') '(4es14.4,',nspec,'es14.4)'
+        allocate(heat_unit(nroots))
+        allocate(heatName(nroots))
+     endif
+
      do in=1,nroots
         write(scanName(in),'(6a,i0)')&
              'solution/',trim(runname),'.scan_',scan_ID,scan_ID2,'.root_',in
         write(*,'(2a)')' => ',trim(scanName(in))
         call get_unused_unit(scan_unit(in))
         open(unit=scan_unit(in),file=trim(scanName(in)),status='replace')
-        write(scan_unit(in),'(4es14.4)') &
-             kperp,kpar,wroots(in)
         close(scan_unit(in))
+                
      enddo
+
   endif
+  
+  if ((scan(1)%eigen_s).or.(scan(1)%heat_s)) then
+
+     do in=1,nroots
+        omega=wroots(in)
+        tmp = disp(omega)
+
+        call calc_eigen(omega,ef,bf,Us,ds,Ps,scan(1)%eigen_s,scan(1)%heat_s)
+
+        !reassign omega:
+        omega=wroots(in)
+
+        call mpi_barrier(mpi_comm_world,ierror)
+
+        if (proc0) then
+           if (scan(1)%eigen_s) then
+              write(eigenName(in),'(6a,i0)')&
+                   'solution/',trim(runname),'.eigen_',scan_ID,scan_ID2,'.root_',in
+              write(*,'(2a)')' => ',trim(eigenName(in))
+              call get_unused_unit(eigen_unit(in))
+              open(unit=eigen_unit(in),file=trim(eigenName(in)),status='replace')
+              close(eigen_unit(in))
+           endif
+
+           if (scan(1)%heat_s) then
+              write(heatName(in),'(6a,i0)')&
+                   'solution/',trim(runname),'.heat_',scan_ID,scan_ID2,'.root_',in
+              write(*,'(2a)')' => ',trim(heatName(in))
+              call get_unused_unit(heat_unit(in))
+              open(unit=heat_unit(in),file=trim(heatName(in)),status='replace')
+              close(heat_unit(in))
+           endif
+        endif
+           
+     enddo
+
+  endif
+
+
 
   nt = scan(1)%n_out*scan(1)%n_res
   nt2 = scan(2)%n_out*scan(2)%n_res
@@ -2290,7 +2373,7 @@ subroutine om_double_scan
   theta_0=atan(kperp_last/kpar_last)
   k_0=sqrt(kperp_last**2+kpar_last**2)
 
-  do it = 1, nt
+  do it = 0, nt
      ! Scan through wavevector space:
      select case(scan(1)%type_s)
      case (0) ! k_0 to k_1
@@ -2331,8 +2414,6 @@ subroutine om_double_scan
         endif
      end select
 
-     if (.true.) then
-
      if (scan(1)%type_s.ne.4) then
 
         ! Scan types with varying kperp require a re-call of split_processes:
@@ -2344,16 +2425,25 @@ subroutine om_double_scan
 
      call mpi_barrier(mpi_comm_world,ierror)
 
-     endif
-
      if (proc0) write(*,'(a,es14.4,a,es14.4)')'kperp: ',kperp,' kpar: ',kpar
 
+     ! Check if all jumps are set to .false.:
+     alljump=.FALSE.
+     do in = 1,nroots
+        alljump=alljump.OR.jump(in)
+     enddo
+
+     if (alljump.EQV..FALSE.) call alps_error(9)
+
+     !Save roots before starting second parameter scan.
      om_tmp=wroots
 
      ! Second scan:
-     do it2 = 1, nt2
+     do it2 = 0, nt2
+        
         ! Scan through wavevector space:
-        if (it2==1) then
+        !if (it2==1) then
+        if (it2==0) then
            kperpi=kperp; kpari=kpar
            kperpi=kperp; kpari=kpar
            theta_i=atan(kperpi/kpari)
@@ -2398,23 +2488,17 @@ subroutine om_double_scan
               kpar=kpari+scan(2)%diff*it2
            endif
         end select
-
-        if (.true.) then
-
-        if (scan(2)%type_s.ne.4) then
-
-          ! Scan types with varying kperp require a re-call of split_processes:
+        
+        if (scan(2)%type_s.ne.4) then           
+           ! Scan types with varying kperp require a re-call of split_processes:
            call determine_nmax
            call split_processes
            if(.NOT.(sproc.EQ.0)) call determine_bessel_array
-
         endif
 
         call mpi_barrier(mpi_comm_world,ierror)
-
-     endif
-
-          if (proc0) write(*,'(a,es14.4,a,es14.4)')'kperp: ',kperp,' kpar: ',kpar
+        
+        if (proc0) write(*,'(a,es14.4,a,es14.4)')'kperp: ',kperp,' kpar: ',kpar
 
           do in = 1,nroots
              !Search for new roots:
@@ -2433,20 +2517,32 @@ subroutine om_double_scan
 
                 call mpi_barrier(mpi_comm_world,ierror)
 
+           ! Eigenfunctions and heating rates:
+           ! only call on wavevector steps that will be output:
+           if ((mod(it,scan(1)%n_res)==0).and.(mod(it2,scan(2)%n_res)==0)) then
+
+              if ((scan(1)%eigen_s).or.((scan(1)%heat_s))) then
+
+                 call calc_eigen(omega,ef,bf,Us,ds,Ps,scan(1)%eigen_s,scan(1)%heat_s)
+
+                 !reassign omega:
+                 omega=wroots(in)
+
+              endif
+           endif
+           call mpi_barrier(mpi_comm_world,ierror)
+                
            ! Output:
            if (proc0) then
 
-              ! NaN Check:
-              tmp=real(omega)
-              if (.not.(tmp .ne. omega)) then
-                 omega=cmplx(0.d0,0.d0);jump(in)=.false.
+              if(isnancheck(real(omega))) then
+              	  omega=cmplx(0.d0,0.d0,kind(1.d0));jump(in)=.false.
               endif
 
               ! infty Check:
               if (abs(tmp) .gt. 1.d100) then
                  omega=cmplx(0.d0,0.d0);jump(in)=.false.
               endif
-
 
               do imm=1,in-1
                  if (abs(wroots(in)-wroots(imm)).lt.D_gap) then
@@ -2459,12 +2555,27 @@ subroutine om_double_scan
               enddo
 
 
-              if (mod(it2,scan(2)%n_res)==0) then
+              if ((mod(it,scan(1)%n_res)==0).and.((mod(it2,scan(2)%n_res)==0))) then
                  open(unit=scan_unit(in),file=trim(scanName(in)),&
                       status='old',position='append')
                  write(scan_unit(in),'(4es14.4)') &
                       kperp,kpar,wroots(in)
                  close(scan_unit(in))
+
+                 if (scan(1)%eigen_s) then
+                    open(unit=eigen_unit(in),file=trim(eigenName(in)),status='old',position='append')
+                    write(eigen_unit(in),trim(fmt_eigen)) &
+                         kperp,kpar,wroots(in),ef,bf,Us,ds
+                    close(eigen_unit(in))
+                 endif
+
+                 if (scan(1)%heat_s) then
+                    open(unit=heat_unit(in),file=trim(heatName(in)),status='old',position='append')
+                    write(heat_unit(in),trim(fmt_heat)) &
+                         kperp,kpar,wroots(in),Ps
+                    close(heat_unit(in))
+                 endif
+                 
               endif
 
            endif
@@ -2473,32 +2584,47 @@ subroutine om_double_scan
 
         endif
 
-           call mpi_barrier(mpi_comm_world,ierror)
+        call mpi_barrier(mpi_comm_world,ierror)
 
-        enddo
 
      enddo
 
-     if (proc0) then
-        do in = 1,nroots
-           open(unit=scan_unit(in),file=trim(scanName(in)),&
-                status='old',position='append')
-           write(scan_unit(in),*)
-           close(scan_unit(in))
-        enddo
-     endif
-
-     kperp=kperp_last
-     kpar=kpar_last
-
   enddo
+  
+  if ((proc0).and.(mod(it,scan(1)%n_res)==0)) then
+     do in = 1,nroots
+        open(unit=scan_unit(in),file=trim(scanName(in)),&
+             status='old',position='append')
+        write(scan_unit(in),*)
+        close(scan_unit(in))
 
-  if (proc0) then
-     deallocate(scan_unit)
-     deallocate(scanName)
+        if (scan(1)%eigen_s) then
+           open(unit=eigen_unit(in),file=trim(eigenName(in)),status='old',position='append')
+           write(eigen_unit(in),*)
+           close(eigen_unit(in))
+        endif
+        if (scan(1)%heat_s) then
+           open(unit=heat_unit(in),file=trim(heatName(in)),status='old',position='append')
+           write(heat_unit(in),*)
+           close(heat_unit(in))
+        endif
+
+     enddo
   endif
 
-  deallocate(om_tmp)
+
+
+  kperp=kperp_last
+  kpar=kpar_last
+  
+enddo
+  
+if (proc0) then
+   deallocate(scan_unit)
+   deallocate(scanName)
+endif
+
+deallocate(om_tmp)
 
 end subroutine om_double_scan
 
@@ -2648,8 +2774,8 @@ subroutine map_search
            endif
 
            open(unit=unit_map,file=trim(mapName),status='old',position='append')
-           write(unit_map,'(2i6,5es14.6)') &
-                ir,ii,om(ir,ii),val(ir,ii),cal(ir,ii)
+           write(unit_map,'(5es14.6)') &
+                om(ir,ii),val(ir,ii),cal(ir,ii)
            close(unit_map)
 
         endif
@@ -2689,7 +2815,7 @@ subroutine map_search
     call mpi_bcast(nroots, 1, MPI_INTEGER, 0, MPI_COMM_WORLD, ierror)
     call mpi_bcast(wroots(:), size(wroots(:)), MPI_DOUBLE_COMPLEX, 0, MPI_COMM_WORLD, ierror)
 
-  endif
+ endif
 
 end subroutine map_search
 

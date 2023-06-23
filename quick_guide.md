@@ -31,9 +31,11 @@ Write or suppress output to screen.
 
 **`nperp`**  
 Perpendicular momentum space resolution, $N_{\perp}$.
+The input file must have $N_{\perp}+1$ values spanning parallel momentum space.
 
 **`npar`**  
 Parallel momentum space resolution, $N_{\parallel}$.
+The input file must have $N_{\parallel}+1$ values spanning parallel momentum space.
 
 **`ngamma`**  
 Relativistic momentum space resolution, $N_{\Gamma}$.
