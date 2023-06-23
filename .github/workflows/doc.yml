@@ -38,6 +38,8 @@ jobs:
         cat input.md >> docs/input.md
         echo 'title: ALPS Output' > docs/output.md
         cat output.md >> docs/output.md
+        cp ALPS_logo.png docs
+        cp qrcode_alps_github.png docs
         ford ford_project.md
 
     - name: Deploy to GH pages
