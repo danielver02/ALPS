@@ -119,8 +119,8 @@ This file is generated from the <em>map_search</em> subroutine in ALPS_fns.f90, 
 1. $\omega_r$<br>
 2. $\gamma$ <br>
 3. $|\mathcal{D}|$<br>
-4. Re$[\mathcal{D}]$<br>
-5. Im$[\mathcal{D}]$  </p>
+4. Re $[|\mathcal{D}|]$<br>
+5. Im $[|\mathcal{D}|]$  </p>
 <p>The <em>&amp;maps_1</em> namelist in <em>filename</em>.in determines the structure of <em>filename</em>.map.<br>
 The range of $\omega_{\textrm{r}}/\Omega_p$ is from <code>omi</code> to <code>omi</code> with <code>nr</code> steps. Logorithmic or linear spacing is selected with <code>loggridw</code>.
 The range of $\gamma_{\textrm{r}}/\Omega_p$ is from <code>gami</code> to <code>gami</code> with <code>ni</code> steps. Logorithmic or linear spacing is selected with <code>loggridg</code>.</p>
@@ -131,8 +131,8 @@ The range of $\gamma_{\textrm{r}}/\Omega_p$ is from <code>gami</code> to <code>g
 2. $\omega_r$<br>
 3. $\gamma$ <br>
 4. $|\mathcal{D}|$<br>
-5. Re$[\mathcal{D}]$<br>
-6. Im$[\mathcal{D}]$  </p>
+5. Re $[|\mathcal{D}|]$<br>
+6. Im $[|\mathcal{D}|]$  </p>
 <p>The routine uses  either the coarse dispersion tensor map generated from the <em>map_search</em> subroutine (in the case of <code>use_map</code> = .true.)<br>
 or from the input guesses (for <code>use_map</code> = .false.).<br>
 Only the first <code>nroots</code> solutions will be identified and written to file.</p>
@@ -154,26 +154,26 @@ in the <em>&amp;scan_input_l</em> namelist.</p>
 2. $k_\parallel d_p$<br>
 3. $\omega_{\textrm{r}}/\Omega_p$ <br>
 4. $\gamma/\Omega_p$ <br>
-5. Re$[E_x]$ 
-6. Im$[E_x]$ 
-7. Re$[E_y]$ 
-8. Im$[E_y]$ 
-9. Re$[E_z]$ 
-10. Im$[E_z]$ 
-11. Re$[B_x]$ 
-12. Im$[B_x]$ 
-13. Re$[B_y]$ 
-14. Im$[B_y]$ 
-15. Re$[B_z]$ 
-16. Im$[B_z]$ 
-17+6(is-1). Re$[\delta U_{x,is}]$ 
-18+6(is-1). Im$[\delta U_{x,is}]$ 
-19+6(is-1). Re$[\delta U_{y,is}]$ 
-20+6(is-1). Im$[\delta U_{y,is}]$ 
-21+6(is-1). Re$[\delta U_{z,is}]$ 
-22+6(is-1). Im$[\delta U_{z,is}]$ 
-17+6(<code>nspec</code>)+2(is-1). Re$[\delta n_{is}]$ 
-18+6(<code>nspec</code>)+2(is-1). Im$[\delta n_{is}]$ </p>
+5. Re $[E_x]$ 
+6. Im $[E_x]$ 
+7. Re $[E_y]$ 
+8. Im $[E_y]$ 
+9. Re $[E_z]$ 
+10. Im $[E_z]$ 
+11. Re $[B_x]$ 
+12. Im $[B_x]$ 
+13. Re $[B_y]$ 
+14. Im $[B_y]$ 
+15. Re $[B_z]$ 
+16. Im $[B_z]$<br>
+17. [+6(is-1)] Re $[\delta U_{x,is}]$ <br>
+18. [+6(is-1)] Im $[\delta U_{x,is}]$ <br>
+19. [+6(is-1)] Re $[\delta U_{y,is}]$ <br>
+20. [+6(is-1)] Im $[\delta U_{y,is}]$ <br>
+21. [+6(is-1)] Re $[\delta U_{z,is}]$ <br>
+22. [+6(is-1)] Im $[\delta U_{z,is}]$ <br>
+17. [+6(<code>nspec</code>)+2(is-1)] Re $[\delta n_{is}]$ <br>
+18. [+6(<code>nspec</code>)+2(is-1)] Im $[\delta n_{is}]$ </p>
 <p>This same data structure is preserved for the output from <code>om_double_scan</code>.</p>
 <h2><em>filename</em>.heat_<em>scan_type_l</em>.root_m</h2>
 <p>The heating rates associated with solution <em>m</em> calculated from <code>om_scan</code> when <code>heating</code> is set to .true.
@@ -183,7 +183,7 @@ in the <em>&amp;scan_input_l</em> namelist.</p>
 2. $k_\parallel d_p$<br>
 3. $\omega_{\textrm{r}}/\Omega_p$ <br>
 4. $\gamma/\Omega_p$ <br>
-5+(is-1). $\gamma_{is}/\omega$</p>
+5. [+(is-1)] $\gamma_{is}/\omega$</p>
 <p>This same data structure is preserved for the output from <code>om_double_scan</code>.</p>
     </div>
     <div class="col-md-3 col-md-pull-9">
