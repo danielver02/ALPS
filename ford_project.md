@@ -22,7 +22,6 @@ src_dir:  ./src
           ./interpolation
           ./distribution
 favicon: favicon.ico
-project_website: https://ui.adsabs.harvard.edu/public-libraries/vPWlMyiDRq-YfZ2bGDWS7Q
 
 ---
 
@@ -43,6 +42,8 @@ If you use the code for a science publication, please provide the code website
 [Verscharen, D., Klein, K. G., Chandran, B. D. G., Stevens, M. L., Salem, C. S.,
 and Bale, S. D.: ALPS: the Arbitrary Linear Plasma Solver, J. Plasma Phys. 84,
 905840403, 2018, doi: 10.1017/S0022377818000739](http://doi.org/10.1017/S0022377818000739)
+
+Publications using the ALPS code can be found in our [NASA ADS Library](https://ui.adsabs.harvard.edu/public-libraries/vPWlMyiDRq-YfZ2bGDWS7Q).
 
 ---
 
