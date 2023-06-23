@@ -33,7 +33,7 @@ If you use the code for a science publication, please provide the code website
 and Bale, S. D.: ALPS: the Arbitrary Linear Plasma Solver, J. Plasma Phys. 84,
 905840403, 2018, doi: 10.1017/S0022377818000739](http://doi.org/10.1017/S0022377818000739)
 
-The documentation of the code can be found on [alps.space](https://alps.space).
+The documentation of the code can be found on [alps.space](http://alps.space).
 
 ## 2. Acknowledgements
 
