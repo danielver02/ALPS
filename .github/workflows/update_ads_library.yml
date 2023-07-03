@@ -1,0 +1,31 @@
+---
+name: Update ADS library with papers citing ALPS
+
+on:
+  schedule:
+    # Midnight on every Sunday
+    - cron: "0 0 * * 0"
+  workflow_dispatch:
+
+jobs:
+  update_library:
+    name: Update library
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install script dependencies
+        run: |
+          pip install requests==2.31
+
+      - name: Run script
+        env:
+          ADS_API_TOKEN: ${{ secrets.ADS_API_TOKEN }}
+        run: |
+          python .github/scripts/add_alps_papers_to_ads_library.py
