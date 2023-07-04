@@ -43,6 +43,7 @@ jobs:
         cat input.md >> docs/input.md
         echo 'title: ALPS Output' > docs/output.md
         cat output.md >> docs/output.md
+        python .github/scripts/print_bib_markdown.py > docs/citingpapers.md
         cp ALPS_logo.png docs
         cp qrcode_alps_github.png docs
         ford ford_project.md
