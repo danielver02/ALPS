@@ -6,7 +6,7 @@ from typing import Any, Optional
 
 BASE_URL = "https://api.adsabs.harvard.edu/v1"
 ALPS_ADS_BIB_CODE = "2018JPlPh..84d9003V"
-ALPS_LIBRARY_ID = "rrfGfF0OT4CH7y4AOOil4w"   # TODO: change
+ADS_LIBRARY_ID = "vPWlMyiDRq-YfZ2bGDWS7Q"
 
 logging.basicConfig(
     level=logging.INFO,
@@ -17,10 +17,10 @@ logger = logging.getLogger(__name__)
 
 
 def data_from_library_api(**params: Any) -> dict:
-    logger.info(f"Getting library data for libray (id: {ALPS_LIBRARY_ID}) with {params}")
+    logger.info(f"Getting library data for libray (id: {ADS_LIBRARY_ID}) with {params}")
 
     response = requests.get(
-        url=f"{BASE_URL}/biblib/libraries/{ALPS_LIBRARY_ID}",
+        url=f"{BASE_URL}/biblib/libraries/{ADS_LIBRARY_ID}",
         headers={'Authorization': f"Bearer {os.environ['ADS_API_TOKEN']}"},
         params=params
     )
