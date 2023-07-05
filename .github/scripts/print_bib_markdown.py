@@ -92,6 +92,7 @@ def get_sorted_bib_entries() -> list:
 
 
 def print_markdown() -> None:
+    logger.info("Printing markdown file containing papers citing ALPS")
     year: Optional[int] = None
 
     print(

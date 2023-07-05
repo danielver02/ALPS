@@ -45,7 +45,11 @@ jobs:
         cat input.md >> docs/input.md
         echo 'title: ALPS Output' > docs/output.md
         cat output.md >> docs/output.md
-        python .github/scripts/print_bib_markdown.py > docs/citingpapers.md
+        if [ "$ADS_API_TOKEN" != "" ]; then
+            python .github/scripts/print_bib_markdown.py > docs/citingpapers.md
+        else
+            echo "⚠️ Had no API token. Skipping adding citing papers to docs"
+        fi
         cp ALPS_logo.png docs
         cp qrcode_alps_github.png docs
         ford ford_project.md
