@@ -12,6 +12,7 @@ ordered_subpage: INSTALL.md
                  tutorial.md
                  input.md
                  output.md
+                 citingpapers.md
 display: public
          protected
          private

@@ -20,12 +20,14 @@ jobs:
         python-version: '3.10'
 
     - name: Install ford
-      run: pip install ford
+      run: pip install ford requests==2.31
 
     - name: Install graphviz
       run: sudo apt install graphviz
 
     - name: Build documentation
+      env:
+        ADS_API_TOKEN: ${{ secrets.ADS_API_TOKEN }}
       run: |
         # Ford converts the markdown files to html files, we need to change
         # the file extension before building to make links work.
@@ -43,6 +45,11 @@ jobs:
         cat input.md >> docs/input.md
         echo 'title: ALPS Output' > docs/output.md
         cat output.md >> docs/output.md
+        if [ "$ADS_API_TOKEN" != "" ]; then
+            python .github/scripts/print_bib_markdown.py > docs/citingpapers.md
+        else
+            echo "⚠️ Had no API token. Skipping adding citing papers to docs"
+        fi
         cp ALPS_logo.png docs
         cp qrcode_alps_github.png docs
         ford ford_project.md
