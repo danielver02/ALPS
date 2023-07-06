@@ -362,7 +362,7 @@ You can copy this file over into the `./distribution` folder and give it the app
 
 In some instances, you may have an analytical expression for the distribution function (which is not covered by `generate_distribution`) that you want to run through ALPS. For example, you may want to analyse the instability of a model distribution that was derived analytical from a model. ALPS can also do this.
 
-For such a calculation, we need to define the background distribution in the code directly. Let's open the file `./solution/distribution_analyt.f90`. This is a Fortran file that allows you to feed an analytical expression for the background distribution into ALPS.
+For such a calculation, we need to define the background distribution in the code directly. Let's open the file `./distribution/distribution_analyt.f90`. This is a Fortran file that allows you to feed an analytical expression for the background distribution into ALPS.
 
 If you have the standard version of ALPS from the repository, this f90 file already contains some variable declarations and an example case. Let's scroll down to the following part:
 
