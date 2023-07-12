@@ -63,7 +63,7 @@ def entry_from_bibcode(bibcode: str) -> Optional[dict]:
     data = data_from_export_api(bibcode=[bibcode], format=string_format)
 
     try:
-        authors, year, journal, doi, volume, pages, title = data["export"].split(seperator)
+        authors, year, journal, doi, title, volume, pages = data["export"].split(seperator)
     except IndexError as e:
         logger.error(f"Failed to parse: {data}.\nException: {e}")
         return None
