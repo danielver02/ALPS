@@ -75,7 +75,7 @@ def entry_from_bibcode(bibcode: str) -> Optional[dict]:
         'year': int(year),
         'doi': doi,
         'volume': volume,
-        'pages': pages,
+        'pages': pages.strip(),
         'doiurl': f"https://dx.doi.org/{doi}",
         'adsurl': f"https://ui.adsabs.harvard.edu/abs/{bibcode}",
         'journal': journal
