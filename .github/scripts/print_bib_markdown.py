@@ -59,11 +59,11 @@ def entry_from_bibcode(bibcode: str) -> Optional[dict]:
 
     # See https://adsabs.github.io/help/actions/export for formatting options
     seperator = ":|:"
-    string_format = seperator.join(["%3.2l", "%Y", "%J", "%d", "%T"])
+    string_format = seperator.join(["%3.2l", "%Y", "%J", "%d", "%T", "%V", "%p"])
     data = data_from_export_api(bibcode=[bibcode], format=string_format)
 
     try:
-        authors, year, journal, doi, title = data["export"].split(seperator)
+        authors, year, journal, doi, title, volume, pages = data["export"].split(seperator)
     except IndexError as e:
         logger.error(f"Failed to parse: {data}.\nException: {e}")
         return None
@@ -74,6 +74,8 @@ def entry_from_bibcode(bibcode: str) -> Optional[dict]:
         'title': title.strip("\n"),
         'year': int(year),
         'doi': doi,
+        'volume': volume,
+        'pages': pages,
         'doiurl': f"https://dx.doi.org/{doi}",
         'adsurl': f"https://ui.adsabs.harvard.edu/abs/{bibcode}",
         'journal': journal
@@ -105,7 +107,7 @@ def print_markdown() -> None:
             year = entry["year"]
             print(f"## {year}")
 
-        print(f"{entry['authors']}, _{entry['title']}_, {entry['journal']}, [{entry['doi']}]({entry['doiurl']})\n")
+        print(f"{entry['authors']}, _{entry['title']}_, {entry['journal']} {entry['volume']}, {entry['pages']}, {entry['year']}, [{entry['doi']}]({entry['doiurl']})\n")
 
 
 def main() -> None:
