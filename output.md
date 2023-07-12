@@ -16,7 +16,7 @@ This file is generated from the *map_search* subroutine in ALPS_fns.f90, and inv
 The data is ordered in columns as  
 1. $\omega_r$  
 2. $\gamma$   
-3. $|\mathcal{D}|$  
+3. $\log_{10} |\mathcal{D}|$  
 4. Re $[|\mathcal{D}|]$  
 5. Im $[|\mathcal{D}|]$  
 
@@ -32,7 +32,7 @@ The data is ordered as
 1. Solution number
 2. $\omega_r$  
 3. $\gamma$   
-4. $|\mathcal{D}|$  
+4. $\log_{10} |\mathcal{D}|$  
 5. Re $[|\mathcal{D}|]$  
 6. Im $[|\mathcal{D}|]$  
 
