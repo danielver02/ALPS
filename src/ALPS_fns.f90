@@ -2062,7 +2062,7 @@ subroutine calc_eigen(omega,electric,magnetic,vmean,ds,Ps,eigen_L,heat_L)
         vmean(:,:)=0.d0
         do j=1,3!x,y,z
            do jj = 1,nspec !Species velocity fluctuations
-              vmean(j,jj) = -(vA**2.d0/(qs(jj)*ns(jj)))*&
+              vmean(j,jj) = -(vA/(qs(jj)*ns(jj)))*&
                    cmplx(0.d0,1.d0,kind(1.d0))*&
                    omega*sum(electric(:)*chi0(jj,j,:))
 
