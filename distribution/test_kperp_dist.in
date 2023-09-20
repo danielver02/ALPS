@@ -29,7 +29,7 @@ writeName='test_kperp'
 &spec_1
 ms_read=1.d0     !Mass m_j/m_ref
 taus=1.d0        !Temperature T_par,j/T_par,ref
-alphs=1.d0       !Anisotropy T_perp,j/T_par,ref
+alphs=1.d0       !Anisotropy T_perp,j/T_par,j
 ps=0.d0          !Drift m_j v_drift/m_ref v_A,ref
 kappas=8.d0      !Kappa index
 distributions=1  !Type of distribution (see documentation)
