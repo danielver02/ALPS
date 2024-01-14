@@ -1,3 +1,5 @@
+<!-- -*- mode: jinja2 -*- -->
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -10,105 +12,88 @@
 
     <title>generate_distribution &ndash; ALPS</title>
 
-    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <link href="../css/pygments.css" rel="stylesheet">
     <link href="../css/font-awesome.min.css" rel="stylesheet">
     <link href="../css/local.css" rel="stylesheet">
       <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
 
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-        <![endif]-->
-
-         <script src="../js/jquery-2.1.3.min.js"></script>
-         <script src="../js/svg-pan-zoom.min.js"></script>
-
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="../js/svg-pan-zoom.min.js"></script>
   </head>
 
   <body>
 
     <!-- Fixed navbar -->
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
           <a class="navbar-brand" href="../index.html">ALPS </a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-              <li><a href='../page/index.html'>Readme</a></li>
-            <li class="dropdown hidden-xs visible-sm visible-md hidden-lg">
-              <a href="#" class="dropdown-toggle"
-                 data-toggle="dropdown" role="button"
-                 aria-haspopup="true"
-                 aria-expanded="false">
-                 Contents <span class="caret"></span>
-              </a>
-              <ul class="dropdown-menu">
-                  <li><a href="../lists/modules.html">Modules</a></li>
-                  <li><a href="../lists/procedures.html">Procedures</a></li>
-                  <li><a href="../lists/types.html">Derived Types</a></li>
-                  <li><a href="../lists/programs.html">Programs</a></li>
-              </ul>
-            </li>
-              <li class="visible-xs hidden-sm visible-lg">
-                <a href="../lists/modules.html">Modules</a>
-              </li>
-              <li class="visible-xs hidden-sm visible-lg">
-                <a href="../lists/procedures.html">Procedures</a>
-              </li>
-              <li class="visible-xs hidden-sm visible-lg">
-                <a href="../lists/types.html">Derived Types</a>
-              </li>
-              <li class="visible-xs hidden-sm visible-lg">
-                <a href="../lists/programs.html">Programs</a>
-              </li>
-          </ul>
-            <form action="../search.html" class="navbar-form navbar-right" role="search">
-              <div class="form-group">
-                <input type="text" class="form-control" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="../page/index.html">Readme</a></li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/namelists.html">Namelists</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/programs.html">Programs</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
               </div>
-              <!--
-                  <button type="submit" class="btn btn-default">Submit</button>
-                  -->
-            </form>
-        </div><!--/.nav-collapse -->
-      </div>
-    </nav>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
 
     <div class="container">
   <div class="row">
     <h1>generate_distribution      <small>Program</small>
       
     </h1>
-      <div class="row" id="info-bar">
-    <div class="col-lg-12">
-      <div class="well well-sm">
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
         <ul class="list-inline" style="margin-bottom:0px;display:inline">
 
-          <li id="statements"><i class="fa fa-list-ol"></i>
-            <a data-toggle="tooltip"
-               data-placement="bottom" data-html="true"
-               title="55.2% of total for programs.">393 statements</a>
-          </li>
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip"
+                 data-bs-placement="bottom" data-html="true"
+                 title="55.2% of total for programs.">393 statements</a>
+            </li>
 
         </ul>
-        <ol class="breadcrumb in-well text-right">
-          <li class="active">generate_distribution</li>
-        </ol>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+            <li class="breadcrumb-item active" aria-current="page">generate_distribution</li>
+          </ol>
+        </nav>
       </div>
     </div>
   </div>
   <script>
     $(function () {
-    $('[data-toggle="tooltip"]').tooltip()
+    $('[data-bs-toggle="tooltip"]').tooltip()
     })
   </script>
 
@@ -119,25 +104,24 @@
       <div id="sidebar">
       <h3>Contents</h3>
   
-      <div class="panel panel-primary">
-      <div class="panel-heading text-left">
-        <h3 class="panel-title">
-          <a data-toggle="collapse" href="#vars-0">Variables</a>
-        </h3>
-      </div>
-      <div id="vars-0" class="panel-collapse collapse">
-        <div class="list-group">
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-iperp~20">iperp</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-ipar~15">ipar</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-nperp~5">nperp</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-npar~6">npar</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-nspec~2">nspec</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-is~23">is</a>
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#vars-0"
+         aria-expanded="false" aria-controls="vars-0">
+         <h4 class="card-header bg-primary text-white">Variables</h4>
+      </a>
+      <div id="vars-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-iperp~2">iperp</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-ipar~2">ipar</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-nperp~4">nperp</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-npar~4">npar</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-nspec">nspec</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-is~8">is</a>
             <a class="list-group-item" href="../program/generate_distribution.html#variable-unit_out">unit_out</a>
             <a class="list-group-item" href="../program/generate_distribution.html#variable-writename">writeName</a>
             <a class="list-group-item" href="../program/generate_distribution.html#variable-outputname">outputName</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-dpperp~8">dpperp</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-dppar~10">dppar</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-dpperp~2">dpperp</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-dppar~2">dppar</a>
             <a class="list-group-item" href="../program/generate_distribution.html#variable-ppar_max~2">ppar_max</a>
             <a class="list-group-item" href="../program/generate_distribution.html#variable-pperp_max~2">pperp_max</a>
             <a class="list-group-item" href="../program/generate_distribution.html#variable-iperpcorr">iperpcorr</a>
@@ -147,7 +131,7 @@
             <a class="list-group-item" href="../program/generate_distribution.html#variable-ifit_4">ifit_4</a>
             <a class="list-group-item" href="../program/generate_distribution.html#variable-ifit_5">ifit_5</a>
             <a class="list-group-item" href="../program/generate_distribution.html#variable-ppar~5">ppar</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-pperp~4">pperp</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-pperp~5">pperp</a>
             <a class="list-group-item" href="../program/generate_distribution.html#variable-f0~2">f0</a>
             <a class="list-group-item" href="../program/generate_distribution.html#variable-ms~2">ms</a>
             <a class="list-group-item" href="../program/generate_distribution.html#variable-tau">tau</a>
@@ -158,20 +142,20 @@
             <a class="list-group-item" href="../program/generate_distribution.html#variable-maxppar">maxPpar</a>
             <a class="list-group-item" href="../program/generate_distribution.html#variable-autoscale">autoscale</a>
             <a class="list-group-item" href="../program/generate_distribution.html#variable-distribution">distribution</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-beta">beta</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-va~2">vA</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-beta~2">beta</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-va">vA</a>
             <a class="list-group-item" href="../program/generate_distribution.html#variable-maxp">maxP</a>
             <a class="list-group-item" href="../program/generate_distribution.html#variable-pi~2">pi</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-integrate~4">integrate</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-norm~2">norm</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-integrate">integrate</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-norm">norm</a>
             <a class="list-group-item" href="../program/generate_distribution.html#variable-a">a</a>
             <a class="list-group-item" href="../program/generate_distribution.html#variable-bessk">BESSK</a>
             <a class="list-group-item" href="../program/generate_distribution.html#variable-ppar_c">ppar_C</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-unit~9">unit</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-unit~7">unit</a>
             <a class="list-group-item" href="../program/generate_distribution.html#variable-stdout_unit~3">stdout_unit</a>
             <a class="list-group-item" href="../program/generate_distribution.html#variable-input_unit_no~3">input_unit_no</a>
             <a class="list-group-item" href="../program/generate_distribution.html#variable-error_unit_no~3">error_unit_no</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-runname~6">runname</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-runname~4">runname</a>
         </div>
       </div>
     </div>
@@ -185,28 +169,26 @@
   
   
   
-      <div class="panel panel-primary">
-      <div class="panel-heading text-left">
-        <h3 class="panel-title">
-          <a data-toggle="collapse" href="#funcs-0">Functions</a>
-        </h3>
-      </div>
-      <div id="funcs-0" class="panel-collapse collapse">
-        <div class="list-group">
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#funcs-0"
+         aria-expanded="false" aria-controls="funcs-0">
+         <h4 class="card-header bg-primary text-white">Functions</h4>
+      </a>
+      <div id="funcs-0" class="collapse">
+        <div class="list-group list-group-flush">
             <a class="list-group-item" href="../program/generate_distribution.html#proc-input_unit_exist~3">input_unit_exist</a>
             <a class="list-group-item" href="../program/generate_distribution.html#proc-input_unit~3">input_unit</a>
         </div>
       </div>
     </div>
 
-      <div class="panel panel-primary">
-      <div class="panel-heading text-left">
-        <h3 class="panel-title">
-          <a data-toggle="collapse" href="#subs-0">Subroutines</a>
-        </h3>
-      </div>
-      <div id="subs-0" class="panel-collapse collapse">
-        <div class="list-group">
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#subs-0"
+         aria-expanded="false" aria-controls="subs-0">
+         <h4 class="card-header bg-primary text-white">Subroutines</h4>
+      </a>
+      <div id="subs-0" class="collapse">
+        <div class="list-group list-group-flush">
             <a class="list-group-item" href="../program/generate_distribution.html#proc-read_in_params~2">read_in_params</a>
             <a class="list-group-item" href="../program/generate_distribution.html#proc-spec_read~2">spec_read</a>
             <a class="list-group-item" href="../program/generate_distribution.html#proc-get_indexed_namelist_unit~2">get_indexed_namelist_unit</a>
@@ -222,6 +204,7 @@
   
   
   
+  
 
 
   </div>
@@ -229,18 +212,17 @@
     </div>
     
     <div class="col-md-9" id='text'>
-        <div class="panel panel-default">
-      <div class="panel-heading">
-        <h3 class="panel-title">Uses</h3>
-      </div>
-      <ul class="list-group">
-          <li class="list-group-item">
-            <ul class="list-inline">
-                <li><a href='../module/alps_distribution_analyt.html'>alps_distribution_analyt</a></li>
-            </ul>
-          </li>
-          <li class="list-group-item">
-            <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+        <div class="card mb-4">
+      <h3 class="card-header card-title bg-light">Uses</h3>
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <ul class="list-inline">
+                  <li class="list-inline-item"><a href='../module/alps_distribution_analyt.html'>alps_distribution_analyt</a></li>
+              </ul>
+            </li>
+            <li class="list-group-item">
+              <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Generated by graphviz version 2.43.0 (0)
@@ -260,7 +242,7 @@
 <!-- module~alps_distribution_analyt -->
 <g id="program~~generate_distribution~~UsesGraph_node2" class="node">
 <title>module~alps_distribution_analyt</title>
-<g id="a_program~~generate_distribution~~UsesGraph_node2"><a xlink:href=".././module/alps_distribution_analyt.html" xlink:title="alps_distribution_analyt">
+<g id="a_program~~generate_distribution~~UsesGraph_node2"><a xlink:href="../module/alps_distribution_analyt.html" xlink:title="alps_distribution_analyt">
 <polygon fill="#337ab7" stroke="#337ab7" points="138,-24 0,-24 0,0 138,0 138,-24"/>
 <text text-anchor="middle" x="69" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_distribution_analyt</text>
 </a>
@@ -274,17 +256,17 @@
 </g>
 </g>
 </svg>
-</div>        <div><a type="button" class="graph-help" data-toggle="modal" href="#graph-help-text">Help</a></div>
-          <div class="modal fade" id="graph-help-text" tabindex="-1" role="dialog">
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#UsesGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="UsesGraph-help-text" tabindex="-1" role="dialog">
             <div class="modal-dialog modal-lg" role="document">
               <div class="modal-content">
                 <div class="modal-header">
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
                   <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-              <div class="modal-body">
+                <div class="modal-body">
 <p>Nodes of different colours represent the following: </p>
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
@@ -344,17 +326,18 @@ modules which it uses.
             </div>
           </div>
         </div>
-          </li>
-      </ul>
+            </li>
+        </ul>
+      </div>
     </div>
 
     <p>This program generates distribution files for input into ALPS based on pre-defined functions.</p>
     <br>
-    <div class="panel panel-default">
-      <div class="panel-heading">
-  <h3 class="panel-title">Calls</h3>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Calls</h3>
       </div>
-      <div class="panel-body">
+      <div class="card-body">
   <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
@@ -369,131 +352,143 @@ modules which it uses.
 <!-- program~generate_distribution -->
 <g id="program~~generate_distribution~~CallsGraph_node1" class="node">
 <title>program~generate_distribution</title>
-<polygon fill="none" stroke="black" points="127,-105 0,-105 0,-81 127,-81 127,-105"/>
-<text text-anchor="middle" x="63.5" y="-90.6" font-family="Helvetica,sans-Serif" font-size="10.50">generate_distribution</text>
+<polygon fill="none" stroke="black" points="127,-126 0,-126 0,-102 127,-102 127,-126"/>
+<text text-anchor="middle" x="63.5" y="-111.6" font-family="Helvetica,sans-Serif" font-size="10.50">generate_distribution</text>
+</g>
+<!-- dgamma -->
+<g id="program~~generate_distribution~~CallsGraph_node2" class="node">
+<title>dgamma</title>
+<polygon fill="#777777" stroke="#777777" points="315.5,-168 254.5,-168 254.5,-144 315.5,-144 315.5,-168"/>
+<text text-anchor="middle" x="285" y="-153.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">dgamma</text>
+</g>
+<!-- program~generate_distribution&#45;&gt;dgamma -->
+<g id="program~~generate_distribution~~CallsGraph_edge1" class="edge">
+<title>program~generate_distribution&#45;&gt;dgamma</title>
+<path fill="none" stroke="#000000" d="M119.13,-126.04C133.39,-129.07 148.75,-132.25 163,-135 189.99,-140.22 220.48,-145.51 244.1,-149.47"/>
+<polygon fill="#000000" stroke="#000000" points="243.67,-152.95 254.11,-151.14 244.82,-146.04 243.67,-152.95"/>
 </g>
 <!-- proc~distribution_analyt -->
-<g id="program~~generate_distribution~~CallsGraph_node2" class="node">
+<g id="program~~generate_distribution~~CallsGraph_node3" class="node">
 <title>proc~distribution_analyt</title>
-<g id="a_program~~generate_distribution~~CallsGraph_node2"><a xlink:href=".././proc/distribution_analyt.html" xlink:title="alps_distribution_analyt::distribution_analyt">
+<g id="a_program~~generate_distribution~~CallsGraph_node3"><a xlink:href="../proc/distribution_analyt.html" xlink:title="alps_distribution_analyt::distribution_analyt">
 <polygon fill="#d94e8f" stroke="#d94e8f" points="407,-126 163,-126 163,-102 407,-102 407,-126"/>
 <text text-anchor="middle" x="285" y="-111.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_distribution_analyt::distribution_analyt</text>
 </a>
 </g>
 </g>
 <!-- program~generate_distribution&#45;&gt;proc~distribution_analyt -->
-<g id="program~~generate_distribution~~CallsGraph_edge1" class="edge">
+<g id="program~~generate_distribution~~CallsGraph_edge2" class="edge">
 <title>program~generate_distribution&#45;&gt;proc~distribution_analyt</title>
-<path fill="none" stroke="#000000" d="M127.11,-98.99C135.3,-99.77 143.93,-100.6 152.75,-101.44"/>
-<polygon fill="#000000" stroke="#000000" points="152.49,-104.93 162.77,-102.4 153.15,-97.97 152.49,-104.93"/>
+<path fill="none" stroke="#000000" d="M127.11,-114C135.3,-114 143.93,-114 152.75,-114"/>
+<polygon fill="#000000" stroke="#000000" points="152.77,-117.5 162.77,-114 152.77,-110.5 152.77,-117.5"/>
 </g>
 <!-- proc~read_in_params~2 -->
-<g id="program~~generate_distribution~~CallsGraph_node3" class="node">
+<g id="program~~generate_distribution~~CallsGraph_node4" class="node">
 <title>proc~read_in_params~2</title>
-<g id="a_program~~generate_distribution~~CallsGraph_node3"><a xlink:href=".././proc/read_in_params~2.html" xlink:title="generate_distribution::read_in_params">
+<g id="a_program~~generate_distribution~~CallsGraph_node4"><a xlink:href="../proc/read_in_params~2.html" xlink:title="generate_distribution::read_in_params">
 <polygon fill="#d9534f" stroke="#d9534f" points="394.5,-84 175.5,-84 175.5,-60 394.5,-60 394.5,-84"/>
 <text text-anchor="middle" x="285" y="-69.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">generate_distribution::read_in_params</text>
 </a>
 </g>
 </g>
 <!-- program~generate_distribution&#45;&gt;proc~read_in_params~2 -->
-<g id="program~~generate_distribution~~CallsGraph_edge2" class="edge">
+<g id="program~~generate_distribution~~CallsGraph_edge3" class="edge">
 <title>program~generate_distribution&#45;&gt;proc~read_in_params~2</title>
-<path fill="none" stroke="#000000" d="M127.11,-87.01C139.12,-85.86 152.07,-84.62 165.19,-83.37"/>
-<polygon fill="#000000" stroke="#000000" points="165.62,-86.84 175.25,-82.4 164.96,-79.87 165.62,-86.84"/>
+<path fill="none" stroke="#000000" d="M119.13,-101.96C133.39,-98.93 148.75,-95.75 163,-93 175.59,-90.57 188.95,-88.12 202.02,-85.79"/>
+<polygon fill="#000000" stroke="#000000" points="202.7,-89.23 211.94,-84.04 201.48,-82.33 202.7,-89.23"/>
 </g>
 <!-- proc~get_indexed_namelist_unit~2 -->
-<g id="program~~generate_distribution~~CallsGraph_node4" class="node">
+<g id="program~~generate_distribution~~CallsGraph_node5" class="node">
 <title>proc~get_indexed_namelist_unit~2</title>
-<g id="a_program~~generate_distribution~~CallsGraph_node4"><a xlink:href=".././proc/get_indexed_namelist_unit~2.html" xlink:title="generate_distribution::get_indexed_namelist_unit">
+<g id="a_program~~generate_distribution~~CallsGraph_node5"><a xlink:href="../proc/get_indexed_namelist_unit~2.html" xlink:title="generate_distribution::get_indexed_namelist_unit">
 <polygon fill="#d9534f" stroke="#d9534f" points="718,-146 443,-146 443,-122 718,-122 718,-146"/>
 <text text-anchor="middle" x="580.5" y="-131.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">generate_distribution::get_indexed_namelist_unit</text>
 </a>
 </g>
 </g>
 <!-- proc~read_in_params~2&#45;&gt;proc~get_indexed_namelist_unit~2 -->
-<g id="program~~generate_distribution~~CallsGraph_edge3" class="edge">
+<g id="program~~generate_distribution~~CallsGraph_edge4" class="edge">
 <title>proc~read_in_params~2&#45;&gt;proc~get_indexed_namelist_unit~2</title>
 <path fill="none" stroke="#000000" d="M375.43,-84.01C386.21,-86.49 396.95,-89.45 407,-93 424.26,-99.09 425.68,-107.07 443,-113 450.26,-115.48 457.83,-117.68 465.53,-119.61"/>
 <polygon fill="#000000" stroke="#000000" points="464.8,-123.03 475.34,-121.92 466.41,-116.22 464.8,-123.03"/>
 </g>
 <!-- proc~get_runname~3 -->
-<g id="program~~generate_distribution~~CallsGraph_node5" class="node">
+<g id="program~~generate_distribution~~CallsGraph_node6" class="node">
 <title>proc~get_runname~3</title>
-<g id="a_program~~generate_distribution~~CallsGraph_node5"><a xlink:href=".././proc/get_runname~3.html" xlink:title="generate_distribution::get_runname">
+<g id="a_program~~generate_distribution~~CallsGraph_node6"><a xlink:href="../proc/get_runname~3.html" xlink:title="generate_distribution::get_runname">
 <polygon fill="#d9534f" stroke="#d9534f" points="683,-104 478,-104 478,-80 683,-80 683,-104"/>
 <text text-anchor="middle" x="580.5" y="-89.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">generate_distribution::get_runname</text>
 </a>
 </g>
 </g>
 <!-- proc~read_in_params~2&#45;&gt;proc~get_runname~3 -->
-<g id="program~~generate_distribution~~CallsGraph_edge4" class="edge">
+<g id="program~~generate_distribution~~CallsGraph_edge5" class="edge">
 <title>proc~read_in_params~2&#45;&gt;proc~get_runname~3</title>
 <path fill="none" stroke="#000000" d="M394.87,-79.42C418.57,-81.03 443.68,-82.74 467.49,-84.37"/>
 <polygon fill="#000000" stroke="#000000" points="467.4,-87.87 477.61,-85.06 467.87,-80.89 467.4,-87.87"/>
 </g>
 <!-- proc~get_unused_unit~3 -->
-<g id="program~~generate_distribution~~CallsGraph_node6" class="node">
+<g id="program~~generate_distribution~~CallsGraph_node7" class="node">
 <title>proc~get_unused_unit~3</title>
-<g id="a_program~~generate_distribution~~CallsGraph_node6"><a xlink:href=".././proc/get_unused_unit~3.html" xlink:title="generate_distribution::get_unused_unit">
+<g id="a_program~~generate_distribution~~CallsGraph_node7"><a xlink:href="../proc/get_unused_unit~3.html" xlink:title="generate_distribution::get_unused_unit">
 <polygon fill="#d9534f" stroke="#d9534f" points="975,-84 754,-84 754,-60 975,-60 975,-84"/>
 <text text-anchor="middle" x="864.5" y="-69.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">generate_distribution::get_unused_unit</text>
 </a>
 </g>
 </g>
 <!-- proc~read_in_params~2&#45;&gt;proc~get_unused_unit~3 -->
-<g id="program~~generate_distribution~~CallsGraph_edge5" class="edge">
+<g id="program~~generate_distribution~~CallsGraph_edge6" class="edge">
 <title>proc~read_in_params~2&#45;&gt;proc~get_unused_unit~3</title>
 <path fill="none" stroke="#000000" d="M394.53,-71.22C410.77,-71.13 427.33,-71.05 443,-71 565.22,-70.61 595.78,-70.58 718,-71 726.35,-71.03 734.97,-71.07 743.66,-71.11"/>
 <polygon fill="#000000" stroke="#000000" points="743.84,-74.61 753.86,-71.17 743.88,-67.61 743.84,-74.61"/>
 </g>
 <!-- proc~spec_read~2 -->
-<g id="program~~generate_distribution~~CallsGraph_node7" class="node">
+<g id="program~~generate_distribution~~CallsGraph_node8" class="node">
 <title>proc~spec_read~2</title>
-<g id="a_program~~generate_distribution~~CallsGraph_node7"><a xlink:href=".././proc/spec_read~2.html" xlink:title="generate_distribution::spec_read">
+<g id="a_program~~generate_distribution~~CallsGraph_node8"><a xlink:href="../proc/spec_read~2.html" xlink:title="generate_distribution::spec_read">
 <polygon fill="#d9534f" stroke="#d9534f" points="674.5,-24 486.5,-24 486.5,0 674.5,0 674.5,-24"/>
 <text text-anchor="middle" x="580.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">generate_distribution::spec_read</text>
 </a>
 </g>
 </g>
 <!-- proc~read_in_params~2&#45;&gt;proc~spec_read~2 -->
-<g id="program~~generate_distribution~~CallsGraph_edge6" class="edge">
+<g id="program~~generate_distribution~~CallsGraph_edge7" class="edge">
 <title>proc~read_in_params~2&#45;&gt;proc~spec_read~2</title>
 <path fill="none" stroke="#000000" d="M340.06,-59.94C370.3,-53.29 408.7,-44.98 443,-38 462.92,-33.95 484.51,-29.74 504.52,-25.93"/>
 <polygon fill="#000000" stroke="#000000" points="505.34,-29.34 514.51,-24.03 504.04,-22.46 505.34,-29.34"/>
 </g>
 <!-- proc~get_indexed_namelist_unit~2&#45;&gt;proc~get_unused_unit~3 -->
-<g id="program~~generate_distribution~~CallsGraph_edge7" class="edge">
+<g id="program~~generate_distribution~~CallsGraph_edge8" class="edge">
 <title>proc~get_indexed_namelist_unit~2&#45;&gt;proc~get_unused_unit~3</title>
 <path fill="none" stroke="#000000" d="M670.27,-121.95C686.22,-119.33 702.65,-116.33 718,-113 720.41,-112.48 770.33,-98.38 811.03,-86.86"/>
 <polygon fill="#000000" stroke="#000000" points="812.21,-90.17 820.88,-84.08 810.3,-83.43 812.21,-90.17"/>
 </g>
 <!-- proc~input_unit_exist~3 -->
-<g id="program~~generate_distribution~~CallsGraph_node8" class="node">
+<g id="program~~generate_distribution~~CallsGraph_node9" class="node">
 <title>proc~input_unit_exist~3</title>
-<g id="a_program~~generate_distribution~~CallsGraph_node8"><a xlink:href=".././proc/input_unit_exist~3.html" xlink:title="generate_distribution::input_unit_exist">
+<g id="a_program~~generate_distribution~~CallsGraph_node9"><a xlink:href="../proc/input_unit_exist~3.html" xlink:title="generate_distribution::input_unit_exist">
 <polygon fill="#d94e8f" stroke="#d94e8f" points="972.5,-178 756.5,-178 756.5,-154 972.5,-154 972.5,-178"/>
 <text text-anchor="middle" x="864.5" y="-163.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">generate_distribution::input_unit_exist</text>
 </a>
 </g>
 </g>
 <!-- proc~get_indexed_namelist_unit~2&#45;&gt;proc~input_unit_exist~3 -->
-<g id="program~~generate_distribution~~CallsGraph_edge8" class="edge">
+<g id="program~~generate_distribution~~CallsGraph_edge9" class="edge">
 <title>proc~get_indexed_namelist_unit~2&#45;&gt;proc~input_unit_exist~3</title>
 <path fill="none" stroke="#000000" d="M687.31,-146.01C706.96,-148.24 727.59,-150.58 747.53,-152.84"/>
 <polygon fill="#000000" stroke="#000000" points="747.24,-156.33 757.57,-153.98 748.03,-149.37 747.24,-156.33"/>
 </g>
 <!-- proc~input_unit~3 -->
-<g id="program~~generate_distribution~~CallsGraph_node9" class="node">
+<g id="program~~generate_distribution~~CallsGraph_node10" class="node">
 <title>proc~input_unit~3</title>
-<g id="a_program~~generate_distribution~~CallsGraph_node9"><a xlink:href=".././proc/input_unit~3.html" xlink:title="generate_distribution::input_unit">
+<g id="a_program~~generate_distribution~~CallsGraph_node10"><a xlink:href="../proc/input_unit~3.html" xlink:title="generate_distribution::input_unit">
 <polygon fill="#d94e8f" stroke="#d94e8f" points="958,-136 771,-136 771,-112 958,-112 958,-136"/>
 <text text-anchor="middle" x="864.5" y="-121.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">generate_distribution::input_unit</text>
 </a>
 </g>
 </g>
 <!-- proc~get_indexed_namelist_unit~2&#45;&gt;proc~input_unit~3 -->
-<g id="program~~generate_distribution~~CallsGraph_edge9" class="edge">
+<g id="program~~generate_distribution~~CallsGraph_edge10" class="edge">
 <title>proc~get_indexed_namelist_unit~2&#45;&gt;proc~input_unit~3</title>
 <path fill="none" stroke="#000000" d="M718.37,-129.15C732.57,-128.64 746.83,-128.14 760.57,-127.65"/>
 <polygon fill="#000000" stroke="#000000" points="761.09,-131.13 770.96,-127.28 760.84,-124.14 761.09,-131.13"/>
@@ -504,17 +499,17 @@ modules which it uses.
                   var panprogramgenerate_distributionCallsGraph = svgPanZoom('#programgenerate_distributionCallsGraph',
                     {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
                   );
-                </script>        <div><a type="button" class="graph-help" data-toggle="modal" href="#graph-help-text">Help</a></div>
-          <div class="modal fade" id="graph-help-text" tabindex="-1" role="dialog">
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CallsGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CallsGraph-help-text" tabindex="-1" role="dialog">
             <div class="modal-dialog modal-lg" role="document">
               <div class="modal-content">
                 <div class="modal-header">
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
                   <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-              <div class="modal-body">
+                <div class="modal-body">
 <p>Nodes of different colours represent the following: </p>
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
@@ -522,11 +517,11 @@ modules which it uses.
 <!-- Generated by graphviz version 2.43.0 (0)
  -->
 <!-- Title: Graph Key Pages: 1 -->
-<svg width="597pt" height="32pt"
- viewBox="0.00 0.00 596.50 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1.16 1.16) rotate(0) translate(4 28)">
 <title>Graph Key</title>
-<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 592.5,-28 592.5,4 -4,4"/>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
 <!-- Subroutine -->
 <g id="node1" class="node">
 <title>Subroutine</title>
@@ -545,23 +540,29 @@ modules which it uses.
 <polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
 <text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
 </g>
-<!-- Unknown Procedure Type -->
+<!-- Type Bound Procedure -->
 <g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
 <title>Unknown Procedure Type</title>
-<polygon fill="#777777" stroke="#777777" points="388.5,-24 243.5,-24 243.5,0 388.5,0 388.5,-24"/>
-<text text-anchor="middle" x="316" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
 </g>
 <!-- Program -->
-<g id="node5" class="node">
+<g id="node6" class="node">
 <title>Program</title>
-<polygon fill="#f0ad4e" stroke="#f0ad4e" points="465,-24 407,-24 407,0 465,0 465,-24"/>
-<text text-anchor="middle" x="436" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
 </g>
 <!-- This Page&#39;s Entity -->
-<g id="node6" class="node">
+<g id="node7" class="node">
 <title>This Page&#39;s Entity</title>
-<polygon fill="none" stroke="black" points="588.5,-24 483.5,-24 483.5,0 588.5,0 588.5,-24"/>
-<text text-anchor="middle" x="536" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
 </g>
 </g>
 </svg>
@@ -578,133 +579,22 @@ implementation in a submodule of an interface in a parent module.
       </div>
     </div>
 <br>
-     <section class="visible-xs visible-sm hidden-md">
-         <h3>Contents</h3>
-  
-      <div class="panel panel-primary">
-      <div class="panel-heading text-left">
-        <h3 class="panel-title">
-          <a data-toggle="collapse" href="#vars-1">Variables</a>
-        </h3>
-      </div>
-      <div id="vars-1" class="panel-collapse collapse">
-        <div class="list-group">
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-iperp~20">iperp</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-ipar~15">ipar</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-nperp~5">nperp</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-npar~6">npar</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-nspec~2">nspec</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-is~23">is</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-unit_out">unit_out</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-writename">writeName</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-outputname">outputName</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-dpperp~8">dpperp</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-dppar~10">dppar</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-ppar_max~2">ppar_max</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-pperp_max~2">pperp_max</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-iperpcorr">iperpcorr</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-ifit_1">ifit_1</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-ifit_2">ifit_2</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-ifit_3">ifit_3</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-ifit_4">ifit_4</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-ifit_5">ifit_5</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-ppar~5">ppar</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-pperp~4">pperp</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-f0~2">f0</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-ms~2">ms</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-tau">tau</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-alph">alph</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-p_drift">p_drift</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-kappa">kappa</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-maxpperp">maxPperp</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-maxppar">maxPpar</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-autoscale">autoscale</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-distribution">distribution</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-beta">beta</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-va~2">vA</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-maxp">maxP</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-pi~2">pi</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-integrate~4">integrate</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-norm~2">norm</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-a">a</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-bessk">BESSK</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-ppar_c">ppar_C</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-unit~9">unit</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-stdout_unit~3">stdout_unit</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-input_unit_no~3">input_unit_no</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-error_unit_no~3">error_unit_no</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#variable-runname~6">runname</a>
-        </div>
-      </div>
-    </div>
-
-  
-  
-  
-  
-  
-  
-  
-  
-  
-      <div class="panel panel-primary">
-      <div class="panel-heading text-left">
-        <h3 class="panel-title">
-          <a data-toggle="collapse" href="#funcs-1">Functions</a>
-        </h3>
-      </div>
-      <div id="funcs-1" class="panel-collapse collapse">
-        <div class="list-group">
-            <a class="list-group-item" href="../program/generate_distribution.html#proc-input_unit_exist~3">input_unit_exist</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#proc-input_unit~3">input_unit</a>
-        </div>
-      </div>
-    </div>
-
-      <div class="panel panel-primary">
-      <div class="panel-heading text-left">
-        <h3 class="panel-title">
-          <a data-toggle="collapse" href="#subs-1">Subroutines</a>
-        </h3>
-      </div>
-      <div id="subs-1" class="panel-collapse collapse">
-        <div class="list-group">
-            <a class="list-group-item" href="../program/generate_distribution.html#proc-read_in_params~2">read_in_params</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#proc-spec_read~2">spec_read</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#proc-get_indexed_namelist_unit~2">get_indexed_namelist_unit</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#proc-get_unused_unit~3">get_unused_unit</a>
-            <a class="list-group-item" href="../program/generate_distribution.html#proc-get_runname~3">get_runname</a>
-        </div>
-      </div>
-    </div>
-
-  
-  
-  
-  
-  
-  
-
-
-     </section>
-     <br class="visible-xs visible-sm hidden-md">
-
 
     <section>
     <h2>Variables</h2>
       <table class="table table-striped varlist">
     <thead>
       <tr>
-        <th>Type</th>
-        <th>Attributes</th>
-        <th></th>
-        <th>Name</th>
-<th></th><th>Initial</th>        <th></th>
+        <th scope="col">Type</th>
+        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+<th></th><th scope="col">Initial</th>        <th scope="col"></th>
     </thead>
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-iperp~20"></span>
+              <span class="anchor" id="variable-iperp~2"></span>
               integer
             </td>
             <td>
@@ -720,7 +610,7 @@ implementation in a submodule of an interface in a parent module.
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-ipar~15"></span>
+              <span class="anchor" id="variable-ipar~2"></span>
               integer
             </td>
             <td>
@@ -736,7 +626,7 @@ implementation in a submodule of an interface in a parent module.
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-nperp~5"></span>
+              <span class="anchor" id="variable-nperp~4"></span>
               integer
             </td>
             <td>
@@ -752,7 +642,7 @@ implementation in a submodule of an interface in a parent module.
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-npar~6"></span>
+              <span class="anchor" id="variable-npar~4"></span>
               integer
             </td>
             <td>
@@ -768,7 +658,7 @@ implementation in a submodule of an interface in a parent module.
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-nspec~2"></span>
+              <span class="anchor" id="variable-nspec"></span>
               integer
             </td>
             <td>
@@ -784,7 +674,7 @@ implementation in a submodule of an interface in a parent module.
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-is~23"></span>
+              <span class="anchor" id="variable-is~8"></span>
               integer
             </td>
             <td>
@@ -848,7 +738,7 @@ implementation in a submodule of an interface in a parent module.
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-dpperp~8"></span>
+              <span class="anchor" id="variable-dpperp~2"></span>
               double precision
             </td>
             <td>
@@ -864,7 +754,7 @@ implementation in a submodule of an interface in a parent module.
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-dppar~10"></span>
+              <span class="anchor" id="variable-dppar~2"></span>
               double precision
             </td>
             <td>
@@ -1024,7 +914,7 @@ implementation in a submodule of an interface in a parent module.
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-pperp~4"></span>
+              <span class="anchor" id="variable-pperp~5"></span>
               double precision
             </td>
             <td>
@@ -1200,7 +1090,7 @@ implementation in a submodule of an interface in a parent module.
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-beta"></span>
+              <span class="anchor" id="variable-beta~2"></span>
               double precision
             </td>
             <td>
@@ -1216,7 +1106,7 @@ implementation in a submodule of an interface in a parent module.
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-va~2"></span>
+              <span class="anchor" id="variable-va"></span>
               double precision
             </td>
             <td>
@@ -1264,7 +1154,7 @@ implementation in a submodule of an interface in a parent module.
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-integrate~4"></span>
+              <span class="anchor" id="variable-integrate"></span>
               double precision
             </td>
             <td>
@@ -1280,7 +1170,7 @@ implementation in a submodule of an interface in a parent module.
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-norm~2"></span>
+              <span class="anchor" id="variable-norm"></span>
               double precision
             </td>
             <td>
@@ -1344,7 +1234,7 @@ implementation in a submodule of an interface in a parent module.
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-unit~9"></span>
+              <span class="anchor" id="variable-unit~7"></span>
               integer
             </td>
             <td>
@@ -1408,7 +1298,7 @@ parameter
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-runname~6"></span>
+              <span class="anchor" id="variable-runname~4"></span>
               character(len=500)
             </td>
             <td>
@@ -1435,10 +1325,10 @@ parameter
  
     <section>
     <h2>Functions</h2>
-      <div class="panel panel-default">
-    <div class="panel-heading codesum"><span class="anchor" id="proc-input_unit_exist~3"></span><h3> function <a href='../proc/input_unit_exist~3.html'>input_unit_exist</a>(nml, exist)  
+      <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-input_unit_exist~3"></span> <h3> function <a href='../proc/input_unit_exist~3.html'>input_unit_exist</a>(nml, exist)  
 </h3></div>
-    <div class="panel-body">
+    <div class="card-body">
           
   <p>Determine if a particular namelist already opened.</p>
 
@@ -1446,16 +1336,16 @@ parameter
       <table class="table table-striped varlist">
     <thead>
       <tr>
-        <th>Type</th>
-<th>Intent</th><th>Optional</th>        <th>Attributes</th>
-        <th></th>
-        <th>Name</th>
-        <th></th>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
     </thead>
     <tbody>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-nml~8"></span>
               character(len=*),
             </td>
 <td>intent(in)</td>
@@ -1470,7 +1360,7 @@ parameter
         </tr>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-exist~6"></span>
               logical,
             </td>
 <td>intent(out)</td>
@@ -1495,10 +1385,10 @@ parameter
     </div>
   </div>
 
-      <div class="panel panel-default">
-    <div class="panel-heading codesum"><span class="anchor" id="proc-input_unit~3"></span><h3> function <a href='../proc/input_unit~3.html'>input_unit</a>(nml)  
+      <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-input_unit~3"></span> <h3> function <a href='../proc/input_unit~3.html'>input_unit</a>(nml)  
 </h3></div>
-    <div class="panel-body">
+    <div class="card-body">
           
   <p>Assigns input unit for namelist opening.</p>
 
@@ -1506,16 +1396,16 @@ parameter
       <table class="table table-striped varlist">
     <thead>
       <tr>
-        <th>Type</th>
-<th>Intent</th><th>Optional</th>        <th>Attributes</th>
-        <th></th>
-        <th>Name</th>
-        <th></th>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
     </thead>
     <tbody>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-nml~9"></span>
               character(len=*),
             </td>
 <td>intent(in)</td>
@@ -1546,10 +1436,10 @@ parameter
 
     <section>
     <h2>Subroutines</h2>
-      <div class="panel panel-default">
-    <div class="panel-heading codesum"><span class="anchor" id="proc-read_in_params~2"></span><h3> subroutine <a href='../proc/read_in_params~2.html'>read_in_params</a>()  
+      <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-read_in_params~2"></span> <h3> subroutine <a href='../proc/read_in_params~2.html'>read_in_params</a>()  
 </h3></div>
-    <div class="panel-body">
+    <div class="card-body">
           
   <p>This subroutine reads in the parameters for the generation of distribution functions for ALPS.</p>
 
@@ -1559,10 +1449,10 @@ parameter
     </div>
   </div>
 
-      <div class="panel panel-default">
-    <div class="panel-heading codesum"><span class="anchor" id="proc-spec_read~2"></span><h3> subroutine <a href='../proc/spec_read~2.html'>spec_read</a>(is)  
+      <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-spec_read~2"></span> <h3> subroutine <a href='../proc/spec_read~2.html'>spec_read</a>(is)  
 </h3></div>
-    <div class="panel-body">
+    <div class="card-body">
           
   <p>Subroutine for reading in species parameters.</p>
 
@@ -1570,16 +1460,16 @@ parameter
       <table class="table table-striped varlist">
     <thead>
       <tr>
-        <th>Type</th>
-<th>Intent</th><th>Optional</th>        <th>Attributes</th>
-        <th></th>
-        <th>Name</th>
-        <th></th>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
     </thead>
     <tbody>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-is~9"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -1599,10 +1489,10 @@ parameter
     </div>
   </div>
 
-      <div class="panel panel-default">
-    <div class="panel-heading codesum"><span class="anchor" id="proc-get_indexed_namelist_unit~2"></span><h3> subroutine <a href='../proc/get_indexed_namelist_unit~2.html'>get_indexed_namelist_unit</a>(unit, nml, index_in)  
+      <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-get_indexed_namelist_unit~2"></span> <h3> subroutine <a href='../proc/get_indexed_namelist_unit~2.html'>get_indexed_namelist_unit</a>(unit, nml, index_in)  
 </h3></div>
-    <div class="panel-body">
+    <div class="card-body">
           
   <p>Determines unused I/O unit.</p>
 
@@ -1610,16 +1500,16 @@ parameter
       <table class="table table-striped varlist">
     <thead>
       <tr>
-        <th>Type</th>
-<th>Intent</th><th>Optional</th>        <th>Attributes</th>
-        <th></th>
-        <th>Name</th>
-        <th></th>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
     </thead>
     <tbody>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-unit~8"></span>
               integer,
             </td>
 <td>intent(out)</td>
@@ -1634,7 +1524,7 @@ parameter
         </tr>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-nml~7"></span>
               character(len=*),
             </td>
 <td>intent(in)</td>
@@ -1649,7 +1539,7 @@ parameter
         </tr>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-index_in~3"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -1669,10 +1559,10 @@ parameter
     </div>
   </div>
 
-      <div class="panel panel-default">
-    <div class="panel-heading codesum"><span class="anchor" id="proc-get_unused_unit~3"></span><h3> subroutine <a href='../proc/get_unused_unit~3.html'>get_unused_unit</a>(unit)  
+      <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-get_unused_unit~3"></span> <h3> subroutine <a href='../proc/get_unused_unit~3.html'>get_unused_unit</a>(unit)  
 </h3></div>
-    <div class="panel-body">
+    <div class="card-body">
           
   <p>Determine unused number for I/O index.</p>
 
@@ -1680,16 +1570,16 @@ parameter
       <table class="table table-striped varlist">
     <thead>
       <tr>
-        <th>Type</th>
-<th>Intent</th><th>Optional</th>        <th>Attributes</th>
-        <th></th>
-        <th>Name</th>
-        <th></th>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
     </thead>
     <tbody>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-unit~9"></span>
               integer,
             </td>
 <td>intent(out)</td>
@@ -1709,10 +1599,10 @@ parameter
     </div>
   </div>
 
-      <div class="panel panel-default">
-    <div class="panel-heading codesum"><span class="anchor" id="proc-get_runname~3"></span><h3> subroutine <a href='../proc/get_runname~3.html'>get_runname</a>(runname)  
+      <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-get_runname~3"></span> <h3> subroutine <a href='../proc/get_runname~3.html'>get_runname</a>(runname)  
 </h3></div>
-    <div class="panel-body">
+    <div class="card-body">
           
   <p>Get runname for output files from input argument.</p>
 
@@ -1720,16 +1610,16 @@ parameter
       <table class="table table-striped varlist">
     <thead>
       <tr>
-        <th>Type</th>
-<th>Intent</th><th>Optional</th>        <th>Attributes</th>
-        <th></th>
-        <th>Name</th>
-        <th></th>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
     </thead>
     <tbody>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-runname~5"></span>
               character(len=500),
             </td>
 <td>intent(out)</td>
@@ -1751,6 +1641,7 @@ parameter
 
     </section>    
     
+
     
     </div>
   </div>
@@ -1759,12 +1650,12 @@ parameter
     </div> <!-- /container -->
     <footer>
       <div class="container">
-        <div class="row">
-          <div class="col-xs-6 col-md-6"><p>ALPS was developed by Kristopher Klein, Daniel Verscharen<br>&copy; 2023 
+        <div class="row justify-content-between">
+          <div class="col"><p>ALPS was developed by Kristopher Klein, Daniel Verscharen<br>&copy; 2024 
 </p>
           </div>
-          <div class="col-xs-6 col-md-6">
-            <p class="text-right">
+          <div class="col">
+            <p class="text-end">
               Documentation generated by
               <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
             </p>
@@ -1774,17 +1665,12 @@ parameter
       </div> <!-- /container -->
     </footer>
 
-    <!-- Bootstrap core JavaScript
-         ================================================== -->
-         <!-- Placed at the end of the document so the pages load faster -->
-    <!--
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-        -->
-        <script src="../js/bootstrap.min.js"></script>
-        <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-        <script src="../js/ie10-viewport-bug-workaround.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>    
 
-        <!-- MathJax JavaScript
+    <!-- MathJax JavaScript
              ================================================== -->
              <!-- Placed at the end of the document so the pages load faster -->
         <script type="text/x-mathjax-config">

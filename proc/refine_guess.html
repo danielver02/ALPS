@@ -1,3 +1,5 @@
+<!-- -*- mode: jinja2 -*- -->
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -10,78 +12,57 @@
 
     <title>refine_guess &ndash; ALPS</title>
 
-    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <link href="../css/pygments.css" rel="stylesheet">
     <link href="../css/font-awesome.min.css" rel="stylesheet">
     <link href="../css/local.css" rel="stylesheet">
       <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
 
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-        <![endif]-->
-
-         <script src="../js/jquery-2.1.3.min.js"></script>
-         <script src="../js/svg-pan-zoom.min.js"></script>
-
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="../js/svg-pan-zoom.min.js"></script>
   </head>
 
   <body>
 
     <!-- Fixed navbar -->
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
           <a class="navbar-brand" href="../index.html">ALPS </a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-              <li><a href='../page/index.html'>Readme</a></li>
-            <li class="dropdown hidden-xs visible-sm visible-md hidden-lg">
-              <a href="#" class="dropdown-toggle"
-                 data-toggle="dropdown" role="button"
-                 aria-haspopup="true"
-                 aria-expanded="false">
-                 Contents <span class="caret"></span>
-              </a>
-              <ul class="dropdown-menu">
-                  <li><a href="../lists/modules.html">Modules</a></li>
-                  <li><a href="../lists/procedures.html">Procedures</a></li>
-                  <li><a href="../lists/types.html">Derived Types</a></li>
-                  <li><a href="../lists/programs.html">Programs</a></li>
-              </ul>
-            </li>
-              <li class="visible-xs hidden-sm visible-lg">
-                <a href="../lists/modules.html">Modules</a>
-              </li>
-              <li class="visible-xs hidden-sm visible-lg">
-                <a href="../lists/procedures.html">Procedures</a>
-              </li>
-              <li class="visible-xs hidden-sm visible-lg">
-                <a href="../lists/types.html">Derived Types</a>
-              </li>
-              <li class="visible-xs hidden-sm visible-lg">
-                <a href="../lists/programs.html">Programs</a>
-              </li>
-          </ul>
-            <form action="../search.html" class="navbar-form navbar-right" role="search">
-              <div class="form-group">
-                <input type="text" class="form-control" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="../page/index.html">Readme</a></li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/namelists.html">Namelists</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/programs.html">Programs</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
               </div>
-              <!--
-                  <button type="submit" class="btn btn-default">Submit</button>
-                  -->
-            </form>
-        </div><!--/.nav-collapse -->
-      </div>
-    </nav>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
 
     <div class="container">
   <div class="row">
@@ -89,28 +70,32 @@
       <small>Subroutine</small>
       
     </h1>
-      <div class="row" id="info-bar">
-    <div class="col-lg-12">
-      <div class="well well-sm">
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
         <ul class="list-inline" style="margin-bottom:0px;display:inline">
 
-          <li id="statements"><i class="fa fa-list-ol"></i>
-            <a data-toggle="tooltip"
-               data-placement="bottom" data-html="true"
-               title=" 0.6% of total for procedures.">31 statements</a>
-          </li>
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip"
+                 data-bs-placement="bottom" data-html="true"
+                 title=" 0.6% of total for procedures.">31 statements</a>
+            </li>
 
         </ul>
-        <ol class="breadcrumb in-well text-right">
-              <li><a href='../module/alps_fns.html'>alps_fns</a></li>
-          <li class="active">refine_guess</li>
-        </ol>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../module/alps_fns.html'>alps_fns</a></li>
+            <li class="breadcrumb-item active" aria-current="page">refine_guess</li>
+          </ol>
+        </nav>
       </div>
     </div>
   </div>
   <script>
     $(function () {
-    $('[data-toggle="tooltip"]').tooltip()
+    $('[data-bs-toggle="tooltip"]').tooltip()
     })
   </script>
 
@@ -120,6 +105,7 @@
     <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
       <div id="sidebar">
       <h3>Contents</h3>
+  
   
   
   
@@ -149,20 +135,19 @@
     <div class="col-md-9" id='text'>
     <h2>public  subroutine refine_guess()  
 </h2>
-        <div class="panel panel-default">
-      <div class="panel-heading">
-        <h3 class="panel-title">Uses</h3>
-      </div>
-      <ul class="list-group">
-          <li class="list-group-item">
-            <ul class="list-inline">
-                <li><a href='<a href="http://www.mpi-forum.org/docs/mpi-3.1/mpi31-report/node410.htm">mpi</a>'>mpi</a></li>
-                <li><a href='../module/alps_io.html'>alps_io</a></li>
-                <li><a href='../module/alps_var.html'>alps_var</a></li>
-            </ul>
-          </li>
-          <li class="list-group-item">
-            <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+        <div class="card mb-4">
+      <h3 class="card-header card-title bg-light">Uses</h3>
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <ul class="list-inline">
+                  <li class="list-inline-item"><a href='../module/alps_io.html'>alps_io</a></li>
+                  <li class="list-inline-item"><a href='http://www.mpi-forum.org/docs/mpi-3.1/mpi31-report/node410.htm'>mpi</a></li>
+                  <li class="list-inline-item"><a href='../module/alps_var.html'>alps_var</a></li>
+              </ul>
+            </li>
+            <li class="list-group-item">
+              <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Generated by graphviz version 2.43.0 (0)
@@ -182,7 +167,7 @@
 <!-- module~alps_io -->
 <g id="proc~~refine_guess~~UsesGraph_node2" class="node">
 <title>module~alps_io</title>
-<g id="a_proc~~refine_guess~~UsesGraph_node2"><a xlink:href=".././module/alps_io.html" xlink:title="alps_io">
+<g id="a_proc~~refine_guess~~UsesGraph_node2"><a xlink:href="../module/alps_io.html" xlink:title="alps_io">
 <polygon fill="#337ab7" stroke="#337ab7" points="145.5,-86 91.5,-86 91.5,-62 145.5,-62 145.5,-86"/>
 <text text-anchor="middle" x="118.5" y="-71.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_io</text>
 </a>
@@ -197,7 +182,7 @@
 <!-- module~alps_var -->
 <g id="proc~~refine_guess~~UsesGraph_node3" class="node">
 <title>module~alps_var</title>
-<g id="a_proc~~refine_guess~~UsesGraph_node3"><a xlink:href=".././module/alps_var.html" xlink:title="alps_var">
+<g id="a_proc~~refine_guess~~UsesGraph_node3"><a xlink:href="../module/alps_var.html" xlink:title="alps_var">
 <polygon fill="#337ab7" stroke="#337ab7" points="147,-44 90,-44 90,-20 147,-20 147,-44"/>
 <text text-anchor="middle" x="118.5" y="-29.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_var</text>
 </a>
@@ -229,17 +214,17 @@
 </g>
 </g>
 </svg>
-</div>        <div><a type="button" class="graph-help" data-toggle="modal" href="#graph-help-text">Help</a></div>
-          <div class="modal fade" id="graph-help-text" tabindex="-1" role="dialog">
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#UsesGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="UsesGraph-help-text" tabindex="-1" role="dialog">
             <div class="modal-dialog modal-lg" role="document">
               <div class="modal-content">
                 <div class="modal-header">
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
                   <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-              <div class="modal-body">
+                <div class="modal-body">
 <p>Nodes of different colours represent the following: </p>
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
@@ -299,8 +284,9 @@ modules which it uses.
             </div>
           </div>
         </div>
-          </li>
-      </ul>
+            </li>
+        </ul>
+      </div>
     </div>
 
 
@@ -311,11 +297,11 @@ modules which it uses.
     <em>None</em>
     <br>
     <br>
-    <div class="panel panel-default">
-      <div class="panel-heading">
-  <h3 class="panel-title">Calls</h3>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Calls</h3>
       </div>
-      <div class="panel-body">
+      <div class="card-body">
   <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
@@ -348,7 +334,7 @@ modules which it uses.
 <!-- proc~disp -->
 <g id="proc~~refine_guess~~CallsGraph_node3" class="node">
 <title>proc~disp</title>
-<g id="a_proc~~refine_guess~~CallsGraph_node3"><a xlink:href=".././proc/disp.html" xlink:title="alps_fns::disp">
+<g id="a_proc~~refine_guess~~CallsGraph_node3"><a xlink:href="../proc/disp.html" xlink:title="alps_fns::disp">
 <polygon fill="#d94e8f" stroke="#d94e8f" points="431,-233 346,-233 346,-209 431,-209 431,-233"/>
 <text text-anchor="middle" x="388.5" y="-218.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_fns::disp</text>
 </a>
@@ -363,7 +349,7 @@ modules which it uses.
 <!-- proc~get_unused_unit -->
 <g id="proc~~refine_guess~~CallsGraph_node4" class="node">
 <title>proc~get_unused_unit</title>
-<g id="a_proc~~refine_guess~~CallsGraph_node4"><a xlink:href=".././proc/get_unused_unit.html" xlink:title="alps_io::get_unused_unit">
+<g id="a_proc~~refine_guess~~CallsGraph_node4"><a xlink:href="../proc/get_unused_unit.html" xlink:title="alps_io::get_unused_unit">
 <polygon fill="#d9534f" stroke="#d9534f" points="310,-204 166,-204 166,-180 310,-180 310,-204"/>
 <text text-anchor="middle" x="238" y="-189.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_io::get_unused_unit</text>
 </a>
@@ -378,7 +364,7 @@ modules which it uses.
 <!-- proc~secant -->
 <g id="proc~~refine_guess~~CallsGraph_node5" class="node">
 <title>proc~secant</title>
-<g id="a_proc~~refine_guess~~CallsGraph_node5"><a xlink:href=".././proc/secant.html" xlink:title="alps_fns::secant">
+<g id="a_proc~~refine_guess~~CallsGraph_node5"><a xlink:href="../proc/secant.html" xlink:title="alps_fns::secant">
 <polygon fill="#d9534f" stroke="#d9534f" points="287,-284 189,-284 189,-260 287,-260 287,-284"/>
 <text text-anchor="middle" x="238" y="-269.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_fns::secant</text>
 </a>
@@ -423,7 +409,7 @@ modules which it uses.
 <!-- proc~calc_chi -->
 <g id="proc~~refine_guess~~CallsGraph_node8" class="node">
 <title>proc~calc_chi</title>
-<g id="a_proc~~refine_guess~~CallsGraph_node8"><a xlink:href=".././proc/calc_chi.html" xlink:title="alps_nhds::calc_chi">
+<g id="a_proc~~refine_guess~~CallsGraph_node8"><a xlink:href="../proc/calc_chi.html" xlink:title="alps_nhds::calc_chi">
 <polygon fill="#d9534f" stroke="#d9534f" points="616.5,-293 501.5,-293 501.5,-269 616.5,-269 616.5,-293"/>
 <text text-anchor="middle" x="559" y="-278.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_nhds::calc_chi</text>
 </a>
@@ -438,7 +424,7 @@ modules which it uses.
 <!-- proc~determine_resonances -->
 <g id="proc~~refine_guess~~CallsGraph_node9" class="node">
 <title>proc~determine_resonances</title>
-<g id="a_proc~~refine_guess~~CallsGraph_node9"><a xlink:href=".././proc/determine_resonances.html" xlink:title="alps_fns::determine_resonances">
+<g id="a_proc~~refine_guess~~CallsGraph_node9"><a xlink:href="../proc/determine_resonances.html" xlink:title="alps_fns::determine_resonances">
 <polygon fill="#d9534f" stroke="#d9534f" points="651,-171 467,-171 467,-147 651,-147 651,-171"/>
 <text text-anchor="middle" x="559" y="-156.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_fns::determine_resonances</text>
 </a>
@@ -453,7 +439,7 @@ modules which it uses.
 <!-- proc~full_integrate -->
 <g id="proc~~refine_guess~~CallsGraph_node10" class="node">
 <title>proc~full_integrate</title>
-<g id="a_proc~~refine_guess~~CallsGraph_node10"><a xlink:href=".././proc/full_integrate.html" xlink:title="alps_fns::full_integrate">
+<g id="a_proc~~refine_guess~~CallsGraph_node10"><a xlink:href="../proc/full_integrate.html" xlink:title="alps_fns::full_integrate">
 <polygon fill="#d94e8f" stroke="#d94e8f" points="625.5,-213 492.5,-213 492.5,-189 625.5,-189 625.5,-213"/>
 <text text-anchor="middle" x="559" y="-198.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_fns::full_integrate</text>
 </a>
@@ -468,7 +454,7 @@ modules which it uses.
 <!-- proc~int_ee -->
 <g id="proc~~refine_guess~~CallsGraph_node11" class="node">
 <title>proc~int_ee</title>
-<g id="a_proc~~refine_guess~~CallsGraph_node11"><a xlink:href=".././proc/int_ee.html" xlink:title="alps_fns::int_ee">
+<g id="a_proc~~refine_guess~~CallsGraph_node11"><a xlink:href="../proc/int_ee.html" xlink:title="alps_fns::int_ee">
 <polygon fill="#d94e8f" stroke="#d94e8f" points="606.5,-129 511.5,-129 511.5,-105 606.5,-105 606.5,-129"/>
 <text text-anchor="middle" x="559" y="-114.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_fns::int_ee</text>
 </a>
@@ -483,7 +469,7 @@ modules which it uses.
 <!-- proc~int_ee_rel -->
 <g id="proc~~refine_guess~~CallsGraph_node12" class="node">
 <title>proc~int_ee_rel</title>
-<g id="a_proc~~refine_guess~~CallsGraph_node12"><a xlink:href=".././proc/int_ee_rel.html" xlink:title="alps_fns_rel::int_ee_rel">
+<g id="a_proc~~refine_guess~~CallsGraph_node12"><a xlink:href="../proc/int_ee_rel.html" xlink:title="alps_fns_rel::int_ee_rel">
 <polygon fill="#d94e8f" stroke="#d94e8f" points="849,-276 716,-276 716,-252 849,-252 849,-276"/>
 <text text-anchor="middle" x="782.5" y="-261.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_fns_rel::int_ee_rel</text>
 </a>
@@ -510,7 +496,7 @@ modules which it uses.
 <!-- proc~besseli -->
 <g id="proc~~refine_guess~~CallsGraph_node13" class="node">
 <title>proc~besseli</title>
-<g id="a_proc~~refine_guess~~CallsGraph_node13"><a xlink:href=".././proc/besseli.html" xlink:title="alps_nhds::besselI">
+<g id="a_proc~~refine_guess~~CallsGraph_node13"><a xlink:href="../proc/besseli.html" xlink:title="alps_nhds::besselI">
 <polygon fill="#d94e8f" stroke="#d94e8f" points="1063.5,-431 954.5,-431 954.5,-407 1063.5,-407 1063.5,-431"/>
 <text text-anchor="middle" x="1009" y="-416.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_nhds::besselI</text>
 </a>
@@ -525,7 +511,7 @@ modules which it uses.
 <!-- proc~calc_ypsilon -->
 <g id="proc~~refine_guess~~CallsGraph_node14" class="node">
 <title>proc~calc_ypsilon</title>
-<g id="a_proc~~refine_guess~~CallsGraph_node14"><a xlink:href=".././proc/calc_ypsilon.html" xlink:title="alps_nhds::calc_ypsilon">
+<g id="a_proc~~refine_guess~~CallsGraph_node14"><a xlink:href="../proc/calc_ypsilon.html" xlink:title="alps_nhds::calc_ypsilon">
 <polygon fill="#d9534f" stroke="#d9534f" points="851,-389 714,-389 714,-365 851,-365 851,-389"/>
 <text text-anchor="middle" x="782.5" y="-374.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_nhds::calc_ypsilon</text>
 </a>
@@ -540,7 +526,7 @@ modules which it uses.
 <!-- proc~integrate -->
 <g id="proc~~refine_guess~~CallsGraph_node16" class="node">
 <title>proc~integrate</title>
-<g id="a_proc~~refine_guess~~CallsGraph_node16"><a xlink:href=".././proc/integrate.html" xlink:title="alps_fns::integrate">
+<g id="a_proc~~refine_guess~~CallsGraph_node16"><a xlink:href="../proc/integrate.html" xlink:title="alps_fns::integrate">
 <polygon fill="#d94e8f" stroke="#d94e8f" points="1065,-66 953,-66 953,-42 1065,-42 1065,-66"/>
 <text text-anchor="middle" x="1009" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_fns::integrate</text>
 </a>
@@ -555,7 +541,7 @@ modules which it uses.
 <!-- proc~integrate_res -->
 <g id="proc~~refine_guess~~CallsGraph_node17" class="node">
 <title>proc~integrate_res</title>
-<g id="a_proc~~refine_guess~~CallsGraph_node17"><a xlink:href=".././proc/integrate_res.html" xlink:title="alps_fns::integrate_res">
+<g id="a_proc~~refine_guess~~CallsGraph_node17"><a xlink:href="../proc/integrate_res.html" xlink:title="alps_fns::integrate_res">
 <polygon fill="#d94e8f" stroke="#d94e8f" points="849,-66 716,-66 716,-42 849,-42 849,-66"/>
 <text text-anchor="middle" x="782.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_fns::integrate_res</text>
 </a>
@@ -570,7 +556,7 @@ modules which it uses.
 <!-- proc~integrate_res_rel -->
 <g id="proc~~refine_guess~~CallsGraph_node18" class="node">
 <title>proc~integrate_res_rel</title>
-<g id="a_proc~~refine_guess~~CallsGraph_node18"><a xlink:href=".././proc/integrate_res_rel.html" xlink:title="alps_fns_rel::integrate_res_rel">
+<g id="a_proc~~refine_guess~~CallsGraph_node18"><a xlink:href="../proc/integrate_res_rel.html" xlink:title="alps_fns_rel::integrate_res_rel">
 <polygon fill="#d94e8f" stroke="#d94e8f" points="867.5,-234 697.5,-234 697.5,-210 867.5,-210 867.5,-234"/>
 <text text-anchor="middle" x="782.5" y="-219.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_fns_rel::integrate_res_rel</text>
 </a>
@@ -585,7 +571,7 @@ modules which it uses.
 <!-- proc~landau_integrate -->
 <g id="proc~~refine_guess~~CallsGraph_node19" class="node">
 <title>proc~landau_integrate</title>
-<g id="a_proc~~refine_guess~~CallsGraph_node19"><a xlink:href=".././proc/landau_integrate.html" xlink:title="alps_fns::landau_integrate">
+<g id="a_proc~~refine_guess~~CallsGraph_node19"><a xlink:href="../proc/landau_integrate.html" xlink:title="alps_fns::landau_integrate">
 <polygon fill="#d94e8f" stroke="#d94e8f" points="859.5,-150 705.5,-150 705.5,-126 859.5,-126 859.5,-150"/>
 <text text-anchor="middle" x="782.5" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_fns::landau_integrate</text>
 </a>
@@ -600,7 +586,7 @@ modules which it uses.
 <!-- proc~landau_integrate_rel -->
 <g id="proc~~refine_guess~~CallsGraph_node20" class="node">
 <title>proc~landau_integrate_rel</title>
-<g id="a_proc~~refine_guess~~CallsGraph_node20"><a xlink:href=".././proc/landau_integrate_rel.html" xlink:title="alps_fns_rel::landau_integrate_rel">
+<g id="a_proc~~refine_guess~~CallsGraph_node20"><a xlink:href="../proc/landau_integrate_rel.html" xlink:title="alps_fns_rel::landau_integrate_rel">
 <polygon fill="#d94e8f" stroke="#d94e8f" points="878,-192 687,-192 687,-168 878,-168 878,-192"/>
 <text text-anchor="middle" x="782.5" y="-177.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_fns_rel::landau_integrate_rel</text>
 </a>
@@ -615,7 +601,7 @@ modules which it uses.
 <!-- proc~determine_sproc_rel -->
 <g id="proc~~refine_guess~~CallsGraph_node15" class="node">
 <title>proc~determine_sproc_rel</title>
-<g id="a_proc~~refine_guess~~CallsGraph_node15"><a xlink:href=".././proc/determine_sproc_rel.html" xlink:title="alps_fns_rel::determine_sproc_rel">
+<g id="a_proc~~refine_guess~~CallsGraph_node15"><a xlink:href="../proc/determine_sproc_rel.html" xlink:title="alps_fns_rel::determine_sproc_rel">
 <polygon fill="#d9534f" stroke="#d9534f" points="1104,-276 914,-276 914,-252 1104,-252 1104,-276"/>
 <text text-anchor="middle" x="1009" y="-261.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_fns_rel::determine_sproc_rel</text>
 </a>
@@ -630,7 +616,7 @@ modules which it uses.
 <!-- proc~bessi -->
 <g id="proc~~refine_guess~~CallsGraph_node21" class="node">
 <title>proc~bessi</title>
-<g id="a_proc~~refine_guess~~CallsGraph_node21"><a xlink:href=".././proc/bessi.html" xlink:title="alps_nhds::BESSI">
+<g id="a_proc~~refine_guess~~CallsGraph_node21"><a xlink:href="../proc/bessi.html" xlink:title="alps_nhds::BESSI">
 <polygon fill="#d94e8f" stroke="#d94e8f" points="1313.5,-650 1210.5,-650 1210.5,-626 1313.5,-626 1313.5,-650"/>
 <text text-anchor="middle" x="1262" y="-635.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_nhds::BESSI</text>
 </a>
@@ -651,7 +637,7 @@ modules which it uses.
 <!-- proc~dispfunct -->
 <g id="proc~~refine_guess~~CallsGraph_node22" class="node">
 <title>proc~dispfunct</title>
-<g id="a_proc~~refine_guess~~CallsGraph_node22"><a xlink:href=".././proc/dispfunct.html" xlink:title="alps_nhds::dispfunct">
+<g id="a_proc~~refine_guess~~CallsGraph_node22"><a xlink:href="../proc/dispfunct.html" xlink:title="alps_nhds::dispfunct">
 <polygon fill="#d94e8f" stroke="#d94e8f" points="1069.5,-389 948.5,-389 948.5,-365 1069.5,-365 1069.5,-389"/>
 <text text-anchor="middle" x="1009" y="-374.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_nhds::dispfunct</text>
 </a>
@@ -666,7 +652,7 @@ modules which it uses.
 <!-- proc~int_t -->
 <g id="proc~~refine_guess~~CallsGraph_node25" class="node">
 <title>proc~int_t</title>
-<g id="a_proc~~refine_guess~~CallsGraph_node25"><a xlink:href=".././proc/int_t.html" xlink:title="alps_fns::int_T">
+<g id="a_proc~~refine_guess~~CallsGraph_node25"><a xlink:href="../proc/int_t.html" xlink:title="alps_fns::int_T">
 <polygon fill="#d94e8f" stroke="#d94e8f" points="1306,-24 1218,-24 1218,0 1306,0 1306,-24"/>
 <text text-anchor="middle" x="1262" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_fns::int_T</text>
 </a>
@@ -681,7 +667,7 @@ modules which it uses.
 <!-- proc~resu -->
 <g id="proc~~refine_guess~~CallsGraph_node29" class="node">
 <title>proc~resu</title>
-<g id="a_proc~~refine_guess~~CallsGraph_node29"><a xlink:href=".././proc/resu.html" xlink:title="alps_fns::resU">
+<g id="a_proc~~refine_guess~~CallsGraph_node29"><a xlink:href="../proc/resu.html" xlink:title="alps_fns::resU">
 <polygon fill="#d94e8f" stroke="#d94e8f" points="1305,-66 1219,-66 1219,-42 1305,-42 1305,-66"/>
 <text text-anchor="middle" x="1262" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_fns::resU</text>
 </a>
@@ -702,7 +688,7 @@ modules which it uses.
 <!-- proc~funct_g -->
 <g id="proc~~refine_guess~~CallsGraph_node24" class="node">
 <title>proc~funct_g</title>
-<g id="a_proc~~refine_guess~~CallsGraph_node24"><a xlink:href=".././proc/funct_g.html" xlink:title="alps_fns::funct_g">
+<g id="a_proc~~refine_guess~~CallsGraph_node24"><a xlink:href="../proc/funct_g.html" xlink:title="alps_fns::funct_g">
 <polygon fill="#d94e8f" stroke="#d94e8f" points="1060,-24 958,-24 958,0 1060,0 1060,-24"/>
 <text text-anchor="middle" x="1009" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_fns::funct_g</text>
 </a>
@@ -723,7 +709,7 @@ modules which it uses.
 <!-- proc~integrate_resu_rel -->
 <g id="proc~~refine_guess~~CallsGraph_node28" class="node">
 <title>proc~integrate_resu_rel</title>
-<g id="a_proc~~refine_guess~~CallsGraph_node28"><a xlink:href=".././proc/integrate_resu_rel.html" xlink:title="alps_fns_rel::integrate_resU_rel">
+<g id="a_proc~~refine_guess~~CallsGraph_node28"><a xlink:href="../proc/integrate_resu_rel.html" xlink:title="alps_fns_rel::integrate_resU_rel">
 <polygon fill="#d94e8f" stroke="#d94e8f" points="1098,-234 920,-234 920,-210 1098,-210 1098,-234"/>
 <text text-anchor="middle" x="1009" y="-219.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_fns_rel::integrate_resU_rel</text>
 </a>
@@ -738,7 +724,7 @@ modules which it uses.
 <!-- proc~eval_fit -->
 <g id="proc~~refine_guess~~CallsGraph_node23" class="node">
 <title>proc~eval_fit</title>
-<g id="a_proc~~refine_guess~~CallsGraph_node23"><a xlink:href=".././proc/eval_fit.html" xlink:title="alps_analyt::eval_fit">
+<g id="a_proc~~refine_guess~~CallsGraph_node23"><a xlink:href="../proc/eval_fit.html" xlink:title="alps_analyt::eval_fit">
 <polygon fill="#d94e8f" stroke="#d94e8f" points="1068,-150 950,-150 950,-126 1068,-126 1068,-150"/>
 <text text-anchor="middle" x="1009" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_analyt::eval_fit</text>
 </a>
@@ -753,7 +739,7 @@ modules which it uses.
 <!-- proc~int_t_res -->
 <g id="proc~~refine_guess~~CallsGraph_node26" class="node">
 <title>proc~int_t_res</title>
-<g id="a_proc~~refine_guess~~CallsGraph_node26"><a xlink:href=".././proc/int_t_res.html" xlink:title="alps_fns::int_T_res">
+<g id="a_proc~~refine_guess~~CallsGraph_node26"><a xlink:href="../proc/int_t_res.html" xlink:title="alps_fns::int_T_res">
 <polygon fill="#d94e8f" stroke="#d94e8f" points="1063.5,-108 954.5,-108 954.5,-84 1063.5,-84 1063.5,-108"/>
 <text text-anchor="middle" x="1009" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_fns::int_T_res</text>
 </a>
@@ -780,7 +766,7 @@ modules which it uses.
 <!-- proc~int_t_res_rel -->
 <g id="proc~~refine_guess~~CallsGraph_node27" class="node">
 <title>proc~int_t_res_rel</title>
-<g id="a_proc~~refine_guess~~CallsGraph_node27"><a xlink:href=".././proc/int_t_res_rel.html" xlink:title="alps_fns_rel::int_T_res_rel">
+<g id="a_proc~~refine_guess~~CallsGraph_node27"><a xlink:href="../proc/int_t_res_rel.html" xlink:title="alps_fns_rel::int_T_res_rel">
 <polygon fill="#d94e8f" stroke="#d94e8f" points="1082.5,-192 935.5,-192 935.5,-168 1082.5,-168 1082.5,-192"/>
 <text text-anchor="middle" x="1009" y="-177.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_fns_rel::int_T_res_rel</text>
 </a>
@@ -816,40 +802,40 @@ modules which it uses.
 <path fill="none" stroke="#000000" d="M1313.74,-646.53C1344.4,-651.25 1384.33,-656.62 1420,-659 1481.64,-663.1 1497.44,-664.21 1559,-659 1696.07,-647.39 1856.48,-614.04 1927.05,-598.35"/>
 <polygon fill="#000000" stroke="#000000" points="1928.2,-601.68 1937.2,-596.08 1926.67,-594.85 1928.2,-601.68"/>
 </g>
-<!-- proc~bessi0 -->
+<!-- proc~bessi0~2 -->
 <g id="proc~~refine_guess~~CallsGraph_node33" class="node">
-<title>proc~bessi0</title>
-<g id="a_proc~~refine_guess~~CallsGraph_node33"><a xlink:href=".././proc/bessi0.html" xlink:title="alps_nhds::BESSI0">
+<title>proc~bessi0~2</title>
+<g id="a_proc~~refine_guess~~CallsGraph_node33"><a xlink:href="../proc/bessi0~2.html" xlink:title="alps_nhds::BESSI0">
 <polygon fill="#d94e8f" stroke="#d94e8f" points="1544.5,-650 1434.5,-650 1434.5,-626 1544.5,-626 1544.5,-650"/>
 <text text-anchor="middle" x="1489.5" y="-635.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_nhds::BESSI0</text>
 </a>
 </g>
 </g>
-<!-- proc~bessi&#45;&gt;proc~bessi0 -->
+<!-- proc~bessi&#45;&gt;proc~bessi0~2 -->
 <g id="proc~~refine_guess~~CallsGraph_edge39" class="edge">
-<title>proc~bessi&#45;&gt;proc~bessi0</title>
+<title>proc~bessi&#45;&gt;proc~bessi0~2</title>
 <path fill="none" stroke="#000000" d="M1313.61,-638C1346.23,-638 1388.94,-638 1423.99,-638"/>
 <polygon fill="#000000" stroke="#000000" points="1424.12,-641.5 1434.12,-638 1424.12,-634.5 1424.12,-641.5"/>
 </g>
-<!-- proc~bessi1 -->
+<!-- proc~bessi1~2 -->
 <g id="proc~~refine_guess~~CallsGraph_node34" class="node">
-<title>proc~bessi1</title>
-<g id="a_proc~~refine_guess~~CallsGraph_node34"><a xlink:href=".././proc/bessi1.html" xlink:title="alps_nhds::BESSI1">
+<title>proc~bessi1~2</title>
+<g id="a_proc~~refine_guess~~CallsGraph_node34"><a xlink:href="../proc/bessi1~2.html" xlink:title="alps_nhds::BESSI1">
 <polygon fill="#d94e8f" stroke="#d94e8f" points="1544.5,-608 1434.5,-608 1434.5,-584 1544.5,-584 1544.5,-608"/>
 <text text-anchor="middle" x="1489.5" y="-593.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_nhds::BESSI1</text>
 </a>
 </g>
 </g>
-<!-- proc~bessi&#45;&gt;proc~bessi1 -->
+<!-- proc~bessi&#45;&gt;proc~bessi1~2 -->
 <g id="proc~~refine_guess~~CallsGraph_edge40" class="edge">
-<title>proc~bessi&#45;&gt;proc~bessi1</title>
+<title>proc~bessi&#45;&gt;proc~bessi1~2</title>
 <path fill="none" stroke="#000000" d="M1313.61,-628.57C1346.23,-622.5 1388.94,-614.54 1423.99,-608.02"/>
 <polygon fill="#000000" stroke="#000000" points="1424.93,-611.4 1434.12,-606.13 1423.65,-604.52 1424.93,-611.4"/>
 </g>
 <!-- proc~wofz -->
 <g id="proc~~refine_guess~~CallsGraph_node41" class="node">
 <title>proc~wofz</title>
-<g id="a_proc~~refine_guess~~CallsGraph_node41"><a xlink:href=".././proc/wofz.html" xlink:title="alps_nhds::WOFZ">
+<g id="a_proc~~refine_guess~~CallsGraph_node41"><a xlink:href="../proc/wofz.html" xlink:title="alps_nhds::WOFZ">
 <polygon fill="#d9534f" stroke="#d9534f" points="1314.5,-461 1209.5,-461 1209.5,-437 1314.5,-437 1314.5,-461"/>
 <text text-anchor="middle" x="1262" y="-446.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_nhds::WOFZ</text>
 </a>
@@ -864,7 +850,7 @@ modules which it uses.
 <!-- proc~distribution_analyt -->
 <g id="proc~~refine_guess~~CallsGraph_node36" class="node">
 <title>proc~distribution_analyt</title>
-<g id="a_proc~~refine_guess~~CallsGraph_node36"><a xlink:href=".././proc/distribution_analyt.html" xlink:title="alps_distribution_analyt::distribution_analyt">
+<g id="a_proc~~refine_guess~~CallsGraph_node36"><a xlink:href="../proc/distribution_analyt.html" xlink:title="alps_distribution_analyt::distribution_analyt">
 <polygon fill="#d94e8f" stroke="#d94e8f" points="1384,-150 1140,-150 1140,-126 1384,-126 1384,-150"/>
 <text text-anchor="middle" x="1262" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_distribution_analyt::distribution_analyt</text>
 </a>
@@ -879,7 +865,7 @@ modules which it uses.
 <!-- proc~fit_function -->
 <g id="proc~~refine_guess~~CallsGraph_node37" class="node">
 <title>proc~fit_function</title>
-<g id="a_proc~~refine_guess~~CallsGraph_node37"><a xlink:href=".././proc/fit_function.html" xlink:title="alps_analyt::fit_function">
+<g id="a_proc~~refine_guess~~CallsGraph_node37"><a xlink:href="../proc/fit_function.html" xlink:title="alps_analyt::fit_function">
 <polygon fill="#d94e8f" stroke="#d94e8f" points="1331.5,-108 1192.5,-108 1192.5,-84 1331.5,-84 1331.5,-108"/>
 <text text-anchor="middle" x="1262" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_analyt::fit_function</text>
 </a>
@@ -900,7 +886,7 @@ modules which it uses.
 <!-- proc~cbessj -->
 <g id="proc~~refine_guess~~CallsGraph_node35" class="node">
 <title>proc~cbessj</title>
-<g id="a_proc~~refine_guess~~CallsGraph_node35"><a xlink:href=".././proc/cbessj.html" xlink:title="alps_fns_rel::CBESSJ">
+<g id="a_proc~~refine_guess~~CallsGraph_node35"><a xlink:href="../proc/cbessj.html" xlink:title="alps_fns_rel::CBESSJ">
 <polygon fill="#d9534f" stroke="#d9534f" points="1322,-192 1202,-192 1202,-168 1322,-168 1322,-192"/>
 <text text-anchor="middle" x="1262" y="-177.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_fns_rel::CBESSJ</text>
 </a>
@@ -915,7 +901,7 @@ modules which it uses.
 <!-- proc~alps_error -->
 <g id="proc~~refine_guess~~CallsGraph_node32" class="node">
 <title>proc~alps_error</title>
-<g id="a_proc~~refine_guess~~CallsGraph_node32"><a xlink:href=".././proc/alps_error.html" xlink:title="alps_io::alps_error">
+<g id="a_proc~~refine_guess~~CallsGraph_node32"><a xlink:href="../proc/alps_error.html" xlink:title="alps_io::alps_error">
 <polygon fill="#d9534f" stroke="#d9534f" points="1317,-356 1207,-356 1207,-332 1317,-332 1317,-356"/>
 <text text-anchor="middle" x="1262" y="-341.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_io::alps_error</text>
 </a>
@@ -930,7 +916,7 @@ modules which it uses.
 <!-- proc~int_t_rel -->
 <g id="proc~~refine_guess~~CallsGraph_node38" class="node">
 <title>proc~int_t_rel</title>
-<g id="a_proc~~refine_guess~~CallsGraph_node38"><a xlink:href=".././proc/int_t_rel.html" xlink:title="alps_fns_rel::int_T_rel">
+<g id="a_proc~~refine_guess~~CallsGraph_node38"><a xlink:href="../proc/int_t_rel.html" xlink:title="alps_fns_rel::int_T_rel">
 <polygon fill="#d94e8f" stroke="#d94e8f" points="1721,-274 1595,-274 1595,-250 1721,-250 1721,-274"/>
 <text text-anchor="middle" x="1658" y="-259.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_fns_rel::int_T_rel</text>
 </a>
@@ -945,7 +931,7 @@ modules which it uses.
 <!-- proc~principal_integral_rel -->
 <g id="proc~~refine_guess~~CallsGraph_node39" class="node">
 <title>proc~principal_integral_rel</title>
-<g id="a_proc~~refine_guess~~CallsGraph_node39"><a xlink:href=".././proc/principal_integral_rel.html" xlink:title="alps_fns_rel::principal_integral_rel">
+<g id="a_proc~~refine_guess~~CallsGraph_node39"><a xlink:href="../proc/principal_integral_rel.html" xlink:title="alps_fns_rel::principal_integral_rel">
 <polygon fill="#d94e8f" stroke="#d94e8f" points="1358.5,-234 1165.5,-234 1165.5,-210 1358.5,-210 1358.5,-234"/>
 <text text-anchor="middle" x="1262" y="-219.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_fns_rel::principal_integral_rel</text>
 </a>
@@ -960,7 +946,7 @@ modules which it uses.
 <!-- proc~resu_rel -->
 <g id="proc~~refine_guess~~CallsGraph_node40" class="node">
 <title>proc~resu_rel</title>
-<g id="a_proc~~refine_guess~~CallsGraph_node40"><a xlink:href=".././proc/resu_rel.html" xlink:title="alps_fns_rel::resU_rel">
+<g id="a_proc~~refine_guess~~CallsGraph_node40"><a xlink:href="../proc/resu_rel.html" xlink:title="alps_fns_rel::resU_rel">
 <polygon fill="#d94e8f" stroke="#d94e8f" points="1324,-314 1200,-314 1200,-290 1324,-290 1324,-314"/>
 <text text-anchor="middle" x="1262" y="-299.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_fns_rel::resU_rel</text>
 </a>
@@ -987,7 +973,7 @@ modules which it uses.
 <!-- proc~output_time -->
 <g id="proc~~refine_guess~~CallsGraph_node51" class="node">
 <title>proc~output_time</title>
-<g id="a_proc~~refine_guess~~CallsGraph_node51"><a xlink:href=".././proc/output_time.html" xlink:title="alps_io::output_time">
+<g id="a_proc~~refine_guess~~CallsGraph_node51"><a xlink:href="../proc/output_time.html" xlink:title="alps_io::output_time">
 <polygon fill="#d9534f" stroke="#d9534f" points="1550,-356 1429,-356 1429,-332 1550,-332 1550,-356"/>
 <text text-anchor="middle" x="1489.5" y="-341.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_io::output_time</text>
 </a>
@@ -1002,7 +988,7 @@ modules which it uses.
 <!-- proc~fact -->
 <g id="proc~~refine_guess~~CallsGraph_node49" class="node">
 <title>proc~fact</title>
-<g id="a_proc~~refine_guess~~CallsGraph_node49"><a xlink:href=".././proc/fact.html" xlink:title="alps_fns_rel::Fact">
+<g id="a_proc~~refine_guess~~CallsGraph_node49"><a xlink:href="../proc/fact.html" xlink:title="alps_fns_rel::Fact">
 <polygon fill="#d94e8f" stroke="#d94e8f" points="1541,-192 1438,-192 1438,-168 1541,-168 1541,-192"/>
 <text text-anchor="middle" x="1489.5" y="-177.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_fns_rel::Fact</text>
 </a>
@@ -1017,7 +1003,7 @@ modules which it uses.
 <!-- proc~bessj -->
 <g id="proc~~refine_guess~~CallsGraph_node48" class="node">
 <title>proc~bessj</title>
-<g id="a_proc~~refine_guess~~CallsGraph_node48"><a xlink:href=".././proc/bessj.html" xlink:title="alps_fns_rel::BESSJ">
+<g id="a_proc~~refine_guess~~CallsGraph_node48"><a xlink:href="../proc/bessj.html" xlink:title="alps_fns_rel::BESSJ">
 <polygon fill="#d94e8f" stroke="#d94e8f" points="1869,-363 1757,-363 1757,-339 1869,-339 1869,-363"/>
 <text text-anchor="middle" x="1813" y="-348.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_fns_rel::BESSJ</text>
 </a>
@@ -1032,7 +1018,7 @@ modules which it uses.
 <!-- proc~funct_g_rel -->
 <g id="proc~~refine_guess~~CallsGraph_node50" class="node">
 <title>proc~funct_g_rel</title>
-<g id="a_proc~~refine_guess~~CallsGraph_node50"><a xlink:href=".././proc/funct_g_rel.html" xlink:title="alps_fns_rel::funct_g_rel">
+<g id="a_proc~~refine_guess~~CallsGraph_node50"><a xlink:href="../proc/funct_g_rel.html" xlink:title="alps_fns_rel::funct_g_rel">
 <polygon fill="#d94e8f" stroke="#d94e8f" points="1559,-234 1420,-234 1420,-210 1559,-210 1559,-234"/>
 <text text-anchor="middle" x="1489.5" y="-219.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_fns_rel::funct_g_rel</text>
 </a>
@@ -1113,7 +1099,7 @@ modules which it uses.
 <!-- proc~bessj0 -->
 <g id="proc~~refine_guess~~CallsGraph_node52" class="node">
 <title>proc~bessj0</title>
-<g id="a_proc~~refine_guess~~CallsGraph_node52"><a xlink:href=".././proc/bessj0.html" xlink:title="alps_fns_rel::BESSJ0">
+<g id="a_proc~~refine_guess~~CallsGraph_node52"><a xlink:href="../proc/bessj0.html" xlink:title="alps_fns_rel::BESSJ0">
 <polygon fill="#d94e8f" stroke="#d94e8f" points="2024,-384 1905,-384 1905,-360 2024,-360 2024,-384"/>
 <text text-anchor="middle" x="1964.5" y="-369.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_fns_rel::BESSJ0</text>
 </a>
@@ -1128,7 +1114,7 @@ modules which it uses.
 <!-- proc~bessj1 -->
 <g id="proc~~refine_guess~~CallsGraph_node53" class="node">
 <title>proc~bessj1</title>
-<g id="a_proc~~refine_guess~~CallsGraph_node53"><a xlink:href=".././proc/bessj1.html" xlink:title="alps_fns_rel::BESSJ1">
+<g id="a_proc~~refine_guess~~CallsGraph_node53"><a xlink:href="../proc/bessj1.html" xlink:title="alps_fns_rel::BESSJ1">
 <polygon fill="#d94e8f" stroke="#d94e8f" points="2024,-342 1905,-342 1905,-318 2024,-318 2024,-342"/>
 <text text-anchor="middle" x="1964.5" y="-327.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_fns_rel::BESSJ1</text>
 </a>
@@ -1152,17 +1138,17 @@ modules which it uses.
                   var panprocrefine_guessCallsGraph = svgPanZoom('#procrefine_guessCallsGraph',
                     {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
                   );
-                </script>        <div><a type="button" class="graph-help" data-toggle="modal" href="#graph-help-text">Help</a></div>
-          <div class="modal fade" id="graph-help-text" tabindex="-1" role="dialog">
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CallsGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CallsGraph-help-text" tabindex="-1" role="dialog">
             <div class="modal-dialog modal-lg" role="document">
               <div class="modal-content">
                 <div class="modal-header">
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
                   <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-              <div class="modal-body">
+                <div class="modal-body">
 <p>Nodes of different colours represent the following: </p>
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
@@ -1170,11 +1156,11 @@ modules which it uses.
 <!-- Generated by graphviz version 2.43.0 (0)
  -->
 <!-- Title: Graph Key Pages: 1 -->
-<svg width="597pt" height="32pt"
- viewBox="0.00 0.00 596.50 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1.16 1.16) rotate(0) translate(4 28)">
 <title>Graph Key</title>
-<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 592.5,-28 592.5,4 -4,4"/>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
 <!-- Subroutine -->
 <g id="node1" class="node">
 <title>Subroutine</title>
@@ -1193,23 +1179,29 @@ modules which it uses.
 <polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
 <text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
 </g>
-<!-- Unknown Procedure Type -->
+<!-- Type Bound Procedure -->
 <g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
 <title>Unknown Procedure Type</title>
-<polygon fill="#777777" stroke="#777777" points="388.5,-24 243.5,-24 243.5,0 388.5,0 388.5,-24"/>
-<text text-anchor="middle" x="316" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
 </g>
 <!-- Program -->
-<g id="node5" class="node">
+<g id="node6" class="node">
 <title>Program</title>
-<polygon fill="#f0ad4e" stroke="#f0ad4e" points="465,-24 407,-24 407,0 465,0 465,-24"/>
-<text text-anchor="middle" x="436" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
 </g>
 <!-- This Page&#39;s Entity -->
-<g id="node6" class="node">
+<g id="node7" class="node">
 <title>This Page&#39;s Entity</title>
-<polygon fill="none" stroke="black" points="588.5,-24 483.5,-24 483.5,0 588.5,0 588.5,-24"/>
-<text text-anchor="middle" x="536" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
 </g>
 </g>
 </svg>
@@ -1225,11 +1217,11 @@ implementation in a submodule of an interface in a parent module.
         </div>
       </div>
     </div>
-    <div class="panel panel-default">
-      <div class="panel-heading">
-  <h3 class="panel-title">Called by</h3>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Called by</h3>
       </div>
-      <div class="panel-body">
+      <div class="card-body">
   <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
@@ -1250,7 +1242,7 @@ implementation in a submodule of an interface in a parent module.
 <!-- proc~map_search -->
 <g id="proc~~refine_guess~~CalledByGraph_node2" class="node">
 <title>proc~map_search</title>
-<g id="a_proc~~refine_guess~~CalledByGraph_node2"><a xlink:href=".././proc/map_search.html" xlink:title="alps_fns::map_search">
+<g id="a_proc~~refine_guess~~CalledByGraph_node2"><a xlink:href="../proc/map_search.html" xlink:title="alps_fns::map_search">
 <polygon fill="#d9534f" stroke="#d9534f" points="217,-24 90,-24 90,0 217,0 217,-24"/>
 <text text-anchor="middle" x="153.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_fns::map_search</text>
 </a>
@@ -1265,7 +1257,7 @@ implementation in a submodule of an interface in a parent module.
 <!-- program~alps -->
 <g id="proc~~refine_guess~~CalledByGraph_node3" class="node">
 <title>program~alps</title>
-<g id="a_proc~~refine_guess~~CalledByGraph_node3"><a xlink:href=".././program/alps.html" xlink:title="alps">
+<g id="a_proc~~refine_guess~~CalledByGraph_node3"><a xlink:href="../program/alps.html" xlink:title="alps">
 <polygon fill="#f0ad4e" stroke="#f0ad4e" points="54,-44 0,-44 0,-20 54,-20 54,-44"/>
 <text text-anchor="middle" x="27" y="-29.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps</text>
 </a>
@@ -1285,17 +1277,17 @@ implementation in a submodule of an interface in a parent module.
 </g>
 </g>
 </svg>
-</div>        <div><a type="button" class="graph-help" data-toggle="modal" href="#graph-help-text">Help</a></div>
-          <div class="modal fade" id="graph-help-text" tabindex="-1" role="dialog">
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CalledByGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CalledByGraph-help-text" tabindex="-1" role="dialog">
             <div class="modal-dialog modal-lg" role="document">
               <div class="modal-content">
                 <div class="modal-header">
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
                   <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-              <div class="modal-body">
+                <div class="modal-body">
 <p>Nodes of different colours represent the following: </p>
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
@@ -1303,11 +1295,11 @@ implementation in a submodule of an interface in a parent module.
 <!-- Generated by graphviz version 2.43.0 (0)
  -->
 <!-- Title: Graph Key Pages: 1 -->
-<svg width="597pt" height="32pt"
- viewBox="0.00 0.00 596.50 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1.16 1.16) rotate(0) translate(4 28)">
 <title>Graph Key</title>
-<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 592.5,-28 592.5,4 -4,4"/>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
 <!-- Subroutine -->
 <g id="node1" class="node">
 <title>Subroutine</title>
@@ -1326,23 +1318,29 @@ implementation in a submodule of an interface in a parent module.
 <polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
 <text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
 </g>
-<!-- Unknown Procedure Type -->
+<!-- Type Bound Procedure -->
 <g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
 <title>Unknown Procedure Type</title>
-<polygon fill="#777777" stroke="#777777" points="388.5,-24 243.5,-24 243.5,0 388.5,0 388.5,-24"/>
-<text text-anchor="middle" x="316" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
 </g>
 <!-- Program -->
-<g id="node5" class="node">
+<g id="node6" class="node">
 <title>Program</title>
-<polygon fill="#f0ad4e" stroke="#f0ad4e" points="465,-24 407,-24 407,0 465,0 465,-24"/>
-<text text-anchor="middle" x="436" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
 </g>
 <!-- This Page&#39;s Entity -->
-<g id="node6" class="node">
+<g id="node7" class="node">
 <title>This Page&#39;s Entity</title>
-<polygon fill="none" stroke="black" points="588.5,-24 483.5,-24 483.5,0 588.5,0 588.5,-24"/>
-<text text-anchor="middle" x="536" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
 </g>
 </g>
 </svg>
@@ -1360,39 +1358,13 @@ implementation in a submodule of an interface in a parent module.
     </div>
     <br>
 
-    <section class="visible-xs visible-sm hidden-md">
-        <h3>Contents</h3>
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-
-    <em>None</em>
-
-    </section>
-    <br class="visible-xs visible-sm hidden-md">
-
 
     
     
 
     
     
+
 
 
     
@@ -1404,12 +1376,12 @@ implementation in a submodule of an interface in a parent module.
     </div> <!-- /container -->
     <footer>
       <div class="container">
-        <div class="row">
-          <div class="col-xs-6 col-md-6"><p>ALPS was developed by Kristopher Klein, Daniel Verscharen<br>&copy; 2023 
+        <div class="row justify-content-between">
+          <div class="col"><p>ALPS was developed by Kristopher Klein, Daniel Verscharen<br>&copy; 2024 
 </p>
           </div>
-          <div class="col-xs-6 col-md-6">
-            <p class="text-right">
+          <div class="col">
+            <p class="text-end">
               Documentation generated by
               <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
             </p>
@@ -1419,17 +1391,12 @@ implementation in a submodule of an interface in a parent module.
       </div> <!-- /container -->
     </footer>
 
-    <!-- Bootstrap core JavaScript
-         ================================================== -->
-         <!-- Placed at the end of the document so the pages load faster -->
-    <!--
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-        -->
-        <script src="../js/bootstrap.min.js"></script>
-        <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-        <script src="../js/ie10-viewport-bug-workaround.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>    
 
-        <!-- MathJax JavaScript
+    <!-- MathJax JavaScript
              ================================================== -->
              <!-- Placed at the end of the document so the pages load faster -->
         <script type="text/x-mathjax-config">

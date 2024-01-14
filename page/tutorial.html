@@ -1,3 +1,5 @@
+<!-- -*- mode: jinja2 -*- -->
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -10,100 +12,99 @@
 
     <title>ALPS Tutorial &ndash; ALPS</title>
 
-    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <link href="../css/pygments.css" rel="stylesheet">
     <link href="../css/font-awesome.min.css" rel="stylesheet">
     <link href="../css/local.css" rel="stylesheet">
       <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
 
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-        <![endif]-->
-
-         <script src="../js/jquery-2.1.3.min.js"></script>
-         <script src="../js/svg-pan-zoom.min.js"></script>
-
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="../js/svg-pan-zoom.min.js"></script>
   </head>
 
   <body>
 
     <!-- Fixed navbar -->
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
           <a class="navbar-brand" href="../index.html">ALPS </a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-              <li><a href='../page/index.html'>Readme</a></li>
-            <li class="dropdown hidden-xs visible-sm visible-md hidden-lg">
-              <a href="#" class="dropdown-toggle"
-                 data-toggle="dropdown" role="button"
-                 aria-haspopup="true"
-                 aria-expanded="false">
-                 Contents <span class="caret"></span>
-              </a>
-              <ul class="dropdown-menu">
-                  <li><a href="../lists/modules.html">Modules</a></li>
-                  <li><a href="../lists/procedures.html">Procedures</a></li>
-                  <li><a href="../lists/types.html">Derived Types</a></li>
-                  <li><a href="../lists/programs.html">Programs</a></li>
-              </ul>
-            </li>
-              <li class="visible-xs hidden-sm visible-lg">
-                <a href="../lists/modules.html">Modules</a>
-              </li>
-              <li class="visible-xs hidden-sm visible-lg">
-                <a href="../lists/procedures.html">Procedures</a>
-              </li>
-              <li class="visible-xs hidden-sm visible-lg">
-                <a href="../lists/types.html">Derived Types</a>
-              </li>
-              <li class="visible-xs hidden-sm visible-lg">
-                <a href="../lists/programs.html">Programs</a>
-              </li>
-          </ul>
-            <form action="../search.html" class="navbar-form navbar-right" role="search">
-              <div class="form-group">
-                <input type="text" class="form-control" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="index.html">Readme</a></li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/namelists.html">Namelists</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/programs.html">Programs</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
               </div>
-              <!--
-                  <button type="submit" class="btn btn-default">Submit</button>
-                  -->
-            </form>
-        </div><!--/.nav-collapse -->
-      </div>
-    </nav>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
 
     <div class="container">
   <div class="row">
     <h1>ALPS Tutorial</h1>
-    <div class="row">
-    <div class="col-lg-12">
-    <div class="well well-sm" style="min-height: 40px;">
-      <ul class="list-inline" style="margin-bottom:0px; display:inline">
-<!--
--->
-      </ul>
-        <ol class="breadcrumb in-well">
-         <li><a href='../page/index.html'>Readme</a></li>
-         <li class="active">ALPS Tutorial</li>
-      </ol>
-    </div>
-    </div>
+    <div class="container p-2 mb-4 bg-light border rounded-3">
+      <div class="row align-items-center justify-content-between">
+        <div class="col">
+          <ul class="list-inline" style="margin-bottom:0px; display:inline">
+          </ul>
+        </div>
+        <div class="col">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='index.html'>Readme</a></li>
+              <li class="breadcrumb-item active" aria-current="page">ALPS Tutorial</li>
+            </ol>
+          </nav>
+        </div>
+      </div>
     </div>
   </div>
-  
+
   <div class="row">
-    <div class="col-md-9 col-md-push-3" id='text'>
+      <div class="col-3">
+        <div class="card card-body bg-light" id="sidebar-toc">
+          <ul class="nav flex-column align-items">
+            <li class="nav-item">
+              <a class="nav-link" href="index.html">Readme</a>
+            </li>
+          </ul>
+          <hr>
+          <nav class="nav nav-pills flex-column">
+              <a class="nav-link" href="INSTALL.html">Installing ALPS</a>
+              <a class="nav-link" href="citingpapers.html">Papers citing ALPS</a>
+              <a class="nav-link" href="input.html">ALPS Input</a>
+              <a class="nav-link" href="output.html">ALPS Output</a>
+              <a class="nav-link active disabled" href="tutorial.html">ALPS Tutorial</a>
+          </nav>
+        </div>
+      </div>
+
+    <div class="col-9" id='text'>
       <h1>ALPS Tutorial</h1>
 <p>This is a tutorial for ALPS. It will guide you through the setting up of some basic input files, the running of the code, and the basic output. For more details, we refer to the <a href="input.html">ALPS Input</a> page, the <a href="output.html">ALPS Output</a> page, and the <a href="http://alps.space">ALPS Documentation</a>.</p>
 <h2>Authors</h2>
@@ -168,43 +169,43 @@ make
 
 </blockquote>
 <p>The code now generates the following output:</p>
-<div class="codehilite"><pre><span></span><code>Species  1
- Integration:       9.9958E-01
- Norm:              5.9862E-02
- pperp_max:         1.0392E+01
- ppar_max:          6.0000E+00
+<div class="codehilite"><pre><span></span><code><span class="nx">Species</span><span class="w">  </span><span class="mi">1</span>
+<span class="w"> </span><span class="nx">Integration</span><span class="p">:</span><span class="w">       </span><span class="m m-Double">9.9958</span><span class="nx">E</span><span class="o">-</span><span class="mi">01</span>
+<span class="w"> </span><span class="nx">Norm</span><span class="p">:</span><span class="w">              </span><span class="m m-Double">5.9862</span><span class="nx">E</span><span class="o">-</span><span class="mi">02</span>
+<span class="w"> </span><span class="nx">pperp_max</span><span class="p">:</span><span class="w">         </span><span class="m m-Double">1.0392</span><span class="nx">E</span><span class="o">+</span><span class="mi">01</span>
+<span class="w"> </span><span class="nx">ppar_max</span><span class="p">:</span><span class="w">          </span><span class="m m-Double">6.0000</span><span class="nx">E</span><span class="o">+</span><span class="mi">00</span>
 
- Fit type:          1
- ideal fit_1:       5.9862E-02
- ideal fit_2:       1.0000E+00
- ideal fit_3:       0.0000E+00
- ideal perpcorr:    3.3333E-01
-============================
-Species  2
- Integration:       9.9958E-01
- Norm:              1.4128E+04
- pperp_max:         1.4003E-01
- ppar_max:          1.4003E-01
+<span class="w"> </span><span class="nx">Fit</span><span class="w"> </span><span class="k">type</span><span class="p">:</span><span class="w">          </span><span class="mi">1</span>
+<span class="w"> </span><span class="nx">ideal</span><span class="w"> </span><span class="nx">fit_1</span><span class="p">:</span><span class="w">       </span><span class="m m-Double">5.9862</span><span class="nx">E</span><span class="o">-</span><span class="mi">02</span>
+<span class="w"> </span><span class="nx">ideal</span><span class="w"> </span><span class="nx">fit_2</span><span class="p">:</span><span class="w">       </span><span class="m m-Double">1.0000</span><span class="nx">E</span><span class="o">+</span><span class="mi">00</span>
+<span class="w"> </span><span class="nx">ideal</span><span class="w"> </span><span class="nx">fit_3</span><span class="p">:</span><span class="w">       </span><span class="m m-Double">0.0000</span><span class="nx">E</span><span class="o">+</span><span class="mi">00</span>
+<span class="w"> </span><span class="nx">ideal</span><span class="w"> </span><span class="nx">perpcorr</span><span class="p">:</span><span class="w">    </span><span class="m m-Double">3.3333</span><span class="nx">E</span><span class="o">-</span><span class="mi">01</span>
+<span class="o">============================</span>
+<span class="nx">Species</span><span class="w">  </span><span class="mi">2</span>
+<span class="w"> </span><span class="nx">Integration</span><span class="p">:</span><span class="w">       </span><span class="m m-Double">9.9958</span><span class="nx">E</span><span class="o">-</span><span class="mi">01</span>
+<span class="w"> </span><span class="nx">Norm</span><span class="p">:</span><span class="w">              </span><span class="m m-Double">1.4128</span><span class="nx">E</span><span class="o">+</span><span class="mi">04</span>
+<span class="w"> </span><span class="nx">pperp_max</span><span class="p">:</span><span class="w">         </span><span class="m m-Double">1.4003</span><span class="nx">E</span><span class="o">-</span><span class="mi">01</span>
+<span class="w"> </span><span class="nx">ppar_max</span><span class="p">:</span><span class="w">          </span><span class="m m-Double">1.4003</span><span class="nx">E</span><span class="o">-</span><span class="mi">01</span>
 
- Fit type:          1
- ideal fit_1:       1.4128E+04
- ideal fit_2:       1.8360E+03
- ideal fit_3:       0.0000E+00
- ideal perpcorr:    1.8360E+03
-============================
+<span class="w"> </span><span class="nx">Fit</span><span class="w"> </span><span class="k">type</span><span class="p">:</span><span class="w">          </span><span class="mi">1</span>
+<span class="w"> </span><span class="nx">ideal</span><span class="w"> </span><span class="nx">fit_1</span><span class="p">:</span><span class="w">       </span><span class="m m-Double">1.4128</span><span class="nx">E</span><span class="o">+</span><span class="mi">04</span>
+<span class="w"> </span><span class="nx">ideal</span><span class="w"> </span><span class="nx">fit_2</span><span class="p">:</span><span class="w">       </span><span class="m m-Double">1.8360</span><span class="nx">E</span><span class="o">+</span><span class="mi">03</span>
+<span class="w"> </span><span class="nx">ideal</span><span class="w"> </span><span class="nx">fit_3</span><span class="p">:</span><span class="w">       </span><span class="m m-Double">0.0000</span><span class="nx">E</span><span class="o">+</span><span class="mi">00</span>
+<span class="w"> </span><span class="nx">ideal</span><span class="w"> </span><span class="nx">perpcorr</span><span class="p">:</span><span class="w">    </span><span class="m m-Double">1.8360</span><span class="nx">E</span><span class="o">+</span><span class="mi">03</span>
+<span class="o">============================</span>
 </code></pre></div>
 
 <p>Species 1 corresponds to the protons, and species 2 corresponds to the electrons in this case. The output gives us some information about the integration and normalisation of $f_{0j}$ as well as some suggestions for the fit parameters (<em>ideal fit</em> and <em>ideal perpcorr</em>) that will become important later for the hybrid-analytic continuation.</p>
 <p>In addition to this output, the code has also created two files: <code>test_ICW.1.array</code> and <code>test_ICW.2.array</code>. These are the the two f0-tables, which now include the pre-defined Maxwellian distributions for the protons and electrons. Let's open the proton file <code>test_ICW.1.array</code> and have a look:</p>
-<div class="codehilite"><pre><span></span><code><span class="mf">0.0000000000000000</span><span class="w">       </span><span class="o">-</span><span class="mf">6.0000000000000000</span><span class="w">        </span><span class="mf">1.3885214326235464E-017</span><span class="w"></span>
-<span class="mf">0.0000000000000000</span><span class="w">       </span><span class="o">-</span><span class="mf">5.9500000000000002</span><span class="w">        </span><span class="mf">2.5237337794355358E-017</span><span class="w"></span>
-<span class="mf">0.0000000000000000</span><span class="w">       </span><span class="o">-</span><span class="mf">5.9000000000000004</span><span class="w">        </span><span class="mf">4.5641827072255333E-017</span><span class="w"></span>
-<span class="mf">0.0000000000000000</span><span class="w">       </span><span class="o">-</span><span class="mf">5.8499999999999996</span><span class="w">        </span><span class="mf">8.2131741067563143E-017</span><span class="w"></span>
-<span class="mf">0.0000000000000000</span><span class="w">       </span><span class="o">-</span><span class="mf">5.7999999999999998</span><span class="w">        </span><span class="mf">1.4705763083579771E-016</span><span class="w"></span>
-<span class="mf">0.0000000000000000</span><span class="w">       </span><span class="o">-</span><span class="mf">5.7500000000000000</span><span class="w">        </span><span class="mf">2.6199477385677698E-016</span><span class="w"></span>
-<span class="mf">0.0000000000000000</span><span class="w">       </span><span class="o">-</span><span class="mf">5.7000000000000002</span><span class="w">        </span><span class="mf">4.6443636702139106E-016</span><span class="w"></span>
-<span class="mf">0.0000000000000000</span><span class="w">       </span><span class="o">-</span><span class="mf">5.6500000000000004</span><span class="w">        </span><span class="mf">8.1919697073946868E-016</span><span class="w"></span>
-<span class="mf">...</span><span class="w">                      </span><span class="mf">...</span><span class="w">                        </span><span class="mf">...</span><span class="w"></span>
+<div class="codehilite"><pre><span></span><code><span class="mf">0.0000000000000000</span><span class="w">       </span><span class="o">-</span><span class="mf">6.0000000000000000</span><span class="w">        </span><span class="mf">1.3885214326235464E-017</span>
+<span class="mf">0.0000000000000000</span><span class="w">       </span><span class="o">-</span><span class="mf">5.9500000000000002</span><span class="w">        </span><span class="mf">2.5237337794355358E-017</span>
+<span class="mf">0.0000000000000000</span><span class="w">       </span><span class="o">-</span><span class="mf">5.9000000000000004</span><span class="w">        </span><span class="mf">4.5641827072255333E-017</span>
+<span class="mf">0.0000000000000000</span><span class="w">       </span><span class="o">-</span><span class="mf">5.8499999999999996</span><span class="w">        </span><span class="mf">8.2131741067563143E-017</span>
+<span class="mf">0.0000000000000000</span><span class="w">       </span><span class="o">-</span><span class="mf">5.7999999999999998</span><span class="w">        </span><span class="mf">1.4705763083579771E-016</span>
+<span class="mf">0.0000000000000000</span><span class="w">       </span><span class="o">-</span><span class="mf">5.7500000000000000</span><span class="w">        </span><span class="mf">2.6199477385677698E-016</span>
+<span class="mf">0.0000000000000000</span><span class="w">       </span><span class="o">-</span><span class="mf">5.7000000000000002</span><span class="w">        </span><span class="mf">4.6443636702139106E-016</span>
+<span class="mf">0.0000000000000000</span><span class="w">       </span><span class="o">-</span><span class="mf">5.6500000000000004</span><span class="w">        </span><span class="mf">8.1919697073946868E-016</span>
+<span class="mf">...</span><span class="w">                      </span><span class="mf">...</span><span class="w">                        </span><span class="mf">...</span>
 </code></pre></div>
 
 <p>As discussed above, the first column is the normalised perpendicular momentum, the second column is the normalised parallel momentum, and the third column is the value of the distribution function. The file contains 29,161 lines, which is just the combination of all perpendicular and parallel momentum steps. These have been defined by the lines</p>
@@ -244,38 +245,38 @@ Also ensure that the perpendicular momentum grid begins at a momentum of zero.</
 </blockquote>
 <p>which we had created earlier.</p>
 <p>If you scroll further down, you'll find the following block:</p>
-<div class="codehilite"><pre><span></span><code><span class="sx">!Initial guess of complex frequency for first solution</span><span class="w"></span>
-<span class="sx">!Only used when use_map=.false.</span><span class="w"></span>
-<span class="sx">!Need to have # of name lists equal to nroots</span><span class="w"></span>
-<span class="o">&amp;</span><span class="n">guess_1</span><span class="w"></span>
-<span class="n">g_om</span><span class="p">=</span><span class="mi">1</span><span class="p">.</span>5508<span class="n">d</span><span class="o">-</span><span class="mi">01</span><span class="w">   </span>!<span class="nb">real</span><span class="w"> </span><span class="n">frequency</span><span class="w"></span>
-<span class="n">g_gam</span><span class="p">=</span><span class="o">-</span><span class="mi">1</span><span class="p">.</span>3429<span class="n">d</span><span class="o">-</span><span class="mi">05</span><span class="w"> </span>!<span class="n">imaginary</span><span class="w"> </span><span class="n">frequency</span><span class="w"></span>
-<span class="o">/</span><span class="w"></span>
+<div class="codehilite"><pre><span></span><code><span class="sx">!Initial guess of complex frequency for first solution</span>
+<span class="sx">!Only used when use_map=.false.</span>
+<span class="sx">!Need to have # of name lists equal to nroots</span>
+<span class="o">&amp;</span><span class="n">guess_1</span>
+<span class="n">g_om</span><span class="p">=</span><span class="mi">1</span><span class="p">.</span>5508<span class="n">d</span><span class="o">-</span><span class="mi">01</span><span class="w">   </span>!<span class="nb">real</span><span class="w"> </span><span class="n">frequency</span>
+<span class="n">g_gam</span><span class="p">=</span><span class="o">-</span><span class="mi">1</span><span class="p">.</span>3429<span class="n">d</span><span class="o">-</span><span class="mi">05</span><span class="w"> </span>!<span class="n">imaginary</span><span class="w"> </span><span class="n">frequency</span>
+<span class="o">/</span>
 </code></pre></div>
 
 <p>This block defines the <em>initial guess</em> for the frequency that the code will use to search for solutions. By picking the appropriate guess, you can select which plasma mode the code should follow. Remember that all frequencies are normalised to the gyro-frequency of the protons.</p>
 <p>Further down, you can find definitions for the species. The first species is defined through the following:</p>
-<div class="codehilite"><pre><span></span><code><span class="sx">!Species parameters list; species 1</span><span class="w"></span>
-<span class="o">&amp;</span><span class="n">spec_1</span><span class="w"></span>
-<span class="n">nn</span><span class="p">=</span><span class="mi">1</span><span class="p">.</span><span class="n">d0</span><span class="w">  </span>!<span class="n">relative</span><span class="w"> </span><span class="n">density</span><span class="p">;</span><span class="w"> </span><span class="n">n_j</span><span class="o">/</span><span class="n">n_ref</span><span class="w"></span>
-<span class="n">qq</span><span class="p">=</span><span class="mi">1</span><span class="p">.</span><span class="n">d0</span><span class="w">  </span>!<span class="n">relative</span><span class="w"> </span><span class="n">charge</span><span class="p">;</span><span class="w">  </span><span class="n">q_j</span><span class="o">/</span><span class="n">q_ref</span><span class="w"></span>
-<span class="n">mm</span><span class="p">=</span><span class="mi">1</span><span class="p">.</span><span class="n">d0</span><span class="w">  </span>!<span class="n">relative</span><span class="w"> </span><span class="n">mass</span><span class="p">;</span><span class="w">    </span><span class="n">m_j</span><span class="o">/</span><span class="n">m_ref</span><span class="w"></span>
-<span class="n">ff</span><span class="p">=</span><span class="mi">1</span><span class="w">     </span>!#<span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">fits</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="n">used</span><span class="p">.</span><span class="w"></span>
-<span class="n">relat</span><span class="p">=</span><span class="n">F</span><span class="w">  </span>!<span class="n">relativistic</span><span class="w"> </span><span class="p">(</span><span class="n">T</span><span class="p">)</span><span class="w"> </span><span class="n">or</span><span class="w"> </span><span class="n">non</span><span class="o">-</span><span class="n">relativistic</span><span class="w"> </span><span class="p">(</span><span class="n">F</span><span class="p">)</span><span class="w"> </span><span class="n">species</span><span class="w"></span>
-<span class="n">log_fit</span><span class="p">=</span><span class="n">T</span>!<span class="nb">log</span><span class="w"> </span><span class="p">(</span><span class="n">T</span><span class="p">)</span><span class="w"> </span><span class="n">or</span><span class="w"> </span><span class="n">linear</span><span class="w"> </span><span class="p">(</span><span class="n">F</span><span class="p">)</span><span class="w"> </span><span class="n">fit</span><span class="w"></span>
-<span class="n">use_bM</span><span class="p">=</span><span class="n">F</span><span class="w"> </span>!<span class="n">numerically</span><span class="w"> </span><span class="n">integrate</span><span class="w"> </span><span class="n">array</span><span class="w"> </span><span class="p">(</span><span class="n">F</span><span class="p">)</span><span class="w"> </span><span class="n">or</span><span class="w"> </span><span class="n">use</span><span class="w"> </span><span class="n">bi</span><span class="o">-</span><span class="n">Maxwellian</span><span class="w"> </span><span class="p">(</span><span class="n">T</span><span class="p">)</span><span class="w"></span>
-<span class="o">/</span><span class="w"></span>
+<div class="codehilite"><pre><span></span><code><span class="sx">!Species parameters list; species 1</span>
+<span class="o">&amp;</span><span class="n">spec_1</span>
+<span class="n">nn</span><span class="p">=</span><span class="mi">1</span><span class="p">.</span><span class="n">d0</span><span class="w">  </span>!<span class="n">relative</span><span class="w"> </span><span class="n">density</span><span class="p">;</span><span class="w"> </span><span class="n">n_j</span><span class="o">/</span><span class="n">n_ref</span>
+<span class="n">qq</span><span class="p">=</span><span class="mi">1</span><span class="p">.</span><span class="n">d0</span><span class="w">  </span>!<span class="n">relative</span><span class="w"> </span><span class="n">charge</span><span class="p">;</span><span class="w">  </span><span class="n">q_j</span><span class="o">/</span><span class="n">q_ref</span>
+<span class="n">mm</span><span class="p">=</span><span class="mi">1</span><span class="p">.</span><span class="n">d0</span><span class="w">  </span>!<span class="n">relative</span><span class="w"> </span><span class="n">mass</span><span class="p">;</span><span class="w">    </span><span class="n">m_j</span><span class="o">/</span><span class="n">m_ref</span>
+<span class="n">ff</span><span class="p">=</span><span class="mi">1</span><span class="w">     </span>!#<span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">fits</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="n">used</span><span class="p">.</span>
+<span class="n">relat</span><span class="p">=</span><span class="n">F</span><span class="w">  </span>!<span class="n">relativistic</span><span class="w"> </span><span class="p">(</span><span class="n">T</span><span class="p">)</span><span class="w"> </span><span class="n">or</span><span class="w"> </span><span class="n">non</span><span class="o">-</span><span class="n">relativistic</span><span class="w"> </span><span class="p">(</span><span class="n">F</span><span class="p">)</span><span class="w"> </span><span class="n">species</span>
+<span class="n">log_fit</span><span class="p">=</span><span class="n">T</span>!<span class="nb">log</span><span class="w"> </span><span class="p">(</span><span class="n">T</span><span class="p">)</span><span class="w"> </span><span class="n">or</span><span class="w"> </span><span class="n">linear</span><span class="w"> </span><span class="p">(</span><span class="n">F</span><span class="p">)</span><span class="w"> </span><span class="n">fit</span>
+<span class="n">use_bM</span><span class="p">=</span><span class="n">F</span><span class="w"> </span>!<span class="n">numerically</span><span class="w"> </span><span class="n">integrate</span><span class="w"> </span><span class="n">array</span><span class="w"> </span><span class="p">(</span><span class="n">F</span><span class="p">)</span><span class="w"> </span><span class="n">or</span><span class="w"> </span><span class="n">use</span><span class="w"> </span><span class="n">bi</span><span class="o">-</span><span class="n">Maxwellian</span><span class="w"> </span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+<span class="o">/</span>
 
-<span class="sx">!Initial Fit Values; species 1, function 1</span><span class="w"></span>
-<span class="o">&amp;</span><span class="n">ffit_1_1</span><span class="w"></span>
-<span class="n">fit_type_in</span><span class="p">=</span><span class="mi">1</span><span class="w">   </span>!<span class="n">Kind</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">fit</span><span class="w"> </span><span class="k">function</span><span class="w"> </span><span class="p">(</span><span class="n">see</span><span class="w"> </span><span class="n">documentation</span><span class="p">)</span><span class="w"></span>
-<span class="n">fit_1</span><span class="p">=</span><span class="mi">5</span><span class="p">.</span>986<span class="n">D</span><span class="o">-</span><span class="mi">2</span><span class="w">  </span>!<span class="n">Suggested</span><span class="w"> </span><span class="nb">values</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">parameters</span><span class="p">,</span><span class="w"></span>
-<span class="n">fit_2</span><span class="p">=</span><span class="mi">1</span><span class="p">.</span><span class="n">d0</span><span class="w">      </span>!<span class="n">e</span><span class="p">.</span><span class="n">g</span><span class="p">.</span><span class="w"> </span><span class="n">generated</span><span class="w"> </span><span class="n">by</span><span class="w"> </span><span class="n">generate_distribution</span><span class="w"></span>
-<span class="n">fit_3</span><span class="p">=</span><span class="mi">0</span><span class="p">.</span><span class="n">d0</span><span class="w"></span>
-<span class="n">fit_4</span><span class="p">=</span><span class="mi">0</span><span class="p">.</span><span class="n">d0</span><span class="w"></span>
-<span class="n">fit_5</span><span class="p">=</span><span class="mi">0</span><span class="p">.</span><span class="n">d0</span><span class="w"></span>
-<span class="n">perpcorr</span><span class="p">=</span><span class="mi">3</span><span class="p">.</span>33<span class="n">D</span><span class="o">-</span><span class="mi">1</span><span class="w">   </span>!<span class="n">renormalization</span><span class="w"> </span><span class="nb">factor</span><span class="w"></span>
-<span class="o">/</span><span class="w"></span>
+<span class="sx">!Initial Fit Values; species 1, function 1</span>
+<span class="o">&amp;</span><span class="n">ffit_1_1</span>
+<span class="n">fit_type_in</span><span class="p">=</span><span class="mi">1</span><span class="w">   </span>!<span class="n">Kind</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">fit</span><span class="w"> </span><span class="k">function</span><span class="w"> </span><span class="p">(</span><span class="n">see</span><span class="w"> </span><span class="n">documentation</span><span class="p">)</span>
+<span class="n">fit_1</span><span class="p">=</span><span class="mi">5</span><span class="p">.</span>986<span class="n">D</span><span class="o">-</span><span class="mi">2</span><span class="w">  </span>!<span class="n">Suggested</span><span class="w"> </span><span class="nb">values</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">parameters</span><span class="p">,</span>
+<span class="n">fit_2</span><span class="p">=</span><span class="mi">1</span><span class="p">.</span><span class="n">d0</span><span class="w">      </span>!<span class="n">e</span><span class="p">.</span><span class="n">g</span><span class="p">.</span><span class="w"> </span><span class="n">generated</span><span class="w"> </span><span class="n">by</span><span class="w"> </span><span class="n">generate_distribution</span>
+<span class="n">fit_3</span><span class="p">=</span><span class="mi">0</span><span class="p">.</span><span class="n">d0</span>
+<span class="n">fit_4</span><span class="p">=</span><span class="mi">0</span><span class="p">.</span><span class="n">d0</span>
+<span class="n">fit_5</span><span class="p">=</span><span class="mi">0</span><span class="p">.</span><span class="n">d0</span>
+<span class="n">perpcorr</span><span class="p">=</span><span class="mi">3</span><span class="p">.</span>33<span class="n">D</span><span class="o">-</span><span class="mi">1</span><span class="w">   </span>!<span class="n">renormalization</span><span class="w"> </span><span class="nb">factor</span>
+<span class="o">/</span>
 </code></pre></div>
 
 <p>You can recognise many of the parameters from our <code>test_ICW_dist.in</code> file, like the charge and the mass of the particle species The block <code>&amp;ffit_1_1</code> includes the fit parameters for the hybrid-analytic continuation. As you can see, this file includes the suggestions for the ideal fit that <code>generate_distribution</code> has given us earlier.</p>
@@ -289,31 +290,31 @@ mpirun -np 4 ./src/ALPS tests/test_ICW.in
 </blockquote>
 <p>This command will run 4 instances of ALPS via MPI. Depending on your computer and the MPI setup, you may need to add the option <code>--oversubscribe</code> to ensure that 4 instances of MPI can actually be executed. The ALPS binary (<code>./src/ALPS</code>) expectes only one command-line argument: the name of the input file to run on. The number of processes (in this case 4), must always be an even number greater than 2, even if your computer doesn't have four or more cores. In those cases, the <code>--oversubscribe</code> option is particularly important. In general, the code scales quite well, especially for calculations of the dispersion relation with many plasma species and high perpendicular wavenumbers (compared to the species gyro-radii).</p>
 <p>If everything was successful so far, you'll now start to get the ALPS standard output:</p>
-<div class="codehilite"><pre><span></span><code><span class="o">===========================================================</span><span class="w"></span>
-<span class="n">I</span><span class="w">                                                         </span><span class="n">I</span><span class="w"></span>
-<span class="n">I</span><span class="w">                       </span><span class="n">A</span><span class="w">  </span><span class="n">L</span><span class="w">  </span><span class="n">P</span><span class="w">  </span><span class="n">S</span><span class="w">                        </span><span class="n">I</span><span class="w"></span>
-<span class="n">I</span><span class="w">              </span><span class="n">Arbitrary</span><span class="w"> </span><span class="n">Linear</span><span class="w"> </span><span class="n">Plasma</span><span class="w"> </span><span class="n">Solver</span><span class="w">             </span><span class="n">I</span><span class="w"></span>
-<span class="n">I</span><span class="w">                                                         </span><span class="n">I</span><span class="w"></span>
-<span class="n">I</span><span class="w">                       </span><span class="n">Version</span><span class="w"> </span><span class="n">X</span><span class="p">.</span><span class="n">X</span><span class="w">                       </span><span class="n">I</span><span class="w"></span>
-<span class="n">I</span><span class="w">                                                         </span><span class="n">I</span><span class="w"></span>
-<span class="n">I</span><span class="w">  </span><span class="n">Kristopher</span><span class="w"> </span><span class="n">Klein</span><span class="w">   </span><span class="p">(</span><span class="n">kgklein</span><span class="nv">@arizone</span><span class="p">.</span><span class="n">edu</span><span class="p">)</span><span class="w">               </span><span class="n">I</span><span class="w"></span>
-<span class="n">I</span><span class="w">  </span><span class="n">Daniel</span><span class="w"> </span><span class="n">Verscharen</span><span class="w">  </span><span class="p">(</span><span class="n">d</span><span class="p">.</span><span class="n">verscharen</span><span class="nv">@ucl</span><span class="p">.</span><span class="n">ac</span><span class="p">.</span><span class="n">uk</span><span class="p">)</span><span class="w">            </span><span class="n">I</span><span class="w"></span>
-<span class="n">I</span><span class="w">                                                         </span><span class="n">I</span><span class="w"></span>
-<span class="o">===========================================================</span><span class="w"></span>
-<span class="ow">All</span><span class="w"> </span><span class="n">processes</span><span class="w"> </span><span class="k">are</span><span class="w"> </span><span class="n">up</span><span class="w"> </span><span class="ow">and</span><span class="w"> </span><span class="n">running</span><span class="p">.</span><span class="w"></span>
-<span class="n">Reading</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="k">Input</span><span class="w"> </span><span class="k">File</span><span class="err">:</span><span class="w"> </span><span class="n">test_ICW</span><span class="w"></span>
-<span class="n">GUESS</span><span class="w"> </span><span class="k">ROUTINE</span><span class="err">:</span><span class="w"></span>
-<span class="n">Intial</span><span class="w"> </span><span class="n">Guess</span><span class="w">   </span><span class="mi">1</span><span class="w"> </span><span class="err">:</span><span class="w">     </span><span class="mf">1.5508E-01</span><span class="w">   </span><span class="o">-</span><span class="mf">1.3429E-05</span><span class="w"></span>
-<span class="n">SPECIES</span><span class="w"> </span><span class="k">PARAMETERS</span><span class="err">:</span><span class="w"></span>
-<span class="n">Species</span><span class="w">   </span><span class="mi">1</span><span class="w"> </span><span class="err">:</span><span class="w"></span>
-<span class="n">ns</span><span class="o">/</span><span class="n">nREF</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="mf">1.0000E+00</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">qs</span><span class="o">/</span><span class="n">qREF</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="mf">1.0000E+00</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">ms</span><span class="o">/</span><span class="n">mREF</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="mf">1.0000E+00</span><span class="w"></span>
-<span class="n">Number</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="n">fitted</span><span class="w"> </span><span class="n">functions</span><span class="w"> </span><span class="o">=</span><span class="w">    </span><span class="mi">1</span><span class="w"></span>
-<span class="n">Relativistic</span><span class="w"> </span><span class="n">effects</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">F</span><span class="w"></span>
-<span class="n">Species</span><span class="w">   </span><span class="mi">2</span><span class="w"> </span><span class="err">:</span><span class="w"></span>
-<span class="n">ns</span><span class="o">/</span><span class="n">nREF</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="mf">1.0000E+00</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">qs</span><span class="o">/</span><span class="n">qREF</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">-</span><span class="mf">1.0000E+00</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">ms</span><span class="o">/</span><span class="n">mREF</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="mf">5.4466E-04</span><span class="w"></span>
-<span class="n">Number</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="n">fitted</span><span class="w"> </span><span class="n">functions</span><span class="w"> </span><span class="o">=</span><span class="w">    </span><span class="mi">1</span><span class="w"></span>
-<span class="n">Relativistic</span><span class="w"> </span><span class="n">effects</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">F</span><span class="w"></span>
-<span class="o">-=-=-=-=-=-=-=-=-</span><span class="w"></span>
+<div class="codehilite"><pre><span></span><code><span class="o">===========================================================</span>
+<span class="n">I</span><span class="w">                                                         </span><span class="n">I</span>
+<span class="n">I</span><span class="w">                       </span><span class="n">A</span><span class="w">  </span><span class="n">L</span><span class="w">  </span><span class="n">P</span><span class="w">  </span><span class="n">S</span><span class="w">                        </span><span class="n">I</span>
+<span class="n">I</span><span class="w">              </span><span class="n">Arbitrary</span><span class="w"> </span><span class="n">Linear</span><span class="w"> </span><span class="n">Plasma</span><span class="w"> </span><span class="n">Solver</span><span class="w">             </span><span class="n">I</span>
+<span class="n">I</span><span class="w">                                                         </span><span class="n">I</span>
+<span class="n">I</span><span class="w">                       </span><span class="n">Version</span><span class="w"> </span><span class="n">X</span><span class="p">.</span><span class="n">X</span><span class="w">                       </span><span class="n">I</span>
+<span class="n">I</span><span class="w">                                                         </span><span class="n">I</span>
+<span class="n">I</span><span class="w">  </span><span class="n">Kristopher</span><span class="w"> </span><span class="n">Klein</span><span class="w">   </span><span class="p">(</span><span class="n">kgklein</span><span class="nv">@arizone</span><span class="p">.</span><span class="n">edu</span><span class="p">)</span><span class="w">               </span><span class="n">I</span>
+<span class="n">I</span><span class="w">  </span><span class="n">Daniel</span><span class="w"> </span><span class="n">Verscharen</span><span class="w">  </span><span class="p">(</span><span class="n">d</span><span class="p">.</span><span class="n">verscharen</span><span class="nv">@ucl</span><span class="p">.</span><span class="n">ac</span><span class="p">.</span><span class="n">uk</span><span class="p">)</span><span class="w">            </span><span class="n">I</span>
+<span class="n">I</span><span class="w">                                                         </span><span class="n">I</span>
+<span class="o">===========================================================</span>
+<span class="ow">All</span><span class="w"> </span><span class="n">processes</span><span class="w"> </span><span class="k">are</span><span class="w"> </span><span class="n">up</span><span class="w"> </span><span class="ow">and</span><span class="w"> </span><span class="n">running</span><span class="p">.</span>
+<span class="n">Reading</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="k">Input</span><span class="w"> </span><span class="k">File</span><span class="err">:</span><span class="w"> </span><span class="n">test_ICW</span>
+<span class="n">GUESS</span><span class="w"> </span><span class="k">ROUTINE</span><span class="err">:</span>
+<span class="n">Intial</span><span class="w"> </span><span class="n">Guess</span><span class="w">   </span><span class="mi">1</span><span class="w"> </span><span class="err">:</span><span class="w">     </span><span class="mf">1.5508E-01</span><span class="w">   </span><span class="o">-</span><span class="mf">1.3429E-05</span>
+<span class="n">SPECIES</span><span class="w"> </span><span class="k">PARAMETERS</span><span class="err">:</span>
+<span class="n">Species</span><span class="w">   </span><span class="mi">1</span><span class="w"> </span><span class="err">:</span>
+<span class="n">ns</span><span class="o">/</span><span class="n">nREF</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="mf">1.0000E+00</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">qs</span><span class="o">/</span><span class="n">qREF</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="mf">1.0000E+00</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">ms</span><span class="o">/</span><span class="n">mREF</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="mf">1.0000E+00</span>
+<span class="n">Number</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="n">fitted</span><span class="w"> </span><span class="n">functions</span><span class="w"> </span><span class="o">=</span><span class="w">    </span><span class="mi">1</span>
+<span class="n">Relativistic</span><span class="w"> </span><span class="n">effects</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">F</span>
+<span class="n">Species</span><span class="w">   </span><span class="mi">2</span><span class="w"> </span><span class="err">:</span>
+<span class="n">ns</span><span class="o">/</span><span class="n">nREF</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="mf">1.0000E+00</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">qs</span><span class="o">/</span><span class="n">qREF</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">-</span><span class="mf">1.0000E+00</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">ms</span><span class="o">/</span><span class="n">mREF</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="mf">5.4466E-04</span>
+<span class="n">Number</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="n">fitted</span><span class="w"> </span><span class="n">functions</span><span class="w"> </span><span class="o">=</span><span class="w">    </span><span class="mi">1</span>
+<span class="n">Relativistic</span><span class="w"> </span><span class="n">effects</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">F</span>
+<span class="o">-=-=-=-=-=-=-=-=-</span>
 </code></pre></div>
 
 <p>This output summarises a lot of the information that is useful. We recommend that you read this output carefully, or even that you pipe the output into a log file for later reference by using</p>
@@ -323,27 +324,27 @@ mpirun -np 4 ./src/ALPS tests/test_ICW.in
 
 </blockquote>
 <p>Further down in the ALPS standard output, you'll find lines similar to this:</p>
-<div class="codehilite"><pre><span></span><code><span class="n">kperp</span><span class="o">:</span><span class="w">     </span><span class="mf">1.0000</span><span class="n">E</span><span class="o">-</span><span class="mi">03</span><span class="w"> </span><span class="n">kpar</span><span class="o">:</span><span class="w">     </span><span class="mf">1.0275</span><span class="n">E</span><span class="o">-</span><span class="mi">01</span><span class="w"></span>
-<span class="w"> </span><span class="n">Converged</span><span class="w"> </span><span class="n">after</span><span class="w"> </span><span class="n">iteration</span><span class="w">    </span><span class="mi">7</span><span class="w"></span>
-<span class="w"> </span><span class="n">D</span><span class="o">(</span><span class="w">    </span><span class="mf">1.4337</span><span class="n">E</span><span class="o">-</span><span class="mi">01</span><span class="w">   </span><span class="o">-</span><span class="mf">8.9137</span><span class="n">E</span><span class="o">-</span><span class="mi">06</span><span class="o">)=</span><span class="w">    </span><span class="o">-</span><span class="mf">2.0138</span><span class="n">E</span><span class="o">-</span><span class="mi">18</span><span class="w">   </span><span class="o">-</span><span class="mf">1.2447</span><span class="n">E</span><span class="o">-</span><span class="mi">18</span><span class="w"></span>
-<span class="n">kperp</span><span class="o">:</span><span class="w">     </span><span class="mf">1.0000</span><span class="n">E</span><span class="o">-</span><span class="mi">03</span><span class="w"> </span><span class="n">kpar</span><span class="o">:</span><span class="w">     </span><span class="mf">1.0557</span><span class="n">E</span><span class="o">-</span><span class="mi">01</span><span class="w"></span>
-<span class="w"> </span><span class="n">Converged</span><span class="w"> </span><span class="n">after</span><span class="w"> </span><span class="n">iteration</span><span class="w">    </span><span class="mi">8</span><span class="w"></span>
-<span class="w"> </span><span class="n">D</span><span class="o">(</span><span class="w">    </span><span class="mf">1.4729</span><span class="n">E</span><span class="o">-</span><span class="mi">01</span><span class="w">   </span><span class="o">-</span><span class="mf">8.6524</span><span class="n">E</span><span class="o">-</span><span class="mi">06</span><span class="o">)=</span><span class="w">    </span><span class="o">-</span><span class="mf">2.9456</span><span class="n">E</span><span class="o">-</span><span class="mi">19</span><span class="w">   </span><span class="o">-</span><span class="mf">1.6708</span><span class="n">E</span><span class="o">-</span><span class="mi">19</span><span class="w"></span>
-<span class="n">kperp</span><span class="o">:</span><span class="w">     </span><span class="mf">1.0000</span><span class="n">E</span><span class="o">-</span><span class="mi">03</span><span class="w"> </span><span class="n">kpar</span><span class="o">:</span><span class="w">     </span><span class="mf">1.0846</span><span class="n">E</span><span class="o">-</span><span class="mi">01</span><span class="w"></span>
-<span class="w"> </span><span class="n">Converged</span><span class="w"> </span><span class="n">after</span><span class="w"> </span><span class="n">iteration</span><span class="w">    </span><span class="mi">8</span><span class="w"></span>
-<span class="w"> </span><span class="n">D</span><span class="o">(</span><span class="w">    </span><span class="mf">1.5132</span><span class="n">E</span><span class="o">-</span><span class="mi">01</span><span class="w">   </span><span class="o">-</span><span class="mf">8.3974</span><span class="n">E</span><span class="o">-</span><span class="mi">06</span><span class="o">)=</span><span class="w">     </span><span class="mf">7.8943</span><span class="n">E</span><span class="o">-</span><span class="mi">19</span><span class="w">    </span><span class="mf">5.5227</span><span class="n">E</span><span class="o">-</span><span class="mi">19</span><span class="w"></span>
+<div class="codehilite"><pre><span></span><code><span class="n">kperp</span><span class="o">:</span><span class="w">     </span><span class="mf">1.0000</span><span class="n">E</span><span class="o">-</span><span class="mi">03</span><span class="w"> </span><span class="n">kpar</span><span class="o">:</span><span class="w">     </span><span class="mf">1.0275</span><span class="n">E</span><span class="o">-</span><span class="mi">01</span>
+<span class="w"> </span><span class="n">Converged</span><span class="w"> </span><span class="n">after</span><span class="w"> </span><span class="n">iteration</span><span class="w">    </span><span class="mi">7</span>
+<span class="w"> </span><span class="n">D</span><span class="o">(</span><span class="w">    </span><span class="mf">1.4337</span><span class="n">E</span><span class="o">-</span><span class="mi">01</span><span class="w">   </span><span class="o">-</span><span class="mf">8.9137</span><span class="n">E</span><span class="o">-</span><span class="mi">06</span><span class="o">)=</span><span class="w">    </span><span class="o">-</span><span class="mf">2.0138</span><span class="n">E</span><span class="o">-</span><span class="mi">18</span><span class="w">   </span><span class="o">-</span><span class="mf">1.2447</span><span class="n">E</span><span class="o">-</span><span class="mi">18</span>
+<span class="n">kperp</span><span class="o">:</span><span class="w">     </span><span class="mf">1.0000</span><span class="n">E</span><span class="o">-</span><span class="mi">03</span><span class="w"> </span><span class="n">kpar</span><span class="o">:</span><span class="w">     </span><span class="mf">1.0557</span><span class="n">E</span><span class="o">-</span><span class="mi">01</span>
+<span class="w"> </span><span class="n">Converged</span><span class="w"> </span><span class="n">after</span><span class="w"> </span><span class="n">iteration</span><span class="w">    </span><span class="mi">8</span>
+<span class="w"> </span><span class="n">D</span><span class="o">(</span><span class="w">    </span><span class="mf">1.4729</span><span class="n">E</span><span class="o">-</span><span class="mi">01</span><span class="w">   </span><span class="o">-</span><span class="mf">8.6524</span><span class="n">E</span><span class="o">-</span><span class="mi">06</span><span class="o">)=</span><span class="w">    </span><span class="o">-</span><span class="mf">2.9456</span><span class="n">E</span><span class="o">-</span><span class="mi">19</span><span class="w">   </span><span class="o">-</span><span class="mf">1.6708</span><span class="n">E</span><span class="o">-</span><span class="mi">19</span>
+<span class="n">kperp</span><span class="o">:</span><span class="w">     </span><span class="mf">1.0000</span><span class="n">E</span><span class="o">-</span><span class="mi">03</span><span class="w"> </span><span class="n">kpar</span><span class="o">:</span><span class="w">     </span><span class="mf">1.0846</span><span class="n">E</span><span class="o">-</span><span class="mi">01</span>
+<span class="w"> </span><span class="n">Converged</span><span class="w"> </span><span class="n">after</span><span class="w"> </span><span class="n">iteration</span><span class="w">    </span><span class="mi">8</span>
+<span class="w"> </span><span class="n">D</span><span class="o">(</span><span class="w">    </span><span class="mf">1.5132</span><span class="n">E</span><span class="o">-</span><span class="mi">01</span><span class="w">   </span><span class="o">-</span><span class="mf">8.3974</span><span class="n">E</span><span class="o">-</span><span class="mi">06</span><span class="o">)=</span><span class="w">     </span><span class="mf">7.8943</span><span class="n">E</span><span class="o">-</span><span class="mi">19</span><span class="w">    </span><span class="mf">5.5227</span><span class="n">E</span><span class="o">-</span><span class="mi">19</span>
 </code></pre></div>
 
 <p>These lines tell us that the code is actually now finding solutions, as it scans through the wavevector space. The scan options had been defined in <code>test_ICW.in</code>, and details on how this works are given in our <a href="input.html">ALPS Input</a> page.</p>
 <p>When the code has finished, it has produced a number of output files, which you can find in the folder <code>./solution</code> in the ALPS directory structure. Let's look at the file <code>test_ICW.scan_kpara_1.root_1</code>. As the name suggests, this file contains the scan result for a scan along the parallel wavenumber $k_{\parallel}$ for root number 1 (we only scan along one root in this example).</p>
 <p>The file has the following format:</p>
-<div class="codehilite"><pre><span></span><code><span class="mf">1.0000E-03</span><span class="w">    </span><span class="mf">1.0000E-01</span><span class="w">    </span><span class="mf">1.4424E-01</span><span class="w">   </span><span class="o">-</span><span class="mf">1.0449E-05</span><span class="w"></span>
-<span class="mf">1.0000E-03</span><span class="w">    </span><span class="mf">1.0275E-01</span><span class="w">    </span><span class="mf">1.4337E-01</span><span class="w">   </span><span class="o">-</span><span class="mf">8.9137E-06</span><span class="w"></span>
-<span class="mf">1.0000E-03</span><span class="w">    </span><span class="mf">1.0557E-01</span><span class="w">    </span><span class="mf">1.4729E-01</span><span class="w">   </span><span class="o">-</span><span class="mf">8.6524E-06</span><span class="w"></span>
-<span class="mf">1.0000E-03</span><span class="w">    </span><span class="mf">1.0846E-01</span><span class="w">    </span><span class="mf">1.5132E-01</span><span class="w">   </span><span class="o">-</span><span class="mf">8.3974E-06</span><span class="w"></span>
-<span class="mf">1.0000E-03</span><span class="w">    </span><span class="mf">1.1144E-01</span><span class="w">    </span><span class="mf">1.5546E-01</span><span class="w">   </span><span class="o">-</span><span class="mf">8.1484E-06</span><span class="w"></span>
-<span class="mf">1.0000E-03</span><span class="w">    </span><span class="mf">1.1450E-01</span><span class="w">    </span><span class="mf">1.5971E-01</span><span class="w">   </span><span class="o">-</span><span class="mf">7.9055E-06</span><span class="w"></span>
-<span class="mf">...</span><span class="w">           </span><span class="mf">...</span><span class="w">           </span><span class="mf">...</span><span class="w">          </span><span class="mf">...</span><span class="w"></span>
+<div class="codehilite"><pre><span></span><code><span class="mf">1.0000E-03</span><span class="w">    </span><span class="mf">1.0000E-01</span><span class="w">    </span><span class="mf">1.4424E-01</span><span class="w">   </span><span class="o">-</span><span class="mf">1.0449E-05</span>
+<span class="mf">1.0000E-03</span><span class="w">    </span><span class="mf">1.0275E-01</span><span class="w">    </span><span class="mf">1.4337E-01</span><span class="w">   </span><span class="o">-</span><span class="mf">8.9137E-06</span>
+<span class="mf">1.0000E-03</span><span class="w">    </span><span class="mf">1.0557E-01</span><span class="w">    </span><span class="mf">1.4729E-01</span><span class="w">   </span><span class="o">-</span><span class="mf">8.6524E-06</span>
+<span class="mf">1.0000E-03</span><span class="w">    </span><span class="mf">1.0846E-01</span><span class="w">    </span><span class="mf">1.5132E-01</span><span class="w">   </span><span class="o">-</span><span class="mf">8.3974E-06</span>
+<span class="mf">1.0000E-03</span><span class="w">    </span><span class="mf">1.1144E-01</span><span class="w">    </span><span class="mf">1.5546E-01</span><span class="w">   </span><span class="o">-</span><span class="mf">8.1484E-06</span>
+<span class="mf">1.0000E-03</span><span class="w">    </span><span class="mf">1.1450E-01</span><span class="w">    </span><span class="mf">1.5971E-01</span><span class="w">   </span><span class="o">-</span><span class="mf">7.9055E-06</span>
+<span class="mf">...</span><span class="w">           </span><span class="mf">...</span><span class="w">           </span><span class="mf">...</span><span class="w">          </span><span class="mf">...</span>
 </code></pre></div>
 
 <p>The format of the columns is as follows:</p>
@@ -403,16 +404,16 @@ Writing output to file test_interp.in.array
 </code></pre></div>
 
 <p>At the same time, the folder now includes a new file <code>test_interp.in.array</code>, which includes the interpolated f0-table in the correct format for ALPS:</p>
-<div class="codehilite"><pre><span></span><code><span class="mf">0.0000000000000000</span><span class="w">       </span><span class="o">-</span><span class="mf">3.0081663100000000</span><span class="w">        </span><span class="mf">2.5699885852486149E-005</span><span class="w"></span>
-<span class="mf">0.0000000000000000</span><span class="w">       </span><span class="o">-</span><span class="mf">2.9480029837999999</span><span class="w">        </span><span class="mf">3.4671386965111912E-005</span><span class="w"></span>
-<span class="mf">0.0000000000000000</span><span class="w">       </span><span class="o">-</span><span class="mf">2.8878396575999998</span><span class="w">        </span><span class="mf">4.7473668668616121E-005</span><span class="w"></span>
-<span class="mf">0.0000000000000000</span><span class="w">       </span><span class="o">-</span><span class="mf">2.8276763314000002</span><span class="w">        </span><span class="mf">6.5558031421796410E-005</span><span class="w"></span>
-<span class="mf">0.0000000000000000</span><span class="w">       </span><span class="o">-</span><span class="mf">2.7675130052000001</span><span class="w">        </span><span class="mf">9.0732738996456109E-005</span><span class="w"></span>
-<span class="mf">0.0000000000000000</span><span class="w">       </span><span class="o">-</span><span class="mf">2.7073496790000000</span><span class="w">        </span><span class="mf">1.2528393376824723E-004</span><span class="w"></span>
-<span class="mf">0.0000000000000000</span><span class="w">       </span><span class="o">-</span><span class="mf">2.6471863527999999</span><span class="w">        </span><span class="mf">1.7212176003060674E-004</span><span class="w"></span>
-<span class="mf">0.0000000000000000</span><span class="w">       </span><span class="o">-</span><span class="mf">2.5870230265999998</span><span class="w">        </span><span class="mf">2.3495069283188794E-004</span><span class="w"></span>
-<span class="mf">0.0000000000000000</span><span class="w">       </span><span class="o">-</span><span class="mf">2.5268597004000002</span><span class="w">        </span><span class="mf">3.1846300082066743E-004</span><span class="w"></span>
-<span class="mf">...</span><span class="w">                       </span><span class="mf">...</span><span class="w">                       </span><span class="mf">...</span><span class="w"></span>
+<div class="codehilite"><pre><span></span><code><span class="mf">0.0000000000000000</span><span class="w">       </span><span class="o">-</span><span class="mf">3.0081663100000000</span><span class="w">        </span><span class="mf">2.5699885852486149E-005</span>
+<span class="mf">0.0000000000000000</span><span class="w">       </span><span class="o">-</span><span class="mf">2.9480029837999999</span><span class="w">        </span><span class="mf">3.4671386965111912E-005</span>
+<span class="mf">0.0000000000000000</span><span class="w">       </span><span class="o">-</span><span class="mf">2.8878396575999998</span><span class="w">        </span><span class="mf">4.7473668668616121E-005</span>
+<span class="mf">0.0000000000000000</span><span class="w">       </span><span class="o">-</span><span class="mf">2.8276763314000002</span><span class="w">        </span><span class="mf">6.5558031421796410E-005</span>
+<span class="mf">0.0000000000000000</span><span class="w">       </span><span class="o">-</span><span class="mf">2.7675130052000001</span><span class="w">        </span><span class="mf">9.0732738996456109E-005</span>
+<span class="mf">0.0000000000000000</span><span class="w">       </span><span class="o">-</span><span class="mf">2.7073496790000000</span><span class="w">        </span><span class="mf">1.2528393376824723E-004</span>
+<span class="mf">0.0000000000000000</span><span class="w">       </span><span class="o">-</span><span class="mf">2.6471863527999999</span><span class="w">        </span><span class="mf">1.7212176003060674E-004</span>
+<span class="mf">0.0000000000000000</span><span class="w">       </span><span class="o">-</span><span class="mf">2.5870230265999998</span><span class="w">        </span><span class="mf">2.3495069283188794E-004</span>
+<span class="mf">0.0000000000000000</span><span class="w">       </span><span class="o">-</span><span class="mf">2.5268597004000002</span><span class="w">        </span><span class="mf">3.1846300082066743E-004</span>
+<span class="mf">...</span><span class="w">                       </span><span class="mf">...</span><span class="w">                       </span><span class="mf">...</span>
 </code></pre></div>
 
 <p>You can copy this file over into the <code>./distribution</code> folder and give it the appropriate naming with the convention given above. Then ALPS can use this interpolated file for the calculation.</p>
@@ -428,8 +429,8 @@ Writing output to file test_interp.in.array
     beta=1.d0
     ms=1.d0
 
-    f0=(pi**(-1.5d0) /((ms * beta )**(3.d0/2.d0) )) * exp( -( ppar**2/( beta * ms)&amp;
-      + (pperp**2)/( beta * ms ) ) )
+    f0=(pi**(-1.5d0) /((ms <span class="gs">* beta )*</span>*(3.d0/2.d0) )) <span class="gs">* exp( -( ppar*</span>*2/( beta <span class="gs">* ms)&amp;</span>
+<span class="gs">      + (pperp*</span>*2)/( beta * ms ) ) )
 
   case(2) ! Species 2
      ...
@@ -490,56 +491,30 @@ test_analytical.2.array
 
 <p>for any species, its contributions to the dielectric tensor will be calculated with the NHDS routines. Also the Landau-contour integration will be done through NHDS.</p>
 <p>Once <code>use_bM</code> is set to true, ALPS will look for the parameters used to define the bi-Maxwellian properties of the corresponding species. These are given in a species-dependent block in the ALPS input file, which may look like this:</p>
-<div class="codehilite"><pre><span></span><code><span class="sx">!Bi-Maxwellian parameters; for species 1</span><span class="w"></span>
-<span class="sx">!Only used if use_bM=T</span><span class="w"></span>
-<span class="o">&amp;</span><span class="n">bM_spec_1</span><span class="w"></span>
-<span class="n">bM_nmaxs</span><span class="p">=</span><span class="mi">500</span><span class="w">           </span>!<span class="n">Maximum</span><span class="w"> </span><span class="n">number</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">resonaces</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">consider</span><span class="w"></span>
-<span class="n">bM_Bessel_zeros</span><span class="p">=</span><span class="mi">1</span><span class="p">.</span><span class="n">d</span><span class="o">-</span><span class="mi">50</span><span class="w"> </span>!<span class="n">Amplitude</span><span class="w"> </span><span class="n">limit</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">Bessel</span><span class="w"> </span><span class="k">function</span><span class="w"></span>
-<span class="n">bM_betas</span><span class="p">=</span><span class="mi">1</span><span class="p">.</span><span class="n">d0</span><span class="w">          </span>!<span class="n">Plasma</span><span class="w"> </span><span class="nb">beta</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">species</span><span class="w"> </span><span class="mi">1</span><span class="w"></span>
-<span class="n">bM_alphas</span><span class="p">=</span><span class="mi">1</span><span class="p">.</span><span class="n">d0</span><span class="w">         </span>!<span class="n">Tperp</span><span class="o">/</span><span class="n">Tpar</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">species</span><span class="w"> </span><span class="mi">1</span><span class="w"></span>
-<span class="n">bM_pdrifts</span><span class="p">=</span><span class="mi">0</span><span class="p">.</span><span class="n">d0</span><span class="w">        </span>!<span class="n">Momentum</span><span class="w"> </span><span class="n">drift</span><span class="p">,</span><span class="w"> </span><span class="nb">norm</span><span class="p">.</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">m_ref</span><span class="w"> </span><span class="n">v_A</span><span class="p">,</span><span class="n">ref</span><span class="w"></span>
-<span class="o">/</span><span class="w"></span>
+<div class="codehilite"><pre><span></span><code><span class="sx">!Bi-Maxwellian parameters; for species 1</span>
+<span class="sx">!Only used if use_bM=T</span>
+<span class="o">&amp;</span><span class="n">bM_spec_1</span>
+<span class="n">bM_nmaxs</span><span class="p">=</span><span class="mi">500</span><span class="w">           </span>!<span class="n">Maximum</span><span class="w"> </span><span class="n">number</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">resonaces</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">consider</span>
+<span class="n">bM_Bessel_zeros</span><span class="p">=</span><span class="mi">1</span><span class="p">.</span><span class="n">d</span><span class="o">-</span><span class="mi">50</span><span class="w"> </span>!<span class="n">Amplitude</span><span class="w"> </span><span class="n">limit</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">Bessel</span><span class="w"> </span><span class="k">function</span>
+<span class="n">bM_betas</span><span class="p">=</span><span class="mi">1</span><span class="p">.</span><span class="n">d0</span><span class="w">          </span>!<span class="n">Plasma</span><span class="w"> </span><span class="nb">beta</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">species</span><span class="w"> </span><span class="mi">1</span>
+<span class="n">bM_alphas</span><span class="p">=</span><span class="mi">1</span><span class="p">.</span><span class="n">d0</span><span class="w">         </span>!<span class="n">Tperp</span><span class="o">/</span><span class="n">Tpar</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">species</span><span class="w"> </span><span class="mi">1</span>
+<span class="n">bM_pdrifts</span><span class="p">=</span><span class="mi">0</span><span class="p">.</span><span class="n">d0</span><span class="w">        </span>!<span class="n">Momentum</span><span class="w"> </span><span class="n">drift</span><span class="p">,</span><span class="w"> </span><span class="nb">norm</span><span class="p">.</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">m_ref</span><span class="w"> </span><span class="n">v_A</span><span class="p">,</span><span class="n">ref</span>
+<span class="o">/</span>
 </code></pre></div>
 
 <p>The ALPS code suite includes a test case called <code>./tests/test_bimax.in</code> that uses the NHDS routines for a quick calculation of the dispersion relation for a bi-Maxwellian plasma.</p>
-    </div>
-    <div class="col-md-3 col-md-pull-9">
-      <hr class="visible-xs visible-sm">
-        <div class="well toc">
-          <ul class="nav nav-stacked nav-pills">
-            <li role="presentation" class="title"><a href='../page/index.html'>Readme</a></li>
-          </ul>
-          <hr>
-          <ul class="nav nav-stacked nav-pills">
-            <li role="presentation">
-            <a href='../page/./INSTALL.html'>Installing ALPS</a>
-            </li>
-            <li role="presentation">
-            <a href='../page/./citingpapers.html'>Papers citing ALPS</a>
-            </li>
-            <li role="presentation">
-            <a href='../page/./input.html'>ALPS Input</a>
-            </li>
-            <li role="presentation">
-            <a href='../page/./output.html'>ALPS Output</a>
-            </li>
-            <li role="presentation" class="disabled">
-            <a href='../page/./tutorial.html'>ALPS Tutorial</a>
-            </li>
-          </ul>
-        </div>
     </div>
   </div>
       <hr>
     </div> <!-- /container -->
     <footer>
       <div class="container">
-        <div class="row">
-          <div class="col-xs-6 col-md-6"><p>ALPS was developed by Kristopher Klein, Daniel Verscharen<br>&copy; 2023 
+        <div class="row justify-content-between">
+          <div class="col"><p>ALPS was developed by Kristopher Klein, Daniel Verscharen<br>&copy; 2024 
 </p>
           </div>
-          <div class="col-xs-6 col-md-6">
-            <p class="text-right">
+          <div class="col">
+            <p class="text-end">
               Documentation generated by
               <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
             </p>
@@ -549,17 +524,12 @@ test_analytical.2.array
       </div> <!-- /container -->
     </footer>
 
-    <!-- Bootstrap core JavaScript
-         ================================================== -->
-         <!-- Placed at the end of the document so the pages load faster -->
-    <!--
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-        -->
-        <script src="../js/bootstrap.min.js"></script>
-        <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-        <script src="../js/ie10-viewport-bug-workaround.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>    
 
-        <!-- MathJax JavaScript
+    <!-- MathJax JavaScript
              ================================================== -->
              <!-- Placed at the end of the document so the pages load faster -->
         <script type="text/x-mathjax-config">

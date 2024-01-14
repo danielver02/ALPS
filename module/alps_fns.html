@@ -1,3 +1,5 @@
+<!-- -*- mode: jinja2 -*- -->
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -10,78 +12,57 @@
 
     <title>alps_fns &ndash; ALPS</title>
 
-    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <link href="../css/pygments.css" rel="stylesheet">
     <link href="../css/font-awesome.min.css" rel="stylesheet">
     <link href="../css/local.css" rel="stylesheet">
       <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
 
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-        <![endif]-->
-
-         <script src="../js/jquery-2.1.3.min.js"></script>
-         <script src="../js/svg-pan-zoom.min.js"></script>
-
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="../js/svg-pan-zoom.min.js"></script>
   </head>
 
   <body>
 
     <!-- Fixed navbar -->
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
           <a class="navbar-brand" href="../index.html">ALPS </a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-              <li><a href='../page/index.html'>Readme</a></li>
-            <li class="dropdown hidden-xs visible-sm visible-md hidden-lg">
-              <a href="#" class="dropdown-toggle"
-                 data-toggle="dropdown" role="button"
-                 aria-haspopup="true"
-                 aria-expanded="false">
-                 Contents <span class="caret"></span>
-              </a>
-              <ul class="dropdown-menu">
-                  <li><a href="../lists/modules.html">Modules</a></li>
-                  <li><a href="../lists/procedures.html">Procedures</a></li>
-                  <li><a href="../lists/types.html">Derived Types</a></li>
-                  <li><a href="../lists/programs.html">Programs</a></li>
-              </ul>
-            </li>
-              <li class="visible-xs hidden-sm visible-lg">
-                <a href="../lists/modules.html">Modules</a>
-              </li>
-              <li class="visible-xs hidden-sm visible-lg">
-                <a href="../lists/procedures.html">Procedures</a>
-              </li>
-              <li class="visible-xs hidden-sm visible-lg">
-                <a href="../lists/types.html">Derived Types</a>
-              </li>
-              <li class="visible-xs hidden-sm visible-lg">
-                <a href="../lists/programs.html">Programs</a>
-              </li>
-          </ul>
-            <form action="../search.html" class="navbar-form navbar-right" role="search">
-              <div class="form-group">
-                <input type="text" class="form-control" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="../page/index.html">Readme</a></li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/namelists.html">Namelists</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/programs.html">Programs</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
               </div>
-              <!--
-                  <button type="submit" class="btn btn-default">Submit</button>
-                  -->
-            </form>
-        </div><!--/.nav-collapse -->
-      </div>
-    </nav>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
 
     <div class="container">
   <div class="row">
@@ -89,34 +70,38 @@
       <small>Module</small>
       
     </h1>
-      <div class="row" id="info-bar">
-    <div class="col-lg-12">
-      <div class="well well-sm">
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
         <ul class="list-inline" style="margin-bottom:0px;display:inline">
 
-          <li id="statements"><i class="fa fa-list-ol"></i>
-            <a data-toggle="tooltip"
-               data-placement="bottom" data-html="true"
-               title="38.8% of total for modules and submodules.">1762 statements</a>
-          </li>
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip"
+                 data-bs-placement="bottom" data-html="true"
+                 title="38.8% of total for modules and submodules.">1762 statements</a>
+            </li>
 
         </ul>
-        <ol class="breadcrumb in-well text-right">
-          <li class="active">alps_fns</li>
-        </ol>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+            <li class="breadcrumb-item active" aria-current="page">alps_fns</li>
+          </ol>
+        </nav>
       </div>
     </div>
   </div>
   <script>
     $(function () {
-    $('[data-toggle="tooltip"]').tooltip()
+    $('[data-bs-toggle="tooltip"]').tooltip()
     })
   </script>
 
   </div>
 
   <div class="row">
-    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+    <div class="col-md-3">
         <div id="sidebar">
       <h3>Contents</h3>
   
@@ -130,14 +115,13 @@
   
   
   
-      <div class="panel panel-primary">
-      <div class="panel-heading text-left">
-        <h3 class="panel-title">
-          <a data-toggle="collapse" href="#funcs-0">Functions</a>
-        </h3>
-      </div>
-      <div id="funcs-0" class="panel-collapse collapse">
-        <div class="list-group">
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#funcs-0"
+         aria-expanded="false" aria-controls="funcs-0">
+         <h4 class="card-header bg-primary text-white">Functions</h4>
+      </a>
+      <div id="funcs-0" class="collapse">
+        <div class="list-group list-group-flush">
             <a class="list-group-item" href="../module/alps_fns.html#proc-disp">disp</a>
             <a class="list-group-item" href="../module/alps_fns.html#proc-full_integrate">full_integrate</a>
             <a class="list-group-item" href="../module/alps_fns.html#proc-integrate">integrate</a>
@@ -152,14 +136,13 @@
       </div>
     </div>
 
-      <div class="panel panel-primary">
-      <div class="panel-heading text-left">
-        <h3 class="panel-title">
-          <a data-toggle="collapse" href="#subs-0">Subroutines</a>
-        </h3>
-      </div>
-      <div id="subs-0" class="panel-collapse collapse">
-        <div class="list-group">
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#subs-0"
+         aria-expanded="false" aria-controls="subs-0">
+         <h4 class="card-header bg-primary text-white">Subroutines</h4>
+      </a>
+      <div id="subs-0" class="collapse">
+        <div class="list-group list-group-flush">
             <a class="list-group-item" href="../module/alps_fns.html#proc-derivative_f0">derivative_f0</a>
             <a class="list-group-item" href="../module/alps_fns.html#proc-determine_resonances">determine_resonances</a>
             <a class="list-group-item" href="../module/alps_fns.html#proc-secant">secant</a>
@@ -182,6 +165,7 @@
   
   
   
+  
 
 
   </div>
@@ -191,13 +175,12 @@
     <div class="col-md-9" id='text'>
       <p>This module contains the key numerical functions of ALPS.</p>
 <br>      
-          <div class="panel panel-default">
-      <div class="panel-heading">
-        <h3 class="panel-title">Used by</h3>
-      </div>
-      <ul class="list-group">
-          <li class="list-group-item">
-            <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+          <div class="card">
+      <h3 class="card-header card-title bg-light">Used by</h3>
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Generated by graphviz version 2.43.0 (0)
@@ -217,7 +200,7 @@
 <!-- program~alps -->
 <g id="module~~alps_fns~~UsedByGraph_node2" class="node">
 <title>program~alps</title>
-<g id="a_module~~alps_fns~~UsedByGraph_node2"><a xlink:href=".././program/alps.html" xlink:title="alps">
+<g id="a_module~~alps_fns~~UsedByGraph_node2"><a xlink:href="../program/alps.html" xlink:title="alps">
 <polygon fill="#f0ad4e" stroke="#f0ad4e" points="145,-24 91,-24 91,0 145,0 145,-24"/>
 <text text-anchor="middle" x="118" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps</text>
 </a>
@@ -231,17 +214,17 @@
 </g>
 </g>
 </svg>
-</div>        <div><a type="button" class="graph-help" data-toggle="modal" href="#graph-help-text">Help</a></div>
-          <div class="modal fade" id="graph-help-text" tabindex="-1" role="dialog">
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#UsedByGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="UsedByGraph-help-text" tabindex="-1" role="dialog">
             <div class="modal-dialog modal-lg" role="document">
               <div class="modal-content">
                 <div class="modal-header">
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
                   <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-              <div class="modal-body">
+                <div class="modal-body">
 <p>Nodes of different colours represent the following: </p>
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
@@ -301,81 +284,12 @@ modules which it uses.
             </div>
           </div>
         </div>
-          </li>
-      </ul>
+            </li>
+        </ul>
+      </div>
     </div>
 
       <br>
-
-      <section class="visible-xs visible-sm hidden-md">
-          <h3>Contents</h3>
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-      <div class="panel panel-primary">
-      <div class="panel-heading text-left">
-        <h3 class="panel-title">
-          <a data-toggle="collapse" href="#funcs-1">Functions</a>
-        </h3>
-      </div>
-      <div id="funcs-1" class="panel-collapse collapse">
-        <div class="list-group">
-            <a class="list-group-item" href="../module/alps_fns.html#proc-disp">disp</a>
-            <a class="list-group-item" href="../module/alps_fns.html#proc-full_integrate">full_integrate</a>
-            <a class="list-group-item" href="../module/alps_fns.html#proc-integrate">integrate</a>
-            <a class="list-group-item" href="../module/alps_fns.html#proc-integrate_res">integrate_res</a>
-            <a class="list-group-item" href="../module/alps_fns.html#proc-funct_g">funct_g</a>
-            <a class="list-group-item" href="../module/alps_fns.html#proc-landau_integrate">landau_integrate</a>
-            <a class="list-group-item" href="../module/alps_fns.html#proc-int_ee">int_ee</a>
-            <a class="list-group-item" href="../module/alps_fns.html#proc-resu">resU</a>
-            <a class="list-group-item" href="../module/alps_fns.html#proc-int_t">int_T</a>
-            <a class="list-group-item" href="../module/alps_fns.html#proc-int_t_res">int_T_res</a>
-        </div>
-      </div>
-    </div>
-
-      <div class="panel panel-primary">
-      <div class="panel-heading text-left">
-        <h3 class="panel-title">
-          <a data-toggle="collapse" href="#subs-1">Subroutines</a>
-        </h3>
-      </div>
-      <div id="subs-1" class="panel-collapse collapse">
-        <div class="list-group">
-            <a class="list-group-item" href="../module/alps_fns.html#proc-derivative_f0">derivative_f0</a>
-            <a class="list-group-item" href="../module/alps_fns.html#proc-determine_resonances">determine_resonances</a>
-            <a class="list-group-item" href="../module/alps_fns.html#proc-secant">secant</a>
-            <a class="list-group-item" href="../module/alps_fns.html#proc-om_scan">om_scan</a>
-            <a class="list-group-item" href="../module/alps_fns.html#proc-calc_eigen">calc_eigen</a>
-            <a class="list-group-item" href="../module/alps_fns.html#proc-om_double_scan">om_double_scan</a>
-            <a class="list-group-item" href="../module/alps_fns.html#proc-map_search">map_search</a>
-            <a class="list-group-item" href="../module/alps_fns.html#proc-refine_guess">refine_guess</a>
-            <a class="list-group-item" href="../module/alps_fns.html#proc-find_minima">find_minima</a>
-            <a class="list-group-item" href="../module/alps_fns.html#proc-determine_nmax">determine_nmax</a>
-            <a class="list-group-item" href="../module/alps_fns.html#proc-split_processes">split_processes</a>
-            <a class="list-group-item" href="../module/alps_fns.html#proc-determine_bessel_array">determine_bessel_array</a>
-        </div>
-      </div>
-    </div>
-
-  
-  
-  
-  
-  
-  
-
-
-      </section>
-      <br class="visible-xs visible-sm hidden-md">
 
 
 
@@ -385,10 +299,10 @@ modules which it uses.
 
         <section>
           <h2>Functions</h2>
-              <div class="panel panel-default">
-    <div class="panel-heading codesum"><span class="anchor" id="proc-disp"></span><h3>public  function <a href='../proc/disp.html'>disp</a>(om)  
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-disp"></span> <h3>public  function <a href='../proc/disp.html'>disp</a>(om)  
 </h3></div>
-    <div class="panel-body">
+    <div class="card-body">
           
   <p>This function returns the determinant of the dispersion tensor for a given frequency om.</p>
 
@@ -396,16 +310,16 @@ modules which it uses.
       <table class="table table-striped varlist">
     <thead>
       <tr>
-        <th>Type</th>
-<th>Intent</th><th>Optional</th>        <th>Attributes</th>
-        <th></th>
-        <th>Name</th>
-        <th></th>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
     </thead>
     <tbody>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-om~8"></span>
               double complex,
             </td>
 <td>intent(in)</td>
@@ -430,10 +344,10 @@ modules which it uses.
     </div>
   </div>
 
-              <div class="panel panel-default">
-    <div class="panel-heading codesum"><span class="anchor" id="proc-full_integrate"></span><h3>public  function <a href='../proc/full_integrate.html'>full_integrate</a>(om, nn, mode, found_res)  
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-full_integrate"></span> <h3>public  function <a href='../proc/full_integrate.html'>full_integrate</a>(om, nn, mode, found_res)  
 </h3></div>
-    <div class="panel-body">
+    <div class="card-body">
           
   <p>This function returns the full integral expression according to Eq. (2.9) in the code paper.</p>
 
@@ -441,16 +355,16 @@ modules which it uses.
       <table class="table table-striped varlist">
     <thead>
       <tr>
-        <th>Type</th>
-<th>Intent</th><th>Optional</th>        <th>Attributes</th>
-        <th></th>
-        <th>Name</th>
-        <th></th>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
     </thead>
     <tbody>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-om~10"></span>
               double complex,
             </td>
 <td>intent(in)</td>
@@ -465,7 +379,7 @@ modules which it uses.
         </tr>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-nn~12"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -480,7 +394,7 @@ modules which it uses.
         </tr>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-mode~9"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -495,7 +409,7 @@ modules which it uses.
         </tr>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-found_res~2"></span>
               logical,
             </td>
 <td>intent(in)</td>
@@ -520,10 +434,10 @@ modules which it uses.
     </div>
   </div>
 
-              <div class="panel panel-default">
-    <div class="panel-heading codesum"><span class="anchor" id="proc-integrate"></span><h3>private  function <a href='../proc/integrate.html'>integrate</a>(om, nn, mode, iparmin, iparmax)  
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-integrate"></span> <h3>private  function <a href='../proc/integrate.html'>integrate</a>(om, nn, mode, iparmin, iparmax)  
 </h3></div>
-    <div class="panel-body">
+    <div class="card-body">
           
   <p>This function performs the integral in Eq. (2.9) of the code paper, but without
 accounting for the Landau contour integral. It is called by <a href="../proc/full_integrate.html">full_integrate</a>.</p>
@@ -532,16 +446,16 @@ accounting for the Landau contour integral. It is called by <a href="../proc/ful
       <table class="table table-striped varlist">
     <thead>
       <tr>
-        <th>Type</th>
-<th>Intent</th><th>Optional</th>        <th>Attributes</th>
-        <th></th>
-        <th>Name</th>
-        <th></th>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
     </thead>
     <tbody>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-om~11"></span>
               double complex,
             </td>
 <td>intent(in)</td>
@@ -556,7 +470,7 @@ accounting for the Landau contour integral. It is called by <a href="../proc/ful
         </tr>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-nn~13"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -571,7 +485,7 @@ accounting for the Landau contour integral. It is called by <a href="../proc/ful
         </tr>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-mode~10"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -586,7 +500,7 @@ accounting for the Landau contour integral. It is called by <a href="../proc/ful
         </tr>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-iparmin"></span>
               integer
             </td>
 <td></td>
@@ -601,7 +515,7 @@ accounting for the Landau contour integral. It is called by <a href="../proc/ful
         </tr>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-iparmax"></span>
               integer
             </td>
 <td></td>
@@ -626,10 +540,10 @@ accounting for the Landau contour integral. It is called by <a href="../proc/ful
     </div>
   </div>
 
-              <div class="panel panel-default">
-    <div class="panel-heading codesum"><span class="anchor" id="proc-integrate_res"></span><h3>private  function <a href='../proc/integrate_res.html'>integrate_res</a>(om, nn, mode)  
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-integrate_res"></span> <h3>private  function <a href='../proc/integrate_res.html'>integrate_res</a>(om, nn, mode)  
 </h3></div>
-    <div class="panel-body">
+    <div class="card-body">
           
   <p>This function performs the integration near resonances as described in Section 3.1 of the code paper. It is only called if resonances are present in or near the integration domain.</p>
 
@@ -637,16 +551,16 @@ accounting for the Landau contour integral. It is called by <a href="../proc/ful
       <table class="table table-striped varlist">
     <thead>
       <tr>
-        <th>Type</th>
-<th>Intent</th><th>Optional</th>        <th>Attributes</th>
-        <th></th>
-        <th>Name</th>
-        <th></th>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
     </thead>
     <tbody>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-om~12"></span>
               double complex,
             </td>
 <td>intent(in)</td>
@@ -661,7 +575,7 @@ accounting for the Landau contour integral. It is called by <a href="../proc/ful
         </tr>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-nn~14"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -676,7 +590,7 @@ accounting for the Landau contour integral. It is called by <a href="../proc/ful
         </tr>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-mode~11"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -701,10 +615,10 @@ accounting for the Landau contour integral. It is called by <a href="../proc/ful
     </div>
   </div>
 
-              <div class="panel panel-default">
-    <div class="panel-heading codesum"><span class="anchor" id="proc-funct_g"></span><h3>public  function <a href='../proc/funct_g.html'>funct_g</a>(ppar_real, iperp, om, nn, mode)  
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-funct_g"></span> <h3>public  function <a href='../proc/funct_g.html'>funct_g</a>(ppar_real, iperp, om, nn, mode)  
 </h3></div>
-    <div class="panel-body">
+    <div class="card-body">
           
   <p>This function returns the function <script type="math/tex">g</script> from Eq. (3.2) of the code paper.</p>
 
@@ -712,16 +626,16 @@ accounting for the Landau contour integral. It is called by <a href="../proc/ful
       <table class="table table-striped varlist">
     <thead>
       <tr>
-        <th>Type</th>
-<th>Intent</th><th>Optional</th>        <th>Attributes</th>
-        <th></th>
-        <th>Name</th>
-        <th></th>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
     </thead>
     <tbody>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-ppar_real"></span>
               double precision,
             </td>
 <td>intent(in)</td>
@@ -736,7 +650,7 @@ accounting for the Landau contour integral. It is called by <a href="../proc/ful
         </tr>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-iperp~8"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -751,7 +665,7 @@ accounting for the Landau contour integral. It is called by <a href="../proc/ful
         </tr>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-om~13"></span>
               double complex,
             </td>
 <td>intent(in)</td>
@@ -766,7 +680,7 @@ accounting for the Landau contour integral. It is called by <a href="../proc/ful
         </tr>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-nn~15"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -781,7 +695,7 @@ accounting for the Landau contour integral. It is called by <a href="../proc/ful
         </tr>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-mode~12"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -806,10 +720,10 @@ accounting for the Landau contour integral. It is called by <a href="../proc/ful
     </div>
   </div>
 
-              <div class="panel panel-default">
-    <div class="panel-heading codesum"><span class="anchor" id="proc-landau_integrate"></span><h3>private  function <a href='../proc/landau_integrate.html'>landau_integrate</a>(om, nn, mode)  
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-landau_integrate"></span> <h3>private  function <a href='../proc/landau_integrate.html'>landau_integrate</a>(om, nn, mode)  
 </h3></div>
-    <div class="panel-body">
+    <div class="card-body">
           
   <p>This function evaluates the Landau contour according to Eqs. (3.8) and (3.9) of the code paper.</p>
 
@@ -817,16 +731,16 @@ accounting for the Landau contour integral. It is called by <a href="../proc/ful
       <table class="table table-striped varlist">
     <thead>
       <tr>
-        <th>Type</th>
-<th>Intent</th><th>Optional</th>        <th>Attributes</th>
-        <th></th>
-        <th>Name</th>
-        <th></th>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
     </thead>
     <tbody>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-om~14"></span>
               double complex,
             </td>
 <td>intent(in)</td>
@@ -841,7 +755,7 @@ accounting for the Landau contour integral. It is called by <a href="../proc/ful
         </tr>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-nn~16"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -856,7 +770,7 @@ accounting for the Landau contour integral. It is called by <a href="../proc/ful
         </tr>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-mode~13"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -881,10 +795,10 @@ accounting for the Landau contour integral. It is called by <a href="../proc/ful
     </div>
   </div>
 
-              <div class="panel panel-default">
-    <div class="panel-heading codesum"><span class="anchor" id="proc-int_ee"></span><h3>public  function <a href='../proc/int_ee.html'>int_ee</a>(om)  
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-int_ee"></span> <h3>public  function <a href='../proc/int_ee.html'>int_ee</a>(om)  
 </h3></div>
-    <div class="panel-body">
+    <div class="card-body">
           
   <p>This function returns the ee term in Eq. (2.9).</p>
 
@@ -892,16 +806,16 @@ accounting for the Landau contour integral. It is called by <a href="../proc/ful
       <table class="table table-striped varlist">
     <thead>
       <tr>
-        <th>Type</th>
-<th>Intent</th><th>Optional</th>        <th>Attributes</th>
-        <th></th>
-        <th>Name</th>
-        <th></th>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
     </thead>
     <tbody>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-om~15"></span>
               double complex,
             </td>
 <td>intent(in)</td>
@@ -926,10 +840,10 @@ accounting for the Landau contour integral. It is called by <a href="../proc/ful
     </div>
   </div>
 
-              <div class="panel panel-default">
-    <div class="panel-heading codesum"><span class="anchor" id="proc-resu"></span><h3>private  function <a href='../proc/resu.html'>resU</a>(om, nn, iperp, ipar)  
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-resu"></span> <h3>private  function <a href='../proc/resu.html'>resU</a>(om, nn, iperp, ipar)  
 </h3></div>
-    <div class="panel-body">
+    <div class="card-body">
           
   <p>This function evaluates the term proportional to <script type="math/tex">U</script> in Eq. (2.9) of the code paper.</p>
 
@@ -937,16 +851,16 @@ accounting for the Landau contour integral. It is called by <a href="../proc/ful
       <table class="table table-striped varlist">
     <thead>
       <tr>
-        <th>Type</th>
-<th>Intent</th><th>Optional</th>        <th>Attributes</th>
-        <th></th>
-        <th>Name</th>
-        <th></th>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
     </thead>
     <tbody>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-om~16"></span>
               double complex,
             </td>
 <td>intent(in)</td>
@@ -961,7 +875,7 @@ accounting for the Landau contour integral. It is called by <a href="../proc/ful
         </tr>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-nn~17"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -976,7 +890,7 @@ accounting for the Landau contour integral. It is called by <a href="../proc/ful
         </tr>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-iperp~11"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -991,7 +905,7 @@ accounting for the Landau contour integral. It is called by <a href="../proc/ful
         </tr>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-ipar~10"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -1016,10 +930,10 @@ accounting for the Landau contour integral. It is called by <a href="../proc/ful
     </div>
   </div>
 
-              <div class="panel panel-default">
-    <div class="panel-heading codesum"><span class="anchor" id="proc-int_t"></span><h3>private  function <a href='../proc/int_t.html'>int_T</a>(nn, iperp, ipar, mode)  
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-int_t"></span> <h3>private  function <a href='../proc/int_t.html'>int_T</a>(nn, iperp, ipar, mode)  
 </h3></div>
-    <div class="panel-body">
+    <div class="card-body">
           
   <p>This function returns the T-tensor according to Eq. (2.10) of the code paper.</p>
 
@@ -1027,16 +941,16 @@ accounting for the Landau contour integral. It is called by <a href="../proc/ful
       <table class="table table-striped varlist">
     <thead>
       <tr>
-        <th>Type</th>
-<th>Intent</th><th>Optional</th>        <th>Attributes</th>
-        <th></th>
-        <th>Name</th>
-        <th></th>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
     </thead>
     <tbody>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-nn~18"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -1051,7 +965,7 @@ accounting for the Landau contour integral. It is called by <a href="../proc/ful
         </tr>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-iperp~12"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -1066,7 +980,7 @@ accounting for the Landau contour integral. It is called by <a href="../proc/ful
         </tr>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-ipar~11"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -1081,7 +995,7 @@ accounting for the Landau contour integral. It is called by <a href="../proc/ful
         </tr>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-mode~14"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -1106,10 +1020,10 @@ accounting for the Landau contour integral. It is called by <a href="../proc/ful
     </div>
   </div>
 
-              <div class="panel panel-default">
-    <div class="panel-heading codesum"><span class="anchor" id="proc-int_t_res"></span><h3>private  function <a href='../proc/int_t_res.html'>int_T_res</a>(nn, iperp, p_res, mode)  
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-int_t_res"></span> <h3>private  function <a href='../proc/int_t_res.html'>int_T_res</a>(nn, iperp, p_res, mode)  
 </h3></div>
-    <div class="panel-body">
+    <div class="card-body">
           
   <p>This function returns the T-tensor according to Eq. (2.10) of the code paper for the case in which it is evaluated at the complex resonance momentum.</p>
 
@@ -1117,16 +1031,16 @@ accounting for the Landau contour integral. It is called by <a href="../proc/ful
       <table class="table table-striped varlist">
     <thead>
       <tr>
-        <th>Type</th>
-<th>Intent</th><th>Optional</th>        <th>Attributes</th>
-        <th></th>
-        <th>Name</th>
-        <th></th>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
     </thead>
     <tbody>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-nn~19"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -1141,7 +1055,7 @@ accounting for the Landau contour integral. It is called by <a href="../proc/ful
         </tr>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-iperp~13"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -1156,7 +1070,7 @@ accounting for the Landau contour integral. It is called by <a href="../proc/ful
         </tr>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-p_res~4"></span>
               double complex,
             </td>
 <td>intent(in)</td>
@@ -1171,7 +1085,7 @@ accounting for the Landau contour integral. It is called by <a href="../proc/ful
         </tr>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-mode~15"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -1201,10 +1115,10 @@ accounting for the Landau contour integral. It is called by <a href="../proc/ful
 
         <section>
           <h2>Subroutines</h2>
-              <div class="panel panel-default">
-    <div class="panel-heading codesum"><span class="anchor" id="proc-derivative_f0"></span><h3>public  subroutine <a href='../proc/derivative_f0.html'>derivative_f0</a>()  
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-derivative_f0"></span> <h3>public  subroutine <a href='../proc/derivative_f0.html'>derivative_f0</a>()  
 </h3></div>
-    <div class="panel-body">
+    <div class="card-body">
           
   <p>This subroutine calculates the perpendicular and parallel derivatives of the background velocity distribution function f0.</p>
 
@@ -1214,10 +1128,10 @@ accounting for the Landau contour integral. It is called by <a href="../proc/ful
     </div>
   </div>
 
-              <div class="panel panel-default">
-    <div class="panel-heading codesum"><span class="anchor" id="proc-determine_resonances"></span><h3>public  subroutine <a href='../proc/determine_resonances.html'>determine_resonances</a>(om, nn, found_res_plus, found_res_minus)  
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-determine_resonances"></span> <h3>public  subroutine <a href='../proc/determine_resonances.html'>determine_resonances</a>(om, nn, found_res_plus, found_res_minus)  
 </h3></div>
-    <div class="panel-body">
+    <div class="card-body">
           
   <p>This subroutine determines whether any kinetic resonances are located in the integration domain.</p>
 
@@ -1225,16 +1139,16 @@ accounting for the Landau contour integral. It is called by <a href="../proc/ful
       <table class="table table-striped varlist">
     <thead>
       <tr>
-        <th>Type</th>
-<th>Intent</th><th>Optional</th>        <th>Attributes</th>
-        <th></th>
-        <th>Name</th>
-        <th></th>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
     </thead>
     <tbody>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-om~9"></span>
               double complex,
             </td>
 <td>intent(in)</td>
@@ -1249,7 +1163,7 @@ accounting for the Landau contour integral. It is called by <a href="../proc/ful
         </tr>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-nn~11"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -1264,7 +1178,7 @@ accounting for the Landau contour integral. It is called by <a href="../proc/ful
         </tr>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-found_res_plus~2"></span>
               logical,
             </td>
 <td>intent(out)</td>
@@ -1279,7 +1193,7 @@ accounting for the Landau contour integral. It is called by <a href="../proc/ful
         </tr>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-found_res_minus~2"></span>
               logical,
             </td>
 <td>intent(out)</td>
@@ -1299,10 +1213,10 @@ accounting for the Landau contour integral. It is called by <a href="../proc/ful
     </div>
   </div>
 
-              <div class="panel panel-default">
-    <div class="panel-heading codesum"><span class="anchor" id="proc-secant"></span><h3>public  subroutine <a href='../proc/secant.html'>secant</a>(om)  
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-secant"></span> <h3>public  subroutine <a href='../proc/secant.html'>secant</a>(om)  
 </h3></div>
-    <div class="panel-body">
+    <div class="card-body">
           
   <p>This subroutine applies the secant method to find the roots of the dispersion tensor.</p>
 
@@ -1310,16 +1224,16 @@ accounting for the Landau contour integral. It is called by <a href="../proc/ful
       <table class="table table-striped varlist">
     <thead>
       <tr>
-        <th>Type</th>
-<th>Intent</th><th>Optional</th>        <th>Attributes</th>
-        <th></th>
-        <th>Name</th>
-        <th></th>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
     </thead>
     <tbody>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-om~17"></span>
               double complex,
             </td>
 <td>intent(inout)</td>
@@ -1339,10 +1253,10 @@ accounting for the Landau contour integral. It is called by <a href="../proc/ful
     </div>
   </div>
 
-              <div class="panel panel-default">
-    <div class="panel-heading codesum"><span class="anchor" id="proc-om_scan"></span><h3>public  subroutine <a href='../proc/om_scan.html'>om_scan</a>(ik)  
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-om_scan"></span> <h3>public  subroutine <a href='../proc/om_scan.html'>om_scan</a>(ik)  
 </h3></div>
-    <div class="panel-body">
+    <div class="card-body">
           
   <p>This subroutine scans solutions along a single prescribed path in wavevector space.</p>
 
@@ -1350,16 +1264,16 @@ accounting for the Landau contour integral. It is called by <a href="../proc/ful
       <table class="table table-striped varlist">
     <thead>
       <tr>
-        <th>Type</th>
-<th>Intent</th><th>Optional</th>        <th>Attributes</th>
-        <th></th>
-        <th>Name</th>
-        <th></th>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
     </thead>
     <tbody>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-ik~4"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -1379,10 +1293,10 @@ accounting for the Landau contour integral. It is called by <a href="../proc/ful
     </div>
   </div>
 
-              <div class="panel panel-default">
-    <div class="panel-heading codesum"><span class="anchor" id="proc-calc_eigen"></span><h3>public  subroutine <a href='../proc/calc_eigen.html'>calc_eigen</a>(omega, electric, magnetic, vmean, ds, Ps, eigen_L, heat_L)  
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-calc_eigen"></span> <h3>public  subroutine <a href='../proc/calc_eigen.html'>calc_eigen</a>(omega, electric, magnetic, vmean, ds, Ps, eigen_L, heat_L)  
 </h3></div>
-    <div class="panel-body">
+    <div class="card-body">
           
   <p>This subroutine calculates the relative electric and magnetic field amplitudes, the relative fluctuations in the density and velocity of all species, and the heating rates of the given solution.
 It is based on the calc_eigen routine by Greg Howes and Kris Klein.</p>
@@ -1391,16 +1305,16 @@ It is based on the calc_eigen routine by Greg Howes and Kris Klein.</p>
       <table class="table table-striped varlist">
     <thead>
       <tr>
-        <th>Type</th>
-<th>Intent</th><th>Optional</th>        <th>Attributes</th>
-        <th></th>
-        <th>Name</th>
-        <th></th>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
     </thead>
     <tbody>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-omega~2"></span>
               double complex,
             </td>
 <td>intent(in)</td>
@@ -1415,7 +1329,7 @@ It is based on the calc_eigen routine by Greg Howes and Kris Klein.</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-electric"></span>
               double complex,
             </td>
 <td>intent(out),</td>
@@ -1430,7 +1344,7 @@ It is based on the calc_eigen routine by Greg Howes and Kris Klein.</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-magnetic"></span>
               double complex,
             </td>
 <td>intent(out),</td>
@@ -1445,7 +1359,7 @@ It is based on the calc_eigen routine by Greg Howes and Kris Klein.</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-vmean"></span>
               double complex,
             </td>
 <td>intent(out),</td>
@@ -1460,7 +1374,7 @@ It is based on the calc_eigen routine by Greg Howes and Kris Klein.</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-ds~2"></span>
               double complex,
             </td>
 <td>intent(out),</td>
@@ -1475,7 +1389,7 @@ It is based on the calc_eigen routine by Greg Howes and Kris Klein.</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-ps~2"></span>
               double precision,
             </td>
 <td>intent(out),</td>
@@ -1490,7 +1404,7 @@ It is based on the calc_eigen routine by Greg Howes and Kris Klein.</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-eigen_l"></span>
               logical,
             </td>
 <td>intent(in)</td>
@@ -1505,7 +1419,7 @@ It is based on the calc_eigen routine by Greg Howes and Kris Klein.</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-heat_l"></span>
               logical,
             </td>
 <td>intent(in)</td>
@@ -1525,10 +1439,10 @@ It is based on the calc_eigen routine by Greg Howes and Kris Klein.</p>
     </div>
   </div>
 
-              <div class="panel panel-default">
-    <div class="panel-heading codesum"><span class="anchor" id="proc-om_double_scan"></span><h3>public  subroutine <a href='../proc/om_double_scan.html'>om_double_scan</a>()  
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-om_double_scan"></span> <h3>public  subroutine <a href='../proc/om_double_scan.html'>om_double_scan</a>()  
 </h3></div>
-    <div class="panel-body">
+    <div class="card-body">
           
   <p>This subroutine scans along a prescribed plane in wavevector space to map out <script type="math/tex">\omega</script> in this space. It is required that n_scan=2.</p>
 
@@ -1538,10 +1452,10 @@ It is based on the calc_eigen routine by Greg Howes and Kris Klein.</p>
     </div>
   </div>
 
-              <div class="panel panel-default">
-    <div class="panel-heading codesum"><span class="anchor" id="proc-map_search"></span><h3>public  subroutine <a href='../proc/map_search.html'>map_search</a>()  
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-map_search"></span> <h3>public  subroutine <a href='../proc/map_search.html'>map_search</a>()  
 </h3></div>
-    <div class="panel-body">
+    <div class="card-body">
           
   <p>This subroutine calculates the map of the determinant of the dispersion tensor in complex frequency space.</p>
 
@@ -1551,10 +1465,10 @@ It is based on the calc_eigen routine by Greg Howes and Kris Klein.</p>
     </div>
   </div>
 
-              <div class="panel panel-default">
-    <div class="panel-heading codesum"><span class="anchor" id="proc-refine_guess"></span><h3>public  subroutine <a href='../proc/refine_guess.html'>refine_guess</a>()  
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-refine_guess"></span> <h3>public  subroutine <a href='../proc/refine_guess.html'>refine_guess</a>()  
 </h3></div>
-    <div class="panel-body">
+    <div class="card-body">
           
   <p>This subroutine refines the guess at the starting point of the search for solutions to the dispersion relation when scanning. It is also used by <a href="../proc/map_search.html">map_search</a> to identify the roots on the map.</p>
 
@@ -1564,10 +1478,10 @@ It is based on the calc_eigen routine by Greg Howes and Kris Klein.</p>
     </div>
   </div>
 
-              <div class="panel panel-default">
-    <div class="panel-heading codesum"><span class="anchor" id="proc-find_minima"></span><h3>public  subroutine <a href='../proc/find_minima.html'>find_minima</a>(val, numroots, iroots, nroots)  
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-find_minima"></span> <h3>public  subroutine <a href='../proc/find_minima.html'>find_minima</a>(val, numroots, iroots, nroots)  
 </h3></div>
-    <div class="panel-body">
+    <div class="card-body">
           
   <p>This subroutine identifies the minima of the coarse map grid. It is called by <a href="../proc/map_search.html">map_search</a>.
 The code is based on a routine by Greg Howes, 2006.</p>
@@ -1576,16 +1490,16 @@ The code is based on a routine by Greg Howes, 2006.</p>
       <table class="table table-striped varlist">
     <thead>
       <tr>
-        <th>Type</th>
-<th>Intent</th><th>Optional</th>        <th>Attributes</th>
-        <th></th>
-        <th>Name</th>
-        <th></th>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
     </thead>
     <tbody>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-val~2"></span>
               double precision,
             </td>
 <td>intent(in),</td>
@@ -1600,7 +1514,7 @@ The code is based on a routine by Greg Howes, 2006.</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-numroots~2"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -1615,7 +1529,7 @@ The code is based on a routine by Greg Howes, 2006.</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-iroots~2"></span>
               integer,
             </td>
 <td>intent(out),</td>
@@ -1630,7 +1544,7 @@ The code is based on a routine by Greg Howes, 2006.</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" ></span>
+              <span class="anchor" id="variable-nroots~2"></span>
               integer,
             </td>
 <td>intent(out)</td>
@@ -1650,10 +1564,10 @@ The code is based on a routine by Greg Howes, 2006.</p>
     </div>
   </div>
 
-              <div class="panel panel-default">
-    <div class="panel-heading codesum"><span class="anchor" id="proc-determine_nmax"></span><h3>public  subroutine <a href='../proc/determine_nmax.html'>determine_nmax</a>()  
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-determine_nmax"></span> <h3>public  subroutine <a href='../proc/determine_nmax.html'>determine_nmax</a>()  
 </h3></div>
-    <div class="panel-body">
+    <div class="card-body">
           
   <p>This subroutine determines the maximum required order of the Bessel functions in Eq. (2.9) of the code paper.</p>
 
@@ -1663,10 +1577,10 @@ The code is based on a routine by Greg Howes, 2006.</p>
     </div>
   </div>
 
-              <div class="panel panel-default">
-    <div class="panel-heading codesum"><span class="anchor" id="proc-split_processes"></span><h3>public  subroutine <a href='../proc/split_processes.html'>split_processes</a>()  
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-split_processes"></span> <h3>public  subroutine <a href='../proc/split_processes.html'>split_processes</a>()  
 </h3></div>
-    <div class="panel-body">
+    <div class="card-body">
           
   <p>This subroutine defines the tasks for the individual processes. It uses the number of species and the required orders of the Bessel functions to define the splitting across the MPI processes.</p>
 
@@ -1676,10 +1590,10 @@ The code is based on a routine by Greg Howes, 2006.</p>
     </div>
   </div>
 
-              <div class="panel panel-default">
-    <div class="panel-heading codesum"><span class="anchor" id="proc-determine_bessel_array"></span><h3>public  subroutine <a href='../proc/determine_bessel_array.html'>determine_bessel_array</a>()  
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-determine_bessel_array"></span> <h3>public  subroutine <a href='../proc/determine_bessel_array.html'>determine_bessel_array</a>()  
 </h3></div>
-    <div class="panel-body">
+    <div class="card-body">
           
   <p>This subroutine determines the array of Bessel functions that is used in the T-tensor of Eq. (2.10) of the code paper.</p>
 
@@ -1701,12 +1615,12 @@ The code is based on a routine by Greg Howes, 2006.</p>
     </div> <!-- /container -->
     <footer>
       <div class="container">
-        <div class="row">
-          <div class="col-xs-6 col-md-6"><p>ALPS was developed by Kristopher Klein, Daniel Verscharen<br>&copy; 2023 
+        <div class="row justify-content-between">
+          <div class="col"><p>ALPS was developed by Kristopher Klein, Daniel Verscharen<br>&copy; 2024 
 </p>
           </div>
-          <div class="col-xs-6 col-md-6">
-            <p class="text-right">
+          <div class="col">
+            <p class="text-end">
               Documentation generated by
               <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
             </p>
@@ -1716,17 +1630,12 @@ The code is based on a routine by Greg Howes, 2006.</p>
       </div> <!-- /container -->
     </footer>
 
-    <!-- Bootstrap core JavaScript
-         ================================================== -->
-         <!-- Placed at the end of the document so the pages load faster -->
-    <!--
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-        -->
-        <script src="../js/bootstrap.min.js"></script>
-        <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-        <script src="../js/ie10-viewport-bug-workaround.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>    
 
-        <!-- MathJax JavaScript
+    <!-- MathJax JavaScript
              ================================================== -->
              <!-- Placed at the end of the document so the pages load faster -->
         <script type="text/x-mathjax-config">

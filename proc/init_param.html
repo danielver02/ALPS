@@ -1,3 +1,5 @@
+<!-- -*- mode: jinja2 -*- -->
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -10,78 +12,57 @@
 
     <title>init_param &ndash; ALPS</title>
 
-    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <link href="../css/pygments.css" rel="stylesheet">
     <link href="../css/font-awesome.min.css" rel="stylesheet">
     <link href="../css/local.css" rel="stylesheet">
       <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
 
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-        <![endif]-->
-
-         <script src="../js/jquery-2.1.3.min.js"></script>
-         <script src="../js/svg-pan-zoom.min.js"></script>
-
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="../js/svg-pan-zoom.min.js"></script>
   </head>
 
   <body>
 
     <!-- Fixed navbar -->
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
           <a class="navbar-brand" href="../index.html">ALPS </a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-              <li><a href='../page/index.html'>Readme</a></li>
-            <li class="dropdown hidden-xs visible-sm visible-md hidden-lg">
-              <a href="#" class="dropdown-toggle"
-                 data-toggle="dropdown" role="button"
-                 aria-haspopup="true"
-                 aria-expanded="false">
-                 Contents <span class="caret"></span>
-              </a>
-              <ul class="dropdown-menu">
-                  <li><a href="../lists/modules.html">Modules</a></li>
-                  <li><a href="../lists/procedures.html">Procedures</a></li>
-                  <li><a href="../lists/types.html">Derived Types</a></li>
-                  <li><a href="../lists/programs.html">Programs</a></li>
-              </ul>
-            </li>
-              <li class="visible-xs hidden-sm visible-lg">
-                <a href="../lists/modules.html">Modules</a>
-              </li>
-              <li class="visible-xs hidden-sm visible-lg">
-                <a href="../lists/procedures.html">Procedures</a>
-              </li>
-              <li class="visible-xs hidden-sm visible-lg">
-                <a href="../lists/types.html">Derived Types</a>
-              </li>
-              <li class="visible-xs hidden-sm visible-lg">
-                <a href="../lists/programs.html">Programs</a>
-              </li>
-          </ul>
-            <form action="../search.html" class="navbar-form navbar-right" role="search">
-              <div class="form-group">
-                <input type="text" class="form-control" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="../page/index.html">Readme</a></li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/namelists.html">Namelists</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/programs.html">Programs</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
               </div>
-              <!--
-                  <button type="submit" class="btn btn-default">Submit</button>
-                  -->
-            </form>
-        </div><!--/.nav-collapse -->
-      </div>
-    </nav>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
 
     <div class="container">
   <div class="row">
@@ -89,28 +70,32 @@
       <small>Subroutine</small>
       
     </h1>
-      <div class="row" id="info-bar">
-    <div class="col-lg-12">
-      <div class="well well-sm">
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
         <ul class="list-inline" style="margin-bottom:0px;display:inline">
 
-          <li id="statements"><i class="fa fa-list-ol"></i>
-            <a data-toggle="tooltip"
-               data-placement="bottom" data-html="true"
-               title=" 2.8% of total for procedures.">134 statements</a>
-          </li>
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip"
+                 data-bs-placement="bottom" data-html="true"
+                 title=" 2.8% of total for procedures.">134 statements</a>
+            </li>
 
         </ul>
-        <ol class="breadcrumb in-well text-right">
-              <li><a href='../module/alps_io.html'>alps_io</a></li>
-          <li class="active">init_param</li>
-        </ol>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../module/alps_io.html'>alps_io</a></li>
+            <li class="breadcrumb-item active" aria-current="page">init_param</li>
+          </ol>
+        </nav>
       </div>
     </div>
   </div>
   <script>
     $(function () {
-    $('[data-toggle="tooltip"]').tooltip()
+    $('[data-bs-toggle="tooltip"]').tooltip()
     })
   </script>
 
@@ -139,8 +124,19 @@
   
   
   
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#namelists-0"
+         aria-expanded="false" aria-controls="namelists-0">
+         <h4 class="card-header bg-primary text-white">Namelists</h4>
+      </a>
+      <div id="namelists-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../proc/init_param.html#namelist-system">system</a>
+        </div>
+      </div>
+    </div>
 
-    <em>None</em>
+
 
   </div>
 
@@ -149,18 +145,17 @@
     <div class="col-md-9" id='text'>
     <h2>public  subroutine init_param()  
 </h2>
-        <div class="panel panel-default">
-      <div class="panel-heading">
-        <h3 class="panel-title">Uses</h3>
-      </div>
-      <ul class="list-group">
-          <li class="list-group-item">
-            <ul class="list-inline">
-                <li><a href='../module/alps_var.html'>alps_var</a></li>
-            </ul>
-          </li>
-          <li class="list-group-item">
-            <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+        <div class="card mb-4">
+      <h3 class="card-header card-title bg-light">Uses</h3>
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <ul class="list-inline">
+                  <li class="list-inline-item"><a href='../module/alps_var.html'>alps_var</a></li>
+              </ul>
+            </li>
+            <li class="list-group-item">
+              <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Generated by graphviz version 2.43.0 (0)
@@ -180,7 +175,7 @@
 <!-- module~alps_var -->
 <g id="proc~~init_param~~UsesGraph_node2" class="node">
 <title>module~alps_var</title>
-<g id="a_proc~~init_param~~UsesGraph_node2"><a xlink:href=".././module/alps_var.html" xlink:title="alps_var">
+<g id="a_proc~~init_param~~UsesGraph_node2"><a xlink:href="../module/alps_var.html" xlink:title="alps_var">
 <polygon fill="#337ab7" stroke="#337ab7" points="147,-24 90,-24 90,0 147,0 147,-24"/>
 <text text-anchor="middle" x="118.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_var</text>
 </a>
@@ -206,17 +201,17 @@
 </g>
 </g>
 </svg>
-</div>        <div><a type="button" class="graph-help" data-toggle="modal" href="#graph-help-text">Help</a></div>
-          <div class="modal fade" id="graph-help-text" tabindex="-1" role="dialog">
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#UsesGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="UsesGraph-help-text" tabindex="-1" role="dialog">
             <div class="modal-dialog modal-lg" role="document">
               <div class="modal-content">
                 <div class="modal-header">
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
                   <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-              <div class="modal-body">
+                <div class="modal-body">
 <p>Nodes of different colours represent the following: </p>
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
@@ -276,8 +271,9 @@ modules which it uses.
             </div>
           </div>
         </div>
-          </li>
-      </ul>
+            </li>
+        </ul>
+      </div>
     </div>
 
 
@@ -289,11 +285,11 @@ Only processor 0 calls this routine:</p>
     <em>None</em>
     <br>
     <br>
-    <div class="panel panel-default">
-      <div class="panel-heading">
-  <h3 class="panel-title">Calls</h3>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Calls</h3>
       </div>
-      <div class="panel-body">
+      <div class="card-body">
   <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
@@ -314,7 +310,7 @@ Only processor 0 calls this routine:</p>
 <!-- proc~bm_read -->
 <g id="proc~~init_param~~CallsGraph_node2" class="node">
 <title>proc~bm_read</title>
-<g id="a_proc~~init_param~~CallsGraph_node2"><a xlink:href=".././proc/bm_read.html" xlink:title="alps_io::bM_read">
+<g id="a_proc~~init_param~~CallsGraph_node2"><a xlink:href="../proc/bm_read.html" xlink:title="alps_io::bM_read">
 <polygon fill="#d9534f" stroke="#d9534f" points="321,-356 219,-356 219,-332 321,-332 321,-356"/>
 <text text-anchor="middle" x="270" y="-341.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_io::bM_read</text>
 </a>
@@ -329,7 +325,7 @@ Only processor 0 calls this routine:</p>
 <!-- proc~fit_read -->
 <g id="proc~~init_param~~CallsGraph_node3" class="node">
 <title>proc~fit_read</title>
-<g id="a_proc~~init_param~~CallsGraph_node3"><a xlink:href=".././proc/fit_read.html" xlink:title="alps_io::fit_read">
+<g id="a_proc~~init_param~~CallsGraph_node3"><a xlink:href="../proc/fit_read.html" xlink:title="alps_io::fit_read">
 <polygon fill="#d9534f" stroke="#d9534f" points="318.5,-314 221.5,-314 221.5,-290 318.5,-290 318.5,-314"/>
 <text text-anchor="middle" x="270" y="-299.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_io::fit_read</text>
 </a>
@@ -344,7 +340,7 @@ Only processor 0 calls this routine:</p>
 <!-- proc~get_indexed_double_namelist_unit -->
 <g id="proc~~init_param~~CallsGraph_node4" class="node">
 <title>proc~get_indexed_double_namelist_unit</title>
-<g id="a_proc~~init_param~~CallsGraph_node4"><a xlink:href=".././proc/get_indexed_double_namelist_unit.html" xlink:title="alps_io::get_indexed_double_namelist_unit">
+<g id="a_proc~~init_param~~CallsGraph_node4"><a xlink:href="../proc/get_indexed_double_namelist_unit.html" xlink:title="alps_io::get_indexed_double_namelist_unit">
 <polygon fill="#d9534f" stroke="#d9534f" points="390,-192 150,-192 150,-168 390,-168 390,-192"/>
 <text text-anchor="middle" x="270" y="-177.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_io::get_indexed_double_namelist_unit</text>
 </a>
@@ -359,7 +355,7 @@ Only processor 0 calls this routine:</p>
 <!-- proc~get_indexed_namelist_unit -->
 <g id="proc~~init_param~~CallsGraph_node5" class="node">
 <title>proc~get_indexed_namelist_unit</title>
-<g id="a_proc~~init_param~~CallsGraph_node5"><a xlink:href=".././proc/get_indexed_namelist_unit.html" xlink:title="alps_io::get_indexed_namelist_unit">
+<g id="a_proc~~init_param~~CallsGraph_node5"><a xlink:href="../proc/get_indexed_namelist_unit.html" xlink:title="alps_io::get_indexed_namelist_unit">
 <polygon fill="#d9534f" stroke="#d9534f" points="369,-234 171,-234 171,-210 369,-210 369,-234"/>
 <text text-anchor="middle" x="270" y="-219.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_io::get_indexed_namelist_unit</text>
 </a>
@@ -374,7 +370,7 @@ Only processor 0 calls this routine:</p>
 <!-- proc~get_unused_unit -->
 <g id="proc~~init_param~~CallsGraph_node6" class="node">
 <title>proc~get_unused_unit</title>
-<g id="a_proc~~init_param~~CallsGraph_node6"><a xlink:href=".././proc/get_unused_unit.html" xlink:title="alps_io::get_unused_unit">
+<g id="a_proc~~init_param~~CallsGraph_node6"><a xlink:href="../proc/get_unused_unit.html" xlink:title="alps_io::get_unused_unit">
 <polygon fill="#d9534f" stroke="#d9534f" points="570,-276 426,-276 426,-252 570,-252 570,-276"/>
 <text text-anchor="middle" x="498" y="-261.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_io::get_unused_unit</text>
 </a>
@@ -389,7 +385,7 @@ Only processor 0 calls this routine:</p>
 <!-- proc~map_read -->
 <g id="proc~~init_param~~CallsGraph_node7" class="node">
 <title>proc~map_read</title>
-<g id="a_proc~~init_param~~CallsGraph_node7"><a xlink:href=".././proc/map_read.html" xlink:title="alps_io::map_read">
+<g id="a_proc~~init_param~~CallsGraph_node7"><a xlink:href="../proc/map_read.html" xlink:title="alps_io::map_read">
 <polygon fill="#d9534f" stroke="#d9534f" points="325,-150 215,-150 215,-126 325,-126 325,-150"/>
 <text text-anchor="middle" x="270" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_io::map_read</text>
 </a>
@@ -404,7 +400,7 @@ Only processor 0 calls this routine:</p>
 <!-- proc~scan_read -->
 <g id="proc~~init_param~~CallsGraph_node8" class="node">
 <title>proc~scan_read</title>
-<g id="a_proc~~init_param~~CallsGraph_node8"><a xlink:href=".././proc/scan_read.html" xlink:title="alps_io::scan_read">
+<g id="a_proc~~init_param~~CallsGraph_node8"><a xlink:href="../proc/scan_read.html" xlink:title="alps_io::scan_read">
 <polygon fill="#d9534f" stroke="#d9534f" points="325.5,-108 214.5,-108 214.5,-84 325.5,-84 325.5,-108"/>
 <text text-anchor="middle" x="270" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_io::scan_read</text>
 </a>
@@ -419,7 +415,7 @@ Only processor 0 calls this routine:</p>
 <!-- proc~solution_read -->
 <g id="proc~~init_param~~CallsGraph_node9" class="node">
 <title>proc~solution_read</title>
-<g id="a_proc~~init_param~~CallsGraph_node9"><a xlink:href=".././proc/solution_read.html" xlink:title="alps_io::solution_read">
+<g id="a_proc~~init_param~~CallsGraph_node9"><a xlink:href="../proc/solution_read.html" xlink:title="alps_io::solution_read">
 <polygon fill="#d9534f" stroke="#d9534f" points="334,-66 206,-66 206,-42 334,-42 334,-66"/>
 <text text-anchor="middle" x="270" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_io::solution_read</text>
 </a>
@@ -434,7 +430,7 @@ Only processor 0 calls this routine:</p>
 <!-- proc~spec_read -->
 <g id="proc~~init_param~~CallsGraph_node10" class="node">
 <title>proc~spec_read</title>
-<g id="a_proc~~init_param~~CallsGraph_node10"><a xlink:href=".././proc/spec_read.html" xlink:title="alps_io::spec_read">
+<g id="a_proc~~init_param~~CallsGraph_node10"><a xlink:href="../proc/spec_read.html" xlink:title="alps_io::spec_read">
 <polygon fill="#d9534f" stroke="#d9534f" points="325.5,-24 214.5,-24 214.5,0 325.5,0 325.5,-24"/>
 <text text-anchor="middle" x="270" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_io::spec_read</text>
 </a>
@@ -455,7 +451,7 @@ Only processor 0 calls this routine:</p>
 <!-- proc~alps_error -->
 <g id="proc~~init_param~~CallsGraph_node11" class="node">
 <title>proc~alps_error</title>
-<g id="a_proc~~init_param~~CallsGraph_node11"><a xlink:href=".././proc/alps_error.html" xlink:title="alps_io::alps_error">
+<g id="a_proc~~init_param~~CallsGraph_node11"><a xlink:href="../proc/alps_error.html" xlink:title="alps_io::alps_error">
 <polygon fill="#d9534f" stroke="#d9534f" points="553,-234 443,-234 443,-210 553,-210 553,-234"/>
 <text text-anchor="middle" x="498" y="-219.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_io::alps_error</text>
 </a>
@@ -470,7 +466,7 @@ Only processor 0 calls this routine:</p>
 <!-- proc~input_unit -->
 <g id="proc~~init_param~~CallsGraph_node12" class="node">
 <title>proc~input_unit</title>
-<g id="a_proc~~init_param~~CallsGraph_node12"><a xlink:href=".././proc/input_unit.html" xlink:title="alps_io::input_unit">
+<g id="a_proc~~init_param~~CallsGraph_node12"><a xlink:href="../proc/input_unit.html" xlink:title="alps_io::input_unit">
 <polygon fill="#d94e8f" stroke="#d94e8f" points="552.5,-192 443.5,-192 443.5,-168 552.5,-168 552.5,-192"/>
 <text text-anchor="middle" x="498" y="-177.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_io::input_unit</text>
 </a>
@@ -485,7 +481,7 @@ Only processor 0 calls this routine:</p>
 <!-- proc~input_unit_exist -->
 <g id="proc~~init_param~~CallsGraph_node13" class="node">
 <title>proc~input_unit_exist</title>
-<g id="a_proc~~init_param~~CallsGraph_node13"><a xlink:href=".././proc/input_unit_exist.html" xlink:title="alps_io::input_unit_exist">
+<g id="a_proc~~init_param~~CallsGraph_node13"><a xlink:href="../proc/input_unit_exist.html" xlink:title="alps_io::input_unit_exist">
 <polygon fill="#d94e8f" stroke="#d94e8f" points="567.5,-150 428.5,-150 428.5,-126 567.5,-126 567.5,-150"/>
 <text text-anchor="middle" x="498" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_io::input_unit_exist</text>
 </a>
@@ -536,7 +532,7 @@ Only processor 0 calls this routine:</p>
 <!-- proc~output_time -->
 <g id="proc~~init_param~~CallsGraph_node15" class="node">
 <title>proc~output_time</title>
-<g id="a_proc~~init_param~~CallsGraph_node15"><a xlink:href=".././proc/output_time.html" xlink:title="alps_io::output_time">
+<g id="a_proc~~init_param~~CallsGraph_node15"><a xlink:href="../proc/output_time.html" xlink:title="alps_io::output_time">
 <polygon fill="#d9534f" stroke="#d9534f" points="727,-213 606,-213 606,-189 727,-189 727,-213"/>
 <text text-anchor="middle" x="666.5" y="-198.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_io::output_time</text>
 </a>
@@ -554,17 +550,17 @@ Only processor 0 calls this routine:</p>
                   var panprocinit_paramCallsGraph = svgPanZoom('#procinit_paramCallsGraph',
                     {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
                   );
-                </script>        <div><a type="button" class="graph-help" data-toggle="modal" href="#graph-help-text">Help</a></div>
-          <div class="modal fade" id="graph-help-text" tabindex="-1" role="dialog">
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CallsGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CallsGraph-help-text" tabindex="-1" role="dialog">
             <div class="modal-dialog modal-lg" role="document">
               <div class="modal-content">
                 <div class="modal-header">
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
                   <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-              <div class="modal-body">
+                <div class="modal-body">
 <p>Nodes of different colours represent the following: </p>
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
@@ -572,11 +568,11 @@ Only processor 0 calls this routine:</p>
 <!-- Generated by graphviz version 2.43.0 (0)
  -->
 <!-- Title: Graph Key Pages: 1 -->
-<svg width="597pt" height="32pt"
- viewBox="0.00 0.00 596.50 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1.16 1.16) rotate(0) translate(4 28)">
 <title>Graph Key</title>
-<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 592.5,-28 592.5,4 -4,4"/>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
 <!-- Subroutine -->
 <g id="node1" class="node">
 <title>Subroutine</title>
@@ -595,23 +591,29 @@ Only processor 0 calls this routine:</p>
 <polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
 <text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
 </g>
-<!-- Unknown Procedure Type -->
+<!-- Type Bound Procedure -->
 <g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
 <title>Unknown Procedure Type</title>
-<polygon fill="#777777" stroke="#777777" points="388.5,-24 243.5,-24 243.5,0 388.5,0 388.5,-24"/>
-<text text-anchor="middle" x="316" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
 </g>
 <!-- Program -->
-<g id="node5" class="node">
+<g id="node6" class="node">
 <title>Program</title>
-<polygon fill="#f0ad4e" stroke="#f0ad4e" points="465,-24 407,-24 407,0 465,0 465,-24"/>
-<text text-anchor="middle" x="436" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
 </g>
 <!-- This Page&#39;s Entity -->
-<g id="node6" class="node">
+<g id="node7" class="node">
 <title>This Page&#39;s Entity</title>
-<polygon fill="none" stroke="black" points="588.5,-24 483.5,-24 483.5,0 588.5,0 588.5,-24"/>
-<text text-anchor="middle" x="536" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
 </g>
 </g>
 </svg>
@@ -627,11 +629,11 @@ implementation in a submodule of an interface in a parent module.
         </div>
       </div>
     </div>
-    <div class="panel panel-default">
-      <div class="panel-heading">
-  <h3 class="panel-title">Called by</h3>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Called by</h3>
       </div>
-      <div class="panel-body">
+      <div class="card-body">
   <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
@@ -652,7 +654,7 @@ implementation in a submodule of an interface in a parent module.
 <!-- program~alps -->
 <g id="proc~~init_param~~CalledByGraph_node2" class="node">
 <title>program~alps</title>
-<g id="a_proc~~init_param~~CalledByGraph_node2"><a xlink:href=".././program/alps.html" xlink:title="alps">
+<g id="a_proc~~init_param~~CalledByGraph_node2"><a xlink:href="../program/alps.html" xlink:title="alps">
 <polygon fill="#f0ad4e" stroke="#f0ad4e" points="54,-24 0,-24 0,0 54,0 54,-24"/>
 <text text-anchor="middle" x="27" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps</text>
 </a>
@@ -666,17 +668,17 @@ implementation in a submodule of an interface in a parent module.
 </g>
 </g>
 </svg>
-</div>        <div><a type="button" class="graph-help" data-toggle="modal" href="#graph-help-text">Help</a></div>
-          <div class="modal fade" id="graph-help-text" tabindex="-1" role="dialog">
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CalledByGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CalledByGraph-help-text" tabindex="-1" role="dialog">
             <div class="modal-dialog modal-lg" role="document">
               <div class="modal-content">
                 <div class="modal-header">
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
                   <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-              <div class="modal-body">
+                <div class="modal-body">
 <p>Nodes of different colours represent the following: </p>
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
@@ -684,11 +686,11 @@ implementation in a submodule of an interface in a parent module.
 <!-- Generated by graphviz version 2.43.0 (0)
  -->
 <!-- Title: Graph Key Pages: 1 -->
-<svg width="597pt" height="32pt"
- viewBox="0.00 0.00 596.50 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1.16 1.16) rotate(0) translate(4 28)">
 <title>Graph Key</title>
-<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 592.5,-28 592.5,4 -4,4"/>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
 <!-- Subroutine -->
 <g id="node1" class="node">
 <title>Subroutine</title>
@@ -707,23 +709,29 @@ implementation in a submodule of an interface in a parent module.
 <polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
 <text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
 </g>
-<!-- Unknown Procedure Type -->
+<!-- Type Bound Procedure -->
 <g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
 <title>Unknown Procedure Type</title>
-<polygon fill="#777777" stroke="#777777" points="388.5,-24 243.5,-24 243.5,0 388.5,0 388.5,-24"/>
-<text text-anchor="middle" x="316" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
 </g>
 <!-- Program -->
-<g id="node5" class="node">
+<g id="node6" class="node">
 <title>Program</title>
-<polygon fill="#f0ad4e" stroke="#f0ad4e" points="465,-24 407,-24 407,0 465,0 465,-24"/>
-<text text-anchor="middle" x="436" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
 </g>
 <!-- This Page&#39;s Entity -->
-<g id="node6" class="node">
+<g id="node7" class="node">
 <title>This Page&#39;s Entity</title>
-<polygon fill="none" stroke="black" points="588.5,-24 483.5,-24 483.5,0 588.5,0 588.5,-24"/>
-<text text-anchor="middle" x="536" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
 </g>
 </g>
 </svg>
@@ -741,33 +749,6 @@ implementation in a submodule of an interface in a parent module.
     </div>
     <br>
 
-    <section class="visible-xs visible-sm hidden-md">
-        <h3>Contents</h3>
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-
-    <em>None</em>
-
-    </section>
-    <br class="visible-xs visible-sm hidden-md">
-
 
     
     
@@ -776,6 +757,247 @@ implementation in a submodule of an interface in a parent module.
     
 
 
+
+      <section>
+        <h2>Namelists</h2>
+            <div class="card">
+    <div class="card-header codesum">
+      <span class="anchor" id="namelist-system"></span>
+      <h3>Namelist <a href='../namelist/system.html'>system</a></h3>
+    </div>
+    <div class="card-body">
+        
+  <br class="visible-xs visible-sm hidden-md">
+  <section>
+    <h2>Variables</h2>
+    <table class="table table-striped" id="namelist-system">
+      <thead><tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Default</th>
+          <th>Description</th>
+      </tr></thead>
+      <tbody>
+              <tr id="variable-kperp~3">
+      <td><a href="#variable-kperp~3">kperp</a></td>
+      <td>double precision</td>
+      <td>None</td>
+      <td><p>Perpendicular wavenumber, normalized by
+inverse reference inertial length, <script type="math/tex">k_\perp d_p</script>.</p></td>
+    </tr>
+
+              <tr id="variable-kpar">
+      <td><a href="#variable-kpar">kpar</a></td>
+      <td>double precision</td>
+      <td>None</td>
+      <td><p>Parallel wavenumber, normalized by
+inverse reference inertial length, <script type="math/tex">k_\parallel d_p</script>.</p></td>
+    </tr>
+
+              <tr id="variable-nspec~2">
+      <td><a href="#variable-nspec~2">nspec</a></td>
+      <td>integer</td>
+      <td>None</td>
+      <td><p>Number of plasma components.</p></td>
+    </tr>
+
+              <tr id="variable-nroots">
+      <td><a href="#variable-nroots">nroots</a></td>
+      <td>integer</td>
+      <td>None</td>
+      <td><p>Number of dispersion solutions under consideration.</p></td>
+    </tr>
+
+              <tr id="variable-use_map">
+      <td><a href="#variable-use_map">use_map</a></td>
+      <td>logical</td>
+      <td>None</td>
+      <td><p>Choice of:
+ (T) searching for roots over a map in complex frequency space,
+ via <a href="../proc/map_read.html">map_read</a>;
+ (F) input (nroots) guesses for solutions,
+ via <a href="../proc/solution_read.html">solution_read</a></p></td>
+    </tr>
+
+              <tr id="variable-writeout">
+      <td><a href="#variable-writeout">writeOut</a></td>
+      <td>logical</td>
+      <td>.true.</td>
+      <td><p>Write or suppress output to screen.</p></td>
+    </tr>
+
+              <tr id="variable-nperp~5">
+      <td><a href="#variable-nperp~5">nperp</a></td>
+      <td>integer</td>
+      <td>None</td>
+      <td><p>Number of perpendicular momentum space grid points, <script type="math/tex">N_\perp</script>.</p></td>
+    </tr>
+
+              <tr id="variable-npar~5">
+      <td><a href="#variable-npar~5">npar</a></td>
+      <td>integer</td>
+      <td>None</td>
+      <td><p>Number of parallel momentum space grid points, <script type="math/tex">N_\parallel</script>.</p></td>
+    </tr>
+
+              <tr id="variable-ngamma">
+      <td><a href="#variable-ngamma">ngamma</a></td>
+      <td>integer</td>
+      <td>100</td>
+      <td><p>Number of grid points in relativitic <script type="math/tex">\Gamma=\sqrt{1+\frac{p_\perp^2+p_\parallel^2}{m_j^2c^2}}</script>,
+<script type="math/tex">N_\Gamma</script> (Eqn. 3.14).</p></td>
+    </tr>
+
+              <tr id="variable-npparbar">
+      <td><a href="#variable-npparbar">npparbar</a></td>
+      <td>integer</td>
+      <td>200</td>
+      <td><p>Number of grid points in dimensionless paralell momentum
+<script type="math/tex">\bar{p}_\parallel = p_\parallel/m_j c</script>, <script type="math/tex">N_{\bar{p}_\parallel}</script>.</p></td>
+    </tr>
+
+              <tr id="variable-va~2">
+      <td><a href="#variable-va~2">vA</a></td>
+      <td>double precision</td>
+      <td>None</td>
+      <td><p>Alfven Velocity, normalized to speed of light, <script type="math/tex">v_{Ap}/c</script>.</p></td>
+    </tr>
+
+              <tr id="variable-arrayname">
+      <td><a href="#variable-arrayname">arrayName</a></td>
+      <td>character(len=75)</td>
+      <td>None</td>
+      <td><p>Name of input files for distributions.</p></td>
+    </tr>
+
+              <tr id="variable-bessel_zero~2">
+      <td><a href="#variable-bessel_zero~2">Bessel_zero</a></td>
+      <td>double precision</td>
+      <td>1.d-45</td>
+      <td><p>Calculate Bessel functions until the maximum is less than this value.</p></td>
+    </tr>
+
+              <tr id="variable-numiter">
+      <td><a href="#variable-numiter">numiter</a></td>
+      <td>integer</td>
+      <td>50</td>
+      <td><p>Maximum number of iterations in secant method.</p></td>
+    </tr>
+
+              <tr id="variable-d_threshold">
+      <td><a href="#variable-d_threshold">D_threshold</a></td>
+      <td>double precision</td>
+      <td>1.d-5</td>
+      <td><p>Minimum threshold for secant method.</p></td>
+    </tr>
+
+              <tr id="variable-d_prec">
+      <td><a href="#variable-d_prec">D_prec</a></td>
+      <td>double precision</td>
+      <td>1.d-5</td>
+      <td><p>Size of bounding region for secant method.</p></td>
+    </tr>
+
+              <tr id="variable-d_gap">
+      <td><a href="#variable-d_gap">D_gap</a></td>
+      <td>double precision</td>
+      <td>1.d-5</td>
+      <td><p>Size of allowable difference between roots.</p></td>
+    </tr>
+
+              <tr id="variable-positions_principal">
+      <td><a href="#variable-positions_principal">positions_principal</a></td>
+      <td>integer</td>
+      <td>5</td>
+      <td><p>Number of parallel momentum steps distant from the resonant momentum
+included in the numerical calculation of Eqn 3.5, <script type="math/tex">M_I</script>.</p></td>
+    </tr>
+
+              <tr id="variable-tlim">
+      <td><a href="#variable-tlim">Tlim</a></td>
+      <td>double precision</td>
+      <td>0.01d0</td>
+      <td><p>Threshold for analytical principal-value integration for
+evaluating Eqn 3.6 and 3.7, <script type="math/tex">t_{\textrm{lim}}</script>.</p></td>
+    </tr>
+
+              <tr id="variable-maxsteps_fit">
+      <td><a href="#variable-maxsteps_fit">maxsteps_fit</a></td>
+      <td>integer</td>
+      <td>500</td>
+      <td><p>Maximum number of fitting iterations.</p></td>
+    </tr>
+
+              <tr id="variable-lambda_initial_fit">
+      <td><a href="#variable-lambda_initial_fit">lambda_initial_fit</a></td>
+      <td>double precision</td>
+      <td>1.d0</td>
+      <td><p>Inital Levenberg-Marquardt damping parameter.</p></td>
+    </tr>
+
+              <tr id="variable-lambdafac_fit">
+      <td><a href="#variable-lambdafac_fit">lambdafac_fit</a></td>
+      <td>double precision</td>
+      <td>1.d1</td>
+      <td><p>Adjustment factor for Levenberg-Marquardt damping parameter.</p></td>
+    </tr>
+
+              <tr id="variable-epsilon_fit">
+      <td><a href="#variable-epsilon_fit">epsilon_fit</a></td>
+      <td>double precision</td>
+      <td>1.d-8</td>
+      <td><p>Convergence for Levenberg-Marquardt fit.</p></td>
+    </tr>
+
+              <tr id="variable-fit_check">
+      <td><a href="#variable-fit_check">fit_check</a></td>
+      <td>logical</td>
+      <td>.true.</td>
+      <td><p>If true, output fitted functions to ASCII file for each species.</p></td>
+    </tr>
+
+              <tr id="variable-determine_minima">
+      <td><a href="#variable-determine_minima">determine_minima</a></td>
+      <td>logical</td>
+      <td>.true.</td>
+      <td><p>If true, after map search, determine minima and refine solutions.</p></td>
+    </tr>
+
+              <tr id="variable-n_resonance_interval">
+      <td><a href="#variable-n_resonance_interval">n_resonance_interval</a></td>
+      <td>integer</td>
+      <td>100</td>
+      <td><p>How many steps should be used to integrate around the resonance,
+<script type="math/tex">M_P</script>, used for integrating near poles (see section 3.1).</p></td>
+    </tr>
+
+              <tr id="variable-scan_option">
+      <td><a href="#variable-scan_option">scan_option</a></td>
+      <td>integer</td>
+      <td>1</td>
+      <td><p>Select case for scans;
+1) consecutive scans along input paths in wavevector space,
+2) double scans of two selected parameters.</p></td>
+    </tr>
+
+              <tr id="variable-n_scan">
+      <td><a href="#variable-n_scan">n_scan</a></td>
+      <td>integer</td>
+      <td>0</td>
+      <td><p>Number of wavevector scans.
+Must be set to 2 for scan_option=2;
+Must be 1 or larger for scan_option=1.
+0 turns off wavevector scans.</p></td>
+    </tr>
+
+      </tbody>
+    </table>
+  </section>
+
+    </div>
+  </div>
+
+      </section>
     
     
     </div>
@@ -785,12 +1007,12 @@ implementation in a submodule of an interface in a parent module.
     </div> <!-- /container -->
     <footer>
       <div class="container">
-        <div class="row">
-          <div class="col-xs-6 col-md-6"><p>ALPS was developed by Kristopher Klein, Daniel Verscharen<br>&copy; 2023 
+        <div class="row justify-content-between">
+          <div class="col"><p>ALPS was developed by Kristopher Klein, Daniel Verscharen<br>&copy; 2024 
 </p>
           </div>
-          <div class="col-xs-6 col-md-6">
-            <p class="text-right">
+          <div class="col">
+            <p class="text-end">
               Documentation generated by
               <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
             </p>
@@ -800,17 +1022,12 @@ implementation in a submodule of an interface in a parent module.
       </div> <!-- /container -->
     </footer>
 
-    <!-- Bootstrap core JavaScript
-         ================================================== -->
-         <!-- Placed at the end of the document so the pages load faster -->
-    <!--
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-        -->
-        <script src="../js/bootstrap.min.js"></script>
-        <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-        <script src="../js/ie10-viewport-bug-workaround.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>    
 
-        <!-- MathJax JavaScript
+    <!-- MathJax JavaScript
              ================================================== -->
              <!-- Placed at the end of the document so the pages load faster -->
         <script type="text/x-mathjax-config">
