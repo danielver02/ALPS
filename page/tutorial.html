@@ -119,6 +119,7 @@ Daniel Verscharen  (d.verscharen@ucl.ac.uk)</p>
 <li>Interpolation of input distributions</li>
 <li>Using analytical expressions for the background distribution</li>
 <li>Running bi-Maxwellian species</li>
+<li>Running cold-plasma species</li>
 </ol>
 <h2>1. Before getting started</h2>
 <p>Before starting with the steps described in this tutorial, we recommend that you familiarise yourself with the code paper.</p>
@@ -503,6 +504,24 @@ test_analytical.2.array
 </code></pre></div>
 
 <p>The ALPS code suite includes a test case called <code>./tests/test_bimax.in</code> that uses the NHDS routines for a quick calculation of the dispersion relation for a bi-Maxwellian plasma.</p>
+<h2>8. Running cold-plasma species</h2>
+<p>In some instances, it may be useful to evaluate a species with its susceptibility based on the cold-plasma dispersion relation. For example, you may want to calculate the electron susceptibilities based on an f0-table for very-high frequency waves, in which case the ions are at rest and simply serve as a cold, charge-neutralising background. In that case, the ions can be treated as a cold-plasma species.</p>
+<p>In that case, ALPS uses the cold-plasma capabilities of the <a href="https://github.com/danielver02/NHDS">NHDS code</a> to accelerate the calculation. ALPS then does not integrate over the distribution explicitly but uses the known analytical approximations for the cold-plasma dispersion relation (including drifts) from the paper by Verscharen &amp; Chandran (ApJ 764, 88, 2013).</p>
+<p>The cold-plasma calcuation is activated through the flag <code>use_bM</code> in the ALPS input file. It is then required to set the plasma-beta of the species to zero via the parameter <code>bM_betas</code>. If you set
+The Landau-contour integration is not required in this case.</p>
+<p>Once <code>use_bM</code> is set to true and <code>bM_betas</code> is set to 0.d0, ALPS will look for the parameters used to define the cold-plasma properties of the corresponding species. These are given in a species-dependent block in the ALPS input file, which may look like this:</p>
+<div class="codehilite"><pre><span></span><code><span class="sx">!Bi-Maxwellian parameters; for species 1</span>
+<span class="sx">!Only used if use_bM=T</span>
+<span class="o">&amp;</span><span class="n">bM_spec_1</span>
+<span class="n">bM_nmaxs</span><span class="p">=</span><span class="mi">500</span><span class="w">           </span>!<span class="n">Maximum</span><span class="w"> </span><span class="n">number</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">resonaces</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">consider</span>
+<span class="n">bM_Bessel_zeros</span><span class="p">=</span><span class="mi">1</span><span class="p">.</span><span class="n">d</span><span class="o">-</span><span class="mi">50</span><span class="w"> </span>!<span class="n">Amplitude</span><span class="w"> </span><span class="n">limit</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">Bessel</span><span class="w"> </span><span class="k">function</span>
+<span class="n">bM_betas</span><span class="p">=</span><span class="mi">0</span><span class="p">.</span><span class="n">d0</span><span class="w">          </span>!<span class="n">Plasma</span><span class="w"> </span><span class="nb">beta</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">species</span><span class="w"> </span><span class="mi">1</span>
+<span class="n">bM_alphas</span><span class="p">=</span><span class="mi">1</span><span class="p">.</span><span class="n">d0</span><span class="w">         </span>!<span class="n">Tperp</span><span class="o">/</span><span class="n">Tpar</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">species</span><span class="w"> </span><span class="mi">1</span>
+<span class="n">bM_pdrifts</span><span class="p">=</span><span class="mi">0</span><span class="p">.</span><span class="n">d0</span><span class="w">        </span>!<span class="n">Momentum</span><span class="w"> </span><span class="n">drift</span><span class="p">,</span><span class="w"> </span><span class="nb">norm</span><span class="p">.</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">m_ref</span><span class="w"> </span><span class="n">v_A</span><span class="p">,</span><span class="n">ref</span>
+<span class="o">/</span>
+</code></pre></div>
+
+<p>The ALPS code suite includes a test case called <code>./tests/test_cold_plasma.in</code> that uses the NHDS routines for a quick calculation of the dispersion relation for a cold plasma.</p>
     </div>
   </div>
       <hr>

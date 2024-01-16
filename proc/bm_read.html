@@ -277,7 +277,7 @@ modules which it uses.
     </div>
 
 
-    <p>Reads in bi-Maxwellian parameters.</p>
+    <p>Reads in bi-Maxwellian/cold-plasma parameters.</p>
 
 
     <h3>Arguments</h3>
@@ -293,7 +293,7 @@ modules which it uses.
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-is~3"></span>
+              <span class="anchor" id="variable-is~12"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -493,7 +493,8 @@ implementation in a submodule of an interface in a parent module.
       <td>double precision</td>
       <td>None</td>
       <td><p>
-<script type="math/tex">\beta_{\parallel,j}</script> of biMaxwellian distribution <script type="math/tex">f_j</script>.</p></td>
+<script type="math/tex">\beta_{\parallel,j}</script> of biMaxwellian distribution <script type="math/tex">f_j</script>.
+ If bM_betas=0.d0, this species is treated with the cold-plasma susceptibilities.</p></td>
     </tr>
 
               <tr id="variable-bm_alphas">
@@ -509,7 +510,8 @@ implementation in a submodule of an interface in a parent module.
       <td>double precision</td>
       <td>None</td>
       <td><p>Relative drift of biMaxwellian distribution <script type="math/tex">f_j</script>,
-in units of <script type="math/tex">m_p v_{A,p}</script>.</p></td>
+in units of <script type="math/tex">m_p v_{A,p}</script>. Also used as the drift of the cold-plasma species
+ if bM_betas is set to 0.d0.</p></td>
     </tr>
 
       </tbody>

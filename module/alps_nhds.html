@@ -78,7 +78,7 @@
             <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
               <a data-bs-toggle="tooltip"
                  data-bs-placement="bottom" data-html="true"
-                 title=" 7.0% of total for modules and submodules.">319 statements</a>
+                 title=" 7.9% of total for modules and submodules.">362 statements</a>
             </li>
 
         </ul>
@@ -125,8 +125,8 @@
             <a class="list-group-item" href="../module/alps_nhds.html#proc-besseli">besselI</a>
             <a class="list-group-item" href="../module/alps_nhds.html#proc-dispfunct">dispfunct</a>
             <a class="list-group-item" href="../module/alps_nhds.html#proc-bessi">BESSI</a>
-            <a class="list-group-item" href="../module/alps_nhds.html#proc-bessi0~2">BESSI0</a>
-            <a class="list-group-item" href="../module/alps_nhds.html#proc-bessi1~2">BESSI1</a>
+            <a class="list-group-item" href="../module/alps_nhds.html#proc-bessi0">BESSI0</a>
+            <a class="list-group-item" href="../module/alps_nhds.html#proc-bessi1">BESSI1</a>
         </div>
       </div>
     </div>
@@ -140,6 +140,7 @@
         <div class="list-group list-group-flush">
             <a class="list-group-item" href="../module/alps_nhds.html#proc-calc_chi">calc_chi</a>
             <a class="list-group-item" href="../module/alps_nhds.html#proc-calc_ypsilon">calc_ypsilon</a>
+            <a class="list-group-item" href="../module/alps_nhds.html#proc-calc_chi_cold">calc_chi_cold</a>
             <a class="list-group-item" href="../module/alps_nhds.html#proc-wofz">WOFZ</a>
         </div>
       </div>
@@ -159,7 +160,7 @@
     </div>
 
     <div class="col-md-9" id='text'>
-      <p>Module including the NHDS implementation for bi-Maxwellian reference cases.
+      <p>Module including the NHDS implementation for bi-Maxwellian/cold-plasma reference cases.
 The original NHDS code can be found under github.com/danielver02/NHDS.</p>
 <br>      
           <div class="card">
@@ -321,7 +322,7 @@ modules which it uses.
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-x~3"></span>
+              <span class="anchor" id="variable-x~5"></span>
               double precision,
             </td>
 <td>intent(in)</td>
@@ -442,7 +443,7 @@ for any real X.</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-x~6"></span>
+              <span class="anchor" id="variable-x~4"></span>
               real(kind=8)
             </td>
 <td></td>
@@ -468,7 +469,7 @@ for any real X.</p>
   </div>
 
               <div class="card">
-    <div class="card-header codesum"><span class="anchor" id="proc-bessi0~2"></span> <h3>private  function <a href='../proc/bessi0~2.html'>BESSI0</a>(X)  
+    <div class="card-header codesum"><span class="anchor" id="proc-bessi0"></span> <h3>private  function <a href='../proc/bessi0.html'>BESSI0</a>(X)  
 </h3></div>
     <div class="card-body">
           
@@ -487,7 +488,7 @@ for any real X.</p>
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-x~7"></span>
+              <span class="anchor" id="variable-x~5"></span>
               real(kind=8)
             </td>
 <td></td>
@@ -513,7 +514,7 @@ for any real X.</p>
   </div>
 
               <div class="card">
-    <div class="card-header codesum"><span class="anchor" id="proc-bessi1~2"></span> <h3>private  function <a href='../proc/bessi1~2.html'>BESSI1</a>(X)  
+    <div class="card-header codesum"><span class="anchor" id="proc-bessi1"></span> <h3>private  function <a href='../proc/bessi1.html'>BESSI1</a>(X)  
 </h3></div>
     <div class="card-body">
           
@@ -532,7 +533,7 @@ for any real X.</p>
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-x~8"></span>
+              <span class="anchor" id="variable-x~6"></span>
               real(kind=8)
             </td>
 <td></td>
@@ -597,7 +598,7 @@ for any real X.</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-j~4"></span>
+              <span class="anchor" id="variable-j~6"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -627,7 +628,7 @@ for any real X.</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-kperp"></span>
+              <span class="anchor" id="variable-kperp~2"></span>
               double precision,
             </td>
 <td>intent(in)</td>
@@ -642,7 +643,7 @@ for any real X.</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-x"></span>
+              <span class="anchor" id="variable-x~2"></span>
               double complex,
             </td>
 <td>intent(in)</td>
@@ -682,7 +683,7 @@ for any real X.</p>
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-y~6"></span>
+              <span class="anchor" id="variable-y~4"></span>
               double complex,
             </td>
 <td>intent(out)</td>
@@ -692,12 +693,12 @@ for any real X.</p>
             <td>::</td>
             <td><strong>Y</strong>(3,3)</td>
             <td>
-
+<p>Y-tensor as defined by Stix.</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-j~5"></span>
+              <span class="anchor" id="variable-j~7"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -742,7 +743,7 @@ for any real X.</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-kperp~2"></span>
+              <span class="anchor" id="variable-kperp~3"></span>
               double precision,
             </td>
 <td>intent(in)</td>
@@ -757,7 +758,107 @@ for any real X.</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-x~2"></span>
+              <span class="anchor" id="variable-x~3"></span>
+              double complex,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>x</strong></td>
+            <td>
+<p>Normalised complex frequency.</p>
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-calc_chi_cold"></span> <h3>private  subroutine <a href='../proc/calc_chi_cold.html'>calc_chi_cold</a>(chi, j, kz, kperp, x)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>Subroutine that calculates the susceptibility of species j based on the cold-plasma dispersion relation based on the paper Verscharen &amp; Chandran, ApJ 764, 88, 2013.</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-chi~2"></span>
+              double complex,
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>chi</strong>(3,3)</td>
+            <td>
+<p>Susceptibility tensor of species j.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-j~8"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>j</strong></td>
+            <td>
+<p>Index for species.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-kz~3"></span>
+              double precision,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>kz</strong></td>
+            <td>
+<p>Normalised parallel wavenumber.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-kperp~4"></span>
+              double precision,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>kperp</strong></td>
+            <td>
+<p>Normalised perpendicular wavenumber.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-x~4"></span>
               double complex,
             </td>
 <td>intent(in)</td>
