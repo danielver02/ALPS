@@ -95,7 +95,7 @@ subroutine derivative_f0
     do is = 1, nspec
 
       if (usebM(is)) then
-                write (*,'(a,i2)') ' Bi-Maxwellian calcuation: no derivatives necessary for species ',is
+                write (*,'(a,i2)') ' Bi-Maxwellian/cold-plasma calculation: no derivatives necessary for species ',is
                 df0(is,:,:,:)=0.d0
        else
 
@@ -2047,8 +2047,15 @@ subroutine calc_eigen(omega,electric,magnetic,vmean,ds,Ps,eigen_L,heat_L)
         electric(1) = cmplx(1.d0,0.d0,kind(1.d0))
         electric(3)=-electric(1)*(wave(2,1)*wave(3,2)-wave(3,1)*wave(2,2))
         electric(3)= electric(3)/(wave(2,3)*wave(3,2)-wave(3,3)*wave(2,2))
-        electric(2) = -electric(3)*wave(3,3) - electric(1)*wave(3,1)
-        electric(2) = electric(2)/wave(3,2)
+
+        ! The following captures a situation that can occur in fully cold plasmas without drifts:
+        if (abs(wave(3,2)).NE.0.d0) then
+          electric(2) = -electric(3)*wave(3,3) - electric(1)*wave(3,1)
+          electric(2) = electric(2)/wave(3,2)
+        else
+          electric(2) = wave(2,1)*wave(1,3)-wave(1,1)*wave(2,3)
+          electric(2) = electric(2)/(wave(2,3)*wave(1,2)-wave(2,2)*wave(1,3))
+        endif
 
         !Calculate Magnetic Fields, normalized to E_x:
         magnetic(1) = -1.d0* kpar*electric(2)/(omega*vA)

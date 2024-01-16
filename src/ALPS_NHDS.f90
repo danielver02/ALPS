@@ -17,17 +17,17 @@
 !===============================================================================
 
 module alps_nhds
-!! Module including the NHDS implementation for bi-Maxwellian reference cases.
+!! Module including the NHDS implementation for bi-Maxwellian/cold-plasma reference cases.
 !! The original NHDS code can be found under github.com/danielver02/NHDS.
   implicit none
 
-  private :: calc_ypsilon, besselI, BESSI, BESSI0, BESSI1, WOFZ, dispfunct
+  private :: calc_ypsilon, besselI, BESSI, BESSI0, BESSI1, WOFZ, dispfunct, calc_chi_cold
   public :: calc_chi
 
 contains
 
   ! This file is part of NHDS
-  ! Copyright (C) 2020 Daniel Verscharen (d.verscharen@ucl.ac.uk)
+  ! Copyright (C) 2024 Daniel Verscharen (d.verscharen@ucl.ac.uk)
   !All rights reserved.
   !
   !Redistribution and use in source and binary forms, with or without
@@ -101,7 +101,7 @@ contains
   !! Limit of Bessel-function calculation.
 
   double precision :: vdrift
-  !! Normalised drift speed of bi-Maxwellian.
+  !! Normalised drift speed of bi-Maxwellian/cold population.
 
   integer :: n
   !! Index of sum over Bessel functions.
@@ -122,12 +122,20 @@ contains
   !! Check whether maximum n has been achieved.
 
 
+
+  ! Check if you can use the cold-plasma dispersion relation:
+  if (vtherm.EQ.0.d0) then
+
+    call calc_chi_cold(chi,j,kz,kperp,x)
+
+  else
+
   Omega=qs(j)/ms(j)
   ell=sqrt(ms(j)/(ns(j)*qs(j)*qs(j)))
   vtherm=sqrt(bMbetas(j)/(ns(j)*ms(j)))
+  vdrift=bMpdrifts(j)/ms(j)
   nmax=bMnmaxs(j)
   Bessel_zero=bMBessel_zeros(j)
-  vdrift=bMpdrifts(j)/ms(j)
 
   z=0.5d0*(kperp*vtherm/Omega)*(kperp*vtherm/Omega)*bMalphas(j)
 
@@ -170,7 +178,7 @@ contains
   chi(3,2)=Y(3,2)/(ell*ell)
   chi(3,3)=2.d0*x*vdrift/(ell*ell*kz*vtherm*vtherm*bMalphas(j))+Y(3,3)/(ell*ell)
 
-
+  endif
 
   end subroutine
 
@@ -190,6 +198,7 @@ contains
   !! Imaginary unit.
 
   double complex, intent(out) :: Y(3,3)
+  !! Y-tensor as defined by Stix.
 
   integer, intent(in) :: j
   !! Index for species.
@@ -233,9 +242,8 @@ contains
   double precision :: vtherm
   !! Normalised thermal speed.
 
-
   double precision :: vdrift
-  !! Normalised drift speed of bi-Maxwellian.
+  !! Normalised drift speed of bi-Maxwellian/cold population.
 
   double precision :: dBInzdz
   !! Derivative of Bessel function.
@@ -282,6 +290,89 @@ contains
   Y(3,2)=-uniti*kperp*(BInz-dBInzdz)*Bn/Omega
   Y(3,3)=2.d0*(x-1.d0*n*Omega)*BInz*Bn/(kz*vtherm*vtherm*bMalphas(j))
 
+
+  end subroutine
+
+
+
+  subroutine calc_chi_cold(chi,j,kz,kperp,x)
+  !! Subroutine that calculates the susceptibility of species j based on the cold-plasma dispersion relation based on the paper Verscharen & Chandran, ApJ 764, 88, 2013.
+  use alps_var, only : bMbetas,bMpdrifts
+  use alps_var, only : ms, qs, ns
+  implicit none
+
+  double complex, intent(out) :: chi(3,3)
+  !! Susceptibility tensor of species j.
+
+  double complex, parameter ::  uniti=(0.d0,1.d0)
+  !! Imaginary unit.
+
+  integer, intent(in) :: j
+  !! Index for species.
+
+  double precision, intent(in) :: kz
+  !! Normalised parallel wavenumber.
+
+  double precision, intent(in) :: kperp
+  !! Normalised perpendicular wavenumber.
+
+  double complex, intent(in) :: x
+  !! Normalised complex frequency.
+
+  double precision :: Omega
+  !! Normalised gyro-frequency.
+
+  double precision :: ell
+  !! Normalised inertial length.
+
+  double precision :: vtherm
+  !! Normalised thermal speed.
+
+  double precision :: vdrift
+  !! Normalised drift speed of bi-Maxwellian/cold population.
+
+  double complex :: dispR
+  !! Susceptibility element R as defined by Verscharen & Chandran
+
+  double complex :: dispL
+  !! Susceptibility element L as defined by Verscharen & Chandran
+
+  double complex :: dispP
+  !! Susceptibility element P as defined by Verscharen & Chandran
+
+  double complex :: dispM
+  !! Susceptibility element M as defined by Verscharen & Chandran
+
+  double complex :: dispJ
+  !! Susceptibility element J as defined by Verscharen & Chandran
+
+
+
+  Omega=qs(j)/ms(j)
+  ell=sqrt(ms(j)/(ns(j)*qs(j)*qs(j)))
+  vtherm=sqrt(bMbetas(j)/(ns(j)*ms(j)))
+  vdrift=bMpdrifts(j)/ms(j)
+
+  dispR=-(1.d0/(ell*ell))*(x-kz*vdrift)/(x-kz*vdrift+Omega)
+  dispL=-(1.d0/(ell*ell))*(x-kz*vdrift)/(x-kz*vdrift-Omega)
+
+  dispP=(x*x/((x-kz*vdrift)**2)) + ((kperp*vdrift)**2/((x-kz*vdrift)**2-Omega**2))
+  dispP=-(1.d0/(ell*ell))*dispP
+
+  dispJ=-(1.d0/(ell*ell))*kperp*vdrift*(x-kz*vdrift)/((x-kz*vdrift)**2-Omega**2)
+
+  dispM=uniti*(1.d0/(ell*ell))*kperp*vdrift*Omega/((x-kz*vdrift)**2-Omega**2)
+
+
+  chi(1,1)=(dispR+dispL)/2.d0
+  chi(1,2)=-uniti*(dispR-dispL)/2.d0
+  chi(1,3)=dispJ
+  chi(2,1)=uniti*(dispR-dispL)/2.d0
+  chi(2,2)=(dispR+dispL)/2.d0
+  chi(2,3)=dispM
+  chi(3,1)=dispJ
+  chi(3,2)=-dispM
+  chi(3,3)=dispP
 
   end subroutine
 
@@ -580,7 +671,7 @@ double complex function dispfunct(zeta,kpos)
         !                                                                      *
         !   Version 1.1: corected value of P4 in BESSIO (P4=1.2067492 and not  *
         !                1.2067429) Aug. 2011.                                 *
-  
+
         IMPLICIT DOUBLE PRECISION (A-H, O-Z)
         IMPLICIT INTEGER (I-N)
   !     This subroutine calculates the first kind modified Bessel function

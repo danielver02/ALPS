@@ -339,7 +339,7 @@ subroutine determine_param_fit
 	do is=1,nspec
 
 		if (usebM(is)) then
-     write (*,'(a,i2)') ' Bi-Maxwellian calcuation: no fits necessary for species ',is
+     write (*,'(a,i2)') ' Bi-Maxwellian/cold-plasma calculation: no fits necessary for species ',is
      param_fit(is,:,:,:)=0.d0
      fit_type(is,:)=1
      perp_correction(is,:)=1.d0
@@ -705,7 +705,7 @@ subroutine output_fit(qualitytotal)
 
  charge=0.d0
  current=0.d0
- 
+
 	write (*,'(a)') ' Writing fit result to files'
 	do is=1,nspec
 
@@ -716,12 +716,12 @@ subroutine output_fit(qualitytotal)
        write(*,'(a)')&
             '-=-=-=-='
        write(*,'(a,i3,a)')&
-            'Bi-Maxwellian Species ',is,':'
+            'Bi-Maxwellian/cold-plasma Species ',is,':'
        write(*,'(a, 2es14.4)') &
             ' Charge density:           ', charge(is)
        write(*,'(a, 2es14.4)') &
             ' Parallel current density: ', current(is)
-          
+
     else
 
 	  unit_spec=2000+is
@@ -769,7 +769,7 @@ subroutine output_fit(qualitytotal)
         !current(is) = current(is) + &
         !     qs(is)* ns(is)* gamma_rel(is_rel,igamma,ipparbar) * real(eval_fit(is,igamma,ppar_comp)) * &
         !     2.d0 * pi * dgamma * dpparbar * (ms(is) / vA)**3
-        
+
 			endif
 		 enddo
 		enddo
@@ -784,7 +784,7 @@ subroutine output_fit(qualitytotal)
 				ppar_comp=pp(is,iperp,ipar,2)
 				write (unit_spec,*) pp(is,iperp,ipar,1), pp(is,iperp,ipar,2), real(eval_fit(is,iperp,ppar_comp)), &
          abs(real(eval_fit(is,iperp,ppar_comp))-f0(is,iperp,ipar))/f0(is,iperp,ipar)
-    
+
     integrate = integrate + pp(is,iperp,ipar,1) * real(eval_fit(is,iperp,ppar_comp)) * &
              2.d0 * pi * dpperp * dppar
     charge(is) = charge(is) + qs(is)* ns(is)* pp(is,iperp,ipar,1) * real(eval_fit(is,iperp,ppar_comp)) * &
@@ -792,7 +792,7 @@ subroutine output_fit(qualitytotal)
     current(is) = current(is) + (qs(is)* ns(is)/ms(is))*&
          pp(is,iperp,ipar,2) *pp(is,iperp,ipar,1) * real(eval_fit(is,iperp,ppar_comp)) * &
          2.d0 * pi * dpperp * dppar
-        
+
 			enddo
 		enddo
 	  endif
@@ -812,7 +812,7 @@ subroutine output_fit(qualitytotal)
       write(*,'(a, 2es14.4)') &
          ' Parallel current density of fit/analytical function: ', current(is)
    endif
-   
+
 endif
 enddo
 write(*,'(a)')         '-=-=-=-='

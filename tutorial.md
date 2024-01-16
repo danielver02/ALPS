@@ -16,6 +16,7 @@ Daniel Verscharen  (d.verscharen@ucl.ac.uk)
 5. Interpolation of input distributions
 6. Using analytical expressions for the background distribution
 7. Running bi-Maxwellian species
+8. Running cold-plasma species
 
 
 ## 1. Before getting started
@@ -462,3 +463,28 @@ bM_pdrifts=0.d0        !Momentum drift, norm. to m_ref v_A,ref
 ```
 
 The ALPS code suite includes a test case called `./tests/test_bimax.in` that uses the NHDS routines for a quick calculation of the dispersion relation for a bi-Maxwellian plasma.
+
+## 8. Running cold-plasma species
+
+In some instances, it may be useful to evaluate a species with its susceptibility based on the cold-plasma dispersion relation. For example, you may want to calculate the electron susceptibilities based on an f0-table for very-high frequency waves, in which case the ions are at rest and simply serve as a cold, charge-neutralising background. In that case, the ions can be treated as a cold-plasma species.
+
+In that case, ALPS uses the cold-plasma capabilities of the [NHDS code](https://github.com/danielver02/NHDS) to accelerate the calculation. ALPS then does not integrate over the distribution explicitly but uses the known analytical approximations for the cold-plasma dispersion relation (including drifts) from the paper by Verscharen & Chandran (ApJ 764, 88, 2013).
+
+The cold-plasma calcuation is activated through the flag `use_bM` in the ALPS input file. It is then required to set the plasma-beta of the species to zero via the parameter `bM_betas`. If you set
+The Landau-contour integration is not required in this case.
+
+Once `use_bM` is set to true and `bM_betas` is set to 0.d0, ALPS will look for the parameters used to define the cold-plasma properties of the corresponding species. These are given in a species-dependent block in the ALPS input file, which may look like this:
+
+```
+!Bi-Maxwellian parameters; for species 1
+!Only used if use_bM=T
+&bM_spec_1
+bM_nmaxs=500           !Maximum number of resonaces to consider
+bM_Bessel_zeros=1.d-50 !Amplitude limit for Bessel function
+bM_betas=0.d0          !Plasma beta for species 1
+bM_alphas=1.d0         !Tperp/Tpar for species 1
+bM_pdrifts=0.d0        !Momentum drift, norm. to m_ref v_A,ref
+/
+```
+
+The ALPS code suite includes a test case called `./tests/test_cold_plasma.in` that uses the NHDS routines for a quick calculation of the dispersion relation for a cold plasma.

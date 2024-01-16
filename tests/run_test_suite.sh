@@ -210,6 +210,28 @@ else
 fi
 date
 
+
+echo '-=-=-=-=-=-=-='
+echo ''
+echo '-=-=-=-=-=-=-='
+input='test_cold_plasma'
+echo 'Testing: ' $input
+echo '-=-=-=-=-=-=-='
+echo 'No generation of distribution required'
+echo '-=-=-=-=-=-=-='
+echo 'ALPS'
+date
+mpirun -np $numproc --oversubscribe ./src/ALPS 'tests/'$input.in 2> 'tests/'$input'.error' > 'tests/'$input'.out'
+kk5=$(wc -l 'tests/'$input'.error' | awk '{print $1}')
+if [ $kk5 -eq 0 ]
+then
+    echo 'No Errors for ALPS Execution of ' $input
+else
+    echo "ERRORS in ALPS Execution of" $input
+fi
+date
+
+
 echo '-=-=-=-=-=-=-='
 echo ''
 echo '-=-=-=-=-=-=-='
