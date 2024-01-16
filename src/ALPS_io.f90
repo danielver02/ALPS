@@ -136,7 +136,7 @@ contains
     allocate(relativistic(1:nspec)); relativistic=.FALSE.
     allocate(logfit(1:nspec)); logfit=.TRUE.
 
-    !Bi-Maxwellian Parameters:
+    !Bi-Maxwellian/Cold-plasma Parameters:
     allocate(usebM(1:nspec)); usebM=.TRUE.
     allocate(bMnmaxs(1:nspec)); bMnmaxs=500
     allocate(bMBessel_zeros(1:nspec)); bMBessel_zeros=1.d-50
@@ -171,13 +171,20 @@ contains
     do is = 1, nspec
        if (usebM(is)) then
           write (*,'(a,i2,a)') 'Species ',is,&
-               ' uses bi-Maxwellian calculation...skipping fits. Parameters:'
+               ' uses bi-Maxwellian/cold-plasma calculation... skipping fits. Parameters:'
           call get_indexed_namelist_unit (unit, "bM_spec", is)
           call bM_read(is)
-          write(*,'(a,i4,a,es11.4)')&
-               '  nmax = ',bMnmaxs(is),',        Bessel_zero = ',bMBessel_zeros(is)
+
           write(*,'(a,es11.4,a,es11.4,a,es11.4)')&
                '  beta = ',bMbetas(is),', alpha = ',bMalphas(is),', drift momentum = ',bMpdrifts(is)
+
+          if (bMbetas(is).EQ.0.d0) then
+              write (*,'(a)') '  Cold-plasma calculation.'
+          else
+            write(*,'(a,i4,a,es11.4)')&
+                 '  nmax = ',bMnmaxs(is),',        Bessel_zero = ',bMBessel_zeros(is)
+          endif
+
           close(unit)
        else
           do ifit=1,n_fits(is)
@@ -300,7 +307,7 @@ contains
     !! Use linear or \(\log_{10}\) fitting routine.
 
     logical :: use_bM=.false.
-    !! Use actual numerical integration or bi-Maxwellian proxy via NHDS.
+    !! Use actual numerical integration or bi-Maxwellian/cold-plasma proxy via NHDS.
 
     nameList /spec/ &
          nn,qq,mm,ff,relat,log_fit,use_bM
@@ -313,7 +320,7 @@ contains
 
 
   subroutine bM_read(is)
-    !!Reads in bi-Maxwellian parameters.
+    !!Reads in bi-Maxwellian/cold-plasma parameters.
     use alps_var, only : bMnmaxs,bMBessel_zeros,bMbetas
     use alps_var, only : bMalphas,bMpdrifts
     implicit none
@@ -326,15 +333,18 @@ contains
 
     double precision :: bM_Bessel_zeros
     !!Precision threshold for \(I_n\).
+
     double precision :: bM_betas
     !!\(\beta_{\parallel,j}\) of biMaxwellian distribution \(f_j\).
+    !! If bM_betas=0.d0, this species is treated with the cold-plasma susceptibilities.
 
     double precision :: bM_alphas
     !!\(T_{\perp,j}/T_{\parallel,j} \) of biMaxwellian distribution \(f_j\).
 
     double precision :: bM_pdrifts
     !!Relative drift of biMaxwellian distribution \(f_j\),
-    !!in units of \(m_p v_{A,p}\).
+    !!in units of \(m_p v_{A,p}\). Also used as the drift of the cold-plasma species
+    !! if bM_betas is set to 0.d0.
 
     nameList /bM_spec/ &
          bM_nmaxs,bM_Bessel_zeros,bM_betas,bM_alphas,bM_pdrifts
@@ -597,7 +607,7 @@ subroutine get_runname(runname,foldername)
      do is = 1, nspec
 
        if (usebM(is)) then
-          write (*,'(a,i2)') ' Bi-Maxwellian calcuation: not reading f0 array for species ',is
+          write (*,'(a,i2)') ' Bi-Maxwellian/cold-plasma calculation: not reading f0 array for species ',is
           f0(is,:,:)=0.d0
           pp(is,:,:,:)=0.d0
 
@@ -963,7 +973,7 @@ function input_unit_exist (nml,exist)
     !!Outputs the date and time in a given format using intrinsic
     !!FORTRAN function.
     implicit none
-    
+
     character(8)  :: date
     !!Date.
 

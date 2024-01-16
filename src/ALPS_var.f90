@@ -27,39 +27,39 @@ module alps_var
   !I/O Variables:
   character(500) :: runname
   !!Root of input file name.
-  
+
   character(500) :: foldername
   !!Directory of input file name.
-  
+
   integer :: nroots
   !!Number of dispersion solutions under consideration.
 
   integer :: nroots_max
   !!Number of dispersion solutions found in frequency map scan.
-  
+
   logical :: use_map
-  !!Choice of:  
+  !!Choice of:
   !! (T) searching for roots over a map in complex frequency space,
-  !! via [[map_read(subroutine)]];  
+  !! via [[map_read(subroutine)]];
   !! (F) input (nroots) guesses for solutions,
   !! via [[solution_read(subroutine)]]
-  
+
   logical :: writeOut =.true.
   !! Write or suppress output to screen.
 
   integer :: unit_error
   !! Output unit for error file.
-  
+
   !MPI variables:
   integer :: nproc
   !! Total number of processors.
-  
+
   integer :: iproc
   !! Number of local processor.
-  
+
   logical :: proc0
   !! T if iproc=0.
-  
+
   integer :: ierror
   !! Integer error flag.
 
@@ -67,20 +67,20 @@ module alps_var
   double precision :: kperp
   !! Perpendicular wavenumber, normalized by
   !! inverse reference inertial length, \(k_\perp d_p\).
-  
+
   double precision :: kpar
   !! Parallel wavenumber, normalized by
   !! inverse reference inertial length, \(k_\parallel d_p\).
 
   double precision :: vA
   !! Alfven Velocity, normalized to speed of light, \(v_{Ap}/c\).
-  
+
   double precision :: Bessel_zero=1.d-45
   !! Calculate Bessel functions until the maximum is less than this value.
 
   integer :: nspec
   !!Number of plasma components.
-  
+
   integer :: nspec_rel
   !!Number of relativistic plasma components.
 
@@ -89,19 +89,19 @@ module alps_var
 
   integer :: numroots = 100
   !! Maximum number of solutions.
-  
+
   double precision :: omi
   !!Smallest \(\omega_{\textrm{r}}/\Omega_p\) value for complex map search.
-  
+
   double precision :: omf
   !!Largest \(\omega_{\textrm{r}}/\Omega_p\) value for complex map search.
 
   double precision :: gami
   !!Smallest \(\gamma/\Omega_p\) value for complex map search.
 
-  double precision :: gamf  
+  double precision :: gamf
   !!Largest \(\gamma/\Omega_p\) value for complex map search.
-  
+
   logical :: loggridw
   !!Linear (F) or Log (T) spacing for \(\omega_{\textrm{r}}/\Omega_p\) map search.
 
@@ -119,7 +119,7 @@ module alps_var
 
   integer :: npar
   !!Number of parallel momentum space grid points, \(N_\parallel\).
-  
+
   integer :: ngamma=100
   !!Number of grid points in relativitic \(\Gamma=\sqrt{1+\frac{p_\perp^2+p_\parallel^2}{m_j^2c^2}}\),
   !!\(N_\Gamma\) (Eqn. 3.14).
@@ -164,23 +164,23 @@ module alps_var
   double precision, dimension(:,:,:), allocatable :: f0_rel
   !! Relativistic background distribution function array \(f_{0j}\);
   !! (1:nspec,0:ngamma,0:npparbar).
-    
+
   double precision, dimension(:,:,:,:), allocatable :: df0
   !!Perpendicular and parallel derivatives of \(f_{0j}\);
-  !!(1:nspec,0:nperp,0:npar,1:2),  
-  !!with \(\partial_{p_\perp} f_{0j} \) in index 1,  
+  !!(1:nspec,0:nperp,0:npar,1:2),
+  !!with \(\partial_{p_\perp} f_{0j} \) in index 1,
   !!and \(\partial_{p_\parallel} f_{0j} \) in index 2.
 
   double precision, dimension(:,:,:,:), allocatable :: df0_rel
   !!Derivatives of \(f_{0j}\);
-  !!(1:nspec,0:nperp,0:npar,1:2),  
-  !!with \(\partial_{\Gamma} f_{0j} \) in index 1  
+  !!(1:nspec,0:nperp,0:npar,1:2),
+  !!with \(\partial_{\Gamma} f_{0j} \) in index 1
   !!and \(\partial_{\bar{p}_\parallel} f_{0j} \) in index 2.
-  
+
   double precision, dimension(:,:,:,:), allocatable :: pp
   !!Momentum Space Array for \(f_{0j}\);
-  !!(1:nspec,0:nperp,0:npar,1:2)  
-  !!with \(p_\perp/m_p v_A\) in index 1  
+  !!(1:nspec,0:nperp,0:npar,1:2)
+  !!with \(p_\perp/m_p v_A\) in index 1
   !!and \(p_\parallel/m_p v_A\) in index 2.
 
   double precision, dimension(:), allocatable :: current_int
@@ -194,14 +194,14 @@ module alps_var
   double precision, dimension(:,:,:), allocatable :: pparbar_rel
   !!Relativistic momentum space array of \(\bar{p}_\parallel\);
   !!(1:nspec,0:ngamma,0:npparbar).
-  
+
   integer, dimension(:), allocatable :: nmax
   !!number of n values to sum over, (1:nspec).
 
   integer :: nlim(2)
   !!Lower and Upper limits for n values for iproc to sum over.
 
-  
+
   double precision, dimension(:), allocatable :: ns
   !!Ratio of species density to reference \(n_j/n_p\), (1:nspec).
 
@@ -210,13 +210,13 @@ module alps_var
 
   double precision, dimension(:), allocatable :: ms
   !!Ratio of species mass to reference \(m_j/m_p\), (1:nspec).
-    
+
   logical, dimension(:), allocatable :: relativistic
   !!Use relativistic treatment; (1:nspec).
 
   double complex, dimension(:,:), allocatable :: wave
   !!Wave Equation Tensor (1:3,1:3).
-  
+
   double complex, dimension(:,:,:), allocatable :: chi0
   !!Susceptibility Tensor (1:nspec,1:3,1:3).
 
@@ -228,34 +228,34 @@ module alps_var
   !!Number of fitted functions, (1:nspec)
 
   integer, dimension(:,:), allocatable :: fit_type
-  !! Type of analytic function to be fit, (1:nspec,1:maxval(nfits));  
-  !! 1) Maxwellian,  
-  !! 2) Kappa,  
-  !! 3) Juettner with \(p_\perp,p_\parallel\),  
-  !! 4) Juettner with \(\Gamma,\bar{p}_\parallel\), constant \(\bar{p}_\parallel\),  
-  !! 5) Juettner with \(p_\perp,p_\parallel\); variable \(\bar{p}_\parallel\),  
+  !! Type of analytic function to be fit, (1:nspec,1:maxval(nfits));
+  !! 1) Maxwellian,
+  !! 2) Kappa,
+  !! 3) Juettner with \(p_\perp,p_\parallel\),
+  !! 4) Juettner with \(\Gamma,\bar{p}_\parallel\), constant \(\bar{p}_\parallel\),
+  !! 5) Juettner with \(p_\perp,p_\parallel\); variable \(\bar{p}_\parallel\),
   !! 6) Bi-Moyal distribution.
-  
+
   integer :: maxsteps_fit=500
   !!Maximum number of fitting iterations.
-  
+
   double precision :: lambda_initial_fit=1.d0
   !!Inital Levenberg-Marquardt damping parameter.
-  
+
   double precision :: lambdafac_fit=1.d1
   !!Adjustment factor for Levenberg-Marquardt damping parameter.
-  
+
   double precision :: epsilon_fit=1.d-8
   !!Convergence for Levenberg-Marquardt fit.
 
   !Fit output:
   double precision, dimension(:,:,:,:), allocatable :: param_fit
   !!Fit parameters, (1:nspec,0:nperp,4,maxval(n_fits)).
-  
+
   double precision, dimension(:,:), allocatable :: perp_correction
   !!This parameter, \(y\) in Eqn. B1, compensates for the strong
   !! \(p_\perp\) dependence of \(u_1\), making the fit more reliable.
-  
+
   logical :: fit_check=.true.
   !!If true, output fitted functions to ASCII file for each species.
 
@@ -267,21 +267,21 @@ module alps_var
   !!\(M_P\), used for integrating near poles (see section 3.1).
 
   integer :: scan_option=1
-  !!Select case for scans;  
-  !!1) consecutive scans along input paths in wavevector space,  
+  !!Select case for scans;
+  !!1) consecutive scans along input paths in wavevector space,
   !!2) double scans of two selected parameters.
 
   integer :: n_scan=0
-  !!Number of wavevector scans.  
-  !!Must be set to 2 for scan_option=2;  
-  !!Must be 1 or larger for scan_option=1.  
+  !!Number of wavevector scans.
+  !!Must be set to 2 for scan_option=2;
+  !!Must be 1 or larger for scan_option=1.
   !!0 turns off wavevector scans.
 
   logical, dimension(:), allocatable :: logfit
   !! Use logarithmic fitting, (1:nspec).
 
   logical, dimension(:), allocatable :: usebM
-  !! Use bi-Maxwellian calculation from NHDS, (1:nspec)
+  !! Use bi-Maxwellian/cold calculation from NHDS, (1:nspec).
 
   integer, dimension(:), allocatable ::  bMnmaxs
   !! Maximum number of n for NHDS bi-Maxwellian calculation, (1:nspec).
@@ -292,13 +292,14 @@ module alps_var
   double precision, dimension(:), allocatable ::  bMbetas
   !! Species beta \(\beta_{\parallel,j}\) for
   !! NHDS bi-Maxwellian calculation (1:nspec).
+  !! If bMbetas=0.d0, then this species is treated with the cold-plasma susceptibility.
 
   double precision, dimension(:), allocatable ::  bMalphas
   !! Species temperature anisotropy \(T_{\perp,j}/T_{\parallel,j}\)
   !! for NHDS bi-Maxwellian calculation.
 
   double precision, dimension(:), allocatable ::  bMpdrifts
-  !! Species drift momentum for NHDS bi-Maxwellian calculation,
+  !! Species drift momentum for NHDS bi-Maxwellian/cold calculation,
   !! in units of \(m_p v_A\) (1:nspec).
 
   public :: scanner
@@ -314,17 +315,17 @@ module alps_var
      logical :: heat_s
      !! Calculates heating rates if true.
      logical :: eigen_s    !
-     !! Calculates eigenfunctions if true.     
+     !! Calculates eigenfunctions if true.
      integer :: type_s
-     !!Type of parameter scan;  
+     !!Type of parameter scan;
      !!0: Current value of \(\textbf{k}\) to
-     !! \(k_\perp\)=range\(_\textrm{i}\) and \(k_\parallel \)=range\(_\textrm{f}\).   
+     !! \(k_\perp\)=range\(_\textrm{i}\) and \(k_\parallel \)=range\(_\textrm{f}\).
      !!1: \(\theta_0 \rightarrow \theta_1\) at fixed \(|k|\)
      !! from current value of \(\theta=\mathrm{atan}(k_\perp/k_\parallel)\)
-     !! to range\(_\textrm{f}\).  
-     !!2: Wavevector scan at fixed angle \(\theta_{k,B}\) to \(|k|\)=range\(_\textrm{f}\).  
-     !!3: \(k_\perp\) scan with constant \(k_\parallel\).  
-     !!4: \(k_\parallel\) scan with constant \(k_\perp\).  
+     !! to range\(_\textrm{f}\).
+     !!2: Wavevector scan at fixed angle \(\theta_{k,B}\) to \(|k|\)=range\(_\textrm{f}\).
+     !!3: \(k_\perp\) scan with constant \(k_\parallel\).
+     !!4: \(k_\parallel\) scan with constant \(k_\perp\).
      integer :: n_out
      !!Number of output scan values.
      integer :: n_res
@@ -338,13 +339,13 @@ module alps_var
   type (scanner), dimension (:), allocatable :: scan
   !!Scan parameters for each wavevector scan.
   !! Read in from [[alps_io(module):scan_read(subroutine)]].
-  
+
   double precision :: kperp_last
   !! Previous value of \(k_\perp\).
-  
+
   double precision :: kpar_last
   !! Previous value of \(k_\parallel\).
-  
+
   double precision :: kperp_0
   !! Current value of \(k_\perp\).
 

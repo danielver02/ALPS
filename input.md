@@ -170,7 +170,7 @@ Treat $f_{j}$ as non-relativistic or relativistic.
 Use linear or $\log_{10}$ fitting routine.
 
 **`use_bM`**  
-Use actual numerical integration (F) or bi-Maxwellian proxy via NHDS routines,
+Use actual numerical integration (F) or bi-Maxwellian/cold-plasma proxy via NHDS routines,
 with parameters read in from &bM_spec_j namelist.
 
 
@@ -187,27 +187,27 @@ Kind of fit function:
 $$F_M(\hat{p}\_{\parallel})=u_1\mathrm{exp}[-y{\hat{p}}^2\_{\perp}-u_2(\hat{p}\_{\parallel}-u_3)^2]$$
 
 2. Kappa,  
-    
+
 $$F_{\kappa}(\hat{p}\_{\parallel})=u_1[1+u_2({\hat{p}}\_{\parallel}-u_3)^2+y{\hat{p}}^2\_{\perp}]^{u_{4}}.$$
 
 3. Juettner with $p_{\perp},p_{\parallel}$,  
-   
+
 $$F_{J}(\hat{p}\_{\perp},\hat{p}\_{\parallel})=
 u_1\mathrm{exp}\left[-u_2\sqrt{1+\frac{\hat{p}^2\_{\perp}+(\hat{p}^2\_{\parallel}-u_3)^2 v_A^2}{m_{j}^2 c^2}}\right].$$
 
 4. Juettner with variable $\Gamma$, constant $\bar{p}_{\parallel}$,  
-   
+
 $$F_{J}(\Gamma)= u_1 \mathrm{exp}[-y \Gamma].$$
 
 5. Juettner with $p_{\perp},p_{\parallel}$; variable $\bar{p}_{\parallel}$,  
-   
+
 $$F_{\kappa}(\hat{p}\_{\perp},\hat{p}\_{\parallel})=
 u_1\mathrm{exp}[-y \hat{p}\_{\perp}]
 \mathrm{exp}[-u_2*(\hat{p}\_{\parallel}+u_3)^2]
 .$$
 
 6. Bi-Moyal distribution
-    
+
 $$F_{bMo}(\hat{p}\_{\perp},\hat{p}\_{\parallel})=
 u_1 \mathrm{exp}[0.5 (y u_4 \hat{p}^2\_{\perp} +
 u_2 (\hat{p}\_{\parallel} -u_3)^2 -
@@ -224,7 +224,7 @@ $p_{\perp}$ dependence of $u_1$, making the fit more reliable.
 
 
 ### *&bM_spec_j*
-Bi-Maxwellian parameters; for species j.
+Bi-Maxwellian/cold-plasma parameters; for species j.
 Only used if use_bM=T.
 
 **`bM_nmaxs`**
@@ -234,14 +234,13 @@ Maximum number of resonances to consider.
 Precision threshold for $I_n$.
 
 **`bM_betas`**
-$\beta_{\parallel,j}$ of biMaxwellian distribution $f_{j}$.
+$\beta_{\parallel,j}$ of bi-Maxwellian distribution $f_{j}$. If this variable is set to 0.d0, then the code will treat the given species with the susceptibility from cold-plasma theory.
 
 **`bM_alphas`**
-$T_{\perp,j}/T_{\parallel,j}$ of biMaxwellian distribution $f_{j}$.
+$T_{\perp,j}/T_{\parallel,j}$ of bi-Maxwellian distribution $f_{j}$.
 
 **`bM_pdrifts`**
-Relative drift of biMaxwellian distribution $f_{j}$,
-in units of $m_{p} v_{A,p}$.
+Relative drift of bi-Maxwellian distribution $f_{j}$ or the cold plasma species in units of $m_{p} v_{A,p}$.
 
 
 ### *&scan_input_l*
