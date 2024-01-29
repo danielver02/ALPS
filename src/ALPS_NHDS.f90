@@ -122,9 +122,8 @@ contains
   !! Check whether maximum n has been achieved.
 
 
-
   ! Check if you can use the cold-plasma dispersion relation:
-  if (vtherm.EQ.0.d0) then
+  if (bMbetas(j).EQ.0.d0) then
 
     call calc_chi_cold(chi,j,kz,kperp,x)
 
