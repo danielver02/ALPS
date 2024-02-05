@@ -188,7 +188,7 @@ $$F_M(\hat{p}\_{\parallel})=u_1\mathrm{exp}[-y{\hat{p}}^2\_{\perp}-u_2(\hat{p}\_
 
 2. Kappa,  
 
-$$F_{\kappa}(\hat{p}\_{\parallel})=u_1[1+u_2({\hat{p}}\_{\parallel}-u_3)^2+y{\hat{p}}^2\_{\perp}]^{u_{4}}.$$
+$$F_{\kappa}(\hat{p}\_{\parallel})=u_1[1+u_2({\hat{p}}\_{\parallel}-u_3)^2+yu_5 {\hat{p}}^2\_{\perp}]^{u_{4}}.$$
 
 3. Juettner with $p_{\perp},p_{\parallel}$,  
 
