@@ -223,6 +223,30 @@ module alps_var
   double precision, dimension(:,:), allocatable :: bessel_array
   !! Array of Bessel functions; (nlim(1):nlim(2)+1,0:nperp).
 
+  integer, dimension(:), allocatable :: basis_representation
+  !!Selection of method for Hybrid-Analytical Continutation, (1:nspec)
+  !! 0) Use the analytic function.
+  !! 1) Use the 'n_fits' functions described with 'fit_type'
+  !! 2) Use a polynomial basis representation.
+
+  double precision, dimension(:,:,:), allocatable :: polynomials
+  !! Polynomials of order (0,poly_order) evaluatated at (0,npar) abscissa points,
+  !! (1:nspec,0:npar,0:poly_order)
+  !! poly_order is taken to be the maximum order across all species.
+
+  double precision, dimension(:,:,:), allocatable :: poly_fit_coeffs
+  !! Fit Coefficients for Polynomials from Generarl Linear Least Squares Method
+  !! (1:nspec,0:nperp,0:poly_order)
+  !! poly_order is taken to be the maximum order across all species.
+  !! The fit is taken in one dimension at each perpendicular momentum value.
+  
+  integer, dimension(:), allocatable :: poly_kind
+  !!Selection of Orthogonal Basis Function, (1:nspec)
+  !! 1) Chebyshev Polynomials
+  
+  integer, dimension(:), allocatable :: poly_order
+  !! Selection of Maximum Order of Orthogonal Basis Function, (1:nspec)
+  
   !Fit Parameters for Hybrid-Analytical Continuation Method:
   integer, dimension(:), allocatable :: n_fits
   !!Number of fitted functions, (1:nspec)
@@ -369,5 +393,6 @@ module alps_var
   public :: relativistic, logfit, usebM
   public :: f0_rel,df0_rel,nspec_rel,gamma_rel,pparbar_rel,ngamma,npparbar
   public :: bMnmaxs,bMBessel_zeros,bMbetas,bMalphas,bMpdrifts
+  public :: basis_representation, poly_kind, poly_order, polynomials, poly_fit_coeffs
 
  end module alps_var

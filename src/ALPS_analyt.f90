@@ -20,19 +20,22 @@ module alps_analyt
 	!! This module contains functions and subroutines for the hybrid analytical continuation.
 	implicit none
 
-	public  :: eval_fit, determine_param_fit
-	private :: fit_function, output_fit, determine_JT, LM_nonlinear_fit
+        public  :: eval_fit, determine_param_fit
+        private :: set_polynomial_basis
+        private :: fit_function, output_fit, determine_JT, LM_nonlinear_fit
+        private :: determine_GLLS
 
 contains
 
 
 
 double complex function eval_fit(is,iperp,ppar_valC)
-	!! This function evaluates the fit to f0 at and the complex parallel
-	!! momentum ppar_valC. It requires the fit parameters that will be determined
-	!! by the subroutine [[determine_param_fit(subroutine)]].
+  !! This function evaluates the fit to f0 at and the complex parallel
+  !! momentum ppar_valC. It requires the fit parameters that will be determined
+  !! by the subroutine [[determine_param_fit(subroutine)]].
 
-	use alps_var, only : fit_type, pp, param_fit, n_fits, gamma_rel,nspec,relativistic
+        use alps_var, only : fit_type, pp, param_fit, n_fits, gamma_rel,nspec,relativistic
+        use alps_var, only : basis_representation
 	use alps_distribution_analyt, only : distribution_analyt
 	implicit none
 
@@ -74,7 +77,7 @@ double complex function eval_fit(is,iperp,ppar_valC)
 
 
 	! Use the pre-coded distribution from distribution/distribution_analyt.f90
-	if (n_fits(is).EQ.0) then
+	if (basis_representation(is).EQ.0) then
 		eval_fit=distribution_analyt(is,pp(is,iperp,1,1),ppar_valC)
 		return
 	endif
@@ -261,7 +264,8 @@ subroutine determine_param_fit
 	!! This is the fitting routine for the hybrid analytic continuation. It determines
 	!! the full field [[alps_var(module):param_fit(variable)]].
 	use alps_var, only : writeOut, fit_type, param_fit, n_fits, nspec, f0, nperp, npar, logfit, runname
-	use alps_var, only : relativistic,npparbar,f0_rel,ngamma, perp_correction, gamma_rel, usebM
+        use alps_var, only : relativistic,npparbar,f0_rel,ngamma, perp_correction, gamma_rel, usebM
+        use alps_var, only : basis_representation 
 	implicit none
 
 	integer :: ifit
@@ -344,7 +348,7 @@ subroutine determine_param_fit
      fit_type(is,:)=1
      perp_correction(is,:)=1.d0
 
-		 elseif (n_fits(is).EQ.0) then
+		 elseif (basis_representation(is).EQ.0) then
 
 			 	write (*,'(a,i2)') ' Using analytical function from distribution/distribution_analyt.f90: no fits necessary for species ',is
 
@@ -352,6 +356,17 @@ subroutine determine_param_fit
 				fit_type(is,:)=1
 				perp_correction(is,:)=1.d0
 
+    		 elseif (basis_representation(is).EQ.2) then
+
+			 	write (*,'(a,i2)') ' Using polynomial representation for species ',is
+
+				param_fit(is,:,:,:)=0.d0
+				fit_type(is,:)=1
+                                perp_correction(is,:)=1.d0
+
+                                call set_polynomial_basis(is)
+
+                                call determine_GLLS(is)
 
 		 else
 		! For all fit types that include a fit parameter for the perpendicular momentum (kappa and Moyal),
@@ -586,9 +601,9 @@ subroutine determine_param_fit
 		deallocate (params)
 		deallocate (param_mask)
 
-		endif
-	enddo	! End loop over is
-
+endif !end if (bM or basis_representation) selection 
+enddo	! End loop over is
+ 
 
 
 
@@ -601,12 +616,133 @@ subroutine determine_param_fit
 end subroutine
 
 
+subroutine determine_GLLS(is)
+  !! This subroutine evaluates the General Linear Least Squares fit
+  !! to the distribution function for component 'is' using the selected
+  !! polynomial basis functions.
+  use alps_var, only : polynomials, nperp, npar, f0, poly_fit_coeffs, poly_order
+  implicit none
+
+  integer :: is
+  !! Index of species.
+
+  integer :: iperp
+  !! Perpendicular index.
+
+  double precision, dimension(:), allocatable :: f0_fit
+
+  allocate(f0_fit(0:npar));f0_fit=0.d0
+  do iperp=0,nperp
+     f0_fit(:)=log10(f0(is,iperp,:))
+     call least_squares_fit(polynomials(is,:,:),f0_fit,poly_fit_coeffs(is,iperp,:),poly_order(is))
+  enddo
+  deallocate(f0_fit)
+
+end subroutine determine_GLLS
+
+subroutine least_squares_fit(AA,BB,coeffs,npoly)
+  !!Solves General Linear Least Squares Normal Equation
+  use alps_var, only : npar
+  implicit none
+
+  integer :: npoly
+  !! Order for polyhedral representation
+  
+  double precision, intent(in) :: BB(0:npar)
+  !! f0(is,iperp,:)
+
+    double precision, intent(out) :: coeffs(0:npoly)
+    !! fit coefficients
+
+    double precision, intent(in) :: AA(0:npar, 0:npoly)
+    !! Polynomial Basis
+   
+    integer, dimension(0:npoly) :: ipiv
+    !!Pivot Indices
+
+    integer :: info
+    !!LAPACK error diagnostics
+
+    double precision :: alpha(0:npoly,0:npoly)
+    !! A^T.A component of General Linear Least Square calculation
+    !! e.g. Eqn 15.4.7 from Numerical Recipies
+    
+    double precision :: beta(0:npoly)
+    !! A^T.b component of General Linear Least Square calculation
+    !! e.g. Eqn 15.4.7 from Numerical Recipies
+
+    alpha=0.d0
+    beta=0.d0
+    
+    ! Calculate (A^T * A) for the normal equation solution
+    call dgemm('T', 'N', npoly+1, npoly+1, npar+1, 1.0d0, AA(0:npar, 0:npoly), &
+         npar+1, AA(0:npar, 0:npoly), npar+1, 0.0d0, alpha(0:npoly, 0:npoly), npoly+1)
+
+    ! Calculate (A^T * B) for the normal equation solution
+    call dgemv('T', npar+1, npoly+1, 1.0d0, AA(0:npar, 0:npoly), &
+         npar+1, BB(0:npar), 1, 0.0d0, beta(0:npoly), 1)
+    
+    ! Solve for the coefficients using the LAPACK routine
+    call dgesv(npoly+1, 1, alpha(0:npoly, 0:npoly), npoly+1, &
+         ipiv(0:npoly), beta(0:npoly), npoly+1, info)
+
+    coeffs(0:npoly)=beta(0:npoly)
+
+    if (info /= 0) then
+        print *, "Error in dgesv:", info
+        stop
+    end if
+  
+end subroutine least_squares_fit
+
+subroutine set_polynomial_basis(is)
+  !! This subroutine evaluates the General Linear Least Squares fit
+  !! to the distribution function for component 'is' using the selected
+  !! polynomial basis functions.
+  use alps_var, only : polynomials, poly_kind, poly_order
+  use alps_var, only : writeOut, npar
+  use alps_io, only : alps_error
+  implicit none
+
+  integer :: is
+  !! Index of species.
+
+  integer :: ipar
+  !! Index of parallel momentum.
+
+  integer :: n
+  !! Polynomial Order
+
+  double precision :: yy
+  !! Argument of Polynomial
+
+  select case (poly_kind(is))
+  case (1) !Chebyshev Polynomial Basis
+     if (writeOut) & 
+          write(*,'(a,i2)')'Constructing Chebyshev Basis for Component ',is
+     
+     polynomials(is,:,0) = 1.0
+     do ipar = 0, npar
+        yy=-1.d0+ipar*(2.d0/npar)
+        polynomials(is,ipar,1) = yy
+        do n = 2, poly_order(is)
+           polynomials(is,ipar,n) = &
+                2.0 * yy * polynomials(is,ipar,n-1) - polynomials(is,ipar,n-2)
+        end do
+     enddo
+  case default
+     call alps_error(10)
+  end select
+
+end subroutine set_polynomial_basis
+
 
 subroutine output_fit(qualitytotal)
 	!! This subroutine outputs the fit parameters for iperp=0 to stdout to monitor the fit.
 	use alps_io, only : isnancheck, alps_error
 	use alps_var, only : fit_type, param_fit, n_fits, nspec, nperp, npar, pp, f0, pi, vA, runname
  use alps_var, only : relativistic,gamma_rel,pparbar_rel,ngamma,npparbar,f0_rel, ms, usebM
+ use alps_var, only : basis_representation
  use alps_var, only : ns, qs, ms, bMpdrifts
 	implicit none
 
@@ -679,23 +815,28 @@ subroutine output_fit(qualitytotal)
 	!! File name to write fit results to file.
 
 	write (*,'(a)') ' Results of the fit for hybrid analytic continuation at iperp = 1:'
-	do is=1,nspec
-		do ifit=1,n_fits(is)
-			if(fit_type(is,ifit).EQ.1) n_params=3
-			if(fit_type(is,ifit).EQ.2) n_params=5
-			if(fit_type(is,ifit).EQ.3) n_params=3
-			if(fit_type(is,ifit).EQ.4) n_params=1
-			if(fit_type(is,ifit).EQ.5) n_params=3
-			if(fit_type(is,ifit).EQ.6) n_params=4
+ do is=1,nspec
+    select case (basis_representation(is))
+    case (1)
+       do ifit=1,n_fits(is)
+          if(fit_type(is,ifit).EQ.1) n_params=3
+          if(fit_type(is,ifit).EQ.2) n_params=5
+          if(fit_type(is,ifit).EQ.3) n_params=3
+          if(fit_type(is,ifit).EQ.4) n_params=1
+          if(fit_type(is,ifit).EQ.5) n_params=3
+          if(fit_type(is,ifit).EQ.6) n_params=4
+          
+          if (.not.usebM(is)) then
+             do iparam=1,n_params
+                write (*,'(a,i2,a,i2,a,i2,a,2es14.4)') '  param_fit(',is,', 1,',iparam,',',ifit,') = ',param_fit(is,1,iparam,ifit)
+             enddo
+             write (*,'(a)') ' '
+          endif
+       enddo
+    case (2)
 
-			if (.not.usebM(is)) then
-				do iparam=1,n_params
-					write (*,'(a,i2,a,i2,a,i2,a,2es14.4)') '  param_fit(',is,', 1,',iparam,',',ifit,') = ',param_fit(is,1,iparam,ifit)
-				enddo
-			write (*,'(a)') ' '
-			endif
-		enddo
-	enddo
+    end select
+    enddo
 
 	write (*,'(a,es14.4)') ' Sum of all least-squares: ', qualitytotal
 	write (*,'(a,es14.4)') ' Standard error of the estimate: ', sqrt(qualitytotal/(1.d0*(nspec*nperp*npar)))
