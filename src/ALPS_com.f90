@@ -37,6 +37,7 @@ contains
     use alps_var, only : n_scan, scan, scan_option, relativistic, logfit, usebM
     use alps_var, only : bMnmaxs, bMBessel_zeros, bMbetas, bMalphas, bMpdrifts
     use alps_var, only : basis_representation, poly_kind, poly_order, poly_fit_coeffs
+    use alps_var, only : iproc
     use mpi
     implicit none
 
@@ -180,7 +181,9 @@ contains
        allocate(perp_correction(1:nspec,maxval(n_fits)))
 
        !Allocate fit coefficients for the polynomial basis here!
-       allocate(poly_fit_coeffs(1:nspec,0:nperp,0:maxval(poly_order(:)))); poly_fit_coeffs=0.d0
+       if (maxval(poly_order(:)).gt.1) then
+          allocate(poly_fit_coeffs(1:nspec,0:nperp,0:maxval(poly_order(:)))); poly_fit_coeffs=0.d0
+       endif
     endif
     
     allocate(df0(1:nspec,1:nperp-1,1:npar-1,1:2)); df0=0.d0
@@ -196,7 +199,7 @@ contains
     use alps_var,    only : df0, pp, param_fit, fit_type, perp_correction,proc0, writeOut, ierror
     use alps_var,    only : df0_rel, gamma_rel, pparbar_rel, f0_rel
     use alps_var,    only : relativistic, nspec, ngamma, npparbar
-    use alps_var,    only : poly_fit_coeffs
+    use alps_var,    only : poly_fit_coeffs, poly_order
     use alps_var, only : iproc
     use mpi
     implicit none
@@ -246,10 +249,6 @@ contains
             MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierror)
     endif
 
-    if (.not.proc0) then
-
-    endif
-
     call mpi_bcast(df0(:,:,:,:), size(df0(:,:,:,:)),&
          MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierror)
     call mpi_bcast(pp(:,:,:,:),  size(pp(:,:,:,:)),&
@@ -261,10 +260,10 @@ contains
     call mpi_bcast(perp_correction(:,:),  size(perp_correction(:,:)),&
          MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierror)
 
-    call mpi_bcast(poly_fit_coeffs(:,:,:),  size(poly_fit_coeffs(:,:,:)),&
-         MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierror)
-
-    write(*,*)'coefficients:',iproc,poly_fit_coeffs(1,0,1)
+    if (maxval(poly_order(:)).gt.1) then
+       call mpi_bcast(poly_fit_coeffs(:,:,:),  size(poly_fit_coeffs(:,:,:)),&
+            MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierror)
+    endif
     
     if (writeOut.and.proc0)&
          write(*,'(a)')' df0/dp received'
