@@ -102,11 +102,11 @@ basis=2  !Specify Basis Representation
 ff=1     !# of fits to be used.
 relat=F  !relativistic (T) or non-relativistic (F) species
 log_fit=T!log (T) or linear (F) fit
-use_bM=T !numerically integrate array (F) or use bi-Maxwellian/cold-plasma (T)
+use_bM=F !numerically integrate array (F) or use bi-Maxwellian/cold-plasma (T)
 /
 
 !Characteristics of Basis Function Representation
-&poly_1
+&poly_spec_1
 kind=1   !Kind of Orthogonal Basis Function (see documentation)
 order=30 !Maximum Order of Basis Function
 /
@@ -145,7 +145,7 @@ use_bM=F       !numerically integrate array (F) or use bi-Maxwellian/cold-plasma
 /
 
 !Characteristics of Basis Function Representation
-&poly_2
+&poly_spec_2
 kind=1   !Kind of Orthogonal Basis Function (see documentation)
 order=30 !Maximum Order of Basis Function
 /

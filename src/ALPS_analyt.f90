@@ -35,7 +35,7 @@ double complex function eval_fit(is,iperp,ppar_valC)
   !! by the subroutine [[determine_param_fit(subroutine)]].
 
         use alps_var, only : fit_type, pp, param_fit, n_fits, gamma_rel,nspec,relativistic
-        use alps_var, only : basis_representation
+        use alps_var, only : basis_representation, poly_fit_coeffs, poly_order
 	use alps_distribution_analyt, only : distribution_analyt
 	implicit none
 
@@ -76,14 +76,16 @@ double complex function eval_fit(is,iperp,ppar_valC)
 
 
 
-	! Use the pre-coded distribution from distribution/distribution_analyt.f90
-	if (basis_representation(is).EQ.0) then
-		eval_fit=distribution_analyt(is,pp(is,iperp,1,1),ppar_valC)
-		return
-	endif
+
+ select case (basis_representation(is))
+ case (0)
+    ! Use the pre-coded distribution from distribution/distribution_analyt.f90
+    eval_fit=distribution_analyt(is,pp(is,iperp,1,1),ppar_valC)
+    return
 
 
-
+ case (1)
+    ! Use the 'n_fits' functions described with 'fit_type'
 	n_params=0	! total number of fit_parameters
 	do ifit=1,n_fits(is)
 		if (fit_type(is,ifit).EQ.1) n_params=n_params+3	! Maxwell
@@ -169,8 +171,16 @@ double complex function eval_fit(is,iperp,ppar_valC)
 
 	deallocate (params)
 
-	return
-end function
+ return
+
+case (2)
+   ! use the orthogonal polynomials of kind described in &poly_is
+
+   eval_fit=fit_function_poly(is,iperp,ppar_valC,poly_order(is),&
+        poly_fit_coeffs(is,iperp,0:poly_order(is)))
+   
+end select
+end function eval_fit
 
 
 
@@ -255,10 +265,67 @@ double complex function fit_function(is,n_params,params,pperp_val,ppar_val)
 
 	enddo
 	return
-end function
+end function fit_function
 
+double complex function fit_function_poly(is,iperp,ppar_val,n_poly,fit_coeffs)
+  !! This function evaluates the orthogonal polynomical fit to f0
+  !! at real pperp_val and complex ppar_val,
+  !! with the one-dimensional polynomical coefficient array fit_coeffs is fed into the
+  !! function.
+  !! For the evaluation in ALPS, use [[eval_fit(function)]].
+	use alps_var, only : pp, poly_kind, npar, logfit
+ implicit none
 
+ integer :: n_poly
+ !! Maximum Polynomial Order
+ 
+ integer, intent(in) :: is
+ !! Index of species for which [[eval_fit(function)]] is executed.
 
+ double precision, intent(in) :: fit_coeffs(0:n_poly)
+ !! Array of polynomial coefficients
+
+ double precision :: poly_basis(0:n_poly)
+ !! Array of polynomial coefficients
+
+  integer :: n
+ !! Polynomial Order Index
+
+ integer, intent(in) :: iperp
+ !! Index of perpendicular momentum at which [[fit_function_poly(function)]] is executed.
+
+ double complex :: ppar_val
+ !! Complex parallel momentum.
+
+ double precision :: norm_1, norm_2
+ !! Range of p_parallel for rescaling polynomials
+
+ fit_function_poly=cmplx(0.d0,0.d0)
+ 
+ select case (poly_kind(is))
+ case (1)
+    !Chebyshev polynomials range from [-1,1]
+    norm_1=5.d-1*(pp(is,iperp,npar,2)+pp(is,iperp,0,2))
+    norm_2=5.d-1*(pp(is,iperp,npar,2)-pp(is,iperp,0,2))
+    ppar_val=(ppar_val-norm_1)/norm_2
+
+    n=0
+    poly_basis(n)=1.d0
+    fit_function_poly=fit_function_poly+fit_coeffs(n)*poly_basis(n)
+    n=1
+    poly_basis(n)=ppar_val
+    fit_function_poly=fit_function_poly+fit_coeffs(n)*poly_basis(n)
+    do n=2,n_poly
+       poly_basis(n) = 2.d0 * ppar_val * poly_basis(n-1) - poly_basis(n-2)
+       fit_function_poly=fit_function_poly+fit_coeffs(n)*poly_basis(n)
+    enddo
+    if (logfit(is)) then
+       fit_function_poly=10.d0**(fit_function_poly)
+    endif
+ end select
+ 
+ return
+end function fit_function_poly
 
 subroutine determine_param_fit
 	!! This is the fitting routine for the hybrid analytic continuation. It determines
@@ -354,7 +421,7 @@ subroutine determine_param_fit
 
 				param_fit(is,:,:,:)=0.d0
 				fit_type(is,:)=1
-				perp_correction(is,:)=1.d0
+    perp_correction(is,:)=1.d0
 
     		 elseif (basis_representation(is).EQ.2) then
 
@@ -603,17 +670,15 @@ subroutine determine_param_fit
 
 endif !end if (bM or basis_representation) selection 
 enddo	! End loop over is
- 
 
 
+if(writeOut) then
+   call output_fit(qualitytotal)
+   write(*,'(a)') '-=-=-=-=-=-=-=-=-'
+endif
 
 
-	if(writeOut) then
-		call output_fit(qualitytotal)
-		   write(*,'(a)') '-=-=-=-=-=-=-=-=-'
-	endif
-
-end subroutine
+end subroutine determine_param_fit
 
 
 subroutine determine_GLLS(is)
@@ -621,6 +686,7 @@ subroutine determine_GLLS(is)
   !! to the distribution function for component 'is' using the selected
   !! polynomial basis functions.
   use alps_var, only : polynomials, nperp, npar, f0, poly_fit_coeffs, poly_order
+  use alps_var, only : logfit
   implicit none
 
   integer :: is
@@ -633,11 +699,15 @@ subroutine determine_GLLS(is)
 
   allocate(f0_fit(0:npar));f0_fit=0.d0
   do iperp=0,nperp
-     f0_fit(:)=log10(f0(is,iperp,:))
+     if (logfit(is)) then
+        f0_fit(:)=log10(f0(is,iperp,:))
+     else
+        f0_fit(:)=f0(is,iperp,:)
+     endif
      call least_squares_fit(polynomials(is,:,:),f0_fit,poly_fit_coeffs(is,iperp,:),poly_order(is))
   enddo
   deallocate(f0_fit)
-
+  
 end subroutine determine_GLLS
 
 subroutine least_squares_fit(AA,BB,coeffs,npoly)
@@ -736,7 +806,6 @@ subroutine set_polynomial_basis(is)
 
 end subroutine set_polynomial_basis
 
-
 subroutine output_fit(qualitytotal)
 	!! This subroutine outputs the fit parameters for iperp=0 to stdout to monitor the fit.
 	use alps_io, only : isnancheck, alps_error
@@ -834,9 +903,9 @@ subroutine output_fit(qualitytotal)
           endif
        enddo
     case (2)
-
+       
     end select
-    enddo
+ enddo
 
 	write (*,'(a,es14.4)') ' Sum of all least-squares: ', qualitytotal
 	write (*,'(a,es14.4)') ' Standard error of the estimate: ', sqrt(qualitytotal/(1.d0*(nspec*nperp*npar)))
@@ -864,7 +933,8 @@ subroutine output_fit(qualitytotal)
             ' Parallel current density: ', current(is)
 
     else
-
+       select case (basis_representation(is))
+       case (1)
 	  unit_spec=2000+is
 	  write(specwrite,'(i0)') is
 	  open(unit = unit_spec,file = 'distribution/'//trim(runname)//'.fit_result.'//trim(specwrite)//'.out', status = 'replace')
@@ -954,12 +1024,34 @@ subroutine output_fit(qualitytotal)
          ' Parallel current density of fit/analytical function: ', current(is)
    endif
 
+case (2)
+   write(*,'(a)')'evaluated charge not yet implemented!!!'
+
+     unit_spec=2000+is
+     write(specwrite,'(i0)') is
+     open(unit = unit_spec,file = 'distribution/'//trim(runname)//'.poly_fit_result.'//trim(specwrite)//'.out', status = 'replace')
+     write (*,'(a,i0)') ' Writing GLLS fit result to files: ispec',is
+     do iperp=0,nperp
+        do ipar=0,npar
+           ppar_comp=pp(is,iperp,ipar,2)
+           write (unit_spec,*) pp(is,iperp,ipar,1), pp(is,iperp,ipar,2), &
+                real(eval_fit(is,iperp,ppar_comp))!, &
+           !abs(real(eval_fit(is,iperp,ppar_comp))-f0(is,iperp,ipar))/f0(is,iperp,ipar)
+           
+        enddo
+     enddo
+
+     close(unit_spec)
+   
+end select
+   
 endif
 enddo
 write(*,'(a)')         '-=-=-=-='
 write(*,'(a, es14.4)') ' Total charge density of fit/analytical function:           ', sum(charge(1:nspec))
 write(*,'(a, es14.4)') ' Total parallel current density of fit/analytical function: ', sum(current(1:nspec))
 write(*,'(a)')         '-=-=-=-=-=-=-=-='
+
 
 end subroutine output_fit
 
@@ -1419,7 +1511,7 @@ subroutine LM_nonlinear_fit(is,g,n_params,nJT,params,param_mask,iperp,npar,ippar
 
 	quality=LSQ
 
-end subroutine
+end subroutine LM_nonlinear_fit
 
 
 end module alps_analyt

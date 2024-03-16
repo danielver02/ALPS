@@ -196,7 +196,8 @@ contains
     use alps_var,    only : df0, pp, param_fit, fit_type, perp_correction,proc0, writeOut, ierror
     use alps_var,    only : df0_rel, gamma_rel, pparbar_rel, f0_rel
     use alps_var,    only : relativistic, nspec, ngamma, npparbar
-    use alps_var,    only : poly_order, poly_fit_coeffs
+    use alps_var,    only : poly_fit_coeffs
+    use alps_var, only : iproc
     use mpi
     implicit none
     
@@ -259,6 +260,11 @@ contains
          MPI_INTEGER, 0, MPI_COMM_WORLD, ierror)
     call mpi_bcast(perp_correction(:,:),  size(perp_correction(:,:)),&
          MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierror)
+
+    call mpi_bcast(poly_fit_coeffs(:,:,:),  size(poly_fit_coeffs(:,:,:)),&
+         MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierror)
+
+    write(*,*)'coefficients:',iproc,poly_fit_coeffs(1,0,1)
     
     if (writeOut.and.proc0)&
          write(*,'(a)')' df0/dp received'
