@@ -37,7 +37,6 @@ contains
     use alps_var, only : n_scan, scan, scan_option, relativistic, logfit, usebM
     use alps_var, only : bMnmaxs, bMBessel_zeros, bMbetas, bMalphas, bMpdrifts
     use alps_var, only : basis_representation, poly_kind, poly_order, poly_fit_coeffs
-    use alps_var, only : iproc
     use mpi
     implicit none
 
@@ -200,7 +199,7 @@ contains
     use alps_var,    only : df0_rel, gamma_rel, pparbar_rel, f0_rel
     use alps_var,    only : relativistic, nspec, ngamma, npparbar
     use alps_var,    only : poly_fit_coeffs, poly_order
-    use alps_var, only : iproc
+
     use mpi
     implicit none
     

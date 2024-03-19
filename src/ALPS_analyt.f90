@@ -23,7 +23,7 @@ module alps_analyt
         public  :: eval_fit, determine_param_fit
         private :: set_polynomial_basis
         private :: fit_function, output_fit, determine_JT, LM_nonlinear_fit
-        private :: determine_GLLS
+        private :: determine_GLLS, factorial
 
 contains
 
@@ -273,7 +273,7 @@ double complex function fit_function_poly(is,iperp,ppar_val,n_poly,fit_coeffs)
   !! with the one-dimensional polynomical coefficient array fit_coeffs is fed into the
   !! function.
   !! For the evaluation in ALPS, use [[eval_fit(function)]].
-	use alps_var, only : pp, poly_kind, npar, logfit
+	use alps_var, only : pp, poly_kind, npar, logfit, pi
  implicit none
 
  integer :: n_poly
@@ -322,6 +322,49 @@ double complex function fit_function_poly(is,iperp,ppar_val,n_poly,fit_coeffs)
     if (logfit(is)) then
        fit_function_poly=10.d0**(fit_function_poly)
     endif
+ case (2)
+    !Hermite Representation
+    n=0
+    poly_basis(n)=1.d0
+    fit_function_poly=fit_function_poly+fit_coeffs(n)*poly_basis(n)
+    n=1
+    poly_basis(n)=2.d0*ppar_val
+    fit_function_poly=fit_function_poly+fit_coeffs(n)*poly_basis(n)
+    do n=2,n_poly
+       poly_basis(n) = 2.d0 * ppar_val * poly_basis(n-1) - &
+            2.d0*(n-1.d0)*poly_basis(n-2)
+       fit_function_poly=fit_function_poly+fit_coeffs(n)*poly_basis(n)
+    enddo
+    if (logfit(is)) then
+       fit_function_poly=10.d0**(fit_function_poly)
+    endif
+ case (3)
+    !Weighted Hermite Representation
+    n=0
+    poly_basis(n)=1.d0
+    n=1
+    poly_basis(n)=2.d0*ppar_val
+    do n=2,n_poly
+       poly_basis(n) = 2.d0 * ppar_val * poly_basis(n-1) - &
+            2.d0*(n-1.d0)*poly_basis(n-2)
+    enddo
+
+    n=0
+    fit_function_poly=fit_function_poly+&
+         fit_coeffs(n)*poly_basis(n)*exp(-ppar_val**2.d0/2.d0)/&
+         (2.d0**n*pi**5.d-1*factorial(n))**5.d-1
+    n=1
+    fit_function_poly=fit_function_poly+&
+         fit_coeffs(n)*poly_basis(n)*exp(-ppar_val**2.d0/2.d0)/&
+         (2.d0**n*pi**5.d-1*factorial(n))**5.d-1
+    do n=2,n_poly
+       fit_function_poly=fit_function_poly+&
+            fit_coeffs(n)*poly_basis(n)*exp(-ppar_val**2.d0/2.d0)/&
+            (2.d0**n*pi**5.d-1*factorial(n))**5.d-1
+    enddo
+    if (logfit(is)) then
+       fit_function_poly=10.d0**(fit_function_poly)
+    endif
  end select
  
  return
@@ -332,7 +375,7 @@ subroutine determine_param_fit
 	!! the full field [[alps_var(module):param_fit(variable)]].
 	use alps_var, only : writeOut, fit_type, param_fit, n_fits, nspec, f0, nperp, npar, logfit, runname
         use alps_var, only : relativistic,npparbar,f0_rel,ngamma, perp_correction, gamma_rel, usebM
-        use alps_var, only : basis_representation 
+        use alps_var, only : basis_representation, poly_fit_coeffs 
 	implicit none
 
 	integer :: ifit
@@ -434,6 +477,18 @@ subroutine determine_param_fit
                                 call set_polynomial_basis(is)
 
                                 call determine_GLLS(is)
+
+                                unit_spec=2500+is
+                                write(specwrite,'(i0)') is
+                                open(unit = unit_spec,file = 'distribution/'&
+                                     //trim(runname)//'.poly_parameters.'//trim(specwrite)&
+                                     //'.out', status = 'replace')
+                                do iperp=0,nperp
+                                   write(unit_spec,*)&
+                                        iperp,poly_fit_coeffs(is,iperp,:)
+                                enddo
+
+                                close(unit_spec)
 
 		 else
 		! For all fit types that include a fit parameter for the perpendicular momentum (kappa and Moyal),
@@ -769,8 +824,8 @@ subroutine set_polynomial_basis(is)
   !! This subroutine evaluates the General Linear Least Squares fit
   !! to the distribution function for component 'is' using the selected
   !! polynomial basis functions.
-  use alps_var, only : polynomials, poly_kind, poly_order
-  use alps_var, only : writeOut, npar
+  use alps_var, only : polynomials, poly_kind, poly_order, pp
+  use alps_var, only : writeOut, npar, pi
   use alps_io, only : alps_error
   implicit none
 
@@ -786,6 +841,9 @@ subroutine set_polynomial_basis(is)
   double precision :: yy
   !! Argument of Polynomial
 
+  character (100) :: writename
+  !! File name for file i/o.
+
   select case (poly_kind(is))
   case (1) !Chebyshev Polynomial Basis
      if (writeOut) & 
@@ -800,10 +858,52 @@ subroutine set_polynomial_basis(is)
                 2.0 * yy * polynomials(is,ipar,n-1) - polynomials(is,ipar,n-2)
         end do
      enddo
+  case (2) !Hermite Polynomial Basis
+     if (writeOut) & 
+          write(*,'(a,i2)')'Constructing Hermite Basis for Component ',is
+     
+     polynomials(is,:,0) = 1.0
+     do ipar = 0, npar
+        yy=pp(is,0,ipar,2)
+        polynomials(is,ipar,1) = 2.d0*yy
+        do n = 2, poly_order(is)
+           polynomials(is,ipar,n) = &
+                2.0 * yy * polynomials(is,ipar,n-1) - 2.d0**(n-1.d0)*polynomials(is,ipar,n-2)
+        end do
+     enddo
+  case (3) !Weighted Hermite Polynomial Basis
+     if (writeOut) & 
+          write(*,'(a,i2)')'Constructing Weighted Hermite Basis for Component ',is
+     
+     polynomials(is,:,0) = 1.d0
+     do ipar = 0, npar
+        yy=pp(is,0,ipar,2)
+        polynomials(is,ipar,1) = 2.d0*yy
+        do n = 2, poly_order(is)
+           polynomials(is,ipar,n) = &
+                2.d0 * yy * polynomials(is,ipar,n-1) - 2.d0*(n-1.d0)*polynomials(is,ipar,n-2)
+        end do
+     enddo
+     !Apply Exponential Weight
+     do n=0,poly_order(is)
+        do ipar=0,npar
+           polynomials(is,ipar,n)=polynomials(is,ipar,n)*exp(-pp(is,0,ipar,2)**2.d0/2.d0)/&
+                (2.d0**n*pi**5.d-1*factorial(n))**5.d-1
+        enddo
+     enddo
   case default
      call alps_error(10)
   end select
 
+  !OUTPUT POLYNOMIAL BASIS
+  write(writeName,'(a,i0,a,i0,a)')&
+       'distribution/poly_kind_',poly_kind(is),'_s',is,'.out'
+  open(unit=1001,file=trim(writeName),status='replace')
+  do ipar=0,npar
+     write(1001,*)pp(is,0,ipar,2),polynomials(is,ipar,0:10)
+  enddo
+  close(1001)
+  
 end subroutine set_polynomial_basis
 
 subroutine output_fit(qualitytotal)
@@ -1034,8 +1134,10 @@ case (2)
      do iperp=0,nperp
         do ipar=0,npar
            ppar_comp=pp(is,iperp,ipar,2)
+           write(*,*)ppar_comp,eval_fit(is,iperp,ppar_comp)
            write (unit_spec,*) pp(is,iperp,ipar,1), pp(is,iperp,ipar,2), &
-                real(eval_fit(is,iperp,ppar_comp))!, &
+                eval_fit(is,iperp,ppar_comp)
+                !real(eval_fit(is,iperp,ppar_comp))!, &
            !abs(real(eval_fit(is,iperp,ppar_comp))-f0(is,iperp,ipar))/f0(is,iperp,ipar)
            
         enddo
@@ -1513,5 +1615,16 @@ subroutine LM_nonlinear_fit(is,g,n_params,nJT,params,param_mask,iperp,npar,ippar
 
 end subroutine LM_nonlinear_fit
 
+  integer function factorial(n)
+    implicit none
+    integer, intent(in) :: n
+    integer :: i, Ans
+
+    Ans=1
+    do i=1,n
+       Ans=Ans*i
+    enddo
+    Factorial=Ans
+  end function factorial
 
 end module alps_analyt

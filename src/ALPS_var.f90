@@ -243,6 +243,8 @@ module alps_var
   integer, dimension(:), allocatable :: poly_kind
   !!Selection of Orthogonal Basis Function, (1:nspec)
   !! 1) Chebyshev Polynomials
+  !! 2) Hermite Polynomials
+  !! 3) Hermite Polynomials, with weighting factor
   
   integer, dimension(:), allocatable :: poly_order
   !! Selection of Maximum Order of Orthogonal Basis Function, (1:nspec)
