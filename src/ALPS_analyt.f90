@@ -1134,10 +1134,10 @@ case (2)
      do iperp=0,nperp
         do ipar=0,npar
            ppar_comp=pp(is,iperp,ipar,2)
-           write(*,*)ppar_comp,eval_fit(is,iperp,ppar_comp)
+           !write(*,*)ppar_comp,eval_fit(is,iperp,ppar_comp)
            write (unit_spec,*) pp(is,iperp,ipar,1), pp(is,iperp,ipar,2), &
-                eval_fit(is,iperp,ppar_comp)
-                !real(eval_fit(is,iperp,ppar_comp))!, &
+                !eval_fit(is,iperp,ppar_comp)
+                real(eval_fit(is,iperp,ppar_comp))!, &
            !abs(real(eval_fit(is,iperp,ppar_comp))-f0(is,iperp,ipar))/f0(is,iperp,ipar)
            
         enddo
