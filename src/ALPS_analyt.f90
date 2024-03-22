@@ -297,6 +297,9 @@ double complex function fit_function_poly(is,iperp,ppar_val,n_poly,fit_coeffs)
  double complex :: ppar_val
  !! Complex parallel momentum.
 
+ double complex :: ppar_val_tmp
+ !! Complex parallel momentum.
+
  double precision :: norm_1, norm_2
  !! Range of p_parallel for rescaling polynomials
 
@@ -307,16 +310,17 @@ double complex function fit_function_poly(is,iperp,ppar_val,n_poly,fit_coeffs)
     !Chebyshev polynomials range from [-1,1]
     norm_1=5.d-1*(pp(is,iperp,npar,2)+pp(is,iperp,0,2))
     norm_2=5.d-1*(pp(is,iperp,npar,2)-pp(is,iperp,0,2))
-    ppar_val=(ppar_val-norm_1)/norm_2
+    !ppar_val=(ppar_val-norm_1)/norm_2
+    ppar_val_tmp=abs(ppar_val-norm_1)/norm_2
 
     n=0
     poly_basis(n)=1.d0
     fit_function_poly=fit_function_poly+fit_coeffs(n)*poly_basis(n)
     n=1
-    poly_basis(n)=ppar_val
+    poly_basis(n)=ppar_val_tmp
     fit_function_poly=fit_function_poly+fit_coeffs(n)*poly_basis(n)
     do n=2,n_poly
-       poly_basis(n) = 2.d0 * ppar_val * poly_basis(n-1) - poly_basis(n-2)
+       poly_basis(n) = 2.d0 * ppar_val_tmp * poly_basis(n-1) - poly_basis(n-2)
        fit_function_poly=fit_function_poly+fit_coeffs(n)*poly_basis(n)
     enddo
     if (logfit(is)) then
@@ -896,13 +900,13 @@ subroutine set_polynomial_basis(is)
   end select
 
   !OUTPUT POLYNOMIAL BASIS
-  write(writeName,'(a,i0,a,i0,a)')&
-       'distribution/poly_kind_',poly_kind(is),'_s',is,'.out'
-  open(unit=1001,file=trim(writeName),status='replace')
-  do ipar=0,npar
-     write(1001,*)pp(is,0,ipar,2),polynomials(is,ipar,0:10)
-  enddo
-  close(1001)
+  !write(writeName,'(a,i0,a,i0,a)')&
+  !     'distribution/poly_kind_',poly_kind(is),'_s',is,'.out'
+  !open(unit=1001,file=trim(writeName),status='replace')
+  !do ipar=0,npar
+  !   write(1001,*)pp(is,0,ipar,2),polynomials(is,ipar,0:10)
+  !enddo
+  !close(1001)
   
 end subroutine set_polynomial_basis
 

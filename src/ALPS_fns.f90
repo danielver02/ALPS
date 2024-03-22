@@ -1238,7 +1238,8 @@ double complex function landau_integrate(om, nn, mode)
 		   h = 1.d0
 		endif
 
-		p_res = (ms(sproc) * (om) - 1.d0*nn * qs(sproc))/kpar
+  p_res = (ms(sproc) * (om) - 1.d0*nn * qs(sproc))/kpar
+  
 
 		! Calculate the derivatives of f0 at the complex p_res:
 		dfperp_C=(eval_fit(sproc,iperp+1,p_res)-eval_fit(sproc,iperp-1,p_res))/(2.d0*dpperp)
