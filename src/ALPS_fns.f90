@@ -333,7 +333,6 @@ end subroutine derivative_f0
        do nn = nlim(1),nlim(2)
 
           call determine_resonances(om,nn,found_res_plus,found_res_minus)
-
           ! CHIij(nn) function calls:
 
           if (nn == 0) then
@@ -345,15 +344,15 @@ end subroutine derivative_f0
              !yy term:
              schi(sproc,2,2) = schi(sproc,2,2) + &
                   full_integrate(om,nn,2,found_res_plus)
-
+             
              !zz term:
              schi(sproc,3,3) = schi(sproc,3,3) + &
                   full_integrate(om,nn,3,found_res_plus)
-
+             
              !yz term:
              schi(sproc,2,3) = schi(sproc,2,3) + &
                   full_integrate(om,nn,6,found_res_plus)
-
+             
           else
 
              !xx term:
@@ -410,7 +409,7 @@ end subroutine derivative_f0
        schi(sproc,2,3) = schi(sproc,2,3) * norm(sproc)
 
     endif
-
+    
     ! Return the schi to proc0:
     call MPI_REDUCE (schi, chi, size(chi),&
         MPI_DOUBLE_COMPLEX, MPI_SUM, 0, MPI_COMM_WORLD, ierror)
@@ -483,7 +482,7 @@ end subroutine derivative_f0
             wave(1,2)**2*wave(3,3)
 
     endif
-
+    
     call mpi_bcast(disp, 1, MPI_DOUBLE_COMPLEX, 0, MPI_COMM_WORLD, ierror)
 
     !Make sure all processors have completed calculation to avoid
@@ -599,7 +598,7 @@ subroutine determine_resonances(om,nn,found_res_plus,found_res_minus)
 		(real(p_res).GE.(pp(sproc,2,1,2)-(1.d0*positions_principal)*dppar))) found_res_minus=.TRUE.
 	  if ((real(p_res).GE.pp(sproc,2,npar-1,2)).AND.&
 		(real(p_res).LT.(pp(sproc,2,npar-1,2)+(1.d0*positions_principal)*dppar))) found_res_minus=.TRUE.
-	endif
+endif
 
 end subroutine determine_resonances
 
@@ -637,15 +636,15 @@ double complex function full_integrate(om, nn, mode, found_res)
       	 		full_integrate = integrate_res_rel(om,nn,mode) + 2.d0 * landau_integrate_rel(om, nn, mode)
        	 	elseif (aimag(om).EQ.0.d0) then
 	       	 	full_integrate = integrate_res_rel(om,nn,mode) + landau_integrate_rel(om, nn, mode)
-      	 	endif
-  elseif ((found_res).and.(aimag(om).GT.0.d0)) then
-     !Brute force integrate
-	 full_integrate = integrate_res(om,nn,mode)
-  elseif ((found_res).and.(aimag(om).LT.0.d0)) then
-     !Landau Integral
-   	 full_integrate = integrate_res(om,nn,mode)+2.d0 * landau_integrate(om, nn, mode)
-  elseif ((found_res).and.(aimag(om).EQ.0.d0)) then
-   	 full_integrate = integrate_res(om,nn,mode)+landau_integrate(om, nn, mode)
+        endif
+     elseif ((found_res).and.(aimag(om).GT.0.d0)) then
+        !Brute force integrate
+        full_integrate = integrate_res(om,nn,mode)
+     elseif ((found_res).and.(aimag(om).LT.0.d0)) then
+        !Landau Integral
+        full_integrate = integrate_res(om,nn,mode)+2.d0 * landau_integrate(om, nn, mode)
+     elseif ((found_res).and.(aimag(om).EQ.0.d0)) then
+        full_integrate = integrate_res(om,nn,mode)+landau_integrate(om, nn, mode)
   endif
   return
 end function full_integrate
@@ -659,6 +658,7 @@ double complex function integrate(om, nn, mode, iparmin, iparmax)
   !! This function performs the integral in Eq. (2.9) of the code paper, but without
   !! accounting for the Landau contour integral. It is called by [[full_integrate(function)]].
   use alps_var, only : nperp, pp, pi, sproc
+  use alps_var, only : iproc
   implicit none
 
   double complex, intent(in) :: om
@@ -699,7 +699,7 @@ double complex function integrate(om, nn, mode, iparmin, iparmax)
        2.d0 * resU(om, nn, 1, iparmax) * int_T(nn, 1, iparmax, mode) + &
        resU(om, nn, nperp -1, iparmin) * int_T(nn, nperp -1, iparmin, mode) + &
        resU(om, nn, nperp -1, iparmax) * int_T(nn, nperp -1, iparmax, mode)
-
+  
   do iperp = 2, nperp-2
      do ipar = iparmin+1, iparmax-1
         integrate = integrate + 4.d0 * resU(om, nn, iperp, ipar) * int_T(nn, iperp, ipar, mode)
@@ -710,14 +710,13 @@ double complex function integrate(om, nn, mode, iparmin, iparmax)
       resU(om, nn, iperp, iparmax) * int_T(nn, iperp, iparmax, mode) )
   enddo
 
-
   do ipar = iparmin+1, iparmax-1
         integrate = integrate + &
              2.d0 * (2.d0 * resU(om, nn, 1, ipar) * int_T(nn, 1, ipar, mode) + &
              resU(om, nn, nperp -1, ipar) * int_T(nn, nperp -1, ipar, mode) )
-  enddo
+     enddo
 
-  integrate = 2.d0 * pi * integrate * dpperp * dppar * 0.25d0
+     integrate = 2.d0 * pi * integrate * dpperp * dppar * 0.25d0
 
   return
 
@@ -1240,16 +1239,15 @@ double complex function landau_integrate(om, nn, mode)
 
   p_res = (ms(sproc) * (om) - 1.d0*nn * qs(sproc))/kpar
   
+  ! Calculate the derivatives of f0 at the complex p_res:
+  dfperp_C=(eval_fit(sproc,iperp+1,p_res)-eval_fit(sproc,iperp-1,p_res))/(2.d0*dpperp)
+  dfpar_C=(eval_fit(sproc,iperp,p_res+dppar)-eval_fit(sproc,iperp,p_res-dppar))/(2.d0*dppar)
 
-		! Calculate the derivatives of f0 at the complex p_res:
-		dfperp_C=(eval_fit(sproc,iperp+1,p_res)-eval_fit(sproc,iperp-1,p_res))/(2.d0*dpperp)
-		dfpar_C=(eval_fit(sproc,iperp,p_res+dppar)-eval_fit(sproc,iperp,p_res-dppar))/(2.d0*dppar)
-
-    landau_integrate = landau_integrate - h * int_T_res(nn, iperp, p_res, mode)*&
+  landau_integrate = landau_integrate - h * int_T_res(nn, iperp, p_res, mode)*&
         (qs(sproc) /abs(kpar)) *( (pp(sproc, iperp, 1, 1) * dfpar_C - &
         p_res * dfperp_C) * kpar  /  ( ms(sproc)) + om*dfperp_C )
 
-	enddo
+enddo
 
 	landau_integrate = landau_integrate * ii * dpperp * pi * 2.d0 * pi
 
@@ -2756,10 +2754,16 @@ subroutine map_search
         else
            wi=gami+di*(1.d0*(ii-1))
         endif
+        !!check
+        !if (proc0.and.writeOut)&
+        !     write(*,'(a,es11.4)')' gamma = ',wi
 
         omega=cmplx(wr,wi,kind(1.d0))
         om(ir,ii)=omega
         cal(ir,ii)=disp(omega)
+        !!check
+        !if (proc0.and.writeOut)&
+        !     write(*,'(4es13.6)')omega,cal(ir,ii)
         val(ir,ii)=abs(cal(ir,ii))
 
         if (proc0) then

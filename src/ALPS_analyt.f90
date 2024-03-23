@@ -285,7 +285,7 @@ double complex function fit_function_poly(is,iperp,ppar_val,n_poly,fit_coeffs)
  double precision, intent(in) :: fit_coeffs(0:n_poly)
  !! Array of polynomial coefficients
 
- double precision :: poly_basis(0:n_poly)
+ double complex :: poly_basis(0:n_poly)
  !! Array of polynomial coefficients
 
   integer :: n
@@ -303,15 +303,16 @@ double complex function fit_function_poly(is,iperp,ppar_val,n_poly,fit_coeffs)
  double precision :: norm_1, norm_2
  !! Range of p_parallel for rescaling polynomials
 
- fit_function_poly=cmplx(0.d0,0.d0)
+ fit_function_poly=cmplx(0.d0,0.d0,kind(1.d0))
  
  select case (poly_kind(is))
  case (1)
     !Chebyshev polynomials range from [-1,1]
     norm_1=5.d-1*(pp(is,iperp,npar,2)+pp(is,iperp,0,2))
     norm_2=5.d-1*(pp(is,iperp,npar,2)-pp(is,iperp,0,2))
-    !ppar_val=(ppar_val-norm_1)/norm_2
-    ppar_val_tmp=abs(ppar_val-norm_1)/norm_2
+    ppar_val_tmp=(ppar_val-norm_1)/norm_2
+
+    !write(*,*)'pp_C:',ppar_val,ppar_val_tmp,abs(ppar_val_tmp)
 
     n=0
     poly_basis(n)=1.d0
@@ -324,7 +325,7 @@ double complex function fit_function_poly(is,iperp,ppar_val,n_poly,fit_coeffs)
        fit_function_poly=fit_function_poly+fit_coeffs(n)*poly_basis(n)
     enddo
     if (logfit(is)) then
-       fit_function_poly=10.d0**(fit_function_poly)
+       fit_function_poly=10.**(fit_function_poly)
     endif
  case (2)
     !Hermite Representation
