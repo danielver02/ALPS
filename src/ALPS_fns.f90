@@ -124,7 +124,7 @@ subroutine derivative_f0
 
        if (writeOut) &
             write(*,'(a)') 'Outputing df0/dpperp, df0/dppar'
-       write(fmt,'(a)') '(2es14.4,2es14.4)'
+       write(fmt,'(a)') '(2es14.4e3,2es14.4e3)'
        do is = 1, nspec
 
 
@@ -189,16 +189,16 @@ subroutine derivative_f0
             '-=-=-=-='
        write(*,'(a,i3,a)')&
             'Species ',is,':'
-       write(*,'(a, 2es14.4)') &
+       write(*,'(a, 2es14.4e3)') &
             ' Integration:              ', integrate
-       write(*,'(a, 2es14.4)') &
+       write(*,'(a, 2es14.4e3)') &
             ' Charge density:           ', charge(is)
-       write(*,'(a, 2es14.4)') &
+       write(*,'(a, 2es14.4e3)') &
             ' Parallel current density: ', current_int(is)
     enddo
     write(*,'(a)')         '-=-=-=-='
-    write(*,'(a, es14.4)') ' Total charge density:           ', sum(charge(1:nspec))
-    write(*,'(a, es14.4)') ' Total parallel current density: ', sum(current_int(1:nspec))
+    write(*,'(a, es14.4e3)') ' Total charge density:           ', sum(charge(1:nspec))
+    write(*,'(a, es14.4e3)') ' Total parallel current density: ', sum(current_int(1:nspec))
     write(*,'(a)')         '-=-=-=-=-=-=-=-='
 
 
@@ -1623,7 +1623,7 @@ subroutine secant(om)
 			go_for_secant = .FALSE.
 			if (proc0.AND.writeOut) then
 				write(*,'(a,i4)') ' Converged after iteration ',iter
-				write(*,'(a,2es14.4,a,2es14.4)') ' D(',real(om),aimag(om),')= ',D
+				write(*,'(a,2es14.4e3,a,2es14.4e3)') ' D(',real(om),aimag(om),')= ',D
 			endif
 
 		else
@@ -1641,7 +1641,7 @@ subroutine secant(om)
 	if (proc0.AND.writeOut.AND.(iter.GE.numiter)) then
 		write(*,'(a,i4,a)') ' Maximum iteration ',iter,' reached.'
 		om=minom
-		write(*,'(a,2es14.4,a,2es14.4)') ' D(',real(om),aimag(om),')= ',D
+		write(*,'(a,2es14.4e3,a,2es14.4e3)') ' D(',real(om),aimag(om),')= ',D
 	endif
 
 end subroutine secant
@@ -1755,12 +1755,12 @@ subroutine om_scan(ik)
         write(scan_ID,'(a)')'kpara_'
      end select
           if (scan(ik)%eigen_s) then
-        write(fmt_eigen,'(a,i0,a)') '(4es14.4,12es14.4,',nspec*8,'es14.4)'
+        write(fmt_eigen,'(a,i0,a)') '(4es14.4e3,12es14.4e3,',nspec*8,'es14.4e3)'
         allocate(eigen_unit(nroots))
         allocate(eigenName(nroots))
      endif
      if (scan(ik)%heat_s) then
-        write(fmt_heat,'(a,i0,a)') '(4es14.4,',nspec,'es14.4)'
+        write(fmt_heat,'(a,i0,a)') '(4es14.4e3,',nspec,'es14.4e3)'
         allocate(heat_unit(nroots))
         allocate(heatName(nroots))
      endif
@@ -1770,7 +1770,7 @@ subroutine om_scan(ik)
         write(*,'(2a)')' => ',trim(scanName(in))
         call get_unused_unit(scan_unit(in))
         open(unit=scan_unit(in),file=trim(scanName(in)),status='replace')
-        write(scan_unit(in),'(4es14.4)') &
+        write(scan_unit(in),'(4es14.4e3)') &
              kperp,kpar,wroots(in)
         close(scan_unit(in))
      enddo
@@ -1875,7 +1875,7 @@ subroutine om_scan(ik)
 
      call mpi_barrier(mpi_comm_world,ierror)
 
-     if (proc0) write(*,'(a,es14.4,a,es14.4)')'kperp: ',kperp,' kpar: ',kpar
+     if (proc0) write(*,'(a,es14.4e3,a,es14.4e3)')'kperp: ',kperp,' kpar: ',kpar
 
 	! Check if all jumps are set to .false.:
 	alljump=.FALSE.
@@ -1928,7 +1928,7 @@ subroutine om_scan(ik)
 !
               do imm=1,in-1
                  if (abs(wroots(in)-wroots(imm)).lt.D_gap) then
-                    write(*,'(a,6es14.4)')'Root too close!',&
+                    write(*,'(a,6es14.4e3)')'Root too close!',&
                          wroots(in),wroots(imm),&
                          real(wroots(in))-real(wroots(imm)), &
                          aimag(wroots(in))-aimag(wroots(imm))
@@ -1938,7 +1938,7 @@ subroutine om_scan(ik)
 
               if (mod(it,scan(ik)%n_res)==0) then
                  open(unit=scan_unit(in),file=trim(scanName(in)),status='old',position='append')
-                 write(scan_unit(in),'(4es14.4)') &
+                 write(scan_unit(in),'(4es14.4e3)') &
                       kperp,kpar,wroots(in)
                  close(scan_unit(in))
 
@@ -2311,12 +2311,12 @@ subroutine om_double_scan
      end select
 
      if (scan(1)%eigen_s) then
-        write(fmt_eigen,'(a,i0,a)') '(4es14.4,12es14.4,',nspec*8,'es14.4)'
+        write(fmt_eigen,'(a,i0,a)') '(4es14.4e3,12es14.4e3,',nspec*8,'es14.4e3)'
         allocate(eigen_unit(nroots))
         allocate(eigenName(nroots))
      endif
      if (scan(1)%heat_s) then
-        write(fmt_heat,'(a,i0,a)') '(4es14.4,',nspec,'es14.4)'
+        write(fmt_heat,'(a,i0,a)') '(4es14.4e3,',nspec,'es14.4e3)'
         allocate(heat_unit(nroots))
         allocate(heatName(nroots))
      endif
@@ -2432,7 +2432,7 @@ subroutine om_double_scan
 
      call mpi_barrier(mpi_comm_world,ierror)
 
-     if (proc0) write(*,'(a,es14.4,a,es14.4)')'kperp: ',kperp,' kpar: ',kpar
+     if (proc0) write(*,'(a,es14.4e3,a,es14.4e3)')'kperp: ',kperp,' kpar: ',kpar
 
      ! Check if all jumps are set to .false.:
      alljump=.FALSE.
@@ -2505,7 +2505,7 @@ subroutine om_double_scan
 
         call mpi_barrier(mpi_comm_world,ierror)
 
-        if (proc0) write(*,'(a,es14.4,a,es14.4)')'kperp: ',kperp,' kpar: ',kpar
+        if (proc0) write(*,'(a,es14.4e3,a,es14.4e3)')'kperp: ',kperp,' kpar: ',kpar
 
           do in = 1,nroots
              !Search for new roots:
@@ -2553,7 +2553,7 @@ subroutine om_double_scan
 
               do imm=1,in-1
                  if (abs(wroots(in)-wroots(imm)).lt.D_gap) then
-                    write(*,'(a,6es14.4)')'Root too close!',&
+                    write(*,'(a,6es14.4e3)')'Root too close!',&
                          wroots(in),wroots(imm),&
                          real(wroots(in))-real(wroots(imm)), &
                          aimag(wroots(in))-aimag(wroots(imm))
@@ -2565,7 +2565,7 @@ subroutine om_double_scan
               if ((mod(it,scan(1)%n_res)==0).and.((mod(it2,scan(2)%n_res)==0))) then
                  open(unit=scan_unit(in),file=trim(scanName(in)),&
                       status='old',position='append')
-                 write(scan_unit(in),'(4es14.4)') &
+                 write(scan_unit(in),'(4es14.4e3)') &
                       kperp,kpar,wroots(in)
                  close(scan_unit(in))
 
@@ -2701,19 +2701,19 @@ subroutine map_search
   if (writeOut .and. proc0.and. .true.) then
      write(*,'(a)')'-=-=-=-=-=-=-=-=-=-'
      write(*,'(a)')      'Global Plasma Parameters:'
-     write(*,'(a,es12.3)')' k_perp d_p   = ',kperp
-     write(*,'(a,es12.3)')' k_par  d_p   = ',kpar
+     write(*,'(a,es14.3e3)')' k_perp d_p   = ',kperp
+     write(*,'(a,es14.3e3)')' k_par  d_p   = ',kpar
      do is = 1, nspec
         write(*,'(a)')'-=-=-=-=-=-=-=-=-=-'
         write(*,'(a,i3)')      'Parameters for species',is
-        write(*,'(a,es12.3)')' m_s/m_m =        ',ms(is)
-        write(*,'(a,es12.3)')' q_s/q_p =        ',qs(is)
-        write(*,'(a,es12.3)')' n_s/n_p =        ',ns(is)
+        write(*,'(a,es14.3e3)')' m_s/m_m =        ',ms(is)
+        write(*,'(a,es14.3e3)')' q_s/q_p =        ',qs(is)
+        write(*,'(a,es14.3e3)')' n_s/n_p =        ',ns(is)
      enddo
      write(*,'(a)')'-=-=-=-=-=-=-=-=-=-'
      write(*,'(a)')'Searching over:'
-     write(*,'(a,es12.3,a,es12.3,a)')' om  in [',omi,',',omf,']'
-     write(*,'(a,es12.3,a,es12.3,a)')' gam in [',gami,',',gamf,']'
+     write(*,'(a,es14.3e3,a,es14.3e3,a)')' om  in [',omi,',',omf,']'
+     write(*,'(a,es14.3e3,a,es14.3e3,a)')' gam in [',gami,',',gamf,']'
      write(*,'(a)')'-=-=-=-=-=-=-=-=-=-'
   endif
 
@@ -2747,7 +2747,7 @@ subroutine map_search
         wr=omi+dr*(1.d0*(ir-1))
      endif
      if (proc0.and.writeOut)&
-          write(*,'(a,es11.4)')' omega_real = ',wr
+          write(*,'(a,es14.4e3)')' omega_real = ',wr
      do ii=1,ni
         if (loggridg) then
 		   wi=gami
@@ -2781,7 +2781,7 @@ subroutine map_search
            endif
 
            open(unit=unit_map,file=trim(mapName),status='old',position='append')
-           write(unit_map,'(5es14.6)') &
+           write(unit_map,'(5es14.6e3)') &
                 om(ir,ii),val(ir,ii),cal(ir,ii)
            close(unit_map)
 
@@ -2806,7 +2806,7 @@ subroutine map_search
          wroots(iw)=om(iroots(1,iw),iroots(2,iw))
          if (writeOut) then
             write(*,'(a,i4,a,i4)')'ir = ',iroots(1,iw),'    ii = ',iroots(2,iw)
-            write(*,'(4es14.4)') wroots(iw) ,cal(iroots(1,iw),iroots(2,iw))
+            write(*,'(4es14.4e3)') wroots(iw) ,cal(iroots(1,iw),iroots(2,iw))
          endif
       enddo
 
@@ -2874,9 +2874,9 @@ subroutine refine_guess
 
      tmpDisp=disp(wroots(iw))
      if (proc0.and.(abs(tmpDisp).NE.0.d0)) then
-        write(unit_refine,'(i4,5es14.4)') iw,wroots(iw),log10(abs(tmpDisp)),tmpDisp
-        write(*,'(i4,5es14.4)') iw,wroots(iw),log10(abs(tmpDisp)),tmpDisp
- !       if (writeOut) write(*,'(a,2es14.4,a,2es14.4)')'D(',wroots(iw),')= ',tmpDisp
+        write(unit_refine,'(i4,5es14.4e3)') iw,wroots(iw),log10(abs(tmpDisp)),tmpDisp
+        write(*,'(i4,5es14.4e3)') iw,wroots(iw),log10(abs(tmpDisp)),tmpDisp
+ !       if (writeOut) write(*,'(a,2es14.4e3,a,2es14.4e3)')'D(',wroots(iw),')= ',tmpDisp
      endif
 
   enddo

@@ -24,7 +24,7 @@ module alps_com
 
 contains
 
-  
+
   subroutine pass_instructions
     !!Passes information between processes.
     use alps_var, only : proc0, ierror, nroots, n_fits, param_fit, fit_type, perp_correction
@@ -41,7 +41,7 @@ contains
 
     integer :: is
     !!Index for scans.
-    
+
     !Broadcast Global Variables needed for code execution:
     call mpi_bcast(nperp,    1, MPI_INTEGER, 0, MPI_COMM_WORLD, ierror)
     call mpi_bcast(npar,     1, MPI_INTEGER, 0, MPI_COMM_WORLD, ierror)
@@ -71,14 +71,14 @@ contains
        call mpi_bcast(omf,1, MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierror)
        call mpi_bcast(gami,1, MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierror)
        call mpi_bcast(gamf,1, MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierror)
-       
+
        call mpi_bcast(loggridw, 1, MPI_LOGICAL, 0, MPI_COMM_WORLD, ierror)
        call mpi_bcast(loggridg, 1, MPI_LOGICAL, 0, MPI_COMM_WORLD, ierror)
-       
+
        call mpi_bcast(ni,  1, MPI_INTEGER, 0, MPI_COMM_WORLD, ierror)
        call mpi_bcast(nr,  1, MPI_INTEGER, 0, MPI_COMM_WORLD, ierror)
-       
-       call mpi_bcast(determine_minima, 1, MPI_LOGICAL, 0, MPI_COMM_WORLD, ierror)       
+
+       call mpi_bcast(determine_minima, 1, MPI_LOGICAL, 0, MPI_COMM_WORLD, ierror)
     endif
 
     pi = 4.d0*atan(1.d0)
@@ -91,7 +91,7 @@ contains
 
        !Necessary arrays allocated for proc0 in subroutine init_param (ALPS_io)
        !to allow for reading in of guesses for the dispersion solution.
-       
+
     else
 
        allocate(ns(1:nspec)); ns = 0.d0
@@ -100,16 +100,16 @@ contains
        allocate(n_fits(1:nspec))
        allocate(relativistic(1:nspec)); relativistic=.FALSE.
        allocate(logfit(1:nspec)); logfit=.TRUE.
-       
+
        allocate(usebM(1:nspec)); usebM=.TRUE.
        allocate(bMnmaxs(1:nspec)); bMnmaxs=500
        allocate(bMBessel_zeros(1:nspec)); bMBessel_zeros=1.d-50
        allocate(bMbetas(1:nspec)); bMbetas=1.d0
        allocate(bMalphas(1:nspec)); bMalphas=1.d0
        allocate(bMpdrifts(1:nspec)); bMpdrifts=0.d0
-              
+
        allocate(wroots(1:numroots));wroots=cmplx(0.d0,0.d0,kind(1.d0))
-       
+
        if (n_scan.gt.0) allocate(scan(n_scan))
     endif
     !+ Send and Receive instructions:
@@ -165,17 +165,17 @@ contains
        !Final fitting parameter arrays:
        allocate(param_fit(1:nspec,0:(max(nperp,ngamma)),5,maxval(n_fits)))
        allocate(fit_type(1:nspec,maxval(n_fits)))
-       allocate(perp_correction(1:nspec,maxval(n_fits)))     
+       allocate(perp_correction(1:nspec,maxval(n_fits)))
     endif
-    
+
     allocate(df0(1:nspec,1:nperp-1,1:npar-1,1:2)); df0=0.d0
-    
+
     allocate(pp(1:nspec,0:nperp,0:npar,1:2)); pp=0.d0
-    
+
   end subroutine pass_instructions
-  
-  
-  
+
+
+
   subroutine pass_distribution
     !!Passes distribution functions and associated parameters.
     use alps_var,    only : df0, pp, param_fit, fit_type, perp_correction,proc0, writeOut, ierror
@@ -183,23 +183,23 @@ contains
     use alps_var,    only : relativistic, nspec, ngamma, npparbar
     use mpi
     implicit none
-    
+
     integer :: is_rel
     !!Relativistic component index.
-    
+
     integer :: is
     !!Components index.
 
     integer :: nspec_rel
     !!Number of relativistic components.
-    
+
     logical :: any_relativistic
     !!Check if any component relativistic.
-    
+
     !+ Broadcast derivative array:
     if (writeOut.and.proc0)&
          write(*,'(a)')'Broadcasting df0/dp...'
-    
+
     any_relativistic = .FALSE.
     is_rel = 0
     do is = 1, nspec
@@ -239,10 +239,10 @@ contains
          MPI_INTEGER, 0, MPI_COMM_WORLD, ierror)
     call mpi_bcast(perp_correction(:,:),  size(perp_correction(:,:)),&
          MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierror)
-    
+
     if (writeOut.and.proc0)&
          write(*,'(a)')' df0/dp received'
-    
+
   end subroutine pass_distribution
 
 end module alps_com
