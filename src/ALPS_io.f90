@@ -118,7 +118,7 @@ contains
           unit=input_unit_no
           call get_indexed_namelist_unit (unit, "guess", ik)
           call solution_read(ik)
-          write(*,'(a,i3,a,2es14.4)')&
+          write(*,'(a,i3,a,2es14.4e3)')&
                'Intial Guess ',ik,' : ', wroots(ik)
           close(unit)
        enddo
@@ -150,7 +150,7 @@ contains
        call get_indexed_namelist_unit (unit, "spec", is)
        call spec_read(is)
        write(*,'(a,i3,a)')'Species ',is,' : '
-       write(*,'(a,es11.4,a,es11.4,a,es11.4)')&
+       write(*,'(a,es14.4e3,a,es14.4e3,a,es14.4e3)')&
             ' ns/nREF = ',ns(is),' | qs/qREF = ',qs(is),' | ms/mREF = ',ms(is)
        write(*,'(a,i4)')&
             ' Number of fitted functions = ',n_fits(is)
@@ -175,13 +175,13 @@ contains
           call get_indexed_namelist_unit (unit, "bM_spec", is)
           call bM_read(is)
 
-          write(*,'(a,es11.4,a,es11.4,a,es11.4)')&
+          write(*,'(a,es14.4e3,a,es14.4e3,a,es14.4e3)')&
                '  beta = ',bMbetas(is),', alpha = ',bMalphas(is),', drift momentum = ',bMpdrifts(is)
 
           if (bMbetas(is).EQ.0.d0) then
               write (*,'(a)') '  Cold-plasma calculation.'
           else
-            write(*,'(a,i4,a,es11.4)')&
+            write(*,'(a,i4,a,es14.4e3)')&
                  '  nmax = ',bMnmaxs(is),',        Bessel_zero = ',bMBessel_zeros(is)
           endif
 
@@ -216,10 +216,10 @@ contains
              end select
 
              do ip = 1, 5
-                write(*,'(a,i2,a,es14.4)')&
+                write(*,'(a,i2,a,es14.4e3)')&
                      ' Initial fit parameter ',ip,' = ',param_fit(is,0,ip,ifit)
              enddo
-             write(*,'(a,es14.4)')&
+             write(*,'(a,es14.4e3)')&
                   ' Perpendicular correction:  ',perp_correction(is,ifit)
              close(unit)
           enddo
@@ -416,7 +416,7 @@ contains
   select case (scan_type)
   case(0)
      !Scan from k_0 to k_1:
-     write(*,'(a,i0,a,es12.3,a,es12.3,a,es12.3,a,es12.3,a)')&
+     write(*,'(a,i0,a,es14.4e3,a,es14.4e3,a,es14.4e3,a,es14.4e3,a)')&
           'Scan ',is,': (kpar,kperp) from (',&
           kperp_last,',',kpar_last,') to (',swi,',',swf,')'
      if (swlog) then
@@ -433,7 +433,7 @@ contains
      !Scan from theta_0 to theta_1:
      theta_0=atan(kperp_last/kpar_last)
      k_0=sqrt(kperp_last**2+kpar_last**2)
-     write(*,'(a,i0,a,es12.3,a,es12.3)')&
+     write(*,'(a,i0,a,es14.4e3,a,es14.4e3)')&
           'Scan ',is,': theta from ',&
           theta_0*180.d0/(4.d0*atan(1.d0)),' to ',swf
      if (swlog) then
@@ -449,7 +449,7 @@ contains
      !Scan from |k_0| to |k_1| at constant theta.
      theta_0=atan(kperp_last/kpar_last)
      k_0=sqrt(kperp_last**2+kpar_last**2)
-     write(*,'(a,i0,a,es12.3,a,es12.3,a,es12.3,a,es12.3,a)')&
+     write(*,'(a,i0,a,es14.4e3,a,es14.4e3,a,es14.4e3,a,es14.4e3,a)')&
           'Scan ',is,': |k| from ',&
           k_0,' to ',swf,' at theta=',theta_0*180.d0/&
           (4.d0*atan(1.d0))
@@ -466,7 +466,7 @@ contains
      kperp_last=swf*sin(theta_0)
   case(3)
      !Scan of kperp; kpar constant:
-     write(*,'(a,i0,a,es12.3,a,es12.3)')&
+     write(*,'(a,i0,a,es14.4e3,a,es14.4e3)')&
           'Scan ',is,': kperp from ',kperp_last,' to ',swf
      if (swlog) then
         scan(is)%diff=(log10(swf)-log10(kperp_last))/(1.d0*ns*nres)
@@ -476,7 +476,7 @@ contains
      kperp_last=swf
   case(4)
      !Scan of kpar; kperp constant:
-     write(*,'(a,i0,a,es12.3,a,es12.3)')&
+     write(*,'(a,i0,a,es14.4e3,a,es14.4e3)')&
           'Scan ',is,': kpar from ',kpar_last,' to ',swf
      if (swlog) then
         scan(is)%diff=(log10(swf)-log10(kpar_last))/(1.d0*ns*nres)
