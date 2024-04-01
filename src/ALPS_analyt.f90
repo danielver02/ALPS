@@ -36,6 +36,7 @@ double complex function eval_fit(is,iperp,ppar_valC)
 
         use alps_var, only : fit_type, pp, param_fit, n_fits, gamma_rel,nspec,relativistic
         use alps_var, only : basis_representation, poly_fit_coeffs, poly_order
+        use alps_var, only : iproc
 	use alps_distribution_analyt, only : distribution_analyt
 	implicit none
 
@@ -72,10 +73,6 @@ double complex function eval_fit(is,iperp,ppar_valC)
 
 	double precision,allocatable, dimension(:) :: params
 	!! Array of fit parameters.
-
-
-
-
 
  select case (basis_representation(is))
  case (0)
@@ -175,9 +172,10 @@ double complex function eval_fit(is,iperp,ppar_valC)
 
 case (2)
    ! use the orthogonal polynomials of kind described in &poly_is
-
+   !write(*,*)'starting eval_fit'
    eval_fit=fit_function_poly(is,iperp,ppar_valC,poly_order(is),&
         poly_fit_coeffs(is,iperp,0:poly_order(is)))
+   !write(*,*)'fit_function_poly success!'
    
 end select
 end function eval_fit
@@ -312,8 +310,9 @@ double complex function fit_function_poly(is,iperp,ppar_val,n_poly,fit_coeffs)
     norm_2=5.d-1*(pp(is,iperp,npar,2)-pp(is,iperp,0,2))
     ppar_val_tmp=(ppar_val-norm_1)/norm_2
 
-    !write(*,*)'pp_C:',ppar_val,ppar_val_tmp,abs(ppar_val_tmp)
-
+    if (abs(ppar_val_tmp).ge.1.d0) then
+       fit_function_poly=0.d0
+    else
     n=0
     poly_basis(n)=1.d0
     fit_function_poly=fit_function_poly+fit_coeffs(n)*poly_basis(n)
@@ -325,8 +324,15 @@ double complex function fit_function_poly(is,iperp,ppar_val,n_poly,fit_coeffs)
        fit_function_poly=fit_function_poly+fit_coeffs(n)*poly_basis(n)
     enddo
     if (logfit(is)) then
-       fit_function_poly=10.**(fit_function_poly)
+       !write(*,*)'before',fit_function_poly,ppar_val,ppar_val_tmp,abs(ppar_val_tmp)
+       if (abs(fit_function_poly).gt.20.) then
+          fit_function_poly=0.d0
+       else
+          fit_function_poly=10.d0**(fit_function_poly)
+       endif
+       !write(*,*)'after',fit_function_poly
     endif
+ endif
  case (2)
     !Hermite Representation
     n=0
@@ -341,7 +347,11 @@ double complex function fit_function_poly(is,iperp,ppar_val,n_poly,fit_coeffs)
        fit_function_poly=fit_function_poly+fit_coeffs(n)*poly_basis(n)
     enddo
     if (logfit(is)) then
-       fit_function_poly=10.d0**(fit_function_poly)
+       if (abs(fit_function_poly).gt.20.) then
+          fit_function_poly=0.d0
+       else
+          fit_function_poly=10.d0**(fit_function_poly)
+       endif
     endif
  case (3)
     !Weighted Hermite Representation
@@ -1110,7 +1120,8 @@ subroutine output_fit(qualitytotal)
          2.d0 * pi * dpperp * dppar
 
 			enddo
-		enddo
+enddo
+
 	  endif
 	  close(unit_spec)
 
@@ -1149,6 +1160,7 @@ case (2)
      enddo
 
      close(unit_spec)
+
    
 end select
    
