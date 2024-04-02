@@ -325,7 +325,12 @@ double complex function fit_function_poly(is,iperp,ppar_val,n_poly,fit_coeffs)
     enddo
     if (logfit(is)) then
        !write(*,*)'before',fit_function_poly,ppar_val,ppar_val_tmp,abs(ppar_val_tmp)
-       if (abs(fit_function_poly).gt.20.) then
+       !if (abs(fit_function_poly).gt.20.) then
+       !KGK: how does this impact the 'noise'
+       !if ((real(fit_function_poly).gt.1.).or.(aimag(fit_function_poly).gt.1.)&
+       !     .or.(real(fit_function_poly).lt.-18.).or.(aimag(fit_function_poly).lt.-18.)) then
+       if ((real(fit_function_poly).gt.1.).or.(aimag(fit_function_poly).gt.1.)&
+            .or.(real(fit_function_poly).lt.-17.).or.(aimag(fit_function_poly).lt.-17.)) then 
           fit_function_poly=0.d0
        else
           fit_function_poly=10.d0**(fit_function_poly)
