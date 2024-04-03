@@ -2781,7 +2781,7 @@ subroutine map_search
            endif
 
            open(unit=unit_map,file=trim(mapName),status='old',position='append')
-           write(unit_map,'(5es14.6e3)') &
+           write(unit_map,'(5es16.6e3)') &
                 om(ir,ii),val(ir,ii),cal(ir,ii)
            close(unit_map)
 
@@ -2806,7 +2806,7 @@ subroutine map_search
          wroots(iw)=om(iroots(1,iw),iroots(2,iw))
          if (writeOut) then
             write(*,'(a,i4,a,i4)')'ir = ',iroots(1,iw),'    ii = ',iroots(2,iw)
-            write(*,'(4es14.4e3)') wroots(iw) ,cal(iroots(1,iw),iroots(2,iw))
+            write(*,'(4es15.4e3)') wroots(iw) ,cal(iroots(1,iw),iroots(2,iw))
          endif
       enddo
 
