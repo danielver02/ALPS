@@ -1230,7 +1230,7 @@ double complex function landau_integrate(om, nn, mode)
 
   ! Landau contour integral:
   ! At iperp=1, we are already missing the part from iperp=0, where we should actually start. Therefore, we use 4 instead of 2 in the trapezoid integration:
-	do iperp = 1, nperp-1
+	do iperp = 1, nperp-1 !KGK: This line and the following seem to conflict...
 		if ((iperp .EQ. 0).or.(iperp .EQ. (nperp -1))) then
 		   h = 0.5d0
 		else
@@ -1249,8 +1249,36 @@ double complex function landau_integrate(om, nn, mode)
 
 enddo
 
+!KGK: an investigation... (4/4/24)
+
+iperp=0
+h = 0.5d0
+  p_res = (ms(sproc) * (om) - 1.d0*nn * qs(sproc))/kpar
+  
+  ! Calculate the derivatives of f0 at the complex p_res:
+  dfperp_C=(eval_fit(sproc,iperp+1,p_res)-eval_fit(sproc,iperp,p_res))/(dpperp)
+  dfpar_C=(eval_fit(sproc,iperp,p_res+dppar)-eval_fit(sproc,iperp,p_res-dppar))/(2.d0*dppar)
+
+  landau_integrate = landau_integrate - h * int_T_res(nn, iperp, p_res, mode)*&
+        (qs(sproc) /abs(kpar)) *( (pp(sproc, iperp, 1, 1) * dfpar_C - &
+        p_res * dfperp_C) * kpar  /  ( ms(sproc)) + om*dfperp_C )
+
+  iperp=nperp
+h = 0.5d0
+  p_res = (ms(sproc) * (om) - 1.d0*nn * qs(sproc))/kpar
+  
+  ! Calculate the derivatives of f0 at the complex p_res:
+  dfperp_C=(eval_fit(sproc,iperp,p_res)-eval_fit(sproc,iperp-1,p_res))/(dpperp)
+  dfpar_C=(eval_fit(sproc,iperp,p_res+dppar)-eval_fit(sproc,iperp,p_res-dppar))/(2.d0*dppar)
+
+  landau_integrate = landau_integrate - h * int_T_res(nn, iperp, p_res, mode)*&
+        (qs(sproc) /abs(kpar)) *( (pp(sproc, iperp, 1, 1) * dfpar_C - &
+        p_res * dfperp_C) * kpar  /  ( ms(sproc)) + om*dfperp_C )
+
 	landau_integrate = landau_integrate * ii * dpperp * pi * 2.d0 * pi
 
+ write(*,*)p_res, nn, mode, landau_integrate
+ 
 	return
 
 end function landau_integrate
