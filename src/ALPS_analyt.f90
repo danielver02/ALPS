@@ -310,7 +310,7 @@ double complex function fit_function_poly(is,iperp,ppar_val,n_poly,fit_coeffs)
     norm_2=5.d-1*(pp(is,iperp,npar,2)-pp(is,iperp,0,2))
     ppar_val_tmp=(ppar_val-norm_1)/norm_2
 
-    if (abs(ppar_val_tmp).ge.1.d0) then
+    if (abs(ppar_val_tmp).ge.1.d0) then !!kgk: should this be .gt. or .ge. ?
        fit_function_poly=0.d0
     else
     n=0
@@ -329,6 +329,9 @@ double complex function fit_function_poly(is,iperp,ppar_val,n_poly,fit_coeffs)
        !KGK: how does this impact the 'noise'
        !if ((real(fit_function_poly).gt.1.).or.(aimag(fit_function_poly).gt.1.)&
        !     .or.(real(fit_function_poly).lt.-18.).or.(aimag(fit_function_poly).lt.-18.)) then
+
+       !KGK: Need to investigate the appropriate threshold here for when this functional
+       !representation ceases to work.
        if ((real(fit_function_poly).gt.1.).or.(aimag(fit_function_poly).gt.1.)&
             .or.(real(fit_function_poly).lt.-17.).or.(aimag(fit_function_poly).lt.-17.)) then 
           fit_function_poly=0.d0
@@ -1158,8 +1161,8 @@ case (2)
            !write(*,*)ppar_comp,eval_fit(is,iperp,ppar_comp)
            write (unit_spec,*) pp(is,iperp,ipar,1), pp(is,iperp,ipar,2), &
                 !eval_fit(is,iperp,ppar_comp)
-                real(eval_fit(is,iperp,ppar_comp))!, &
-           !abs(real(eval_fit(is,iperp,ppar_comp))-f0(is,iperp,ipar))/f0(is,iperp,ipar)
+                real(eval_fit(is,iperp,ppar_comp)), &
+           abs(real(eval_fit(is,iperp,ppar_comp))-f0(is,iperp,ipar))/f0(is,iperp,ipar)
            
         enddo
      enddo

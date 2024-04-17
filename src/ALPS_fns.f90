@@ -1277,7 +1277,7 @@ h = 0.5d0
 
 	landau_integrate = landau_integrate * ii * dpperp * pi * 2.d0 * pi
 
- write(*,*)p_res, nn, mode, landau_integrate
+! write(*,*)p_res, nn, mode, landau_integrate
  
 	return
 
