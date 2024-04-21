@@ -231,16 +231,16 @@ I                                                         I
 All processes are up and running.
 Reading from Input File: test_ICW
 GUESS ROUTINE:
-Intial Guess   1 :     1.5508E-01   -1.3429E-05
+Intial Guess   1 :    1.5508E-001  -1.3429E-005
 SPECIES PARAMETERS:
 Species   1 :
-ns/nREF =  1.0000E+00 | qs/qREF =  1.0000E+00 | ms/mREF =  1.0000E+00
-Number of fitted functions =    1
-Relativistic effects = F
+ ns/nREF =    1.0000E+000 | qs/qREF =    1.0000E+000 | ms/mREF =    1.0000E+000
+ Number of fitted functions =    1
+ Relativistic effects = F
 Species   2 :
-ns/nREF =  1.0000E+00 | qs/qREF = -1.0000E+00 | ms/mREF =  5.4466E-04
-Number of fitted functions =    1
-Relativistic effects = F
+ ns/nREF =    1.0000E+000 | qs/qREF =   -1.0000E+000 | ms/mREF =    5.4466E-004
+ Number of fitted functions =    1
+ Relativistic effects = F
 -=-=-=-=-=-=-=-=-
 ```
 
@@ -251,15 +251,18 @@ This output summarises a lot of the information that is useful. We recommend tha
 Further down in the ALPS standard output, you'll find lines similar to this:
 
 ```
-kperp:     1.0000E-03 kpar:     1.0275E-01
- Converged after iteration    7
- D(    1.4337E-01   -8.9137E-06)=    -2.0138E-18   -1.2447E-18
-kperp:     1.0000E-03 kpar:     1.0557E-01
- Converged after iteration    8
- D(    1.4729E-01   -8.6524E-06)=    -2.9456E-19   -1.6708E-19
-kperp:     1.0000E-03 kpar:     1.0846E-01
- Converged after iteration    8
- D(    1.5132E-01   -8.3974E-06)=     7.8943E-19    5.5227E-19
+kperp:    1.0000E-003 kpar:    1.0275E-001
+ Root  1 converged after iteration    7
+ D(   1.4337E-001  -8.9137E-006)=   -2.0138E-018  -1.2447E-018
+kperp:    1.0000E-003 kpar:    1.0557E-001
+ Root  1 converged after iteration    8
+ D(   1.4729E-001  -8.6524E-006)=   -2.9371E-019  -1.6792E-019
+kperp:    1.0000E-003 kpar:    1.0846E-001
+ Root  1 converged after iteration    8
+ D(   1.5132E-001  -8.3974E-006)=    3.8108E-018   2.4923E-018
+kperp:    1.0000E-003 kpar:    1.1144E-001
+ Root  1 converged after iteration    8
+ D(   1.5546E-001  -8.1484E-006)=   -4.8910E-018  -3.1173E-018
 ```
 
 These lines tell us that the code is actually now finding solutions, as it scans through the wavevector space. The scan options had been defined in `test_ICW.in`, and details on how this works are given in our [ALPS Input](input.md) page.
@@ -269,12 +272,11 @@ When the code has finished, it has produced a number of output files, which you 
 The file has the following format:
 
 ```
-1.0000E-03    1.0000E-01    1.4424E-01   -1.0449E-05
-1.0000E-03    1.0275E-01    1.4337E-01   -8.9137E-06
-1.0000E-03    1.0557E-01    1.4729E-01   -8.6524E-06
-1.0000E-03    1.0846E-01    1.5132E-01   -8.3974E-06
-1.0000E-03    1.1144E-01    1.5546E-01   -8.1484E-06
-1.0000E-03    1.1450E-01    1.5971E-01   -7.9055E-06
+1.0000E-003   1.0000E-001   1.4424E-001  -1.0449E-005
+1.0000E-003   1.0275E-001   1.4337E-001  -8.9137E-006
+1.0000E-003   1.0557E-001   1.4729E-001  -8.6524E-006
+1.0000E-003   1.0846E-001   1.5132E-001  -8.3974E-006
+1.0000E-003   1.1144E-001   1.5546E-001  -8.1484E-006
 ...           ...           ...          ...
 ```
 
@@ -422,10 +424,10 @@ arrayName='test_analytical'
 It also makes sense to use the pre-defined background distribution function from `distribution_analyt.f90` also for the analytical continuation. You can achieve this by setting
 
 ```
-ff=0
+AC_method=0
 ```
 
-in the block of the corresponding species. If you set `ff=0`, the code will look up the function in `distribution_analyt.f90` to evaluate the Landau-contour integral.
+in the block of the corresponding species. If you set `AC_method=0`, the code will look up the function in `distribution_analyt.f90` to evaluate the Landau-contour integral.
 
 If you now run this test case through
 
@@ -433,7 +435,7 @@ If you now run this test case through
 
 the code will fully calculate the dispersion relation based on the distribution function defined in `distribution_analyt.f90`.
 
-A particular strength is that you can use that distribution for the creation of the f0-table, the Landau-contour integral (analytic continuation), or for both. Sometimes, you may only want to use it for the f0-table and rely on ALPS's internal fitting. If that is the case, simply set `ff` to the corresponding number of fits and define the fits as usual. At other times, you may only want to use the function from `distribution_analyt.f90` as the fit function, but use a different f0-table. In that is the case, point ALPS to your usual f0-table files, but set `ff=0`.
+A particular strength is that you can use that distribution for the creation of the f0-table, the Landau-contour integral (analytic continuation), or for both. Sometimes, you may only want to use it for the f0-table and rely on ALPS's internal fitting. If that is the case, simply set `AC_method=1` and define the fits as usual. At other times, you may only want to use the function from `distribution_analyt.f90` as the fit function, but use a different f0-table. In that is the case, point ALPS to your usual f0-table files, but set `AC_method=0`.
 
 
 ## 7. Running bi-Maxwellian species
