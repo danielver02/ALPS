@@ -51,7 +51,7 @@ Reference Alfven velocity, normalized to the speed of light, $v_{A}/c$.
 Name of input array, located in 'distribution' folder.
 
 **`Bessel_zero`**  
-Maximum amplitude of Bessel function to determine `nmax`. Test.
+Maximum amplitude of Bessel function to determine nmax.
 
 **`numiter`**
 Maximum number of iterations in secant method.
