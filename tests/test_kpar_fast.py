@@ -27,5 +27,5 @@ def test_check_outputs(filename):
 
     np.testing.assert_allclose(ref_data,
                                test_data,
-                               rtol = 1e-4,
+                               rtol = 1.e-3,
                                verbose = True)

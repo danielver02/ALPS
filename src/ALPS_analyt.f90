@@ -931,6 +931,7 @@ subroutine output_fit(qualitytotal)
 	!! File name to write fit results to file.
 
 	write (*,'(a)') ' Results of the fit for hybrid analytic continuation at iperp = 1:'
+
  do is=1,nspec
     select case (ACmethod(is))
     case (1)
@@ -954,8 +955,9 @@ subroutine output_fit(qualitytotal)
     end select
  enddo
 
-	write (*,'(a,es14.4)') ' Sum of all least-squares: ', qualitytotal
-	write (*,'(a,es14.4)') ' Standard error of the estimate: ', sqrt(qualitytotal/(1.d0*(nspec*nperp*npar)))
+
+	write (*,'(a,es14.4e3)') ' Sum of all least-squares: ', qualitytotal
+	write (*,'(a,es14.4e3)') ' Standard error of the estimate: ', sqrt(qualitytotal/(1.d0*(nspec*nperp*npar)))
 
 
 	if (isnancheck(qualitytotal)) call alps_error(7)
@@ -974,9 +976,9 @@ subroutine output_fit(qualitytotal)
             '-=-=-=-='
        write(*,'(a,i3,a)')&
             'Bi-Maxwellian/cold-plasma Species ',is,':'
-       write(*,'(a, 2es14.4)') &
+       write(*,'(a, 2es14.4e3)') &
             ' Charge density:           ', charge(is)
-       write(*,'(a, 2es14.4)') &
+       write(*,'(a, 2es14.4e3)') &
             ' Parallel current density: ', current(is)
 
     else
@@ -1061,14 +1063,14 @@ enddo
         '-=-=-=-='
    write(*,'(a,i3,a)')&
         'Species ',is,':'
-   write(*,'(a, 2es14.4)') &
+   write(*,'(a, 2es14.4e3)') &
         ' Integration of fit/analytical function:              ', integrate
-   write(*,'(a, 2es14.4)') &
+   write(*,'(a, 2es14.4e3)') &
         ' Charge density of fit/analytical function:           ', charge(is)
    if (relativistic(is)) then
       write(*,'(a)')'Relativistic parallel current density not yet implemented!'
    else
-      write(*,'(a, 2es14.4)') &
+      write(*,'(a, 2es14.4e3)') &
          ' Parallel current density of fit/analytical function: ', current(is)
    endif
 
@@ -1125,8 +1127,8 @@ end select
 endif
 enddo
 write(*,'(a)')         '-=-=-=-='
-write(*,'(a, es14.4)') ' Total charge density of fit/analytical function:           ', sum(charge(1:nspec))
-write(*,'(a, es14.4)') ' Total parallel current density of fit/analytical function: ', sum(current(1:nspec))
+write(*,'(a, es14.4e3)') ' Total charge density of fit/analytical function:           ', sum(charge(1:nspec))
+write(*,'(a, es14.4e3)') ' Total parallel current density of fit/analytical function: ', sum(current(1:nspec))
 write(*,'(a)')         '-=-=-=-=-=-=-=-='
 
 

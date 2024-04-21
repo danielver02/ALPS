@@ -23,8 +23,9 @@ Number of dispersion solutions to find and follow.
 
 **`use_map`**   
 Choice of:  
-    -True: Searching for roots over a map in complex frequency space [see &maps_1 namelist].  
-    -False: Input `nroots` guesses for solutions [see &guess_* namelist].
+
+- True: Searching for roots over a map in complex frequency space (see &maps_1 namelist).  
+- False: Input `nroots` guesses for solutions (see &guess_1 namelist).
 
 **`writeOut`**  
 Write or suppress output to screen.
@@ -52,7 +53,7 @@ Name of input array, located in 'distribution' folder.
 **`Bessel_zero`**  
 Maximum amplitude of Bessel function to determine `nmax`.
 
-**`numiter`**
+**`numiter`**  
 Maximum number of iterations in secant method.
 
 **`D_threshold`**  
@@ -73,7 +74,7 @@ How many steps should be used to integrate around the resonance,
 $M_{P}$, used for integrating near poles (see section 3.1).
 
 **`Tlim`**  
-Threshold for analytical principal-value integration, $t_{\textrm{lim}}$.
+Threshold for analytical principal-value integration, $t_{\mathrm{lim}}$.
 
 **`maxsteps_fit=500`**  
 Maximum number of fitting iterations.
@@ -94,9 +95,10 @@ If true, output fitted functions for each species to file in distribution direct
 If true, after map search, determine minima and refine solutions.
 
 **`scan_option`**  
-Select case for wavevector scans;  
-1. Consecutive scans along input paths in wavevector space,  
-2. Double scan over wavevector plane.
+Select case for wavevector scans:
+
+- 1: Consecutive scans along input paths in wavevector space,  
+- 2: Double scan over wavevector plane.
 
 **`n_scan`**  
 Number of wavevector scans.  
@@ -106,12 +108,12 @@ Must be set to 2 for `scan_option`=2.
 
 
 ### *&guess_m*  
-Initial guess of complex frequency for $m^{\textrm{th}}$ solution.  
+Initial guess of complex frequency for $m$th solution.  
 Only used when `use_map`=.false.  
 Need to have number of name lists equal to `nroots`.
 
 **`g_om`**  
-Guess for real solution $\omega_{\textrm{r}}/\Omega_{p} $.
+Guess for real solution $\omega_{r}/\Omega_{p} $.
 
 **`g_gam`**  
 Guess for imaginary solution $\gamma/\Omega_{p} $.
@@ -122,7 +124,7 @@ Range of complex frequencies for map_scan subroutine.
 Only used when `use_map`=.true.
 
 **`loggridw`**  
-Linear (F) or Log (T) spacing for $\omega_{\textrm{r}}/\Omega_{p}$ map search.
+Linear (F) or Log (T) spacing for $\omega_{r}/\Omega_{p}$ map search.
 Spacing automatically calculated between `omi` and `omf`.  
 
 **`loggridg`**  
@@ -130,10 +132,10 @@ Linear (F) or Log (T) spacing for $\gamma/\Omega_{p}$ map search.
 Spacing automatically calculated between `gami` and `gamf`  
 
 **`omi`**  
-Smallest $\omega_{\textrm{r}}/\Omega_{p}$ value for complex map search.
+Smallest $\omega_{r}/\Omega_{p}$ value for complex map search.
 
 **`omf`**  
-Largest $\omega_{\textrm{r}}/\Omega_{p}$ value for complex map search.
+Largest $\omega_{r}/\Omega_{p}$ value for complex map search.
 
 **`gami`**      
 Smallest $\gamma/\Omega_{p}$ value for complex map search.
@@ -145,7 +147,7 @@ Largest $\gamma/\Omega_{p}$ value for complex map search.
 Number of $\gamma/\Omega_{p}$ points in frequency grid.
 
 **`nr`**  
-Number of $\omega_{\textrm{r}}/\Omega_{p}$ points in frequency grid.
+Number of $\omega_{r}/\Omega_{p}$ points in frequency grid.
 
 
 ### *&spec_j*  
@@ -173,6 +175,13 @@ Use linear or $\log_{10}$ fitting routine.
 Use actual numerical integration (F) or bi-Maxwellian/cold-plasma proxy via NHDS routines,
 with parameters read in from &bM_spec_j namelist.
 
+**`AC_method`**  
+Choose the method for the evaluation of the analytic continuation:
+
+- 0: Use the function that is defined analytically in distribution/distribution_analyt.f90
+- 1: Use the fit routine as defined in the &ffit_j_k namelist.
+- 2: Use a polynomial basis representation as defined in the &poly_spec_j namelist. This method should only be used if $|\gamma|\ll |\omega_{r}|$.
+
 
 ### *&ffit_j_k*
 Initial Fit Values for species $j$, function $k$.
@@ -180,38 +189,30 @@ Initial Fit Values for species $j$, function $k$.
 **`fit_type_in`**  
 Kind of fit function:
 
-0. Analytic function (KGK: Need to add details on this functionality).  
+- 1: Maxwellian,  
 
-1. Maxwellian,  
+$$F_M(\hat{p}\_{\parallel})=u_{1}\mathrm{exp}[-y{\hat{p}}^2\_{\perp}-u_{2}(\hat{p}\_{\parallel}-u_{3})^2]$$
 
-$$F_M(\hat{p}\_{\parallel})=u_1\mathrm{exp}[-y{\hat{p}}^2\_{\perp}-u_2(\hat{p}\_{\parallel}-u_3)^2]$$
+- 2: Kappa,  
 
-2. Kappa,  
+$$F_{\kappa}(\hat{p}\_{\parallel})=u_{1}[1+u_2({\hat{p}}\_{\parallel}-u_{3})^2+yu_{5} {\hat{p}}^2\_{\perp}]^{u_{4}}.$$
 
-$$F_{\kappa}(\hat{p}\_{\parallel})=u_1[1+u_2({\hat{p}}\_{\parallel}-u_3)^2+yu_5 {\hat{p}}^2\_{\perp}]^{u_{4}}.$$
-
-3. Juettner with $p_{\perp},p_{\parallel}$,  
+- 3: Juettner with $p_{\perp},p_{\parallel}$,  
 
 $$F_{J}(\hat{p}\_{\perp},\hat{p}\_{\parallel})=
-u_1\mathrm{exp}\left[-u_2\sqrt{1+\frac{\hat{p}^2\_{\perp}+(\hat{p}^2\_{\parallel}-u_3)^2 v_A^2}{m_{j}^2 c^2}}\right].$$
+u_{1}\mathrm{exp}\left[-u_{2}\sqrt{1+\frac{\hat{p}^2\_{\perp}+(\hat{p}^2\_{\parallel}-u_3)^2 v_A^2}{m_{j}^2 c^2}}\right].$$
 
-4. Juettner with variable $\Gamma$, constant $\bar{p}_{\parallel}$,  
+- 4: Juettner with variable $\Gamma$, constant $\bar{p}_{\parallel}$,  
 
-$$F_{J}(\Gamma)= u_1 \mathrm{exp}[-y \Gamma].$$
+$$F_{J}(\Gamma)= u_{1} \mathrm{exp}[-y \Gamma].$$
 
-5. Juettner with $p_{\perp},p_{\parallel}$; variable $\bar{p}_{\parallel}$,  
+- 5: Juettner with $p_{\perp},p_{\parallel}$; variable $\bar{p}_{\parallel}$,  
 
-$$F_{\kappa}(\hat{p}\_{\perp},\hat{p}\_{\parallel})=
-u_1\mathrm{exp}[-y \hat{p}\_{\perp}]
-\mathrm{exp}[-u_2*(\hat{p}\_{\parallel}+u_3)^2]
-.$$
+$$F_{\kappa}(\hat{p}\_{\perp},\hat{p}\_{\parallel})=u_{1}\mathrm{exp}[-y \hat{p}\_{\perp}]\mathrm{exp}[-u_{2}*(\hat{p}\_{\parallel}+u_{3})^2].$$
 
-6. Bi-Moyal distribution
+- 6: Bi-Moyal distribution
 
-$$F_{bMo}(\hat{p}\_{\perp},\hat{p}\_{\parallel})=
-u_1 \mathrm{exp}[0.5 (y u_4 \hat{p}^2\_{\perp} +
-u_2 (\hat{p}\_{\parallel} -u_3)^2 -
-\mathrm{exp}(y u_4 \hat{p}^2\_{\perp} + u_2 (\hat{p}\_{\parallel}-u_3)^2) )].$$
+$$F_{bMo}(\hat{p}\_{\perp},\hat{p}\_{\parallel})= u_{1} \mathrm{exp}[0.5 (y u_4 \hat{p}^2\_{\perp} + u_{2} (\hat{p}\_{\parallel} -u_{3})^2 -\mathrm{exp}(y u_{4} \hat{p}^2\_{\perp} + u_{2} (\hat{p}\_{\parallel}-u_{3})^2) )].$$
 
 **`fit_1`-`fit_5`**  
 Fit parameters, $u_{1}$ - $u_{5}$, defined in the above equations for each of the types of fit functions.
@@ -225,55 +226,69 @@ $p_{\perp}$ dependence of $u_1$, making the fit more reliable.
 
 ### *&bM_spec_j*
 Bi-Maxwellian/cold-plasma parameters; for species j.
-Only used if use_bM=T.
+Only used if `use_bM=T`.
 
-**`bM_nmaxs`**
+**`bM_nmaxs`**  
 Maximum number of resonances to consider.
 
-**`bM_Bessel`**
+**`bM_Bessel`**  
 Precision threshold for $I_n$.
 
-**`bM_betas`**
+**`bM_betas`**  
 $\beta_{\parallel,j}$ of bi-Maxwellian distribution $f_{j}$. If this variable is set to 0.d0, then the code will treat the given species with the susceptibility from cold-plasma theory.
 
-**`bM_alphas`**
+**`bM_alphas`**  
 $T_{\perp,j}/T_{\parallel,j}$ of bi-Maxwellian distribution $f_{j}$.
 
-**`bM_pdrifts`**
+**`bM_pdrifts`**  
 Relative drift of bi-Maxwellian distribution $f_{j}$ or the cold plasma species in units of $m_{p} v_{A,p}$.
 
 
+### *&poly_spec_j*
+Input for the polynomial representation of the input distribution for the analytical continuation.
+Only used if `AC_method=2`.
+
+**`kind`**  
+Type of the basis polynomial:
+
+- 1: Chebychev
+
+**`order`**  
+Maximum order of the basis polynomial.
+
+**`log_max`**  
+When using logfit for the polynomial representation, set all output values to zero if the log(fit_function_poly) is greater than this variable.
+
+
 ### *&scan_input_l*
-Inputs for scanning parameter space for $l^{\textrm{th}}$ scan.  
+Inputs for scanning parameter space for $l$th scan.  
 
-**`scan_type`**
+**`scan_type`**  
 Type of parameter scan:
-0. Current value of $\textbf{k}$ to
- $k\_{\perp}$=range $\_\textrm{i}$ and $k\_{\parallel}$ =range $\_\textrm{f}$.   
-1. $\theta_0 \rightarrow \theta_1$ at fixed $|k|$
- from current value of $\theta=\mathrm{atan}(k\_{\perp}/k\_{\parallel})$
- to range $\_\textrm{f}$.  
-2. Wavevector scan at fixed angle $\theta_{k,B}$ to $|k|$ =range $\_\textrm{f}$.  
-3. $k\_{\perp}$ scan with constant $k\_{\parallel}$.  
-4. $k\_{\parallel}$ scan with constant $k\_{\perp}$.  
 
-**`swi`**
-Initial scan value.
+- 0: Current value of $\textbf{k}$ to $k\_{\perp}$=`swi` and $k\_{\parallel}$ =`swf`.   
+- 1: $\theta_0 \rightarrow \theta_1$ at fixed $|k|$ from current value of $\theta=\mathrm{atan}(k\_{\perp}/k\_{\parallel})$ to `swf`.  
+- 2: Wavevector scan at fixed angle $\theta_{k,B}$ to $|k|$ =`swf`.  
+- 3: $k\_{\perp}$ scan with constant $k\_{\parallel}$ to $k\_{\perp}$=`swf`.  
+- 4: $k\_{\parallel}$ scan with constant $k\_{\perp}$ to $k\_{\parallel}$=`swf`.  
+
+**`swi`**  
+Scan variable to define end of scan through wavevector space (only for `scan_type=1`).
 
 **`swf`**  
-Final scan value.
+Scan variable to define end of scan through wavevector space.
 
-**`swlog`**
-Use $\mathrm{log}_{10}$ (T) or linear (F) spacing.
+**`swlog`**  
+Use $\log_{10}$ (T) or linear (F) spacing.
 
-**`ns`**
+**`ns`**  
 Number of output scan values.
 
-**`nres`**
+**`nres`**  
 Resolution between output scan values.
 
-**`heating`**
+**`heating`**  
 Calculates heating rates if true.
 
-**`eigen`**  =.false.
+**`eigen`**  
 Calculates eigenfunctions if true.     

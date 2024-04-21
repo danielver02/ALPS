@@ -139,11 +139,11 @@ subroutine derivative_f0_rel(is,is_rel)
 	gamma_max_use = sqrt(1.d0+pp(is,nperp,1,1)**2 *vA**2/ms(is)**2)
 
 	if (writeOut) then
-		write (*,'(a,i3,a,1es14.4)') "Maximum Gamma for species",is,":", gamma_max
-		write (*,'(a,i3,a,1es14.4)') "Minimum Gamma for species",is,":", gamma_min
-		write (*,'(a,i3,a,1es14.4)') "Maximum Pparbar: for species",is,":", pparbar_max
-		write (*,'(a,i3,a,1es14.4)') "Minimum Pparbar: for species",is,":", pparbar_min
-		write (*,'(a,i3,a,1es14.4)') "Usable Maximum Gamma for species",is,":", gamma_max_use
+		write (*,'(a,i3,a,1es14.4e3)') "Maximum Gamma for species",is,":", gamma_max
+		write (*,'(a,i3,a,1es14.4e3)') "Minimum Gamma for species",is,":", gamma_min
+		write (*,'(a,i3,a,1es14.4e3)') "Maximum Pparbar: for species",is,":", pparbar_max
+		write (*,'(a,i3,a,1es14.4e3)') "Minimum Pparbar: for species",is,":", pparbar_min
+		write (*,'(a,i3,a,1es14.4e3)') "Usable Maximum Gamma for species",is,":", gamma_max_use
     endif
 
     ! For now, the relativistic smoothing is set to zero.
@@ -208,10 +208,10 @@ subroutine derivative_f0_rel(is,is_rel)
         enddo
 
 
-    write(*,'(a,i3,a, 2es14.4)') 'Integration of species', is,':', integrate
+    write(*,'(a,i3,a, 2es14.4e3)') 'Integration of species', is,':', integrate
 
 	 	if(writeOut) write (*,'(a)') 'Writing relativistic grid to file...'
-        write(fmt,'(a)') '(2es14.4,1es14.4)'
+        write(fmt,'(a)') '(2es14.4e3,1es14.4e3)'
 	     write(writeName,'(3a,i0,a)') 'distribution/',trim(arrayName),'_f0_rel.',is,'.array'
 	      call get_unused_unit(unit_f)
           open(unit=unit_f,file=trim(writeName),status='replace')
@@ -270,7 +270,7 @@ subroutine derivative_f0_rel(is,is_rel)
 
 	if(writeOut) write (*,'(a)') 'Writing relativistic derivatives to file...'
 
-	      write(fmt,'(a)') '(2es14.4,2es14.4)'
+	      write(fmt,'(a)') '(2es14.4e3,2es14.4e3)'
 
 	     write(writeName,'(3a,i0,a)') 'distribution/',trim(arrayName),'_dfdv_rel.',is,'.array'
         call get_unused_unit(unit_f)

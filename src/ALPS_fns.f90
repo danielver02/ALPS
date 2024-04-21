@@ -124,7 +124,7 @@ subroutine derivative_f0
 
        if (writeOut) &
             write(*,'(a)') 'Outputing df0/dpperp, df0/dppar'
-       write(fmt,'(a)') '(2es14.4,2es14.4)'
+       write(fmt,'(a)') '(2es14.4e3,2es14.4e3)'
        do is = 1, nspec
 
 
@@ -189,16 +189,16 @@ subroutine derivative_f0
             '-=-=-=-='
        write(*,'(a,i3,a)')&
             'Species ',is,':'
-       write(*,'(a, 2es14.4)') &
+       write(*,'(a, 2es14.4e3)') &
             ' Integration:              ', integrate
-       write(*,'(a, 2es14.4)') &
+       write(*,'(a, 2es14.4e3)') &
             ' Charge density:           ', charge(is)
-       write(*,'(a, 2es14.4)') &
+       write(*,'(a, 2es14.4e3)') &
             ' Parallel current density: ', current_int(is)
     enddo
     write(*,'(a)')         '-=-=-=-='
-    write(*,'(a, es14.4)') ' Total charge density:           ', sum(charge(1:nspec))
-    write(*,'(a, es14.4)') ' Total parallel current density: ', sum(current_int(1:nspec))
+    write(*,'(a, es14.4e3)') ' Total charge density:           ', sum(charge(1:nspec))
+    write(*,'(a, es14.4e3)') ' Total parallel current density: ', sum(current_int(1:nspec))
     write(*,'(a)')         '-=-=-=-=-=-=-=-='
 
 
@@ -1616,7 +1616,7 @@ double complex function int_T_res(nn, iperp, p_res, mode)
 end function int_T_res
 
 
-subroutine secant(om)
+subroutine secant(om,in)
   !! This subroutine applies the secant method to find the roots of the dispersion tensor.
 	use ALPS_var, only : numiter, D_threshold, ierror, proc0, writeOut, D_prec
    use mpi
@@ -1624,6 +1624,9 @@ subroutine secant(om)
 
   double complex, intent(inout) :: om
   !! Complex wave frequency \(\omega\).
+
+  integer, intent(in) :: in
+  !! Root number
 
 	double complex :: prevom
   !! Storage of previous entry of om.
@@ -1677,8 +1680,8 @@ subroutine secant(om)
 			jump = 0.d0
 			go_for_secant = .FALSE.
 			if (proc0.AND.writeOut) then
-				write(*,'(a,i4)') ' Converged after iteration ',iter
-				write(*,'(a,2es14.4,a,2es14.4)') ' D(',real(om),aimag(om),')= ',D
+				write(*,'(a,i2,a,i4)') ' Root ',in,' converged after iteration ',iter
+				write(*,'(a,2es14.4e3,a,2es14.4e3)') ' D(',real(om),aimag(om),')= ',D
 			endif
 
 		else
@@ -1696,7 +1699,7 @@ subroutine secant(om)
 	if (proc0.AND.writeOut.AND.(iter.GE.numiter)) then
 		write(*,'(a,i4,a)') ' Maximum iteration ',iter,' reached.'
 		om=minom
-		write(*,'(a,2es14.4,a,2es14.4)') ' D(',real(om),aimag(om),')= ',D
+		write(*,'(a,2es14.4e3,a,2es14.4e3)') ' D(',real(om),aimag(om),')= ',D
 	endif
 
 end subroutine secant
@@ -1791,8 +1794,14 @@ subroutine om_scan(ik)
   character (50) :: fmt_heat
   !! Format string for heating-rate output.
 
+  double complex, dimension(:),allocatable :: domegadk
+  !! Gradient of the frequency in k-space along the scan direction (1:nroots).
+
+  double precision :: Deltakstep
+  !! Step through k-space (can be kperp, kpar, theta, or k-magnitude).
 
   allocate(jump(1:nroots));jump=.true.
+  allocate(domegadk(1:nroots)); domegadk=cmplx(0.d0,0.d0,kind(1.d0))
 
   if (proc0) then
      allocate(scan_unit(nroots))
@@ -1810,12 +1819,12 @@ subroutine om_scan(ik)
         write(scan_ID,'(a)')'kpara_'
      end select
           if (scan(ik)%eigen_s) then
-        write(fmt_eigen,'(a,i0,a)') '(4es14.4,12es14.4,',nspec*8,'es14.4)'
+        write(fmt_eigen,'(a,i0,a)') '(4es14.4e3,12es14.4e3,',nspec*8,'es14.4e3)'
         allocate(eigen_unit(nroots))
         allocate(eigenName(nroots))
      endif
      if (scan(ik)%heat_s) then
-        write(fmt_heat,'(a,i0,a)') '(4es14.4,',nspec,'es14.4)'
+        write(fmt_heat,'(a,i0,a)') '(4es14.4e3,',nspec,'es14.4e3)'
         allocate(heat_unit(nroots))
         allocate(heatName(nroots))
      endif
@@ -1825,7 +1834,7 @@ subroutine om_scan(ik)
         write(*,'(2a)')' => ',trim(scanName(in))
         call get_unused_unit(scan_unit(in))
         open(unit=scan_unit(in),file=trim(scanName(in)),status='replace')
-        write(scan_unit(in),'(4es14.4)') &
+        write(scan_unit(in),'(4es14.4e3)') &
              kperp,kpar,wroots(in)
         close(scan_unit(in))
      enddo
@@ -1873,10 +1882,12 @@ subroutine om_scan(ik)
 
   nt = scan(ik)%n_out*scan(ik)%n_res
 
-  kperp_last=kperp;kpar_last=kpar
+  kperp_last=kperp
+  kpar_last=kpar
 
   theta_0=atan(kperp_last/kpar_last)
   k_0=sqrt(kperp_last**2+kpar_last**2)
+
 
   do it = 1, nt
      !Scan through wavevector space:
@@ -1889,6 +1900,7 @@ subroutine om_scan(ik)
            kperp=kperp_last+scan(ik)%diff*it
            kpar= kpar_last +scan(ik)%diff2*it
         endif
+        Deltakstep=0.d0 ! to avoid having to calculate the gradients in 2 dimensions.
      case (1) ! theta_0 to theta_1
         if (scan(ik)%log_scan) then
            theta_1=10.d0**(log10(theta_0)+scan(ik)%diff*it)
@@ -1897,6 +1909,7 @@ subroutine om_scan(ik)
         endif
         kperp=k_0*sin(theta_1)
         kpar=k_0*cos(theta_1)
+        Deltakstep=theta_1-theta_0
      case (2) ! |k_0| to |k_1| @ constant theta
         if (scan(ik)%log_scan) then
            kperp=10.d0**(log10(kperp_last)+scan(ik)%diff*it)
@@ -1905,18 +1918,21 @@ subroutine om_scan(ik)
            kperp=kperp_last+scan(ik)%diff*it
            kpar= kpar_last +scan(ik)%diff2*it
         endif
+        Deltakstep=sqrt(kperp**2+kpar**2)-sqrt(kperp_last**2+kpar_last**2)
      case (3) ! kperp scan
         if (scan(ik)%log_scan) then
            kperp=10.d0**(log10(kperp_last)+scan(ik)%diff*it)
         else
            kperp=kperp_last+scan(ik)%diff*it
         endif
+        Deltakstep=kperp-kperp_last
      case (4) ! kpar scan
         if (scan(ik)%log_scan) then
            kpar=10.d0**(log10(kpar_last)+scan(ik)%diff*it)
         else
            kpar=kpar_last+scan(ik)%diff*it
         endif
+        Deltakstep=kpar-kpar_last
      end select
 
      if (scan(ik)%type_s.ne.4) then
@@ -1930,7 +1946,7 @@ subroutine om_scan(ik)
 
      call mpi_barrier(mpi_comm_world,ierror)
 
-     if (proc0) write(*,'(a,es14.4,a,es14.4)')'kperp: ',kperp,' kpar: ',kpar
+     if (proc0) write(*,'(a,es14.4e3,a,es14.4e3)')'kperp: ',kperp,' kpar: ',kpar
 
 	! Check if all jumps are set to .false.:
 	alljump=.FALSE.
@@ -1940,20 +1956,25 @@ subroutine om_scan(ik)
 
 	if (alljump.EQV..FALSE.) call alps_error(9)
 
+
      do in = 1,nroots
         !Search for new roots
 
         if (jump(in)) then
 
            omega=wroots(in)
+           ! Extrapolate the initial guess along the direction in k-scans:
+           omega=omega+domegadk(in)*Deltakstep
 
-           call secant(omega)
+           call secant(omega,in)
 
+           domegadk(in)=omega-wroots(in)
            wroots(in)=omega
 
            call mpi_bcast(wroots(in), 1, &
                 MPI_DOUBLE_COMPLEX, 0, MPI_COMM_WORLD, ierror)
 
+          ! Run a final instance of disp:
            tmp = disp(omega)
 
            call mpi_barrier(mpi_comm_world,ierror)
@@ -1983,7 +2004,7 @@ subroutine om_scan(ik)
 !
               do imm=1,in-1
                  if (abs(wroots(in)-wroots(imm)).lt.D_gap) then
-                    write(*,'(a,6es14.4)')'Root too close!',&
+                    write(*,'(a,6es14.4e3)')'Root too close!',&
                          wroots(in),wroots(imm),&
                          real(wroots(in))-real(wroots(imm)), &
                          aimag(wroots(in))-aimag(wroots(imm))
@@ -1993,7 +2014,7 @@ subroutine om_scan(ik)
 
               if (mod(it,scan(ik)%n_res)==0) then
                  open(unit=scan_unit(in),file=trim(scanName(in)),status='old',position='append')
-                 write(scan_unit(in),'(4es14.4)') &
+                 write(scan_unit(in),'(4es14.4e3)') &
                       kperp,kpar,wroots(in)
                  close(scan_unit(in))
 
@@ -2321,7 +2342,15 @@ subroutine om_double_scan
   character (50) :: fmt_heat
   !! Format string for heating-rate output.
 
+  double complex, dimension(:),allocatable :: domegadk
+  !! Gradient of the frequency in k-space along the scan direction (1:nroots).
+
+  double precision :: Deltakstep
+  !! Step through k-space (can be kperp, kpar, theta, or k-magnitude).
+
+
   allocate(jump(1:nroots)); jump=.true.
+  allocate(domegadk(1:nroots)); domegadk=cmplx(0.d0,0.d0,kind(1.d0))
 
   if (scan(1)%type_s==scan(2)%type_s) then
      call alps_error(5)
@@ -2366,12 +2395,12 @@ subroutine om_double_scan
      end select
 
      if (scan(1)%eigen_s) then
-        write(fmt_eigen,'(a,i0,a)') '(4es14.4,12es14.4,',nspec*8,'es14.4)'
+        write(fmt_eigen,'(a,i0,a)') '(4es14.4e3,12es14.4e3,',nspec*8,'es14.4e3)'
         allocate(eigen_unit(nroots))
         allocate(eigenName(nroots))
      endif
      if (scan(1)%heat_s) then
-        write(fmt_heat,'(a,i0,a)') '(4es14.4,',nspec,'es14.4)'
+        write(fmt_heat,'(a,i0,a)') '(4es14.4e3,',nspec,'es14.4e3)'
         allocate(heat_unit(nroots))
         allocate(heatName(nroots))
      endif
@@ -2487,7 +2516,7 @@ subroutine om_double_scan
 
      call mpi_barrier(mpi_comm_world,ierror)
 
-     if (proc0) write(*,'(a,es14.4,a,es14.4)')'kperp: ',kperp,' kpar: ',kpar
+     if (proc0) write(*,'(a,es14.4e3,a,es14.4e3)')'kperp: ',kperp,' kpar: ',kpar
 
      ! Check if all jumps are set to .false.:
      alljump=.FALSE.
@@ -2500,6 +2529,7 @@ subroutine om_double_scan
      !Save roots before starting second parameter scan.
      om_tmp=wroots
 
+
      ! Second scan:
      do it2 = 0, nt2
 
@@ -2511,6 +2541,8 @@ subroutine om_double_scan
            theta_i=atan(kperpi/kpari)
            k_i=sqrt(kperpi**2+kpari**2)
            wroots=om_tmp
+           Deltakstep=0.d0
+           domegadk=cmplx(0.d0,0.d0,kind(1.d0))
         endif
         select case(scan(2)%type_s)
         case (0) ! k_0 to k_1
@@ -2521,6 +2553,7 @@ subroutine om_double_scan
               kperp=kperpi+scan(2)%diff*it2
               kpar= kpari +scan(2)%diff2*it2
            endif
+           Deltakstep=0.d0 ! to avoid having to calculate 2D gradients.
         case (1) ! theta_i to theta_1
            if (scan(2)%log_scan) then
               theta_1=10.d0**(log10(theta_i)+scan(2)%diff*it2)
@@ -2529,6 +2562,7 @@ subroutine om_double_scan
            endif
            kperp=k_i*sin(theta_1)
            kpar=k_i*cos(theta_1)
+           Deltakstep=theta_1-theta_i
         case (2) ! |k_0| to |k_1| @ constant theta
            if (scan(2)%log_scan) then
               kperp=10.d0**(log10(kperpi)+scan(2)%diff*it2)
@@ -2537,18 +2571,21 @@ subroutine om_double_scan
               kperp=kperpi+scan(2)%diff*it2
               kpar= kpari +scan(2)%diff2*it2
            endif
+           Deltakstep=sqrt(kperp**2+kpar**2)-sqrt(kperpi**2+kpari**2)
         case (3) ! kperp scan
            if (scan(2)%log_scan) then
               kperp=10.d0**(log10(kperpi)+scan(2)%diff*it2)
            else
               kperp=kperpi+scan(2)%diff*it2
            endif
+           Deltakstep=kperp-kperpi
         case (4) ! kpar scan
            if (scan(2)%log_scan) then
               kpar=10.d0**(log10(kpari)+scan(2)%diff*it2)
            else
               kpar=kpari+scan(2)%diff*it2
            endif
+           Deltakstep=kpar-kpari
         end select
 
         if (scan(2)%type_s.ne.4) then
@@ -2560,17 +2597,21 @@ subroutine om_double_scan
 
         call mpi_barrier(mpi_comm_world,ierror)
 
-        if (proc0) write(*,'(a,es14.4,a,es14.4)')'kperp: ',kperp,' kpar: ',kpar
+        if (proc0) write(*,'(a,es14.4e3,a,es14.4e3)')'kperp: ',kperp,' kpar: ',kpar
 
           do in = 1,nroots
              !Search for new roots:
              if (jump(in)) then
 
                 omega=wroots(in)
+                ! Extrapolate the initial guess along the direction in k-scans:
+                omega=omega+domegadk(in)*Deltakstep
 
-                call secant(omega)
+                call secant(omega,in)
 
+                domegadk(in)=omega-wroots(in)
                 wroots(in)=omega
+
 
                 call mpi_bcast(wroots(in), 1, &
                      MPI_DOUBLE_COMPLEX, 0, MPI_COMM_WORLD, ierror)
@@ -2608,7 +2649,7 @@ subroutine om_double_scan
 
               do imm=1,in-1
                  if (abs(wroots(in)-wroots(imm)).lt.D_gap) then
-                    write(*,'(a,6es14.4)')'Root too close!',&
+                    write(*,'(a,6es14.4e3)')'Root too close!',&
                          wroots(in),wroots(imm),&
                          real(wroots(in))-real(wroots(imm)), &
                          aimag(wroots(in))-aimag(wroots(imm))
@@ -2620,7 +2661,7 @@ subroutine om_double_scan
               if ((mod(it,scan(1)%n_res)==0).and.((mod(it2,scan(2)%n_res)==0))) then
                  open(unit=scan_unit(in),file=trim(scanName(in)),&
                       status='old',position='append')
-                 write(scan_unit(in),'(4es14.4)') &
+                 write(scan_unit(in),'(4es14.4e3)') &
                       kperp,kpar,wroots(in)
                  close(scan_unit(in))
 
@@ -2756,19 +2797,19 @@ subroutine map_search
   if (writeOut .and. proc0.and. .true.) then
      write(*,'(a)')'-=-=-=-=-=-=-=-=-=-'
      write(*,'(a)')      'Global Plasma Parameters:'
-     write(*,'(a,es12.3)')' k_perp d_p   = ',kperp
-     write(*,'(a,es12.3)')' k_par  d_p   = ',kpar
+     write(*,'(a,es14.3e3)')' k_perp d_p   = ',kperp
+     write(*,'(a,es14.3e3)')' k_par  d_p   = ',kpar
      do is = 1, nspec
         write(*,'(a)')'-=-=-=-=-=-=-=-=-=-'
         write(*,'(a,i3)')      'Parameters for species',is
-        write(*,'(a,es12.3)')' m_s/m_m =        ',ms(is)
-        write(*,'(a,es12.3)')' q_s/q_p =        ',qs(is)
-        write(*,'(a,es12.3)')' n_s/n_p =        ',ns(is)
+        write(*,'(a,es14.3e3)')' m_s/m_m =        ',ms(is)
+        write(*,'(a,es14.3e3)')' q_s/q_p =        ',qs(is)
+        write(*,'(a,es14.3e3)')' n_s/n_p =        ',ns(is)
      enddo
      write(*,'(a)')'-=-=-=-=-=-=-=-=-=-'
      write(*,'(a)')'Searching over:'
-     write(*,'(a,es12.3,a,es12.3,a)')' om  in [',omi,',',omf,']'
-     write(*,'(a,es12.3,a,es12.3,a)')' gam in [',gami,',',gamf,']'
+     write(*,'(a,es14.3e3,a,es14.3e3,a)')' om  in [',omi,',',omf,']'
+     write(*,'(a,es14.3e3,a,es14.3e3,a)')' gam in [',gami,',',gamf,']'
      write(*,'(a)')'-=-=-=-=-=-=-=-=-=-'
   endif
 
@@ -2802,7 +2843,7 @@ subroutine map_search
         wr=omi+dr*(1.d0*(ir-1))
      endif
      if (proc0.and.writeOut)&
-          write(*,'(a,es11.4)')' omega_real = ',wr
+          write(*,'(a,es14.4e3)')' omega_real = ',wr
      do ii=1,ni
         if (loggridg) then
 		   wi=gami
@@ -2842,7 +2883,7 @@ subroutine map_search
            endif
 
            open(unit=unit_map,file=trim(mapName),status='old',position='append')
-           write(unit_map,'(5es14.6)') &
+           write(unit_map,'(5es16.6e3)') &
                 om(ir,ii),val(ir,ii),cal(ir,ii)
            close(unit_map)
 
@@ -2867,7 +2908,7 @@ subroutine map_search
          wroots(iw)=om(iroots(1,iw),iroots(2,iw))
          if (writeOut) then
             write(*,'(a,i4,a,i4)')'ir = ',iroots(1,iw),'    ii = ',iroots(2,iw)
-            write(*,'(4es14.4)') wroots(iw) ,cal(iroots(1,iw),iroots(2,iw))
+            write(*,'(4es15.4e3)') wroots(iw) ,cal(iroots(1,iw),iroots(2,iw))
          endif
       enddo
 
@@ -2925,21 +2966,22 @@ subroutine refine_guess
 
 
   do iw=1,nroots
-     if (proc0.and.writeOut) write(*,'(a,i0)')'Root ',iw
+    
      call mpi_barrier(mpi_comm_world,ierror)
+
      omega=wroots(iw)
 
-     if (proc0.and.writeOut) write(*,'(2es14.4)')wroots(iw)
-     call secant(omega)
+     call secant(omega,iw)
+
 
      wroots(iw)=omega
 
 
      tmpDisp=disp(wroots(iw))
      if (proc0.and.(abs(tmpDisp).NE.0.d0)) then
-        write(unit_refine,'(i4,5es14.4)') iw,wroots(iw),log10(abs(tmpDisp)),tmpDisp
-        write(*,'(i4,5es14.4)') iw,wroots(iw),log10(abs(tmpDisp)),tmpDisp
- !       if (writeOut) write(*,'(a,2es14.4,a,2es14.4)')'D(',wroots(iw),')= ',tmpDisp
+        write(unit_refine,'(i4,5es14.4e3)') iw,wroots(iw),log10(abs(tmpDisp)),tmpDisp
+        write(*,'(i4,5es14.4e3)') iw,wroots(iw),log10(abs(tmpDisp)),tmpDisp
+ !       if (writeOut) write(*,'(a,2es14.4e3,a,2es14.4e3)')'D(',wroots(iw),')= ',tmpDisp
      endif
 
   enddo
@@ -3156,9 +3198,7 @@ is=1
 modified_nmax=.FALSE.
 do while (max_procs.LT.(nproc-1))
 
-  if (usebM(is)) then
-
-  else
+  if (.NOT.usebM(is)) then
     modified_nmax=.TRUE.
 	  nmax(is)=nmax(is)+1
   endif
@@ -3185,8 +3225,9 @@ end subroutine 	determine_nmax
 
 subroutine split_processes()
 !! This subroutine defines the tasks for the individual processes. It uses the number of species and the required orders of the Bessel functions to define the splitting across the MPI processes.
-use alps_var, only : nproc, iproc, nmax, nlim
+use alps_var, only : nproc, iproc, nmax, nlim, ierror
 use alps_var, only : nspec, sproc, writeOut, proc0
+use mpi
 implicit none
 
 integer :: is
@@ -3270,6 +3311,8 @@ if (proc0.AND.writeOut) then
      endif
      write(*,'(a,i0)') '-=-=-=-=-=-=-=-=-=-'
 endif
+
+call mpi_barrier(mpi_comm_world,ierror)
 
 ! Determine species with the largest rest of n's:
 largest_spec=1
