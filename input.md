@@ -191,31 +191,28 @@ Kind of fit function:
 
 - 1: Maxwellian,  
 
-$$F_M(\hat{p}\_{\parallel})=u_{1}\mathrm{exp}[-y{\hat{p}}^2\_{\perp}-u_{2}(\hat{p}\_{\parallel}-u_{3})^2]$$
+$$`F_M(\hat{p}\_{\parallel})=u_{1}\mathrm{exp}[-y{\hat{p}}^2\_{\perp}-u_{2}(\hat{p}\_{\parallel}-u_{3})^2]`$$
 
 - 2: Kappa,  
 
-$$F_{\kappa}(\hat{p}\_{\parallel})=u_{1}[1+u_2({\hat{p}}\_{\parallel}-u_{3})^2+yu_{5} {\hat{p}}^2\_{\perp}]^{u_{4}}.$$
+$$`F_{\kappa}(\hat{p}\_{\parallel})=u_{1}[1+u_2({\hat{p}}\_{\parallel}-u_{3})^2+yu_{5} {\hat{p}}^2\_{\perp}]^{u_{4}}.`$$
 
 - 3: Juettner with $p_{\perp},p_{\parallel}$,  
 
-$$F_{J}(\hat{p}\_{\perp},\hat{p}\_{\parallel})=
-u_{1}\mathrm{exp}\left[-u_{2}\sqrt{1+\frac{\hat{p}^2\_{\perp}+(\hat{p}^2\_{\parallel}-u_3)^2 v_A^2}{m_{j}^2 c^2}}\right].$$
+$$`F_{J}(\hat{p}\_{\perp},\hat{p}\_{\parallel})=
+u_{1}\mathrm{exp}\left[-u_{2}\sqrt{1+\frac{\hat{p}^2\_{\perp}+(\hat{p}^2\_{\parallel}-u_3)^2 v_A^2}{m_{j}^2 c^2}}\right].`$$
 
 - 4: Juettner with variable $\Gamma$, constant $\bar{p}_{\parallel}$,  
 
-$$F_{J}(\Gamma)= u_{1} \mathrm{exp}[-y \Gamma].$$
+$$`F_{J}(\Gamma)= u_{1} \mathrm{exp}[-y \Gamma].`$$
 
 - 5: Juettner with $p_{\perp},p_{\parallel}$; variable $\bar{p}_{\parallel}$,  
 
-$$F_{\kappa}(\hat{p}\_{\perp},\hat{p}\_{\parallel})=
-u_1\mathrm{exp}[-y \hat{p}\_{\perp}]
-\mathrm{exp}[-u_{2}*(\hat{p}\_{\parallel}+u_{3})^2]
-.$$
+$$`F_{\kappa}(\hat{p}\_{\perp},\hat{p}\_{\parallel})=u_{1}\mathrm{exp}[-y \hat{p}\_{\perp}]\mathrm{exp}[-u_{2}*(\hat{p}\_{\parallel}+u_{3})^2].`$$
 
 - 6: Bi-Moyal distribution
 
-$$F_{bMo}(\hat{p}\_{\perp},\hat{p}\_{\parallel})= u_{1} \mathrm{exp}[0.5 (y u_4 \hat{p}^2\_{\perp} + u_{2} (\hat{p}\_{\parallel} -u_{3})^2 -\mathrm{exp}(y u_{4} \hat{p}^2\_{\perp} + u_{2} (\hat{p}\_{\parallel}-u_{3})^2) )].$$
+$$`F_{bMo}(\hat{p}\_{\perp},\hat{p}\_{\parallel})= u_{1} \mathrm{exp}[0.5 (y u_4 \hat{p}^2\_{\perp} + u_{2} (\hat{p}\_{\parallel} -u_{3})^2 -\mathrm{exp}(y u_{4} \hat{p}^2\_{\perp} + u_{2} (\hat{p}\_{\parallel}-u_{3})^2) )].`$$
 
 **`fit_1`-`fit_5`**  
 Fit parameters, $u_{1}$ - $u_{5}$, defined in the above equations for each of the types of fit functions.
