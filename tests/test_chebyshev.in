@@ -1,8 +1,8 @@
 !===============================================
-!  ALPS INPUT FILE: Alfven->KAW scan
-!  120 x 240 momentum resolution
-!  6 v_ts spread (from test_kperp.in)
-!  Scan over 2.5 decades in kperp
+!  ALPS INPUT FILE: Bimaxwellian NHDS inputs
+!  150 x 300 momentum resolution
+!  6 v_ts spread (from test_bimax_dist.in)
+!  Scan over one decade in kparallel
 !
 !  Kristopher Klein, Daniel Verscharen
 !  2023 FEB 18
@@ -13,38 +13,38 @@
 &system
 !Initial perpendicular and parallel wavenumbers
 !Normalized to reference inertial length
-kperp=1.d-2
-kpar=1.d-3
+kperp=1.d-3
+kpar=0.03d0
 !Number of plasma species
 nspec=2
 !Number of dispersion solutions to find and follow
-nroots=1
+nroots=2
 !T-> use search for roots over a map
 !F-> use input guesses for solutions
 use_map=.false.
 !Write or suppress output to screen:
 writeOut=.true.
 !Momentum space resolution of f0
-nperp=120
-npar=240
-!Momentum space resolution for relativistic calculation
+nperp=150
+npar=300
+!Velocity Space Resolution for relativistic calculation
 ngamma=100
 npparbar=200
 !Reference Alfven velocity / c
 vA=1.d-4
 !Name of input array-
 !Located in 'distribution' folder
-arrayName='test_kperp'
+arrayName='test_bimax'
 !Maximum amplitude of Bessel function to determine nmax
-Bessel_zero = 1.d-50
+Bessel_zero = 1.d-45
 !Maximum number of iterations in secant method
-numiter = 500
+numiter = 50
 !Value of "zero" for secant method
 D_threshold = 1.d-13
 !Size of bounding region for secant method
 D_prec = 1.d-5
 !Size of allowable gap between solutions
-D_gap=1.D-5
+D_gap=1.d-5
 !# points in principal value integral (see documentation)
 positions_principal=3
 !# steps to integrate around resonance
@@ -60,7 +60,7 @@ epsilon_fit=1.d-8
 !T-> output fit parameters to ASCII in distribution/
 fit_check=T
 !T-> After map_scan, determine minima and refine
-determine_minima=T
+determine_minima=F
 !1: consecutive scans, 2: double scan
 scan_option=1
 !# wavevector scans
@@ -71,8 +71,13 @@ n_scan=1
 !Only used when use_map=.false.
 !Need to have # of name lists equal to nroots
 &guess_1
-g_om=9.9d-4    !real frequency
-g_gam=-5.5d-10 !imaginary frequency
+g_om=3.d-2   !real frequency
+g_gam=-1.d-5 !imaginary frequency
+/
+
+&guess_2
+g_om=4.5d-2    !real frequency
+g_gam=-1.9d-2  !imaginary frequency
 /
 
 !Range of complex frequencies for map_scan
@@ -90,14 +95,14 @@ nr      = 64         !# of steps in real freq.
 
 !Species parameters list; species 1
 &spec_1
-nn=1.d0      !relative density; n_j/n_ref
-qq=1.d0      !relative charge;  q_j/q_ref
-mm=1.d0      !relative mass;    m_j/m_ref
-AC_method=1  !Specify method for analytic continuation
-ff=1         !# of fits to be used.
-relat=F      !relativistic (T) or non-relativistic (F) species
-log_fit=T    !log (T) or linear (F) fit
-use_bM=F     !numerically integrate array (F) or use bi-Maxwellian/cold-plasma (T)
+nn=1.d0  !relative density; n_j/n_ref
+qq=1.d0  !relative charge;  q_j/q_ref
+mm=1.d0  !relative mass;    m_j/m_ref
+AC_method=2  !Specify method for analytic continuation
+ff=1     !# of fits to be used.
+relat=F  !relativistic (T) or non-relativistic (F) species
+log_fit=T!log (T) or linear (F) fit
+use_bM=F !numerically integrate array (F) or use bi-Maxwellian/cold-plasma (T)
 /
 
 !Characteristics of Basis Function Representation
@@ -133,7 +138,7 @@ bM_pdrifts=0.d0        !Momentum drift, norm. to m_ref v_A,ref
 nn=1.d0        !relative density; n_j/n_ref
 qq=-1.d0       !relative charge;  q_j/q_ref
 mm=5.44662d-4  !relative mass;    m_j/m_ref
-AC_method=1    !Specify method for analytic continuation
+AC_method=2    !Specify method for analytic continuation
 ff=1           !# of fits to be used.
 relat=F        !relativistic (T) or non-relativistic (F) species
 log_fit=T      !log (T) or linear (F) fit
@@ -171,12 +176,12 @@ bM_pdrifts=0.d0        !Momentum drift, norm. to m_ref v_A,ref
 !Inputs for scanning parameter space for 1st scan
 &scan_input_1
 !See documentation for details on scan definition
-scan_type=3
-swi=1.0d-2
-swf=3.0d0
+scan_type=4
+swi=3.0d-2
+swf=3.0d-1
 swlog=.true.    !log (T) or linear (F) steps
-ns=64           !# of scan steps
+ns=256           !# of scan steps
 nres=1          !# of scan substeps
-heating=.false. !Calculate heating rates
-eigen=.false.   !Calculate eigenfunctions
+heating=.true. !Calculate heating rates
+eigen=.true.   !Calculate eigenfunctions
 /

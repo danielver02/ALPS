@@ -90,13 +90,21 @@ nr      = 50         !# of steps in real freq.
 
 !Species parameters list; species 1
 &spec_1
-nn=1.d0  !relative density; n_j/n_ref
-qq=1.d0  !relative charge;  q_j/q_ref
-mm=1.d0  !relative mass;    m_j/m_ref
-ff=1     !# of fits to be used.
-relat=F  !relativistic (T) or non-relativistic (F) species
-log_fit=T!log (T) or linear (F) fit
-use_bM=F !numerically integrate array (F) or use bi-Maxwellian/cold-plasma (T)
+nn=1.d0      !relative density; n_j/n_ref
+qq=1.d0      !relative charge;  q_j/q_ref
+mm=1.d0      !relative mass;    m_j/m_ref
+AC_method=1  !Specify method for analytic continuation
+ff=1         !# of fits to be used.
+relat=F      !relativistic (T) or non-relativistic (F) species
+log_fit=T    !log (T) or linear (F) fit
+use_bM=F     !numerically integrate array (F) or use bi-Maxwellian/cold-plasma (T)
+/
+
+!Characteristics of Basis Function Representation
+&poly_spec_1
+kind=1         !Kind of Orthogonal Basis Function (see documentation)
+order=30       !Maximum Order of Basis Function
+log_max=18.d0  !Maximum/minimum threshold when log-fitting is uses
 /
 
 !Initial Fit Values; species 1, function 1
@@ -125,10 +133,18 @@ bM_pdrifts=0.d0        !Momentum drift, norm. to m_ref v_A,ref
 nn=1.d0        !relative density; n_j/n_ref
 qq=-1.d0       !relative charge;  q_j/q_ref
 mm=5.44662d-4  !relative mass;    m_j/m_ref
+AC_method=1    !Specify method for analytic continuation
 ff=1           !# of fits to be used.
 relat=F        !relativistic (T) or non-relativistic (F) species
 log_fit=T      !log (T) or linear (F) fit
 use_bM=F       !numerically integrate array (F) or use bi-Maxwellian/cold-plasma (T)
+/
+
+!Characteristics of Basis Function Representation
+&poly_spec_2
+kind=1         !Kind of Orthogonal Basis Function (see documentation)
+order=30       !Maximum Order of Basis Function
+log_max=18.d0  !Maximum/minimum threshold when log-fitting is uses
 /
 
 !Initial Fit Values; for species 2, function 1

@@ -35,6 +35,7 @@ module alps_io
   private :: get_runname, get_indexed_namelist_unit
   private :: input_unit_exist, input_unit
   private :: map_read, solution_read, spec_read, scan_read, bM_read
+  private :: poly_read
   public  :: init_param, read_f0, get_unused_unit, alps_error
   public :: output_time, display_credits, isnancheck
 
@@ -54,6 +55,8 @@ contains
     use alps_var, only : scan_option, n_scan, scan, relativistic, logfit, usebM
     use alps_var, only : maxsteps_fit, n_fits, lambda_initial_fit, lambdafac_fit, epsilon_fit
     use alps_var, only : bMnmaxs, bMBessel_zeros, bMbetas, bMalphas, bMpdrifts
+    use alps_var, only : ACmethod, poly_kind, poly_order, polynomials, poly_fit_coeffs
+    use alps_var, only : poly_log_max
     implicit none
 
     integer :: ik
@@ -144,6 +147,12 @@ contains
     allocate(bMalphas(1:nspec)); bMalphas=1.d0
     allocate(bMpdrifts(1:nspec)); bMpdrifts=0.d0
 
+    !Basis Function Parameters:
+    allocate(ACmethod(1:nspec)); ACmethod = 1
+    allocate(poly_kind(1:nspec)); poly_kind = 0
+    allocate(poly_order(1:nspec)); poly_order = 0
+    allocate(poly_log_max(1:nspec)); poly_log_max = 0
+
     !READ IN SPECIES PARAMETERS:
     do is = 1, nspec
        unit=input_unit_no
@@ -152,10 +161,16 @@ contains
        write(*,'(a,i3,a)')'Species ',is,' : '
        write(*,'(a,es14.4e3,a,es14.4e3,a,es14.4e3)')&
             ' ns/nREF = ',ns(is),' | qs/qREF = ',qs(is),' | ms/mREF = ',ms(is)
-       write(*,'(a,i4)')&
-            ' Number of fitted functions = ',n_fits(is)
-      if (n_fits(is).EQ.0) &
+       select case (ACmethod(is))
+       case (0)
           write(*,'(a)') ' Using function defined in distribution/distribution_analyt.f90'
+       case (1)
+          write(*,'(a,i4)')&
+               ' Number of fitted functions = ',n_fits(is)
+       case (2)
+          write(*,'(a)')&
+               ' Using a Polynomial Basis Representation'
+       end select
        write(*,'(a,l1)')&
             ' Relativistic effects = ',relativistic(is)
        close(unit)
@@ -187,44 +202,62 @@ contains
 
           close(unit)
        else
-          do ifit=1,n_fits(is)
-             call get_indexed_double_namelist_unit (unit, "ffit", is, ifit)
-             call fit_read(is,ifit)
-             select case(fit_type(is,ifit))
-             case(1)
-                write(*,'(a,i2,a,i2,a)')&
-                     'Species ',is,', function ',ifit,', Maxwellian fit: '
-             case(2)
-                write(*,'(a,i2,a,i2,a)')&
-                     'Species ',is,', function ',ifit,', kappa fit: '
-             case(3)
-                write(*,'(a,i2,a,i2,a)')&
-                     'Species ',is,', function ',ifit,', Juettner fit (pperp and ppar): '
-             case(4)
-                write(*,'(a,i2,a,i2,a)')&
-                     'Species ',is,', function ',ifit,', Juettner fit (gamma-dependent only): '
-             case(5)
-                write(*,'(a,i2,a,i2,a)')&
-                     'Species ',is,', function ',ifit,', Juettner fit (gamma and pparbar): '
-             case(6)
-                write(*,'(a,i2,a,i2,a)')&
-                     'Species ',is,', function ',ifit,', bi-Moyal fit: '
-             case default
-                write(*,'(a)')&
-                     'Function fit undefined'
-                stop
-             end select
-
-             do ip = 1, 5
-                write(*,'(a,i2,a,es14.4e3)')&
-                     ' Initial fit parameter ',ip,' = ',param_fit(is,0,ip,ifit)
+          !Read in initial guesses for LM fits.
+          select case(ACmethod(is))
+          case (1)
+             do ifit=1,n_fits(is)
+                call get_indexed_double_namelist_unit (unit, "ffit", is, ifit)
+                call fit_read(is,ifit)
+                select case(fit_type(is,ifit))
+                case(1)
+                   write(*,'(a,i2,a,i2,a)')&
+                        'Species ',is,', function ',ifit,', Maxwellian fit: '
+                case(2)
+                   write(*,'(a,i2,a,i2,a)')&
+                        'Species ',is,', function ',ifit,', kappa fit: '
+                case(3)
+                   write(*,'(a,i2,a,i2,a)')&
+                        'Species ',is,', function ',ifit,', Juettner fit (pperp and ppar): '
+                case(4)
+                   write(*,'(a,i2,a,i2,a)')&
+                        'Species ',is,', function ',ifit,', Juettner fit (gamma-dependent only): '
+                case(5)
+                   write(*,'(a,i2,a,i2,a)')&
+                        'Species ',is,', function ',ifit,', Juettner fit (gamma and pparbar): '
+                case(6)
+                   write(*,'(a,i2,a,i2,a)')&
+                        'Species ',is,', function ',ifit,', bi-Moyal fit: '
+                case default
+                   write(*,'(a)')&
+                        'Function fit undefined'
+                   stop
+                end select
+                
+                do ip = 1, 5
+                   write(*,'(a,i2,a,es14.4)')&
+                        ' Initial fit parameter ',ip,' = ',param_fit(is,0,ip,ifit)
+                enddo
+                write(*,'(a,es14.4)')&
+                     ' Perpendicular correction:  ',perp_correction(is,ifit)
+                close(unit)
              enddo
-             write(*,'(a,es14.4e3)')&
-                  ' Perpendicular correction:  ',perp_correction(is,ifit)
+          case (2)
+             call get_indexed_namelist_unit (unit, "poly_spec", is)
+             call poly_read(is)
+             select case (poly_kind(is))
+             case (1)
+                write(*,'(a,i0,a,i0)')&
+                     'Chebyshev Representation of Order ',poly_order(is),' for species ',is
+             case default
+                call alps_error(10)
+             end select
              close(unit)
-          enddo
+          end select
        endif
     enddo
+
+    allocate(polynomials(1:nspec,0:npar,0:maxval(poly_order(:)))); polynomials=0.d0
+    allocate(poly_fit_coeffs(1:nspec,0:nperp,0:maxval(poly_order(:)))); poly_fit_coeffs=0.d0
 
     !Read in selection for scan paramter:
     if (n_scan.gt.0) then
@@ -283,6 +316,7 @@ contains
     !!Subroutine for reading in species parameters
     use alps_var, only : ns, qs, ms, n_fits
     use alps_var, only : relativistic, logfit, usebM
+    use alps_var, only : ACmethod
     implicit none
 
     integer,intent(in) :: is
@@ -297,6 +331,9 @@ contains
     double precision :: mm
     !! Read in value for mass for \(f_j\).
 
+    double precision :: AC_method
+    !! Read in value for Analytic Continuation Method
+    
     integer :: ff
     !!Read in value for number of fitted functions.
 
@@ -310,14 +347,41 @@ contains
     !! Use actual numerical integration or bi-Maxwellian/cold-plasma proxy via NHDS.
 
     nameList /spec/ &
-         nn,qq,mm,ff,relat,log_fit,use_bM
+         nn,qq,mm,AC_method,ff,relat,log_fit,use_bM
     read (unit=unit,nml=spec)
     ns(is) = nn; qs(is) = qq; ms(is) = mm
     n_fits(is)=ff; relativistic(is)=relat
     logfit(is)=log_fit; usebM(is)=use_bM
+    ACmethod(is)=AC_method
   end subroutine spec_read
 
+  subroutine poly_read(is)
+    !!Reads in Polynomial Basis Function Parameters
+    use alps_var, only : poly_kind, poly_order, poly_log_max
+    implicit none
 
+    integer,intent(in) :: is
+    !!Species index.
+
+    integer :: kind
+    !! Selection of Orthogonal Basis Function
+    !! 1) Chebyshev polynomials
+
+    integer :: order
+    !! Maximum order of Polynomial
+
+    double precision :: log_max
+    !! Maximum Value of Polynomial Evaluation
+
+    nameList /poly_spec/ &
+         kind, order, log_max
+
+    read(unit=unit,nml=poly_spec)
+    poly_kind(is)=kind
+    poly_order(is)=order
+    poly_log_max(is)=log_max
+
+  end subroutine poly_read
 
   subroutine bM_read(is)
     !!Reads in bi-Maxwellian/cold-plasma parameters.
@@ -855,10 +919,6 @@ function input_unit_exist (nml,exist)
     end do
   end subroutine get_unused_unit
 
-
-
-
-
   subroutine alps_error_init
     !!Open a file for the error log.
     use alps_var, only : unit_error, runname, foldername
@@ -934,6 +994,9 @@ function input_unit_exist (nml,exist)
                'ERROR: All roots diverged. Adjustment of initial guesses or step width may resolve this problem.'
           write(unit_error,'(a)')&
                'ERROR: All roots diverged. Adjustment of initial guesses or step width may resolve this problem.'
+       case(10) !seen by proc0
+          write (*,'(a)') "ERROR: Unspecified Orthogonal Representation."
+          write(unit_error,'(a)') "ERROR: Unspecified Orthogonal Representation."
        case default
           write(*,'(a)')'ERROR: Unspecified...'
           write(unit_error,'(a)')'ERROR: Unspecified...'
