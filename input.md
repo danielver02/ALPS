@@ -23,8 +23,9 @@ Number of dispersion solutions to find and follow.
 
 **`use_map`**   
 Choice of:  
-    -True: Searching for roots over a map in complex frequency space [see &maps_1 namelist].  
-    -False: Input `nroots` guesses for solutions [see &guess_* namelist].
+
+- True: Searching for roots over a map in complex frequency space [see &maps_1 namelist].  
+- False: Input `nroots` guesses for solutions [see &guess_* namelist].
 
 **`writeOut`**  
 Write or suppress output to screen.
@@ -94,9 +95,10 @@ If true, output fitted functions for each species to file in distribution direct
 If true, after map search, determine minima and refine solutions.
 
 **`scan_option`**  
-Select case for wavevector scans;  
-1. Consecutive scans along input paths in wavevector space,  
-2. Double scan over wavevector plane.
+Select case for wavevector scans:
+
+- 1: Consecutive scans along input paths in wavevector space,  
+- 2: Double scan over wavevector plane.
 
 **`n_scan`**  
 Number of wavevector scans.  
@@ -176,9 +178,9 @@ with parameters read in from &bM_spec_j namelist.
 **`AC_method`**
 Choose the method for the evaluation of the analytic continuation:
 
-0. Use the function that is defined analytically in distribution/distribution_analyt.f90
-1. Use the fit routine as defined in the &ffit_j_k namelist.
-2. Use a polynomial basis representation as defined in the &poly_spec_j namelist.
+- 0: Use the function that is defined analytically in distribution/distribution_analyt.f90
+- 1: Use the fit routine as defined in the &ffit_j_k namelist.
+- 2: Use a polynomial basis representation as defined in the &poly_spec_j namelist.
 
 
 ### *&ffit_j_k*
@@ -265,6 +267,7 @@ Inputs for scanning parameter space for $l$th scan.
 
 **`scan_type`**
 Type of parameter scan:
+
 - 0: Current value of $\textbf{k}$ to $k\_{\perp}$=`swi` and $k\_{\parallel}$ =`swf`.   
 - 1: $\theta_0 \rightarrow \theta_1$ at fixed $|k|$ from current value of $\theta=\mathrm{atan}(k\_{\perp}/k\_{\parallel})$ to `swf`.  
 - 2: Wavevector scan at fixed angle $\theta_{k,B}$ to $|k|$ =`swf`.  
