@@ -35,8 +35,7 @@ double complex function eval_fit(is,iperp,ppar_valC)
   !! by the subroutine [[determine_param_fit(subroutine)]].
 
         use alps_var, only : fit_type, pp, param_fit, n_fits, gamma_rel,nspec,relativistic
-        use alps_var, only : basis_representation, poly_fit_coeffs, poly_order
-        use alps_var, only : iproc
+        use alps_var, only : ACmethod, poly_fit_coeffs, poly_order
 	use alps_distribution_analyt, only : distribution_analyt
 	implicit none
 
@@ -74,7 +73,7 @@ double complex function eval_fit(is,iperp,ppar_valC)
 	double precision,allocatable, dimension(:) :: params
 	!! Array of fit parameters.
 
- select case (basis_representation(is))
+ select case (ACmethod(is))
  case (0)
     ! Use the pre-coded distribution from distribution/distribution_analyt.f90
     eval_fit=distribution_analyt(is,pp(is,iperp,1,1),ppar_valC)
@@ -172,10 +171,11 @@ double complex function eval_fit(is,iperp,ppar_valC)
 
 case (2)
    ! use the orthogonal polynomials of kind described in &poly_is
-   !write(*,*)'starting eval_fit'
+   
+   !write(*,*)iproc,is,iperp,ppar_valC
    eval_fit=fit_function_poly(is,iperp,ppar_valC,poly_order(is),&
         poly_fit_coeffs(is,iperp,0:poly_order(is)))
-   !write(*,*)'fit_function_poly success!'
+   !write(*,*)iproc,is,iperp,ppar_valC,eval_fit
    
 end select
 end function eval_fit
@@ -271,7 +271,8 @@ double complex function fit_function_poly(is,iperp,ppar_val,n_poly,fit_coeffs)
   !! with the one-dimensional polynomical coefficient array fit_coeffs is fed into the
   !! function.
   !! For the evaluation in ALPS, use [[eval_fit(function)]].
-	use alps_var, only : pp, poly_kind, npar, logfit, pi
+  use alps_var, only : pp, poly_kind, npar, logfit
+  use alps_var, only : poly_log_max
  implicit none
 
  integer :: n_poly
@@ -310,7 +311,7 @@ double complex function fit_function_poly(is,iperp,ppar_val,n_poly,fit_coeffs)
     norm_2=5.d-1*(pp(is,iperp,npar,2)-pp(is,iperp,0,2))
     ppar_val_tmp=(ppar_val-norm_1)/norm_2
 
-    if (abs(ppar_val_tmp).ge.1.d0) then !!kgk: should this be .gt. or .ge. ?
+    if (abs(ppar_val_tmp).gt.1.d0) then !!kgk: should this be .gt. or .ge. ?
        fit_function_poly=0.d0
     else
     n=0
@@ -324,71 +325,39 @@ double complex function fit_function_poly(is,iperp,ppar_val,n_poly,fit_coeffs)
        fit_function_poly=fit_function_poly+fit_coeffs(n)*poly_basis(n)
     enddo
     if (logfit(is)) then
-       !write(*,*)'before',fit_function_poly,ppar_val,ppar_val_tmp,abs(ppar_val_tmp)
+
        !if (abs(fit_function_poly).gt.20.) then
        !KGK: how does this impact the 'noise'
        !if ((real(fit_function_poly).gt.1.).or.(aimag(fit_function_poly).gt.1.)&
        !     .or.(real(fit_function_poly).lt.-18.).or.(aimag(fit_function_poly).lt.-18.)) then
 
+       !if ((real(fit_function_poly).gt.10.).or.(aimag(fit_function_poly).gt.10.)&
+       !     .or.(real(fit_function_poly).lt.-22.).or.(aimag(fit_function_poly).lt.-22.)) then
+
        !KGK: Need to investigate the appropriate threshold here for when this functional
        !representation ceases to work.
-       if ((real(fit_function_poly).gt.1.).or.(aimag(fit_function_poly).gt.1.)&
-            .or.(real(fit_function_poly).lt.-17.).or.(aimag(fit_function_poly).lt.-17.)) then 
-          fit_function_poly=0.d0
+       !if ((real(fit_function_poly).gt.17.).or.(aimag(fit_function_poly).gt.17.)&
+         !if ((real(fit_function_poly).lt.-poly_log_max(is)).or.& !??
+              !(aimag(fit_function_poly).lt.-poly_log_max(is))) then
+
+       if ((real(fit_function_poly).lt.-poly_log_max(is)).or.& !??
+            (aimag(fit_function_poly).lt.-poly_log_max(is)).or.&
+            (real(fit_function_poly).gt. poly_log_max(is)).or.& !??
+            (aimag(fit_function_poly).gt.poly_log_max(is))) then 
+
+
+       !if ((abs(fit_function_poly).lt.-100.d0).or.(abs(fit_function_poly).gt.100.d0)) then
+       !if ((abs(fit_function_poly).lt.-50.d0).or.(abs(fit_function_poly).gt.50.d0)) then
+       !if (abs(fit_function_poly).gt.poly_log_max(is)) then
+          fit_function_poly=cmplx(0.d0,0.d0,kind(1.d0))
        else
+          !write(*,*)iproc,is,iperp,ppar_val,ppar_val_tmp,fit_function_poly
           fit_function_poly=10.d0**(fit_function_poly)
+          !write(*,*)iproc,is,iperp,ppar_val,ppar_val_tmp,fit_function_poly
        endif
-       !write(*,*)'after',fit_function_poly
     endif
  endif
- case (2)
-    !Hermite Representation
-    n=0
-    poly_basis(n)=1.d0
-    fit_function_poly=fit_function_poly+fit_coeffs(n)*poly_basis(n)
-    n=1
-    poly_basis(n)=2.d0*ppar_val
-    fit_function_poly=fit_function_poly+fit_coeffs(n)*poly_basis(n)
-    do n=2,n_poly
-       poly_basis(n) = 2.d0 * ppar_val * poly_basis(n-1) - &
-            2.d0*(n-1.d0)*poly_basis(n-2)
-       fit_function_poly=fit_function_poly+fit_coeffs(n)*poly_basis(n)
-    enddo
-    if (logfit(is)) then
-       if (abs(fit_function_poly).gt.20.) then
-          fit_function_poly=0.d0
-       else
-          fit_function_poly=10.d0**(fit_function_poly)
-       endif
-    endif
- case (3)
-    !Weighted Hermite Representation
-    n=0
-    poly_basis(n)=1.d0
-    n=1
-    poly_basis(n)=2.d0*ppar_val
-    do n=2,n_poly
-       poly_basis(n) = 2.d0 * ppar_val * poly_basis(n-1) - &
-            2.d0*(n-1.d0)*poly_basis(n-2)
-    enddo
-
-    n=0
-    fit_function_poly=fit_function_poly+&
-         fit_coeffs(n)*poly_basis(n)*exp(-ppar_val**2.d0/2.d0)/&
-         (2.d0**n*pi**5.d-1*factorial(n))**5.d-1
-    n=1
-    fit_function_poly=fit_function_poly+&
-         fit_coeffs(n)*poly_basis(n)*exp(-ppar_val**2.d0/2.d0)/&
-         (2.d0**n*pi**5.d-1*factorial(n))**5.d-1
-    do n=2,n_poly
-       fit_function_poly=fit_function_poly+&
-            fit_coeffs(n)*poly_basis(n)*exp(-ppar_val**2.d0/2.d0)/&
-            (2.d0**n*pi**5.d-1*factorial(n))**5.d-1
-    enddo
-    if (logfit(is)) then
-       fit_function_poly=10.d0**(fit_function_poly)
-    endif
- end select
+end select
  
  return
 end function fit_function_poly
@@ -398,7 +367,7 @@ subroutine determine_param_fit
 	!! the full field [[alps_var(module):param_fit(variable)]].
 	use alps_var, only : writeOut, fit_type, param_fit, n_fits, nspec, f0, nperp, npar, logfit, runname
         use alps_var, only : relativistic,npparbar,f0_rel,ngamma, perp_correction, gamma_rel, usebM
-        use alps_var, only : basis_representation, poly_fit_coeffs 
+        use alps_var, only : ACmethod, poly_fit_coeffs 
 	implicit none
 
 	integer :: ifit
@@ -481,7 +450,7 @@ subroutine determine_param_fit
      fit_type(is,:)=1
      perp_correction(is,:)=1.d0
 
-		 elseif (basis_representation(is).EQ.0) then
+		 elseif (ACmethod(is).EQ.0) then
 
 			 	write (*,'(a,i2)') ' Using analytical function from distribution/distribution_analyt.f90: no fits necessary for species ',is
 
@@ -489,7 +458,7 @@ subroutine determine_param_fit
 				fit_type(is,:)=1
     perp_correction(is,:)=1.d0
 
-    		 elseif (basis_representation(is).EQ.2) then
+    		 elseif (ACmethod(is).EQ.2) then
 
 			 	write (*,'(a,i2)') ' Using polynomial representation for species ',is
 
@@ -746,7 +715,7 @@ subroutine determine_param_fit
 		deallocate (params)
 		deallocate (param_mask)
 
-endif !end if (bM or basis_representation) selection 
+endif !end if (bM or ACmethod) selection 
 enddo	! End loop over is
 
 
@@ -847,8 +816,8 @@ subroutine set_polynomial_basis(is)
   !! This subroutine evaluates the General Linear Least Squares fit
   !! to the distribution function for component 'is' using the selected
   !! polynomial basis functions.
-  use alps_var, only : polynomials, poly_kind, poly_order, pp
-  use alps_var, only : writeOut, npar, pi
+  use alps_var, only : polynomials, poly_kind, poly_order
+  use alps_var, only : writeOut, npar
   use alps_io, only : alps_error
   implicit none
 
@@ -864,9 +833,6 @@ subroutine set_polynomial_basis(is)
   double precision :: yy
   !! Argument of Polynomial
 
-  character (100) :: writename
-  !! File name for file i/o.
-
   select case (poly_kind(is))
   case (1) !Chebyshev Polynomial Basis
      if (writeOut) & 
@@ -881,51 +847,9 @@ subroutine set_polynomial_basis(is)
                 2.0 * yy * polynomials(is,ipar,n-1) - polynomials(is,ipar,n-2)
         end do
      enddo
-  case (2) !Hermite Polynomial Basis
-     if (writeOut) & 
-          write(*,'(a,i2)')'Constructing Hermite Basis for Component ',is
-     
-     polynomials(is,:,0) = 1.0
-     do ipar = 0, npar
-        yy=pp(is,0,ipar,2)
-        polynomials(is,ipar,1) = 2.d0*yy
-        do n = 2, poly_order(is)
-           polynomials(is,ipar,n) = &
-                2.0 * yy * polynomials(is,ipar,n-1) - 2.d0**(n-1.d0)*polynomials(is,ipar,n-2)
-        end do
-     enddo
-  case (3) !Weighted Hermite Polynomial Basis
-     if (writeOut) & 
-          write(*,'(a,i2)')'Constructing Weighted Hermite Basis for Component ',is
-     
-     polynomials(is,:,0) = 1.d0
-     do ipar = 0, npar
-        yy=pp(is,0,ipar,2)
-        polynomials(is,ipar,1) = 2.d0*yy
-        do n = 2, poly_order(is)
-           polynomials(is,ipar,n) = &
-                2.d0 * yy * polynomials(is,ipar,n-1) - 2.d0*(n-1.d0)*polynomials(is,ipar,n-2)
-        end do
-     enddo
-     !Apply Exponential Weight
-     do n=0,poly_order(is)
-        do ipar=0,npar
-           polynomials(is,ipar,n)=polynomials(is,ipar,n)*exp(-pp(is,0,ipar,2)**2.d0/2.d0)/&
-                (2.d0**n*pi**5.d-1*factorial(n))**5.d-1
-        enddo
-     enddo
   case default
      call alps_error(10)
   end select
-
-  !OUTPUT POLYNOMIAL BASIS
-  !write(writeName,'(a,i0,a,i0,a)')&
-  !     'distribution/poly_kind_',poly_kind(is),'_s',is,'.out'
-  !open(unit=1001,file=trim(writeName),status='replace')
-  !do ipar=0,npar
-  !   write(1001,*)pp(is,0,ipar,2),polynomials(is,ipar,0:10)
-  !enddo
-  !close(1001)
   
 end subroutine set_polynomial_basis
 
@@ -934,7 +858,7 @@ subroutine output_fit(qualitytotal)
 	use alps_io, only : isnancheck, alps_error
 	use alps_var, only : fit_type, param_fit, n_fits, nspec, nperp, npar, pp, f0, pi, vA, runname
  use alps_var, only : relativistic,gamma_rel,pparbar_rel,ngamma,npparbar,f0_rel, ms, usebM
- use alps_var, only : basis_representation
+ use alps_var, only : ACmethod
  use alps_var, only : ns, qs, ms, bMpdrifts
 	implicit none
 
@@ -1008,7 +932,7 @@ subroutine output_fit(qualitytotal)
 
 	write (*,'(a)') ' Results of the fit for hybrid analytic continuation at iperp = 1:'
  do is=1,nspec
-    select case (basis_representation(is))
+    select case (ACmethod(is))
     case (1)
        do ifit=1,n_fits(is)
           if(fit_type(is,ifit).EQ.1) n_params=3
@@ -1056,7 +980,7 @@ subroutine output_fit(qualitytotal)
             ' Parallel current density: ', current(is)
 
     else
-       select case (basis_representation(is))
+       select case (ACmethod(is))
        case (1)
 	  unit_spec=2000+is
 	  write(specwrite,'(i0)') is
@@ -1149,8 +1073,12 @@ enddo
    endif
 
 case (2)
-   write(*,'(a)')'evaluated charge not yet implemented!!!'
 
+   integrate = 0.d0
+   dpperp = pp(is,2,2,1)-pp(is,1,2,1)
+   dppar = pp(is,2,2,2)-pp(is,2,1,2)
+
+   
      unit_spec=2000+is
      write(specwrite,'(i0)') is
      open(unit = unit_spec,file = 'distribution/'//trim(runname)//'.poly_fit_result.'//trim(specwrite)//'.out', status = 'replace')
@@ -1158,16 +1086,38 @@ case (2)
      do iperp=0,nperp
         do ipar=0,npar
            ppar_comp=pp(is,iperp,ipar,2)
-           !write(*,*)ppar_comp,eval_fit(is,iperp,ppar_comp)
            write (unit_spec,*) pp(is,iperp,ipar,1), pp(is,iperp,ipar,2), &
-                !eval_fit(is,iperp,ppar_comp)
                 real(eval_fit(is,iperp,ppar_comp)), &
            abs(real(eval_fit(is,iperp,ppar_comp))-f0(is,iperp,ipar))/f0(is,iperp,ipar)
+
+    integrate = integrate + pp(is,iperp,ipar,1) * real(eval_fit(is,iperp,ppar_comp)) * &
+             2.d0 * pi * dpperp * dppar
+    charge(is) = charge(is) + qs(is)* ns(is)* pp(is,iperp,ipar,1) * real(eval_fit(is,iperp,ppar_comp)) * &
+         2.d0 * pi * dpperp * dppar
+    current(is) = current(is) + (qs(is)* ns(is)/ms(is))*&
+         pp(is,iperp,ipar,2) *pp(is,iperp,ipar,1) * real(eval_fit(is,iperp,ppar_comp)) * &
+         2.d0 * pi * dpperp * dppar
            
         enddo
      enddo
-
+    
      close(unit_spec)
+
+        write(*,'(a)')&
+        '-=-=-=-='
+   write(*,'(a,i3,a)')&
+        'Species ',is,':'
+   write(*,'(a, 2es14.4)') &
+        ' Integration of polynomial representation:              ', integrate
+   write(*,'(a, 2es14.4)') &
+        ' Charge density of polynomial representation:           ', charge(is)
+   if (relativistic(is)) then
+      write(*,'(a)')'Relativistic parallel current density not yet implemented!'
+   else
+      write(*,'(a, 2es14.4)') &
+         ' Parallel current density of polynomial representation: ', current(is)
+   endif
+
 
    
 end select

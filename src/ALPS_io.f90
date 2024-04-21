@@ -55,7 +55,8 @@ contains
     use alps_var, only : scan_option, n_scan, scan, relativistic, logfit, usebM
     use alps_var, only : maxsteps_fit, n_fits, lambda_initial_fit, lambdafac_fit, epsilon_fit
     use alps_var, only : bMnmaxs, bMBessel_zeros, bMbetas, bMalphas, bMpdrifts
-    use alps_var, only : basis_representation, poly_kind, poly_order, polynomials, poly_fit_coeffs
+    use alps_var, only : ACmethod, poly_kind, poly_order, polynomials, poly_fit_coeffs
+    use alps_var, only : poly_log_max
     implicit none
 
     integer :: ik
@@ -147,9 +148,10 @@ contains
     allocate(bMpdrifts(1:nspec)); bMpdrifts=0.d0
 
     !Basis Function Parameters:
-    allocate(basis_representation(1:nspec)); basis_representation = 1
+    allocate(ACmethod(1:nspec)); ACmethod = 1
     allocate(poly_kind(1:nspec)); poly_kind = 0
     allocate(poly_order(1:nspec)); poly_order = 0
+    allocate(poly_log_max(1:nspec)); poly_log_max = 0
 
     !READ IN SPECIES PARAMETERS:
     do is = 1, nspec
@@ -159,7 +161,7 @@ contains
        write(*,'(a,i3,a)')'Species ',is,' : '
        write(*,'(a,es11.4,a,es11.4,a,es11.4)')&
             ' ns/nREF = ',ns(is),' | qs/qREF = ',qs(is),' | ms/mREF = ',ms(is)
-       select case (basis_representation(is))
+       select case (ACmethod(is))
        case (0)
           write(*,'(a)') ' Using function defined in distribution/distribution_analyt.f90'
        case (1)
@@ -201,7 +203,7 @@ contains
           close(unit)
        else
           !Read in initial guesses for LM fits.
-          select case(basis_representation(is))
+          select case(ACmethod(is))
           case (1)
              do ifit=1,n_fits(is)
                 call get_indexed_double_namelist_unit (unit, "ffit", is, ifit)
@@ -246,12 +248,6 @@ contains
              case (1)
                 write(*,'(a,i0,a,i0)')&
                      'Chebyshev Representation of Order ',poly_order(is),' for species ',is
-             case (2)
-                write(*,'(a,i0,a,i0)')&
-                     'Hermite Representation of Order ',poly_order(is),' for species ',is
-             case (3)
-                write(*,'(a,i0,a,i0)')&
-                     'Weighted Hermite Representation of Order ',poly_order(is),' for species ',is
              case default
                 call alps_error(10)
              end select
@@ -320,7 +316,7 @@ contains
     !!Subroutine for reading in species parameters
     use alps_var, only : ns, qs, ms, n_fits
     use alps_var, only : relativistic, logfit, usebM
-    use alps_var, only : basis_representation
+    use alps_var, only : ACmethod
     implicit none
 
     integer,intent(in) :: is
@@ -335,8 +331,8 @@ contains
     double precision :: mm
     !! Read in value for mass for \(f_j\).
 
-    double precision :: basis
-    !! Read in value for basis representation
+    double precision :: AC_method
+    !! Read in value for Analytic Continuation Method
     
     integer :: ff
     !!Read in value for number of fitted functions.
@@ -351,17 +347,17 @@ contains
     !! Use actual numerical integration or bi-Maxwellian/cold-plasma proxy via NHDS.
 
     nameList /spec/ &
-         nn,qq,mm,basis,ff,relat,log_fit,use_bM
+         nn,qq,mm,AC_method,ff,relat,log_fit,use_bM
     read (unit=unit,nml=spec)
     ns(is) = nn; qs(is) = qq; ms(is) = mm
     n_fits(is)=ff; relativistic(is)=relat
     logfit(is)=log_fit; usebM(is)=use_bM
-    basis_representation(is)=basis
+    ACmethod(is)=AC_method
   end subroutine spec_read
 
   subroutine poly_read(is)
     !!Reads in Polynomial Basis Function Parameters
-    use alps_var, only : poly_kind, poly_order
+    use alps_var, only : poly_kind, poly_order, poly_log_max
     implicit none
 
     integer,intent(in) :: is
@@ -374,12 +370,17 @@ contains
     integer :: order
     !! Maximum order of Polynomial
 
+    double precision :: log_max
+    !! Maximum Value of Polynomial Evaluation
+
     nameList /poly_spec/ &
-         kind, order
+         kind, order, log_max
 
     read(unit=unit,nml=poly_spec)
     poly_kind(is)=kind
     poly_order(is)=order
+    poly_log_max(is)=log_max
+
   end subroutine poly_read
 
   subroutine bM_read(is)

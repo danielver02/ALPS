@@ -223,7 +223,7 @@ module alps_var
   double precision, dimension(:,:), allocatable :: bessel_array
   !! Array of Bessel functions; (nlim(1):nlim(2)+1,0:nperp).
 
-  integer, dimension(:), allocatable :: basis_representation
+  integer, dimension(:), allocatable :: ACmethod
   !!Selection of method for Hybrid-Analytical Continutation, (1:nspec)
   !! 0) Use the analytic function.
   !! 1) Use the 'n_fits' functions described with 'fit_type'
@@ -243,8 +243,10 @@ module alps_var
   integer, dimension(:), allocatable :: poly_kind
   !!Selection of Orthogonal Basis Function, (1:nspec)
   !! 1) Chebyshev Polynomials
-  !! 2) Hermite Polynomials
-  !! 3) Hermite Polynomials, with weighting factor
+  !! Other Polynomials can be added in future releases.
+
+  double precision, dimension(:), allocatable :: poly_log_max
+  !!Limit on the Evaluation of the Polynomial Representation, (1:nspec)
   
   integer, dimension(:), allocatable :: poly_order
   !! Selection of Maximum Order of Orthogonal Basis Function, (1:nspec)
@@ -395,6 +397,7 @@ module alps_var
   public :: relativistic, logfit, usebM
   public :: f0_rel,df0_rel,nspec_rel,gamma_rel,pparbar_rel,ngamma,npparbar
   public :: bMnmaxs,bMBessel_zeros,bMbetas,bMalphas,bMpdrifts
-  public :: basis_representation, poly_kind, poly_order, polynomials, poly_fit_coeffs
+  public :: ACmethod, poly_kind, poly_order, polynomials, poly_fit_coeffs
+  public :: poly_log_max
 
  end module alps_var

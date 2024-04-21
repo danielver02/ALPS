@@ -36,7 +36,8 @@ contains
     use alps_var, only : determine_minima, n_resonance_interval, positions_principal, Tlim
     use alps_var, only : n_scan, scan, scan_option, relativistic, logfit, usebM
     use alps_var, only : bMnmaxs, bMBessel_zeros, bMbetas, bMalphas, bMpdrifts
-    use alps_var, only : basis_representation, poly_kind, poly_order, poly_fit_coeffs
+    use alps_var, only : ACmethod, poly_kind, poly_order, poly_fit_coeffs
+    use alps_var, only : poly_log_max
     use mpi
     implicit none
 
@@ -109,9 +110,10 @@ contains
        allocate(bMalphas(1:nspec)); bMalphas=1.d0
        allocate(bMpdrifts(1:nspec)); bMpdrifts=0.d0
 
-       allocate(basis_representation(1:nspec)); basis_representation=1
+       allocate(ACmethod(1:nspec)); ACmethod=1
        allocate(poly_order(1:nspec)); poly_order=0
        allocate(poly_kind(1:nspec)); poly_kind=0
+       allocate(poly_log_max(1:nspec)); poly_log_max=0
               
        allocate(wroots(1:numroots));wroots=cmplx(0.d0,0.d0,kind(1.d0))
        
@@ -146,12 +148,14 @@ contains
     call mpi_bcast(wroots(:), size(wroots(:)),&
          MPI_DOUBLE_COMPLEX, 0, MPI_COMM_WORLD, ierror)
 
-    call mpi_bcast(basis_representation(:), size(basis_representation(:)),&
+    call mpi_bcast(ACmethod(:), size(ACmethod(:)),&
          MPI_INTEGER, 0, MPI_COMM_WORLD, ierror)
     call mpi_bcast(poly_kind(:), size(poly_kind(:)),&
          MPI_INTEGER, 0, MPI_COMM_WORLD, ierror)
     call mpi_bcast(poly_order(:), size(poly_order(:)),&
          MPI_INTEGER, 0, MPI_COMM_WORLD, ierror)
+    call mpi_bcast(poly_log_max(:), size(poly_log_max(:)),&
+         MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierror)
     
     if (n_scan.gt.0) then
        do is=1,n_scan

@@ -430,7 +430,6 @@ end subroutine derivative_f0
     	wave=cmplx(0.d0,0.d0,kind(1.d0))
       eps=cmplx(0.d0,0.d0,kind(1.d0))
 
-
        ! Sum over species:
        do is = 1, nspec
           eps(1,1) = eps(1,1) + chi(is,1,1)
@@ -440,6 +439,11 @@ end subroutine derivative_f0
           eps(1,2) = eps(1,2) + chi(is,1,2)
           eps(1,3) = eps(1,3) + chi(is,1,3)
           eps(2,3) = eps(2,3) + chi(is,2,3)
+
+          !Trouble shooting electron firehose
+          !write(*,'(6es14.4,i3)')chi0(is,1,1),chi0(is,1,2),chi0(is,1,3),is
+          !write(*,'(6es14.4,i3)')chi0(is,2,1),chi0(is,2,2),chi0(is,2,3),is
+          !write(*,'(6es14.4,i3)')chi0(is,3,1),chi0(is,3,2),chi0(is,3,3),is
 
        enddo
 
@@ -658,7 +662,6 @@ double complex function integrate(om, nn, mode, iparmin, iparmax)
   !! This function performs the integral in Eq. (2.9) of the code paper, but without
   !! accounting for the Landau contour integral. It is called by [[full_integrate(function)]].
   use alps_var, only : nperp, pp, pi, sproc
-  use alps_var, only : iproc
   implicit none
 
   double complex, intent(in) :: om
@@ -1216,6 +1219,18 @@ double complex function landau_integrate(om, nn, mode)
   double complex :: dfpar_C
   !! Derivative of f0 evaluated at resonance.
 
+  double complex :: fpar_i
+  !! value of distribution at (iperp,p_res+dppar)
+
+  double complex :: fpar_f
+  !! value of distribution at (iperp,p_res-dppar)
+
+  double complex :: fperp_i
+  !! value of distribution at (iperp+1,p_res)
+
+  double complex :: fperp_f
+  !! value of distribution at (iperp-1,p_res)
+
 	integer :: iperp
 	!! Index of perpendicular momentum.
 
@@ -1238,10 +1253,23 @@ double complex function landau_integrate(om, nn, mode)
 		endif
 
   p_res = (ms(sproc) * (om) - 1.d0*nn * qs(sproc))/kpar
+
+  fpar_i=eval_fit(sproc,iperp,p_res+dppar)
+  fpar_f=eval_fit(sproc,iperp,p_res-dppar)
+
+  fperp_i=eval_fit(sproc,iperp+1,p_res)
+  fperp_f=eval_fit(sproc,iperp-1,p_res)
+
+  if ((abs(fpar_i).eq.0.d0).or.(abs(fpar_f).eq.0.d0)&
+       .or.(abs(fperp_i).eq.0.d0).or.(abs(fpar_f).eq.0.d0)) then
+     landau_integrate =cmplx(0.d0,0.d0,kind(1.d0))
+     return
+  endif
+  
   
   ! Calculate the derivatives of f0 at the complex p_res:
-  dfperp_C=(eval_fit(sproc,iperp+1,p_res)-eval_fit(sproc,iperp-1,p_res))/(2.d0*dpperp)
-  dfpar_C=(eval_fit(sproc,iperp,p_res+dppar)-eval_fit(sproc,iperp,p_res-dppar))/(2.d0*dppar)
+  dfperp_C=(fperp_i-fperp_f)/(2.d0*dpperp)
+  dfpar_C=(fpar_i-fpar_f)/(2.d0*dppar)
 
   landau_integrate = landau_integrate - h * int_T_res(nn, iperp, p_res, mode)*&
         (qs(sproc) /abs(kpar)) *( (pp(sproc, iperp, 1, 1) * dfpar_C - &
@@ -2901,9 +2929,11 @@ subroutine refine_guess
      call mpi_barrier(mpi_comm_world,ierror)
      omega=wroots(iw)
 
+     if (proc0.and.writeOut) write(*,'(2es14.4)')wroots(iw)
      call secant(omega)
 
      wroots(iw)=omega
+
 
      tmpDisp=disp(wroots(iw))
      if (proc0.and.(abs(tmpDisp).NE.0.d0)) then
