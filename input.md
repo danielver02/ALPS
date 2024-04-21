@@ -256,6 +256,7 @@ Only used if `AC_method=2`.
 
 **`kind`**
 Type of the basis polynomial:
+
 - 1: Chebychev
 
 **`order`**
