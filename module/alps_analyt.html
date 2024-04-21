@@ -77,7 +77,7 @@
 
             <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
               <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
-                 title="15.3% of total for modules and submodules.">706 statements</a>
+                 title="18.0% of total for modules and submodules.">881 statements</a>
             </li>
 
         </ul>
@@ -123,6 +123,8 @@
         <div class="list-group list-group-flush">
             <a class="list-group-item" href="../module/alps_analyt.html#proc-eval_fit">eval_fit</a>
             <a class="list-group-item" href="../module/alps_analyt.html#proc-fit_function">fit_function</a>
+            <a class="list-group-item" href="../module/alps_analyt.html#proc-fit_function_poly">fit_function_poly</a>
+            <a class="list-group-item" href="../module/alps_analyt.html#proc-factorial">factorial</a>
         </div>
       </div>
     </div>
@@ -135,6 +137,9 @@
       <div id="subs-0" class="collapse">
         <div class="list-group list-group-flush">
             <a class="list-group-item" href="../module/alps_analyt.html#proc-determine_param_fit">determine_param_fit</a>
+            <a class="list-group-item" href="../module/alps_analyt.html#proc-determine_glls">determine_GLLS</a>
+            <a class="list-group-item" href="../module/alps_analyt.html#proc-least_squares_fit">least_squares_fit</a>
+            <a class="list-group-item" href="../module/alps_analyt.html#proc-set_polynomial_basis">set_polynomial_basis</a>
             <a class="list-group-item" href="../module/alps_analyt.html#proc-output_fit">output_fit</a>
             <a class="list-group-item" href="../module/alps_analyt.html#proc-determine_jt">determine_JT</a>
             <a class="list-group-item" href="../module/alps_analyt.html#proc-lm_nonlinear_fit">LM_nonlinear_fit</a>
@@ -334,7 +339,7 @@ by the subroutine <a href="../proc/determine_param_fit.html">determine_param_fit
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-is~5"></span>
+              <span class="anchor" id="variable-is"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -349,7 +354,7 @@ by the subroutine <a href="../proc/determine_param_fit.html">determine_param_fit
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-iperp~2"></span>
+              <span class="anchor" id="variable-iperp"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -412,7 +417,7 @@ use <a href="../proc/eval_fit.html">eval_fit</a>.</p>
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-is~6"></span>
+              <span class="anchor" id="variable-is~2"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -497,6 +502,161 @@ use <a href="../proc/eval_fit.html">eval_fit</a>.</p>
     </div>
   </div>
 
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-fit_function_poly"></span> <h3>public  function <a href='../proc/fit_function_poly.html'>fit_function_poly</a>(is, iperp, ppar_val, n_poly, fit_coeffs)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>This function evaluates the orthogonal polynomical fit to f0
+ at real pperp_val and complex ppar_val,
+ with the one-dimensional polynomical coefficient array fit_coeffs is fed into the
+ function.
+ For the evaluation in ALPS, use <a href="../proc/eval_fit.html">eval_fit</a>.
+kgk: should this be .gt. or .ge. ?</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-is~3"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>is</strong></td>
+            <td>
+<p>Index of species for which <a href="../proc/eval_fit.html">eval_fit</a> is executed.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-iperp~2"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>iperp</strong></td>
+            <td>
+<p>Index of perpendicular momentum at which <a href="../proc/fit_function_poly.html">fit_function_poly</a> is executed.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ppar_val~2"></span>
+              double complex
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>ppar_val</strong></td>
+            <td>
+<p>Complex parallel momentum.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-n_poly"></span>
+              integer
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>n_poly</strong></td>
+            <td>
+<p>Maximum Polynomial Order</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-fit_coeffs"></span>
+              double precision,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>fit_coeffs</strong>(0:n_poly)</td>
+            <td>
+<p>Array of polynomial coefficients</p>
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <h4>
+    Return Value
+    <small>doublecomplex</small>
+    </h4>
+    
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-factorial"></span> <h3>private  function <a href='../proc/factorial.html'>factorial</a>(n)  
+</h3></div>
+    <div class="card-body">
+          
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-n~3"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>n</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <h4>
+    Return Value
+    <small>integer</small>
+    </h4>
+    
+
+    </div>
+  </div>
+
         </section>
         <br>
 
@@ -512,6 +672,175 @@ the full field <a href="../module/alps_var.html#variable-param_fit">param_fit</a
 
   <h4>Arguments</h4>
     <em>None</em>
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-determine_glls"></span> <h3>private  subroutine <a href='../proc/determine_glls.html'>determine_GLLS</a>(is)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>This subroutine evaluates the General Linear Least Squares fit
+to the distribution function for component 'is' using the selected
+polynomial basis functions.</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-is~5"></span>
+              integer
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>is</strong></td>
+            <td>
+<p>Index of species.</p>
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-least_squares_fit"></span> <h3>public  subroutine <a href='../proc/least_squares_fit.html'>least_squares_fit</a>(AA, BB, coeffs, npoly)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>Solves General Linear Least Squares Normal Equation</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-aa"></span>
+              double precision,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>AA</strong>(0:npar,0:npoly)</td>
+            <td>
+<p>Polynomial Basis</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-bb"></span>
+              double precision,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>BB</strong>(0:npar)</td>
+            <td>
+<p>f0(is,iperp,:)</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-coeffs"></span>
+              double precision,
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>coeffs</strong>(0:npoly)</td>
+            <td>
+<p>fit coefficients</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-npoly"></span>
+              integer
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>npoly</strong></td>
+            <td>
+<p>Order for polyhedral representation</p>
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-set_polynomial_basis"></span> <h3>private  subroutine <a href='../proc/set_polynomial_basis.html'>set_polynomial_basis</a>(is)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>This subroutine evaluates the General Linear Least Squares fit
+to the distribution function for component 'is' using the selected
+polynomial basis functions.</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-is~6"></span>
+              integer
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>is</strong></td>
+            <td>
+<p>Index of species.</p>
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
 
     </div>
   </div>
@@ -577,7 +906,7 @@ fit parameter array.</p>
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-is~9"></span>
+              <span class="anchor" id="variable-is~8"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -652,7 +981,7 @@ fit parameter array.</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-iperp~5"></span>
+              <span class="anchor" id="variable-iperp~6"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -724,7 +1053,7 @@ The variable quality is the sum of the squares of all residuals.</p>
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-is~10"></span>
+              <span class="anchor" id="variable-is~9"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -814,7 +1143,7 @@ The variable quality is the sum of the squares of all residuals.</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-iperp~6"></span>
+              <span class="anchor" id="variable-iperp~7"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -829,7 +1158,7 @@ The variable quality is the sum of the squares of all residuals.</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-npar~5"></span>
+              <span class="anchor" id="variable-npar"></span>
               integer,
             </td>
 <td>intent(in)</td>

@@ -10,7 +10,7 @@
     <meta name="author" content="Kristopher Klein, Daniel Verscharen" >
     <link rel="icon" href="../favicon.png">
 
-    <title>normalize &ndash; ALPS</title>
+    <title>factorial &ndash; ALPS</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
@@ -66,8 +66,8 @@
 
     <div class="container">
   <div class="row">
-    <h1>normalize
-      <small>Subroutine</small>
+    <h1>factorial
+      <small>Function</small>
       
     </h1>
       <div class="container p-2 mb-4 bg-light border rounded-3">
@@ -77,7 +77,7 @@
 
             <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
               <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
-                 title=" 0.5% of total for procedures.">24 statements</a>
+                 title=" 0.2% of total for procedures.">10 statements</a>
             </li>
 
         </ul>
@@ -85,7 +85,8 @@
       <div class="col">
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb justify-content-end mb-0">
-            <li class="breadcrumb-item active" aria-current="page">normalize</li>
+                <li class="breadcrumb-item"><a href='../module/alps_analyt.html'>alps_analyt</a></li>
+            <li class="breadcrumb-item active" aria-current="page">factorial</li>
           </ol>
         </nav>
       </div>
@@ -130,11 +131,10 @@
     </div>
     
     <div class="col-md-9" id='text'>
-    <h2> subroutine normalize(pperp, ppar, grid_fine, nperp, npar)  
+    <h2>private  function factorial(n)  
 </h2>
     
 
-    <p>This subroutine normalises the fine interpolation grid.</p>
 
 
     <h3>Arguments</h3>
@@ -150,52 +150,7 @@
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-pperp~2"></span>
-              double precision,
-            </td>
-<td>intent(in)</td>
-              <td></td>            <td>
-              
-            </td>
-            <td>::</td>
-            <td><strong>pperp</strong>(0:nperp,0:npar)</td>
-            <td>
-                <p>Coordinates of perpendicular momentum on fine grid.</p>
-            </td>
-        </tr>
-        <tr>
-            <td>
-              <span class="anchor" id="variable-ppar~3"></span>
-              double precision,
-            </td>
-<td>intent(in)</td>
-              <td></td>            <td>
-              
-            </td>
-            <td>::</td>
-            <td><strong>ppar</strong>(0:nperp,0:npar)</td>
-            <td>
-                <p>Coordinates of parallel momentum on fine grid.</p>
-            </td>
-        </tr>
-        <tr>
-            <td>
-              <span class="anchor" id="variable-grid_fine~2"></span>
-              double precision,
-            </td>
-<td>intent(inout)</td>
-              <td></td>            <td>
-              
-            </td>
-            <td>::</td>
-            <td><strong>grid_fine</strong>(0:nperp,0:npar)</td>
-            <td>
-                <p>Fine output grid from interpolation.</p>
-            </td>
-        </tr>
-        <tr>
-            <td>
-              <span class="anchor" id="variable-nperp~3"></span>
+              <span class="anchor" id="variable-n~3"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -203,29 +158,21 @@
               
             </td>
             <td>::</td>
-            <td><strong>nperp</strong></td>
+            <td><strong>n</strong></td>
             <td>
-                <p>Number of perpendicular steps on fine output grid.</p>
-            </td>
-        </tr>
-        <tr>
-            <td>
-              <span class="anchor" id="variable-npar~4"></span>
-              integer,
-            </td>
-<td>intent(in)</td>
-              <td></td>            <td>
-              
-            </td>
-            <td>::</td>
-            <td><strong>npar</strong></td>
-            <td>
-                <p>Number of parallel steps on fine output grid.</p>
+                
             </td>
         </tr>
     </tbody>
   </table>
 
+      <h3>Return Value
+        <small>
+          <span class="anchor" id="variable-factorial"></span>
+          integer
+        </small>
+      </h3>
+      
     <br>
 
 
