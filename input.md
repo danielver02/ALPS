@@ -10,7 +10,7 @@ The following namelists and associated input parameters are read in by ALPS from
 General system parameters.
 
 **`kperp`**  
-Initial perpendicular wavevector \(k_{\perp} d_{p}\).
+Initial perpendicular wavevector \(k_{\perp} d_{p}\) XX.
 
 **`kpar`**  
 Initial parallel wavevector $k_{\parallel} d_{p}$.
