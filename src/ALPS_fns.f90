@@ -1561,7 +1561,7 @@ double complex function int_T_res(nn, iperp, p_res, mode)
 end function int_T_res
 
 
-subroutine secant(om)
+subroutine secant(om,in)
   !! This subroutine applies the secant method to find the roots of the dispersion tensor.
 	use ALPS_var, only : numiter, D_threshold, ierror, proc0, writeOut, D_prec
    use mpi
@@ -1569,6 +1569,9 @@ subroutine secant(om)
 
   double complex, intent(inout) :: om
   !! Complex wave frequency \(\omega\).
+
+  integer, intent(in) :: in
+  !! Root number
 
 	double complex :: prevom
   !! Storage of previous entry of om.
@@ -1622,7 +1625,7 @@ subroutine secant(om)
 			jump = 0.d0
 			go_for_secant = .FALSE.
 			if (proc0.AND.writeOut) then
-				write(*,'(a,i4)') ' Converged after iteration ',iter
+				write(*,'(a,i2,a,i4)') ' Root ',in,' converged after iteration ',iter
 				write(*,'(a,2es14.4e3,a,2es14.4e3)') ' D(',real(om),aimag(om),')= ',D
 			endif
 
@@ -1736,8 +1739,14 @@ subroutine om_scan(ik)
   character (50) :: fmt_heat
   !! Format string for heating-rate output.
 
+  double complex, dimension(:),allocatable :: domegadk
+  !! Gradient of the frequency in k-space along the scan direction (1:nroots).
+
+  double precision :: Deltakstep
+  !! Step through k-space (can be kperp, kpar, theta, or k-magnitude).
 
   allocate(jump(1:nroots));jump=.true.
+  allocate(domegadk(1:nroots)); domegadk=cmplx(0.d0,0.d0,kind(1.d0))
 
   if (proc0) then
      allocate(scan_unit(nroots))
@@ -1818,10 +1827,12 @@ subroutine om_scan(ik)
 
   nt = scan(ik)%n_out*scan(ik)%n_res
 
-  kperp_last=kperp;kpar_last=kpar
+  kperp_last=kperp
+  kpar_last=kpar
 
   theta_0=atan(kperp_last/kpar_last)
   k_0=sqrt(kperp_last**2+kpar_last**2)
+
 
   do it = 1, nt
      !Scan through wavevector space:
@@ -1834,6 +1845,7 @@ subroutine om_scan(ik)
            kperp=kperp_last+scan(ik)%diff*it
            kpar= kpar_last +scan(ik)%diff2*it
         endif
+        Deltakstep=0.d0 ! to avoid having to calculate the gradients in 2 dimensions.
      case (1) ! theta_0 to theta_1
         if (scan(ik)%log_scan) then
            theta_1=10.d0**(log10(theta_0)+scan(ik)%diff*it)
@@ -1842,6 +1854,7 @@ subroutine om_scan(ik)
         endif
         kperp=k_0*sin(theta_1)
         kpar=k_0*cos(theta_1)
+        Deltakstep=theta_1-theta_0
      case (2) ! |k_0| to |k_1| @ constant theta
         if (scan(ik)%log_scan) then
            kperp=10.d0**(log10(kperp_last)+scan(ik)%diff*it)
@@ -1850,18 +1863,21 @@ subroutine om_scan(ik)
            kperp=kperp_last+scan(ik)%diff*it
            kpar= kpar_last +scan(ik)%diff2*it
         endif
+        Deltakstep=sqrt(kperp**2+kpar**2)-sqrt(kperp_last**2+kpar_last**2)
      case (3) ! kperp scan
         if (scan(ik)%log_scan) then
            kperp=10.d0**(log10(kperp_last)+scan(ik)%diff*it)
         else
            kperp=kperp_last+scan(ik)%diff*it
         endif
+        Deltakstep=kperp-kperp_last
      case (4) ! kpar scan
         if (scan(ik)%log_scan) then
            kpar=10.d0**(log10(kpar_last)+scan(ik)%diff*it)
         else
            kpar=kpar_last+scan(ik)%diff*it
         endif
+        Deltakstep=kpar-kpar_last
      end select
 
      if (scan(ik)%type_s.ne.4) then
@@ -1885,20 +1901,25 @@ subroutine om_scan(ik)
 
 	if (alljump.EQV..FALSE.) call alps_error(9)
 
+
      do in = 1,nroots
         !Search for new roots
 
         if (jump(in)) then
 
            omega=wroots(in)
+           ! Extrapolate the initial guess along the direction in k-scans:
+           omega=omega+domegadk(in)*Deltakstep
 
-           call secant(omega)
+           call secant(omega,in)
 
+           domegadk(in)=omega-wroots(in)
            wroots(in)=omega
 
            call mpi_bcast(wroots(in), 1, &
                 MPI_DOUBLE_COMPLEX, 0, MPI_COMM_WORLD, ierror)
 
+          ! Run a final instance of disp:
            tmp = disp(omega)
 
            call mpi_barrier(mpi_comm_world,ierror)
@@ -2266,7 +2287,15 @@ subroutine om_double_scan
   character (50) :: fmt_heat
   !! Format string for heating-rate output.
 
+  double complex, dimension(:),allocatable :: domegadk
+  !! Gradient of the frequency in k-space along the scan direction (1:nroots).
+
+  double precision :: Deltakstep
+  !! Step through k-space (can be kperp, kpar, theta, or k-magnitude).
+
+
   allocate(jump(1:nroots)); jump=.true.
+  allocate(domegadk(1:nroots)); domegadk=cmplx(0.d0,0.d0,kind(1.d0))
 
   if (scan(1)%type_s==scan(2)%type_s) then
      call alps_error(5)
@@ -2445,6 +2474,7 @@ subroutine om_double_scan
      !Save roots before starting second parameter scan.
      om_tmp=wroots
 
+
      ! Second scan:
      do it2 = 0, nt2
 
@@ -2456,6 +2486,8 @@ subroutine om_double_scan
            theta_i=atan(kperpi/kpari)
            k_i=sqrt(kperpi**2+kpari**2)
            wroots=om_tmp
+           Deltakstep=0.d0
+           domegadk=cmplx(0.d0,0.d0,kind(1.d0))
         endif
         select case(scan(2)%type_s)
         case (0) ! k_0 to k_1
@@ -2466,6 +2498,7 @@ subroutine om_double_scan
               kperp=kperpi+scan(2)%diff*it2
               kpar= kpari +scan(2)%diff2*it2
            endif
+           Deltakstep=0.d0 ! to avoid having to calculate 2D gradients.
         case (1) ! theta_i to theta_1
            if (scan(2)%log_scan) then
               theta_1=10.d0**(log10(theta_i)+scan(2)%diff*it2)
@@ -2474,6 +2507,7 @@ subroutine om_double_scan
            endif
            kperp=k_i*sin(theta_1)
            kpar=k_i*cos(theta_1)
+           Deltakstep=theta_1-theta_i
         case (2) ! |k_0| to |k_1| @ constant theta
            if (scan(2)%log_scan) then
               kperp=10.d0**(log10(kperpi)+scan(2)%diff*it2)
@@ -2482,18 +2516,21 @@ subroutine om_double_scan
               kperp=kperpi+scan(2)%diff*it2
               kpar= kpari +scan(2)%diff2*it2
            endif
+           Deltakstep=sqrt(kperp**2+kpar**2)-sqrt(kperpi**2+kpari**2)
         case (3) ! kperp scan
            if (scan(2)%log_scan) then
               kperp=10.d0**(log10(kperpi)+scan(2)%diff*it2)
            else
               kperp=kperpi+scan(2)%diff*it2
            endif
+           Deltakstep=kperp-kperpi
         case (4) ! kpar scan
            if (scan(2)%log_scan) then
               kpar=10.d0**(log10(kpari)+scan(2)%diff*it2)
            else
               kpar=kpari+scan(2)%diff*it2
            endif
+           Deltakstep=kpar-kpari
         end select
 
         if (scan(2)%type_s.ne.4) then
@@ -2512,10 +2549,14 @@ subroutine om_double_scan
              if (jump(in)) then
 
                 omega=wroots(in)
+                ! Extrapolate the initial guess along the direction in k-scans:
+                omega=omega+domegadk(in)*Deltakstep
 
-                call secant(omega)
+                call secant(omega,in)
 
+                domegadk(in)=omega-wroots(in)
                 wroots(in)=omega
+
 
                 call mpi_bcast(wroots(in), 1, &
                      MPI_DOUBLE_COMPLEX, 0, MPI_COMM_WORLD, ierror)
@@ -2866,9 +2907,11 @@ subroutine refine_guess
   do iw=1,nroots
      if (proc0.and.writeOut) write(*,'(a,i0)')'Root ',iw
      call mpi_barrier(mpi_comm_world,ierror)
+
+
      omega=wroots(iw)
 
-     call secant(omega)
+     call secant(omega,iw)
 
      wroots(iw)=omega
 
@@ -3093,9 +3136,7 @@ is=1
 modified_nmax=.FALSE.
 do while (max_procs.LT.(nproc-1))
 
-  if (usebM(is)) then
-
-  else
+  if (.NOT.usebM(is)) then
     modified_nmax=.TRUE.
 	  nmax(is)=nmax(is)+1
   endif
@@ -3122,8 +3163,9 @@ end subroutine 	determine_nmax
 
 subroutine split_processes()
 !! This subroutine defines the tasks for the individual processes. It uses the number of species and the required orders of the Bessel functions to define the splitting across the MPI processes.
-use alps_var, only : nproc, iproc, nmax, nlim
+use alps_var, only : nproc, iproc, nmax, nlim, ierror
 use alps_var, only : nspec, sproc, writeOut, proc0
+use mpi
 implicit none
 
 integer :: is
@@ -3207,6 +3249,8 @@ if (proc0.AND.writeOut) then
      endif
      write(*,'(a,i0)') '-=-=-=-=-=-=-=-=-=-'
 endif
+
+call mpi_barrier(mpi_comm_world,ierror)
 
 ! Determine species with the largest rest of n's:
 largest_spec=1
