@@ -256,7 +256,7 @@ Type of the basis polynomial:
 **`order`**  
 Maximum order of the basis polynomial.
 
-**`poly_log_max`**  
+**`log_max`**  
 When using logfit for the polynomial representation, set all output values to zero if the log(fit_function_poly) is greater than this variable.
 
 
