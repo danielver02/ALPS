@@ -24,8 +24,8 @@ Number of dispersion solutions to find and follow.
 **`use_map`**   
 Choice of:  
 
-- True: Searching for roots over a map in complex frequency space [see &maps_1 namelist].  
-- False: Input `nroots` guesses for solutions [see &guess_1 namelist].
+- True: Searching for roots over a map in complex frequency space (see &maps_1 namelist).  
+- False: Input `nroots` guesses for solutions (see &guess_1 namelist).
 
 **`writeOut`**  
 Write or suppress output to screen.
@@ -180,7 +180,7 @@ Choose the method for the evaluation of the analytic continuation:
 
 - 0: Use the function that is defined analytically in distribution/distribution_analyt.f90
 - 1: Use the fit routine as defined in the &ffit_j_k namelist.
-- 2: Use a polynomial basis representation as defined in the &poly_spec_j namelist.
+- 2: Use a polynomial basis representation as defined in the &poly_spec_j namelist. This method should only be used if $|\gamma|\ll |\omega_{r}|$.
 
 
 ### *&ffit_j_k*
@@ -191,34 +191,31 @@ Kind of fit function:
 
 - 1: Maxwellian,  
 
-$$F_M(\hat{p}\_{\parallel})=u_1\mathrm{exp}[-y{\hat{p}}^2\_{\perp}-u_2(\hat{p}\_{\parallel}-u_3)^2]$$
+$$F_M(\hat{p}\_{\parallel})=u_{1}\mathrm{exp}[-y{\hat{p}}^2\_{\perp}-u_{2}(\hat{p}\_{\parallel}-u_{3})^2]$$
 
 - 2: Kappa,  
 
-$$F_{\kappa}(\hat{p}\_{\parallel})=u_1[1+u_2({\hat{p}}\_{\parallel}-u_3)^2+yu_5 {\hat{p}}^2\_{\perp}]^{u_{4}}.$$
+$$F_{\kappa}(\hat{p}\_{\parallel})=u_{1}[1+u_2({\hat{p}}\_{\parallel}-u_{3})^2+yu_{5} {\hat{p}}^2\_{\perp}]^{u_{4}}.$$
 
 - 3: Juettner with $p_{\perp},p_{\parallel}$,  
 
 $$F_{J}(\hat{p}\_{\perp},\hat{p}\_{\parallel})=
-u_1\mathrm{exp}\left[-u_2\sqrt{1+\frac{\hat{p}^2\_{\perp}+(\hat{p}^2\_{\parallel}-u_3)^2 v_A^2}{m_{j}^2 c^2}}\right].$$
+u_{1}\mathrm{exp}\left[-u_{2}\sqrt{1+\frac{\hat{p}^2\_{\perp}+(\hat{p}^2\_{\parallel}-u_3)^2 v_A^2}{m_{j}^2 c^2}}\right].$$
 
 - 4: Juettner with variable $\Gamma$, constant $\bar{p}_{\parallel}$,  
 
-$$F_{J}(\Gamma)= u_1 \mathrm{exp}[-y \Gamma].$$
+$$F_{J}(\Gamma)= u_{1} \mathrm{exp}[-y \Gamma].$$
 
 - 5: Juettner with $p_{\perp},p_{\parallel}$; variable $\bar{p}_{\parallel}$,  
 
 $$F_{\kappa}(\hat{p}\_{\perp},\hat{p}\_{\parallel})=
 u_1\mathrm{exp}[-y \hat{p}\_{\perp}]
-\mathrm{exp}[-u_2*(\hat{p}\_{\parallel}+u_3)^2]
+\mathrm{exp}[-u_{2}*(\hat{p}\_{\parallel}+u_{3})^2]
 .$$
 
 - 6: Bi-Moyal distribution
 
-$$F_{bMo}(\hat{p}\_{\perp},\hat{p}\_{\parallel})=
-u_1 \mathrm{exp}[0.5 (y u_4 \hat{p}^2\_{\perp} +
-u_2 (\hat{p}\_{\parallel} -u_3)^2 -
-\mathrm{exp}(y u_4 \hat{p}^2\_{\perp} + u_2 (\hat{p}\_{\parallel}-u_3)^2) )].$$
+$$F_{bMo}(\hat{p}\_{\perp},\hat{p}\_{\parallel})= u_{1} \mathrm{exp}[0.5 (y u_4 \hat{p}^2\_{\perp} + u_{2} (\hat{p}\_{\parallel} -u_{3})^2 -\mathrm{exp}(y u_{4} \hat{p}^2\_{\perp} + u_{2} (\hat{p}\_{\parallel}-u_{3})^2) )].$$
 
 **`fit_1`-`fit_5`**  
 Fit parameters, $u_{1}$ - $u_{5}$, defined in the above equations for each of the types of fit functions.
@@ -261,6 +258,9 @@ Type of the basis polynomial:
 
 **`order`**
 Maximum order of the basis polynomial.
+
+**`poly_log_max`**
+When using logfit for the polynomial representation, set all output values to zero if the log(fit_function_poly) is greater than this variable.
 
 
 ### *&scan_input_l*
