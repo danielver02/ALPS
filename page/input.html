@@ -120,9 +120,11 @@ Number of plasma species.</p>
 <p><strong><code>nroots</code></strong> <br>
 Number of dispersion solutions to find and follow.</p>
 <p><strong><code>use_map</code></strong> <br>
-Choice of:<br>
-    -True: Searching for roots over a map in complex frequency space [see &amp;maps_1 namelist].<br>
-    -False: Input <code>nroots</code> guesses for solutions [see &amp;guess_* namelist].</p>
+Choice of:  </p>
+<ul>
+<li>True: Searching for roots over a map in complex frequency space (see &amp;maps_1 namelist).  </li>
+<li>False: Input <code>nroots</code> guesses for solutions (see &amp;guess_1 namelist).</li>
+</ul>
 <p><strong><code>writeOut</code></strong><br>
 Write or suppress output to screen.</p>
 <p><strong><code>nperp</code></strong><br>
@@ -141,7 +143,7 @@ Reference Alfven velocity, normalized to the speed of light, $v_{A}/c$.</p>
 Name of input array, located in 'distribution' folder.</p>
 <p><strong><code>Bessel_zero</code></strong><br>
 Maximum amplitude of Bessel function to determine <code>nmax</code>.</p>
-<p><strong><code>numiter</code></strong>
+<p><strong><code>numiter</code></strong><br>
 Maximum number of iterations in secant method.</p>
 <p><strong><code>D_threshold</code></strong><br>
 Minimum threshold for secant method.</p>
@@ -170,9 +172,11 @@ If true, output fitted functions for each species to file in distribution direct
 <p><strong><code>determine_minima</code></strong><br>
 If true, after map search, determine minima and refine solutions.</p>
 <p><strong><code>scan_option</code></strong><br>
-Select case for wavevector scans;<br>
-1. Consecutive scans along input paths in wavevector space,<br>
-2. Double scan over wavevector plane.</p>
+Select case for wavevector scans:</p>
+<ul>
+<li>1: Consecutive scans along input paths in wavevector space,  </li>
+<li>2: Double scan over wavevector plane.</li>
+</ul>
 <p><strong><code>n_scan</code></strong><br>
 Number of wavevector scans.<br>
 0 turns off wavevector scans.<br>
@@ -224,13 +228,13 @@ Use linear or $\log_{10}$ fitting routine.</p>
 <p><strong><code>use_bM</code></strong><br>
 Use actual numerical integration (F) or bi-Maxwellian/cold-plasma proxy via NHDS routines,
 with parameters read in from &amp;bM_spec_j namelist.</p>
-<p><strong><code>AC_method</code></strong>
+<p><strong><code>AC_method</code></strong><br>
 Choose the method for the evaluation of the analytic continuation:</p>
-<ol>
-<li>Use the function that is defined analytically in distribution/distribution_analyt.f90</li>
-<li>Use the fit routine as defined in the &amp;ffit_j_k namelist.</li>
-<li>Use a polynomial basis representation as defined in the &amp;poly_spec_j namelist.</li>
-</ol>
+<ul>
+<li>0: Use the function that is defined analytically in distribution/distribution_analyt.f90</li>
+<li>1: Use the fit routine as defined in the &amp;ffit_j_k namelist.</li>
+<li>2: Use a polynomial basis representation as defined in the &amp;poly_spec_j namelist. This method should only be used if $|\gamma|\ll |\omega_{r}|$.</li>
+</ul>
 <h3><em>&amp;ffit_j_k</em></h3>
 <p>Initial Fit Values for species $j$, function $k$.</p>
 <p><strong><code>fit_type_in</code></strong><br>
@@ -239,26 +243,26 @@ Kind of fit function:</p>
 <li>1: Maxwellian,  </li>
 </ul>
 <p>
-<script type="math/tex; mode=display">F_M(\hat{p}\_{\parallel})=u_1\mathrm{exp}[-y{\hat{p}}^2\_{\perp}-u_2(\hat{p}\_{\parallel}-u_3)^2]</script>
+<script type="math/tex; mode=display">F_M(\hat{p}\_{\parallel})=u_{1}\mathrm{exp}[-y{\hat{p}}^2\_{\perp}-u_{2}(\hat{p}\_{\parallel}-u_{3})^2]</script>
 </p>
 <ul>
 <li>2: Kappa,  </li>
 </ul>
 <p>
-<script type="math/tex; mode=display">F_{\kappa}(\hat{p}\_{\parallel})=u_1[1+u_2({\hat{p}}\_{\parallel}-u_3)^2+yu_5 {\hat{p}}^2\_{\perp}]^{u_{4}}.</script>
+<script type="math/tex; mode=display">F_{\kappa}(\hat{p}\_{\parallel})=u_{1}[1+u_2({\hat{p}}\_{\parallel}-u_{3})^2+yu_{5} {\hat{p}}^2\_{\perp}]^{u_{4}}.</script>
 </p>
 <ul>
 <li>3: Juettner with $p_{\perp},p_{\parallel}$,  </li>
 </ul>
 <p>
 <script type="math/tex; mode=display">F_{J}(\hat{p}\_{\perp},\hat{p}\_{\parallel})=
-u_1\mathrm{exp}\left[-u_2\sqrt{1+\frac{\hat{p}^2\_{\perp}+(\hat{p}^2\_{\parallel}-u_3)^2 v_A^2}{m_{j}^2 c^2}}\right].</script>
+u_{1}\mathrm{exp}\left[-u_{2}\sqrt{1+\frac{\hat{p}^2\_{\perp}+(\hat{p}^2\_{\parallel}-u_3)^2 v_A^2}{m_{j}^2 c^2}}\right].</script>
 </p>
 <ul>
 <li>4: Juettner with variable $\Gamma$, constant $\bar{p}_{\parallel}$,  </li>
 </ul>
 <p>
-<script type="math/tex; mode=display">F_{J}(\Gamma)= u_1 \mathrm{exp}[-y \Gamma].</script>
+<script type="math/tex; mode=display">F_{J}(\Gamma)= u_{1} \mathrm{exp}[-y \Gamma].</script>
 </p>
 <ul>
 <li>5: Juettner with $p_{\perp},p_{\parallel}$; variable $\bar{p}_{\parallel}$,  </li>
@@ -266,17 +270,14 @@ u_1\mathrm{exp}\left[-u_2\sqrt{1+\frac{\hat{p}^2\_{\perp}+(\hat{p}^2\_{\parallel
 <p>
 <script type="math/tex; mode=display">F_{\kappa}(\hat{p}\_{\perp},\hat{p}\_{\parallel})=
 u_1\mathrm{exp}[-y \hat{p}\_{\perp}]
-\mathrm{exp}[-u_2*(\hat{p}\_{\parallel}+u_3)^2]
+\mathrm{exp}[-u_{2}*(\hat{p}\_{\parallel}+u_{3})^2]
 .</script>
 </p>
 <ul>
 <li>6: Bi-Moyal distribution</li>
 </ul>
 <p>
-<script type="math/tex; mode=display">F_{bMo}(\hat{p}\_{\perp},\hat{p}\_{\parallel})=
-u_1 \mathrm{exp}[0.5 (y u_4 \hat{p}^2\_{\perp} +
-u_2 (\hat{p}\_{\parallel} -u_3)^2 -
-\mathrm{exp}(y u_4 \hat{p}^2\_{\perp} + u_2 (\hat{p}\_{\parallel}-u_3)^2) )].</script>
+<script type="math/tex; mode=display">F_{bMo}(\hat{p}\_{\perp},\hat{p}\_{\parallel})= u_{1} \mathrm{exp}[0.5 (y u_4 \hat{p}^2\_{\perp} + u_{2} (\hat{p}\_{\parallel} -u_{3})^2 -\mathrm{exp}(y u_{4} \hat{p}^2\_{\perp} + u_{2} (\hat{p}\_{\parallel}-u_{3})^2) )].</script>
 </p>
 <p><strong><code>fit_1</code>-<code>fit_5</code></strong><br>
 Fit parameters, $u_{1}$ - $u_{5}$, defined in the above equations for each of the types of fit functions.
@@ -288,44 +289,50 @@ $p_{\perp}$ dependence of $u_1$, making the fit more reliable.</p>
 <h3><em>&amp;bM_spec_j</em></h3>
 <p>Bi-Maxwellian/cold-plasma parameters; for species j.
 Only used if <code>use_bM=T</code>.</p>
-<p><strong><code>bM_nmaxs</code></strong>
+<p><strong><code>bM_nmaxs</code></strong><br>
 Maximum number of resonances to consider.</p>
-<p><strong><code>bM_Bessel</code></strong>
+<p><strong><code>bM_Bessel</code></strong><br>
 Precision threshold for $I_n$.</p>
-<p><strong><code>bM_betas</code></strong>
+<p><strong><code>bM_betas</code></strong><br>
 $\beta_{\parallel,j}$ of bi-Maxwellian distribution $f_{j}$. If this variable is set to 0.d0, then the code will treat the given species with the susceptibility from cold-plasma theory.</p>
-<p><strong><code>bM_alphas</code></strong>
+<p><strong><code>bM_alphas</code></strong><br>
 $T_{\perp,j}/T_{\parallel,j}$ of bi-Maxwellian distribution $f_{j}$.</p>
-<p><strong><code>bM_pdrifts</code></strong>
+<p><strong><code>bM_pdrifts</code></strong><br>
 Relative drift of bi-Maxwellian distribution $f_{j}$ or the cold plasma species in units of $m_{p} v_{A,p}$.</p>
 <h3><em>&amp;poly_spec_j</em></h3>
 <p>Input for the polynomial representation of the input distribution for the analytical continuation.
 Only used if <code>AC_method=2</code>.</p>
-<p><strong><code>kind</code></strong>
-Type of the basis polynomial:
-- 1: Chebychev</p>
-<p><strong><code>order</code></strong>
+<p><strong><code>kind</code></strong><br>
+Type of the basis polynomial:</p>
+<ul>
+<li>1: Chebychev</li>
+</ul>
+<p><strong><code>order</code></strong><br>
 Maximum order of the basis polynomial.</p>
+<p><strong><code>poly_log_max</code></strong><br>
+When using logfit for the polynomial representation, set all output values to zero if the log(fit_function_poly) is greater than this variable.</p>
 <h3><em>&amp;scan_input_l</em></h3>
 <p>Inputs for scanning parameter space for $l$th scan.  </p>
-<p><strong><code>scan_type</code></strong>
-Type of parameter scan:
-- 0: Current value of $\textbf{k}$ to $k_{\perp}$=<code>swi</code> and $k_{\parallel}$ =<code>swf</code>. <br>
-- 1: $\theta_0 \rightarrow \theta_1$ at fixed $|k|$ from current value of $\theta=\mathrm{atan}(k_{\perp}/k_{\parallel})$ to <code>swf</code>.<br>
-- 2: Wavevector scan at fixed angle $\theta_{k,B}$ to $|k|$ =<code>swf</code>.<br>
-- 3: $k_{\perp}$ scan with constant $k_{\parallel}$ to $k_{\perp}$=<code>swf</code>.<br>
-- 4: $k_{\parallel}$ scan with constant $k_{\perp}$ to $k_{\parallel}$=<code>swf</code>.  </p>
-<p><strong><code>swi</code></strong>
+<p><strong><code>scan_type</code></strong><br>
+Type of parameter scan:</p>
+<ul>
+<li>0: Current value of $\textbf{k}$ to $k_{\perp}$=<code>swi</code> and $k_{\parallel}$ =<code>swf</code>.   </li>
+<li>1: $\theta_0 \rightarrow \theta_1$ at fixed $|k|$ from current value of $\theta=\mathrm{atan}(k_{\perp}/k_{\parallel})$ to <code>swf</code>.  </li>
+<li>2: Wavevector scan at fixed angle $\theta_{k,B}$ to $|k|$ =<code>swf</code>.  </li>
+<li>3: $k_{\perp}$ scan with constant $k_{\parallel}$ to $k_{\perp}$=<code>swf</code>.  </li>
+<li>4: $k_{\parallel}$ scan with constant $k_{\perp}$ to $k_{\parallel}$=<code>swf</code>.  </li>
+</ul>
+<p><strong><code>swi</code></strong><br>
 Scan variable to define end of scan through wavevector space (only for <code>scan_type=1</code>).</p>
 <p><strong><code>swf</code></strong><br>
 Scan variable to define end of scan through wavevector space.</p>
-<p><strong><code>swlog</code></strong>
+<p><strong><code>swlog</code></strong><br>
 Use $\log_{10}$ (T) or linear (F) spacing.</p>
-<p><strong><code>ns</code></strong>
+<p><strong><code>ns</code></strong><br>
 Number of output scan values.</p>
-<p><strong><code>nres</code></strong>
+<p><strong><code>nres</code></strong><br>
 Resolution between output scan values.</p>
-<p><strong><code>heating</code></strong>
+<p><strong><code>heating</code></strong><br>
 Calculates heating rates if true.</p>
 <p><strong><code>eigen</code></strong><br>
 Calculates eigenfunctions if true.     </p>
