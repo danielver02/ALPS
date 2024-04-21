@@ -208,10 +208,7 @@ $$F_{J}(\Gamma)= u_{1} \mathrm{exp}[-y \Gamma].$$
 
 - 5: Juettner with $p_{\perp},p_{\parallel}$; variable $\bar{p}_{\parallel}$,  
 
-$$F_{\kappa}(\hat{p}\_{\perp},\hat{p}\_{\parallel})=
-u_1\mathrm{exp}[-y \hat{p}\_{\perp}]
-\mathrm{exp}[-u_{2}*(\hat{p}\_{\parallel}+u_{3})^2]
-.$$
+$$F_{\kappa}(\hat{p}\_{\perp},\hat{p}\_{\parallel})=u_{1}\mathrm{exp}[-y \hat{p}\_{\perp}]\mathrm{exp}[-u_{2}*(\hat{p}\_{\parallel}+u_{3})^2].$$
 
 - 6: Bi-Moyal distribution
 
