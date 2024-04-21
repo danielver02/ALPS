@@ -156,7 +156,7 @@ included in the numerical calculation of Eqn 3.5, $M_{I}$.</p>
 How many steps should be used to integrate around the resonance,
 $M_{P}$, used for integrating near poles (see section 3.1).</p>
 <p><strong><code>Tlim</code></strong><br>
-Threshold for analytical principal-value integration, $t_{\textrm{lim}}$.</p>
+Threshold for analytical principal-value integration, $t_{\mathrm{lim}}$.</p>
 <p><strong><code>maxsteps_fit=500</code></strong><br>
 Maximum number of fitting iterations.</p>
 <p><strong><code>lambda_initial_fit</code></strong><br>
@@ -179,26 +179,26 @@ Number of wavevector scans.<br>
 Must be 1 or larger for <code>scan_option</code>=1.<br>
 Must be set to 2 for <code>scan_option</code>=2.  </p>
 <h3><em>&amp;guess_m</em></h3>
-<p>Initial guess of complex frequency for $m^{\textrm{th}}$ solution.<br>
+<p>Initial guess of complex frequency for $m$th solution.<br>
 Only used when <code>use_map</code>=.false.<br>
 Need to have number of name lists equal to <code>nroots</code>.</p>
 <p><strong><code>g_om</code></strong><br>
-Guess for real solution $\omega_{\textrm{r}}/\Omega_{p} $.</p>
+Guess for real solution $\omega_{r}/\Omega_{p} $.</p>
 <p><strong><code>g_gam</code></strong><br>
 Guess for imaginary solution $\gamma/\Omega_{p} $.</p>
 <h3><em>&amp;maps_1</em></h3>
 <p>Range of complex frequencies for map_scan subroutine.<br>
 Only used when <code>use_map</code>=.true.</p>
 <p><strong><code>loggridw</code></strong><br>
-Linear (F) or Log (T) spacing for $\omega_{\textrm{r}}/\Omega_{p}$ map search.
+Linear (F) or Log (T) spacing for $\omega_{r}/\Omega_{p}$ map search.
 Spacing automatically calculated between <code>omi</code> and <code>omf</code>.  </p>
 <p><strong><code>loggridg</code></strong><br>
 Linear (F) or Log (T) spacing for $\gamma/\Omega_{p}$ map search.
 Spacing automatically calculated between <code>gami</code> and <code>gamf</code>  </p>
 <p><strong><code>omi</code></strong><br>
-Smallest $\omega_{\textrm{r}}/\Omega_{p}$ value for complex map search.</p>
+Smallest $\omega_{r}/\Omega_{p}$ value for complex map search.</p>
 <p><strong><code>omf</code></strong><br>
-Largest $\omega_{\textrm{r}}/\Omega_{p}$ value for complex map search.</p>
+Largest $\omega_{r}/\Omega_{p}$ value for complex map search.</p>
 <p><strong><code>gami</code></strong>    <br>
 Smallest $\gamma/\Omega_{p}$ value for complex map search.</p>
 <p><strong><code>gamf</code></strong><br>
@@ -206,7 +206,7 @@ Largest $\gamma/\Omega_{p}$ value for complex map search.</p>
 <p><strong><code>ni</code></strong><br>
 Number of $\gamma/\Omega_{p}$ points in frequency grid.</p>
 <p><strong><code>nr</code></strong><br>
-Number of $\omega_{\textrm{r}}/\Omega_{p}$ points in frequency grid.</p>
+Number of $\omega_{r}/\Omega_{p}$ points in frequency grid.</p>
 <h3><em>&amp;spec_j</em></h3>
 <p>Species parameters list for distribution $f_{j}$.</p>
 <p><strong><code>nn</code></strong><br>
@@ -224,52 +224,54 @@ Use linear or $\log_{10}$ fitting routine.</p>
 <p><strong><code>use_bM</code></strong><br>
 Use actual numerical integration (F) or bi-Maxwellian/cold-plasma proxy via NHDS routines,
 with parameters read in from &amp;bM_spec_j namelist.</p>
+<p><strong><code>AC_method</code></strong>
+Choose the method for the evaluation of the analytic continuation:</p>
+<ol>
+<li>Use the function that is defined analytically in distribution/distribution_analyt.f90</li>
+<li>Use the fit routine as defined in the &amp;ffit_j_k namelist.</li>
+<li>Use a polynomial basis representation as defined in the &amp;poly_spec_j namelist.</li>
+</ol>
 <h3><em>&amp;ffit_j_k</em></h3>
 <p>Initial Fit Values for species $j$, function $k$.</p>
 <p><strong><code>fit_type_in</code></strong><br>
 Kind of fit function:</p>
-<ol>
-<li>
-<p>Analytic function (KGK: Need to add details on this functionality).  </p>
-</li>
-<li>
-<p>Maxwellian,  </p>
-</li>
-</ol>
+<ul>
+<li>1: Maxwellian,  </li>
+</ul>
 <p>
 <script type="math/tex; mode=display">F_M(\hat{p}\_{\parallel})=u_1\mathrm{exp}[-y{\hat{p}}^2\_{\perp}-u_2(\hat{p}\_{\parallel}-u_3)^2]</script>
 </p>
-<ol>
-<li>Kappa,  </li>
-</ol>
+<ul>
+<li>2: Kappa,  </li>
+</ul>
 <p>
 <script type="math/tex; mode=display">F_{\kappa}(\hat{p}\_{\parallel})=u_1[1+u_2({\hat{p}}\_{\parallel}-u_3)^2+yu_5 {\hat{p}}^2\_{\perp}]^{u_{4}}.</script>
 </p>
-<ol>
-<li>Juettner with $p_{\perp},p_{\parallel}$,  </li>
-</ol>
+<ul>
+<li>3: Juettner with $p_{\perp},p_{\parallel}$,  </li>
+</ul>
 <p>
 <script type="math/tex; mode=display">F_{J}(\hat{p}\_{\perp},\hat{p}\_{\parallel})=
 u_1\mathrm{exp}\left[-u_2\sqrt{1+\frac{\hat{p}^2\_{\perp}+(\hat{p}^2\_{\parallel}-u_3)^2 v_A^2}{m_{j}^2 c^2}}\right].</script>
 </p>
-<ol>
-<li>Juettner with variable $\Gamma$, constant $\bar{p}_{\parallel}$,  </li>
-</ol>
+<ul>
+<li>4: Juettner with variable $\Gamma$, constant $\bar{p}_{\parallel}$,  </li>
+</ul>
 <p>
 <script type="math/tex; mode=display">F_{J}(\Gamma)= u_1 \mathrm{exp}[-y \Gamma].</script>
 </p>
-<ol>
-<li>Juettner with $p_{\perp},p_{\parallel}$; variable $\bar{p}_{\parallel}$,  </li>
-</ol>
+<ul>
+<li>5: Juettner with $p_{\perp},p_{\parallel}$; variable $\bar{p}_{\parallel}$,  </li>
+</ul>
 <p>
 <script type="math/tex; mode=display">F_{\kappa}(\hat{p}\_{\perp},\hat{p}\_{\parallel})=
 u_1\mathrm{exp}[-y \hat{p}\_{\perp}]
 \mathrm{exp}[-u_2*(\hat{p}\_{\parallel}+u_3)^2]
 .</script>
 </p>
-<ol>
-<li>Bi-Moyal distribution</li>
-</ol>
+<ul>
+<li>6: Bi-Moyal distribution</li>
+</ul>
 <p>
 <script type="math/tex; mode=display">F_{bMo}(\hat{p}\_{\perp},\hat{p}\_{\parallel})=
 u_1 \mathrm{exp}[0.5 (y u_4 \hat{p}^2\_{\perp} +
@@ -285,7 +287,7 @@ This parameter, $y$ in Eqn. B1, compensates for the strong
 $p_{\perp}$ dependence of $u_1$, making the fit more reliable.</p>
 <h3><em>&amp;bM_spec_j</em></h3>
 <p>Bi-Maxwellian/cold-plasma parameters; for species j.
-Only used if use_bM=T.</p>
+Only used if <code>use_bM=T</code>.</p>
 <p><strong><code>bM_nmaxs</code></strong>
 Maximum number of resonances to consider.</p>
 <p><strong><code>bM_Bessel</code></strong>
@@ -296,31 +298,36 @@ $\beta_{\parallel,j}$ of bi-Maxwellian distribution $f_{j}$. If this variable is
 $T_{\perp,j}/T_{\parallel,j}$ of bi-Maxwellian distribution $f_{j}$.</p>
 <p><strong><code>bM_pdrifts</code></strong>
 Relative drift of bi-Maxwellian distribution $f_{j}$ or the cold plasma species in units of $m_{p} v_{A,p}$.</p>
+<h3><em>&amp;poly_spec_j</em></h3>
+<p>Input for the polynomial representation of the input distribution for the analytical continuation.
+Only used if <code>AC_method=2</code>.</p>
+<p><strong><code>kind</code></strong>
+Type of the basis polynomial:
+- 1: Chebychev</p>
+<p><strong><code>order</code></strong>
+Maximum order of the basis polynomial.</p>
 <h3><em>&amp;scan_input_l</em></h3>
-<p>Inputs for scanning parameter space for $l^{\textrm{th}}$ scan.  </p>
+<p>Inputs for scanning parameter space for $l$th scan.  </p>
 <p><strong><code>scan_type</code></strong>
 Type of parameter scan:
-0. Current value of $\textbf{k}$ to
- $k_{\perp}$=range $_\textrm{i}$ and $k_{\parallel}$ =range $_\textrm{f}$. <br>
-1. $\theta_0 \rightarrow \theta_1$ at fixed $|k|$
- from current value of $\theta=\mathrm{atan}(k_{\perp}/k_{\parallel})$
- to range $_\textrm{f}$.<br>
-2. Wavevector scan at fixed angle $\theta_{k,B}$ to $|k|$ =range $_\textrm{f}$.<br>
-3. $k_{\perp}$ scan with constant $k_{\parallel}$.<br>
-4. $k_{\parallel}$ scan with constant $k_{\perp}$.  </p>
+- 0: Current value of $\textbf{k}$ to $k_{\perp}$=<code>swi</code> and $k_{\parallel}$ =<code>swf</code>. <br>
+- 1: $\theta_0 \rightarrow \theta_1$ at fixed $|k|$ from current value of $\theta=\mathrm{atan}(k_{\perp}/k_{\parallel})$ to <code>swf</code>.<br>
+- 2: Wavevector scan at fixed angle $\theta_{k,B}$ to $|k|$ =<code>swf</code>.<br>
+- 3: $k_{\perp}$ scan with constant $k_{\parallel}$ to $k_{\perp}$=<code>swf</code>.<br>
+- 4: $k_{\parallel}$ scan with constant $k_{\perp}$ to $k_{\parallel}$=<code>swf</code>.  </p>
 <p><strong><code>swi</code></strong>
-Initial scan value.</p>
+Scan variable to define end of scan through wavevector space (only for <code>scan_type=1</code>).</p>
 <p><strong><code>swf</code></strong><br>
-Final scan value.</p>
+Scan variable to define end of scan through wavevector space.</p>
 <p><strong><code>swlog</code></strong>
-Use $\mathrm{log}_{10}$ (T) or linear (F) spacing.</p>
+Use $\log_{10}$ (T) or linear (F) spacing.</p>
 <p><strong><code>ns</code></strong>
 Number of output scan values.</p>
 <p><strong><code>nres</code></strong>
 Resolution between output scan values.</p>
 <p><strong><code>heating</code></strong>
 Calculates heating rates if true.</p>
-<p><strong><code>eigen</code></strong>  =.false.
+<p><strong><code>eigen</code></strong><br>
 Calculates eigenfunctions if true.     </p>
     </div>
   </div>

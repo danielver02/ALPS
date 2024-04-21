@@ -79,7 +79,7 @@
       <div class="col">
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb justify-content-end mb-0">
-                <li class="breadcrumb-item"><a href='../program/generate_distribution.html'>generate_distribution</a></li>
+                <li class="breadcrumb-item"><a href='../module/alps_io.html'>alps_io</a></li>
                 <li class="breadcrumb-item"><a href='../proc/spec_read.html'>spec_read</a></li>
             <li class="breadcrumb-item active" aria-current="page">spec</li>
           </ol>
@@ -107,15 +107,13 @@
       </a>
       <div id="vars-0" class="collapse">
         <div class="list-group list-group-flush">
-            <a class="list-group-item" href="../namelist/spec.html#variable-ms_read">mS_read</a>
-            <a class="list-group-item" href="../namelist/spec.html#variable-taus">tauS</a>
-            <a class="list-group-item" href="../namelist/spec.html#variable-alphs">alphS</a>
-            <a class="list-group-item" href="../namelist/spec.html#variable-ps">pS</a>
-            <a class="list-group-item" href="../namelist/spec.html#variable-kappas">kappaS</a>
-            <a class="list-group-item" href="../namelist/spec.html#variable-distributions">distributionS</a>
-            <a class="list-group-item" href="../namelist/spec.html#variable-autoscales">autoscaleS</a>
-            <a class="list-group-item" href="../namelist/spec.html#variable-maxpperps">maxPperpS</a>
-            <a class="list-group-item" href="../namelist/spec.html#variable-maxppars">maxPparS</a>
+            <a class="list-group-item" href="../namelist/spec.html#variable-nn~21">nn</a>
+            <a class="list-group-item" href="../namelist/spec.html#variable-qq">qq</a>
+            <a class="list-group-item" href="../namelist/spec.html#variable-mm">mm</a>
+            <a class="list-group-item" href="../namelist/spec.html#variable-ff">ff</a>
+            <a class="list-group-item" href="../namelist/spec.html#variable-relat">relat</a>
+            <a class="list-group-item" href="../namelist/spec.html#variable-log_fit">log_fit</a>
+            <a class="list-group-item" href="../namelist/spec.html#variable-use_bm">use_bM</a>
         </div>
       </div>
     </div>
@@ -157,67 +155,53 @@
           <th>Description</th>
       </tr></thead>
       <tbody>
-              <tr id="variable-ms_read">
-      <td><a href="#variable-ms_read">mS_read</a></td>
+              <tr id="variable-nn~21">
+      <td><a href="#variable-nn~21">nn</a></td>
       <td>double precision</td>
       <td>None</td>
-      <td><p>Mass of species.</p></td>
+      <td><p>Read in value for relative density for <script type="math/tex">f_j</script>.</p></td>
     </tr>
 
-              <tr id="variable-taus">
-      <td><a href="#variable-taus">tauS</a></td>
+              <tr id="variable-qq">
+      <td><a href="#variable-qq">qq</a></td>
       <td>double precision</td>
       <td>None</td>
-      <td><p>Parallel temperature ratio of species.</p></td>
+      <td><p>Read in value for charge for <script type="math/tex">f_j</script>.</p></td>
     </tr>
 
-              <tr id="variable-alphs">
-      <td><a href="#variable-alphs">alphS</a></td>
+              <tr id="variable-mm">
+      <td><a href="#variable-mm">mm</a></td>
       <td>double precision</td>
       <td>None</td>
-      <td><p>Temperature anisotropy of species.</p></td>
+      <td><p>Read in value for mass for <script type="math/tex">f_j</script>.</p></td>
     </tr>
 
-              <tr id="variable-ps">
-      <td><a href="#variable-ps">pS</a></td>
-      <td>double precision</td>
-      <td>None</td>
-      <td><p>Drift momentum of species.</p></td>
-    </tr>
-
-              <tr id="variable-kappas">
-      <td><a href="#variable-kappas">kappaS</a></td>
-      <td>double precision</td>
-      <td>None</td>
-      <td><p>Kappa index of species.</p></td>
-    </tr>
-
-              <tr id="variable-distributions">
-      <td><a href="#variable-distributions">distributionS</a></td>
+              <tr id="variable-ff">
+      <td><a href="#variable-ff">ff</a></td>
       <td>integer</td>
       <td>None</td>
-      <td><p>Type of distribution for species.</p></td>
+      <td><p>Read in value for number of fitted functions.</p></td>
     </tr>
 
-              <tr id="variable-autoscales">
-      <td><a href="#variable-autoscales">autoscaleS</a></td>
+              <tr id="variable-relat">
+      <td><a href="#variable-relat">relat</a></td>
       <td>logical</td>
-      <td>None</td>
-      <td><p>Flag for autoscaling of grid for species.</p></td>
+      <td>.false.</td>
+      <td><p>Treat species as non-relativistic or relativistic.</p></td>
     </tr>
 
-              <tr id="variable-maxpperps">
-      <td><a href="#variable-maxpperps">maxPperpS</a></td>
-      <td>double precision</td>
-      <td>None</td>
-      <td><p>Maximum perpendicular momentum of species.</p></td>
+              <tr id="variable-log_fit">
+      <td><a href="#variable-log_fit">log_fit</a></td>
+      <td>logical</td>
+      <td>.true.</td>
+      <td><p>Use linear or <script type="math/tex">\log_{10}</script> fitting routine.</p></td>
     </tr>
 
-              <tr id="variable-maxppars">
-      <td><a href="#variable-maxppars">maxPparS</a></td>
-      <td>double precision</td>
-      <td>None</td>
-      <td><p>Maximum parallel momentum of species.</p></td>
+              <tr id="variable-use_bm">
+      <td><a href="#variable-use_bm">use_bM</a></td>
+      <td>logical</td>
+      <td>.false.</td>
+      <td><p>Use actual numerical integration or bi-Maxwellian/cold-plasma proxy via NHDS.</p></td>
     </tr>
 
       </tbody>
