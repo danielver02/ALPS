@@ -25,7 +25,7 @@ Number of dispersion solutions to find and follow.
 Choice of:  
 
 - True: Searching for roots over a map in complex frequency space [see &maps_1 namelist].  
-- False: Input `nroots` guesses for solutions [see &guess_* namelist].
+- False: Input `nroots` guesses for solutions [see &guess_1 namelist].
 
 **`writeOut`**  
 Write or suppress output to screen.
