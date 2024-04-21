@@ -2905,9 +2905,8 @@ subroutine refine_guess
 
 
   do iw=1,nroots
-     if (proc0.and.writeOut) write(*,'(a,i0)')'Root ',iw
+    
      call mpi_barrier(mpi_comm_world,ierror)
-
 
      omega=wroots(iw)
 

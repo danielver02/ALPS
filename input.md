@@ -173,14 +173,19 @@ Use linear or $\log_{10}$ fitting routine.
 Use actual numerical integration (F) or bi-Maxwellian/cold-plasma proxy via NHDS routines,
 with parameters read in from &bM_spec_j namelist.
 
+**`AC_method`**
+Choose the method for the evaluation of the analytic continuation:
+
+0. Use the function that is defined analytically in distribution/distribution_analyt.f90
+1. Use the fit routine as defined in the &ffit_j_k namelist.
+2. Use a polynomial basis representation as defined in the &poly_spec_j namelist.
+
 
 ### *&ffit_j_k*
 Initial Fit Values for species $j$, function $k$.
 
 **`fit_type_in`**  
 Kind of fit function:
-
-0. Analytic function (KGK: Need to add details on this functionality).  
 
 1. Maxwellian,  
 
@@ -225,7 +230,7 @@ $p_{\perp}$ dependence of $u_1$, making the fit more reliable.
 
 ### *&bM_spec_j*
 Bi-Maxwellian/cold-plasma parameters; for species j.
-Only used if use_bM=T.
+Only used if `use_bM=T`.
 
 **`bM_nmaxs`**
 Maximum number of resonances to consider.
@@ -243,28 +248,37 @@ $T_{\perp,j}/T_{\parallel,j}$ of bi-Maxwellian distribution $f_{j}$.
 Relative drift of bi-Maxwellian distribution $f_{j}$ or the cold plasma species in units of $m_{p} v_{A,p}$.
 
 
+### *&poly_spec_j*
+Input for the polynomial representation of the input distribution for the analytical continuation.
+Only used if `AC_method=2`.
+
+**`kind`**
+Type of the basis polynomial:
+1. Chebychev
+
+**`order`**
+Maximum order of the basis polynomial.
+
+
 ### *&scan_input_l*
 Inputs for scanning parameter space for $l^{\textrm{th}}$ scan.  
 
 **`scan_type`**
 Type of parameter scan:
-0. Current value of $\textbf{k}$ to
- $k\_{\perp}$=range $\_\textrm{i}$ and $k\_{\parallel}$ =range $\_\textrm{f}$.   
-1. $\theta_0 \rightarrow \theta_1$ at fixed $|k|$
- from current value of $\theta=\mathrm{atan}(k\_{\perp}/k\_{\parallel})$
- to range $\_\textrm{f}$.  
-2. Wavevector scan at fixed angle $\theta_{k,B}$ to $|k|$ =range $\_\textrm{f}$.  
-3. $k\_{\perp}$ scan with constant $k\_{\parallel}$.  
-4. $k\_{\parallel}$ scan with constant $k\_{\perp}$.  
+0. Current value of $\textbf{k}$ to $k\_{\perp}$=`swi` and $k\_{\parallel}$ =`swf`.   
+1. $\theta_0 \rightarrow \theta_1$ at fixed $|k|$ from current value of $\theta=\mathrm{atan}(k\_{\perp}/k\_{\parallel})$ to `swf`.  
+2. Wavevector scan at fixed angle $\theta_{k,B}$ to $|k|$ =`swf`.  
+3. $k\_{\perp}$ scan with constant $k\_{\parallel}$ to $k\_{\perp}$=`swf`.  
+4. $k\_{\parallel}$ scan with constant $k\_{\perp}$ to $k\_{\parallel}$=`swf`.  
 
 **`swi`**
-Initial scan value.
+Scan variable to define end of scan through wavevector space (only for `scan_type=1`).
 
 **`swf`**  
-Final scan value.
+Scan variable to define end of scan through wavevector space.
 
 **`swlog`**
-Use $\mathrm{log}_{10}$ (T) or linear (F) spacing.
+Use $\log_{10}$ (T) or linear (F) spacing.
 
 **`ns`**
 Number of output scan values.
@@ -275,5 +289,5 @@ Resolution between output scan values.
 **`heating`**
 Calculates heating rates if true.
 
-**`eigen`**  =.false.
+**`eigen`**  
 Calculates eigenfunctions if true.     
