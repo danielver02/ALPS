@@ -51,9 +51,9 @@ Reference Alfven velocity, normalized to the speed of light, $v_{A}/c$.
 Name of input array, located in 'distribution' folder.
 
 **`Bessel_zero`**  
-Maximum amplitude of Bessel function to determine nmax.
+Maximum amplitude of Bessel function to determine `nmax`.
 
-**`numiter`**
+**`numiter`**  
 Maximum number of iterations in secant method.
 
 **`D_threshold`**  
@@ -175,7 +175,7 @@ Use linear or $\log_{10}$ fitting routine.
 Use actual numerical integration (F) or bi-Maxwellian/cold-plasma proxy via NHDS routines,
 with parameters read in from &bM_spec_j namelist.
 
-**`AC_method`**
+**`AC_method`**  
 Choose the method for the evaluation of the analytic continuation:
 
 - 0: Use the function that is defined analytically in distribution/distribution_analyt.f90
@@ -231,19 +231,19 @@ $p_{\perp}$ dependence of $u_1$, making the fit more reliable.
 Bi-Maxwellian/cold-plasma parameters; for species j.
 Only used if `use_bM=T`.
 
-**`bM_nmaxs`**
+**`bM_nmaxs`**  
 Maximum number of resonances to consider.
 
-**`bM_Bessel`**
+**`bM_Bessel`**  
 Precision threshold for $I_n$.
 
-**`bM_betas`**
+**`bM_betas`**  
 $\beta_{\parallel,j}$ of bi-Maxwellian distribution $f_{j}$. If this variable is set to 0.d0, then the code will treat the given species with the susceptibility from cold-plasma theory.
 
-**`bM_alphas`**
+**`bM_alphas`**  
 $T_{\perp,j}/T_{\parallel,j}$ of bi-Maxwellian distribution $f_{j}$.
 
-**`bM_pdrifts`**
+**`bM_pdrifts`**  
 Relative drift of bi-Maxwellian distribution $f_{j}$ or the cold plasma species in units of $m_{p} v_{A,p}$.
 
 
@@ -251,22 +251,22 @@ Relative drift of bi-Maxwellian distribution $f_{j}$ or the cold plasma species 
 Input for the polynomial representation of the input distribution for the analytical continuation.
 Only used if `AC_method=2`.
 
-**`kind`**
+**`kind`**  
 Type of the basis polynomial:
 
 - 1: Chebychev
 
-**`order`**
+**`order`**  
 Maximum order of the basis polynomial.
 
-**`poly_log_max`**
+**`poly_log_max`**  
 When using logfit for the polynomial representation, set all output values to zero if the log(fit_function_poly) is greater than this variable.
 
 
 ### *&scan_input_l*
 Inputs for scanning parameter space for $l$th scan.  
 
-**`scan_type`**
+**`scan_type`**  
 Type of parameter scan:
 
 - 0: Current value of $\textbf{k}$ to $k\_{\perp}$=`swi` and $k\_{\parallel}$ =`swf`.   
@@ -275,22 +275,22 @@ Type of parameter scan:
 - 3: $k\_{\perp}$ scan with constant $k\_{\parallel}$ to $k\_{\perp}$=`swf`.  
 - 4: $k\_{\parallel}$ scan with constant $k\_{\perp}$ to $k\_{\parallel}$=`swf`.  
 
-**`swi`**
+**`swi`**  
 Scan variable to define end of scan through wavevector space (only for `scan_type=1`).
 
 **`swf`**  
 Scan variable to define end of scan through wavevector space.
 
-**`swlog`**
+**`swlog`**  
 Use $\log_{10}$ (T) or linear (F) spacing.
 
-**`ns`**
+**`ns`**  
 Number of output scan values.
 
-**`nres`**
+**`nres`**  
 Resolution between output scan values.
 
-**`heating`**
+**`heating`**  
 Calculates heating rates if true.
 
 **`eigen`**  
