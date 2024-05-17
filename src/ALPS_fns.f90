@@ -1964,7 +1964,10 @@ subroutine om_scan(ik)
 
            omega=wroots(in)
            ! Extrapolate the initial guess along the direction in k-scans:
-           omega=omega+domegadk(in)*Deltakstep
+           !!KGK: This line causes the solution to (occasionally)
+           !!smoothly transition to unphysical values.
+           !!Suppressing until we understand the error.
+           !omega=omega+domegadk(in)*Deltakstep
 
            call secant(omega,in)
 
@@ -2605,7 +2608,10 @@ subroutine om_double_scan
 
                 omega=wroots(in)
                 ! Extrapolate the initial guess along the direction in k-scans:
-                omega=omega+domegadk(in)*Deltakstep
+                !!KGK: This line causes the solution to (occasionally)
+                !!smoothly transition to unphysical values.
+                !!Suppressing until we understand the error.
+                !omega=omega+domegadk(in)*Deltakstep
 
                 call secant(omega,in)
 
