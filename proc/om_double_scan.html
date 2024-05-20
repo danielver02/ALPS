@@ -77,7 +77,7 @@
 
             <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
               <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
-                 title=" 6.2% of total for procedures.">323 statements</a>
+                 title=" 6.2% of total for procedures.">322 statements</a>
             </li>
 
         </ul>
@@ -140,8 +140,8 @@
         <ul class="list-group list-group-flush">
             <li class="list-group-item">
               <ul class="list-inline">
-                  <li class="list-inline-item"><a href='../module/alps_io.html'>alps_io</a></li>
                   <li class="list-inline-item"><a href='../module/alps_var.html'>alps_var</a></li>
+                  <li class="list-inline-item"><a href='../module/alps_io.html'>alps_io</a></li>
                   <li class="list-inline-item"><a href='http://www.mpi-forum.org/docs/mpi-3.1/mpi31-report/node410.htm'>mpi</a></li>
               </ul>
             </li>
@@ -292,7 +292,10 @@ modules which it uses.
     </div>
 
 
-    <p>This subroutine scans along a prescribed plane in wavevector space to map out <script type="math/tex">\omega</script> in this space. It is required that n_scan=2.</p>
+    <p>This subroutine scans along a prescribed plane in wavevector space to map out <script type="math/tex">\omega</script> in this space. It is required that n_scan=2.
+KGK: This line causes the solution to (occasionally)
+smoothly transition to unphysical values.
+Suppressing until we understand the error.</p>
 
 
     <h3>Arguments</h3>
@@ -420,18 +423,18 @@ modules which it uses.
 <path fill="none" stroke="#000000" d="M92.75,-554.93C106.94,-551.3 123.05,-547.8 138,-546 182.13,-540.69 193.87,-540.72 238,-546 254.87,-548.02 273.2,-552.17 288.62,-556.26"/>
 <polygon fill="#000000" stroke="#000000" points="287.73,-559.65 298.3,-558.91 289.58,-552.89 287.73,-559.65"/>
 </g>
-<!-- proc~get_unused_unit -->
+<!-- proc~get_unused_unit~3 -->
 <g id="proc~~om_double_scan~~CallsGraph_node9" class="node">
-<title>proc~get_unused_unit</title>
-<g id="a_proc~~om_double_scan~~CallsGraph_node9"><a xlink:href="../proc/get_unused_unit.html" xlink:title="get_unused_unit">
+<title>proc~get_unused_unit~3</title>
+<g id="a_proc~~om_double_scan~~CallsGraph_node9"><a xlink:href="../proc/get_unused_unit~3.html" xlink:title="get_unused_unit">
 <polygon fill="#d9534f" stroke="#d9534f" points="238,-398 138,-398 138,-374 238,-374 238,-398"/>
 <text text-anchor="middle" x="188" y="-383.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">get_unused_unit</text>
 </a>
 </g>
 </g>
-<!-- proc~om_double_scan&#45;&gt;proc~get_unused_unit -->
+<!-- proc~om_double_scan&#45;&gt;proc~get_unused_unit~3 -->
 <g id="proc~~om_double_scan~~CallsGraph_edge8" class="edge">
-<title>proc~om_double_scan&#45;&gt;proc~get_unused_unit</title>
+<title>proc~om_double_scan&#45;&gt;proc~get_unused_unit~3</title>
 <path fill="none" stroke="#000000" d="M56.09,-554.61C66.01,-526.17 93.85,-455.33 138,-412 141.26,-408.8 144.99,-405.9 148.91,-403.29"/>
 <polygon fill="#000000" stroke="#000000" points="150.89,-406.18 157.67,-398.04 147.29,-400.17 150.89,-406.18"/>
 </g>
@@ -1017,33 +1020,33 @@ modules which it uses.
 <path fill="none" stroke="#000000" d="M987.15,-294.91C1007.81,-304.31 1036.85,-317.53 1059.59,-327.88"/>
 <polygon fill="#000000" stroke="#000000" points="1058.36,-331.17 1068.91,-332.12 1061.26,-324.8 1058.36,-331.17"/>
 </g>
-<!-- proc~bessi0 -->
+<!-- proc~bessi0~2 -->
 <g id="proc~~om_double_scan~~CallsGraph_node44" class="node">
-<title>proc~bessi0</title>
-<g id="a_proc~~om_double_scan~~CallsGraph_node44"><a xlink:href="../proc/bessi0.html" xlink:title="BESSI0">
+<title>proc~bessi0~2</title>
+<g id="a_proc~~om_double_scan~~CallsGraph_node44"><a xlink:href="../proc/bessi0~2.html" xlink:title="BESSI0">
 <polygon fill="#d94e8f" stroke="#d94e8f" points="1123,-314 1069,-314 1069,-290 1123,-290 1123,-314"/>
 <text text-anchor="middle" x="1096" y="-299.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">BESSI0</text>
 </a>
 </g>
 </g>
-<!-- proc~bessi&#45;&gt;proc~bessi0 -->
+<!-- proc~bessi&#45;&gt;proc~bessi0~2 -->
 <g id="proc~~om_double_scan~~CallsGraph_edge57" class="edge">
-<title>proc~bessi&#45;&gt;proc~bessi0</title>
+<title>proc~bessi&#45;&gt;proc~bessi0~2</title>
 <path fill="none" stroke="#000000" d="M987.15,-286.71C1007.63,-289.61 1036.34,-293.68 1058.98,-296.89"/>
 <polygon fill="#000000" stroke="#000000" points="1058.52,-300.36 1068.91,-298.3 1059.5,-293.43 1058.52,-300.36"/>
 </g>
-<!-- proc~bessi1 -->
+<!-- proc~bessi1~2 -->
 <g id="proc~~om_double_scan~~CallsGraph_node45" class="node">
-<title>proc~bessi1</title>
-<g id="a_proc~~om_double_scan~~CallsGraph_node45"><a xlink:href="../proc/bessi1.html" xlink:title="BESSI1">
+<title>proc~bessi1~2</title>
+<g id="a_proc~~om_double_scan~~CallsGraph_node45"><a xlink:href="../proc/bessi1~2.html" xlink:title="BESSI1">
 <polygon fill="#d94e8f" stroke="#d94e8f" points="1123,-272 1069,-272 1069,-248 1123,-248 1123,-272"/>
 <text text-anchor="middle" x="1096" y="-257.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">BESSI1</text>
 </a>
 </g>
 </g>
-<!-- proc~bessi&#45;&gt;proc~bessi1 -->
+<!-- proc~bessi&#45;&gt;proc~bessi1~2 -->
 <g id="proc~~om_double_scan~~CallsGraph_edge58" class="edge">
-<title>proc~bessi&#45;&gt;proc~bessi1</title>
+<title>proc~bessi&#45;&gt;proc~bessi1~2</title>
 <path fill="none" stroke="#000000" d="M987.15,-278.51C1007.63,-275 1036.34,-270.07 1058.98,-266.18"/>
 <polygon fill="#000000" stroke="#000000" points="1059.65,-269.62 1068.91,-264.48 1058.46,-262.72 1059.65,-269.62"/>
 </g>
