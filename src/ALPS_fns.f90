@@ -344,15 +344,15 @@ end subroutine derivative_f0
              !yy term:
              schi(sproc,2,2) = schi(sproc,2,2) + &
                   full_integrate(om,nn,2,found_res_plus)
-             
+
              !zz term:
              schi(sproc,3,3) = schi(sproc,3,3) + &
                   full_integrate(om,nn,3,found_res_plus)
-             
+
              !yz term:
              schi(sproc,2,3) = schi(sproc,2,3) + &
                   full_integrate(om,nn,6,found_res_plus)
-             
+
           else
 
              !xx term:
@@ -409,7 +409,7 @@ end subroutine derivative_f0
        schi(sproc,2,3) = schi(sproc,2,3) * norm(sproc)
 
     endif
-    
+
     ! Return the schi to proc0:
     call MPI_REDUCE (schi, chi, size(chi),&
         MPI_DOUBLE_COMPLEX, MPI_SUM, 0, MPI_COMM_WORLD, ierror)
@@ -486,7 +486,7 @@ end subroutine derivative_f0
             wave(1,2)**2*wave(3,3)
 
     endif
-    
+
     call mpi_bcast(disp, 1, MPI_DOUBLE_COMPLEX, 0, MPI_COMM_WORLD, ierror)
 
     !Make sure all processors have completed calculation to avoid
@@ -702,7 +702,7 @@ double complex function integrate(om, nn, mode, iparmin, iparmax)
        2.d0 * resU(om, nn, 1, iparmax) * int_T(nn, 1, iparmax, mode) + &
        resU(om, nn, nperp -1, iparmin) * int_T(nn, nperp -1, iparmin, mode) + &
        resU(om, nn, nperp -1, iparmax) * int_T(nn, nperp -1, iparmax, mode)
-  
+
   do iperp = 2, nperp-2
      do ipar = iparmin+1, iparmax-1
         integrate = integrate + 4.d0 * resU(om, nn, iperp, ipar) * int_T(nn, iperp, ipar, mode)
@@ -1265,8 +1265,8 @@ double complex function landau_integrate(om, nn, mode)
      landau_integrate =cmplx(0.d0,0.d0,kind(1.d0))
      return
   endif
-  
-  
+
+
   ! Calculate the derivatives of f0 at the complex p_res:
   dfperp_C=(fperp_i-fperp_f)/(2.d0*dpperp)
   dfpar_C=(fpar_i-fpar_f)/(2.d0*dppar)
@@ -1282,7 +1282,7 @@ enddo
 iperp=0
 h = 0.5d0
   p_res = (ms(sproc) * (om) - 1.d0*nn * qs(sproc))/kpar
-  
+
   ! Calculate the derivatives of f0 at the complex p_res:
   dfperp_C=(eval_fit(sproc,iperp+1,p_res)-eval_fit(sproc,iperp,p_res))/(dpperp)
   dfpar_C=(eval_fit(sproc,iperp,p_res+dppar)-eval_fit(sproc,iperp,p_res-dppar))/(2.d0*dppar)
@@ -1294,7 +1294,7 @@ h = 0.5d0
   iperp=nperp
 h = 0.5d0
   p_res = (ms(sproc) * (om) - 1.d0*nn * qs(sproc))/kpar
-  
+
   ! Calculate the derivatives of f0 at the complex p_res:
   dfperp_C=(eval_fit(sproc,iperp,p_res)-eval_fit(sproc,iperp-1,p_res))/(dpperp)
   dfpar_C=(eval_fit(sproc,iperp,p_res+dppar)-eval_fit(sproc,iperp,p_res-dppar))/(2.d0*dppar)
@@ -1306,7 +1306,7 @@ h = 0.5d0
 	landau_integrate = landau_integrate * ii * dpperp * pi * 2.d0 * pi
 
 ! write(*,*)p_res, nn, mode, landau_integrate
- 
+
 	return
 
 end function landau_integrate
@@ -2962,7 +2962,6 @@ subroutine refine_guess
   !! File unit for refinement output.
 
 
-
   if (proc0) then
      if (writeOut) write(*,'(a)')' Refining Roots:'
      write(mapName,'(3a)') 'solution/',trim(runname),'.roots'
@@ -2972,7 +2971,7 @@ subroutine refine_guess
 
 
   do iw=1,nroots
-    
+
      call mpi_barrier(mpi_comm_world,ierror)
 
      omega=wroots(iw)
@@ -3395,9 +3394,12 @@ subroutine determine_bessel_array()
      do iperp = 0, nperp
 
         z = kperp * pp(sproc, iperp, ipar, 1) / qs(sproc)
-        bessel_array(nn,iperp) = BESSJ(nn,z)
 
-        if (nn.EQ.-1) bessel_array(nn,iperp)=-BESSJ(1,z)
+        if (nn.EQ.-1) then
+          bessel_array(nn,iperp)=-BESSJ(1,z)
+        else
+          bessel_array(nn,iperp) = BESSJ(nn,z)
+        endif
 
      enddo
   enddo
