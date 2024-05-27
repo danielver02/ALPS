@@ -55,5 +55,5 @@ jobs:
       run: |
         cd tests
         bash ./run_test.sh
-        bash cat ../solution/test_kpar_fast.eigen_kpara_1.root_1
+        cat ../solution/test_kpar_fast.eigen_kpara_1.root_1
         pytest
