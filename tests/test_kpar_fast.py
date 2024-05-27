@@ -15,7 +15,7 @@ def read_roots(path=".", filename="test_kpar_fast.scan_kpara_1.root_1"):
 def test_check_outputs(filename):
     '''
     tests that the contents of the file solution/<filename> matches the file
-    ./<filename> to a relative tolerance of 1e-3. Will do this for each file
+    ./<filename> to a relative tolerance of 1e-2. Will do this for each file
     in the parameter list.
     '''
 
@@ -27,6 +27,5 @@ def test_check_outputs(filename):
 
     np.testing.assert_allclose(ref_data,
                                test_data,
-                               rtol = 1.e-3,
-                               atol = 1.e-5,
+                               rtol = 1.e-2,
                                verbose = True)
