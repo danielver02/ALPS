@@ -14,7 +14,7 @@
 !Initial perpendicular and parallel wavenumbers
 !Normalized to reference inertial length
 kperp=1.d-2
-kpar=1.d-3
+kpar=1.d-2
 !Number of plasma species
 nspec=2
 !Number of dispersion solutions to find and follow
@@ -71,8 +71,8 @@ n_scan=1
 !Only used when use_map=.false.
 !Need to have # of name lists equal to nroots
 &guess_1
-g_om=9.9d-4    !real frequency
-g_gam=-5.5d-10 !imaginary frequency
+g_om=9.9d-3    !real frequency
+g_gam=-5.5d-6 !imaginary frequency
 /
 
 !Range of complex frequencies for map_scan
@@ -173,7 +173,7 @@ bM_pdrifts=0.d0        !Momentum drift, norm. to m_ref v_A,ref
 !See documentation for details on scan definition
 scan_type=4
 swi=1.0d-3
-swf=1.0d-2
+swf=1.0d-1
 swlog=.true.    !log (T) or linear (F) steps
 ns=32           !# of scan steps
 nres=1          !# of scan substeps
