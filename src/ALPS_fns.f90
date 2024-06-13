@@ -253,6 +253,8 @@ end subroutine derivative_f0
     use alps_var, only : wave, kperp, kpar, ns, qs, vA, chi0, usebM
     use alps_nhds, only: calc_chi
     use alps_fns_rel, only : int_ee_rel
+    use alps_var, only : arrayName
+    use alps_io, only : get_unused_unit
     use mpi
     implicit none
 
@@ -295,6 +297,12 @@ end subroutine derivative_f0
 
     logical :: found_res_minus
     !! Check whether a resonance is found at negative n.
+
+    character (100) :: writename
+    !! File name for file i/o.
+
+    integer :: unit_f
+    !! Unit for file i/o.
 
 
     chi=cmplx(0.d0,0.d0,kind(1.d0))
@@ -430,6 +438,11 @@ end subroutine derivative_f0
     	wave=cmplx(0.d0,0.d0,kind(1.d0))
       eps=cmplx(0.d0,0.d0,kind(1.d0))
 
+      write(writeName,'(3a,i0,a)')&
+               'solution/',trim(arrayName),'_chiS.array'
+      call get_unused_unit(unit_f)
+      open(unit=unit_f,file=trim(writeName),status='replace')
+
        ! Sum over species:
        do is = 1, nspec
           eps(1,1) = eps(1,1) + chi(is,1,1)
@@ -440,12 +453,30 @@ end subroutine derivative_f0
           eps(1,3) = eps(1,3) + chi(is,1,3)
           eps(2,3) = eps(2,3) + chi(is,2,3)
 
+         write(unit_f,'(12es14.4,i2)')&
+            chi(is,1,1),chi(is,1,2),chi(is,1,3),&
+            chi(is,2,2),chi(is,2,3),&
+            chi(is,3,3),is
+
+         write(unit_f,*);write(unit_f,*);
+
           !Trouble shooting electron firehose
           !write(*,'(6es14.4,i3)')chi0(is,1,1),chi0(is,1,2),chi0(is,1,3),is
           !write(*,'(6es14.4,i3)')chi0(is,2,1),chi0(is,2,2),chi0(is,2,3),is
           !write(*,'(6es14.4,i3)')chi0(is,3,1),chi0(is,3,2),chi0(is,3,3),is
 
+          !write(*,*)
+
+          !Trouble shooting electron firehose
+          !write(*,'(6es14.4,i3)')chi(is,1,1),chi(is,1,2),chi(is,1,3),is
+          !write(*,'(6es14.4,i3)')chi(is,2,1),chi(is,2,2),chi(is,2,3),is
+          !write(*,'(6es14.4,i3)')chi(is,3,1),chi(is,3,2),chi(is,3,3),is
+
+          !write(*,*)
+
        enddo
+
+       close(unit_f)
 
        ! Exploit symmetry of epsilon tensor:
        eps(2,1) = -eps(1,2)
