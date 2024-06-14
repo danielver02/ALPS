@@ -177,6 +177,8 @@ contains
   chi(3,2)=Y(3,2)/(ell*ell)
   chi(3,3)=2.d0*x*vdrift/(ell*ell*kz*vtherm*vtherm*bMalphas(j))+Y(3,3)/(ell*ell)
 
+  write(*,*)
+
   endif
 
   end subroutine

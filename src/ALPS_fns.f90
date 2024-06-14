@@ -119,12 +119,14 @@ subroutine derivative_f0
 
 
     !Output df/dv to file:
-    OutDF = .false.
+    OutDF = .true.
+    !OutDF = .false.
     if (OutDF) then
 
        if (writeOut) &
             write(*,'(a)') 'Outputing df0/dpperp, df0/dppar'
-       write(fmt,'(a)') '(2es14.4e3,2es14.4e3)'
+            write(fmt,'(a)') '(2es14.4e3,2es14.4e3,es14.4e3)'
+            !write(fmt,'(a)') '(2es14.4e3,2es14.4e3)'
        do is = 1, nspec
 
 
@@ -142,8 +144,12 @@ subroutine derivative_f0
           do iperp = 1, nperp-1
              do ipar = 1, npar-1
 
-                   write(unit_f,fmt) pp(is,iperp,ipar,1),pp(is,iperp,ipar,2),&
-                    df0(is, iperp,ipar,1),df0(is, iperp,ipar,2)
+                   !write(unit_f,fmt) pp(is,iperp,ipar,1),pp(is,iperp,ipar,2),&
+                   ! df0(is, iperp,ipar,1),df0(is, iperp,ipar,2)
+
+                  write(unit_f,fmt) pp(is,iperp,ipar,1),pp(is,iperp,ipar,2),&
+                  df0(is, iperp,ipar,1),df0(is, iperp,ipar,2),&
+                  f0(is,iperp,ipar)
              enddo
              write(unit_f,*)
           enddo
@@ -1348,6 +1354,8 @@ end function landau_integrate
 double complex function int_ee(om)
   !! This function returns the ee term in Eq. (2.9).
 	use alps_var, only : qs, ms, nperp, npar, pp, pi, df0, sproc
+   use alps_var, only : runname
+   use alps_io, only : get_unused_unit
 	implicit none
 
     double complex, intent(in) :: om
@@ -1365,6 +1373,17 @@ double complex function int_ee(om)
     double precision :: dppar
     !! Inifinitesimal step in parallel momentum.
 
+    double precision, dimension(:,:), allocatable :: vv_eval
+    !! point by point evaluation of int_ee
+
+    character(500) :: vv_Name 
+  !! File name for output of map.
+
+    integer :: unit_vv
+  !! Unit for map output.
+
+   allocate(vv_eval(1:nperp-1,1:npar-1));vv_eval=0.d0
+
 	int_ee = cmplx (0.d0, 0.d0,kind(1.d0))
 
 	dpperp = pp(sproc, 2, 2, 1) - pp(sproc, 1, 2, 1)
@@ -1374,13 +1393,20 @@ double complex function int_ee(om)
 	int_ee = int_ee + &
 		   2.d0 * pp(sproc, 1, 1, 2) *&
 		   (df0(sproc, 1, 1, 2)*pp(sproc, 1, 1, 1) - &
-		   pp(sproc, 1, 1, 1)*df0(sproc, 1, 1, 1))
+		   pp(sproc, 1, 1, 2)*df0(sproc, 1, 1, 1))
 
+   vv_eval(1,1)=pp(sproc, 1, 1, 2) *&
+      (df0(sproc, 1, 1, 2)*pp(sproc, 1, 1, 1) - &
+      pp(sproc, 1, 1, 2)*df0(sproc, 1, 1, 1))
 
 	int_ee = int_ee + &
 		   2.d0 * pp(sproc, 1, npar -1, 2) *&
 		   (df0(sproc, 1, npar -1, 2)*pp(sproc, 1, npar -1, 1) - &
 		   pp(sproc, 1, npar -1, 2)*df0(sproc, 1, npar -1, 1))
+      
+      vv_eval(1,npar-1)=pp(sproc, 1, npar-1, 2) *&
+         (df0(sproc, 1, npar-1, 2)*pp(sproc, 1, npar-1, 1) - &
+         pp(sproc, 1, npar-1, 2)*df0(sproc, 1, npar-1, 1))
 
 
 	int_ee = int_ee + &
@@ -1388,12 +1414,19 @@ double complex function int_ee(om)
 		   (df0(sproc, nperp -1, 1, 2)*pp(sproc, nperp -1, 1, 1) - &
 		   pp(sproc, nperp -1, 1, 2)*df0(sproc, nperp -1, 1, 1))
 
+         vv_eval(nperp-1,1)=pp(sproc, nperp-1, 1, 2) *&
+         (df0(sproc, nperp-1, 1, 2)*pp(sproc, nperp-1, 1, 1) - &
+         pp(sproc, nperp-1, 1, 2)*df0(sproc, nperp-1, 1, 1))  
+
 
 	int_ee = int_ee + &
 		   pp(sproc, nperp -1, npar -1, 2) *&
 		   (df0(sproc, nperp -1, npar -1, 2)*pp(sproc, nperp -1, npar -1, 1) - &
 		   pp(sproc, nperp -1, npar -1, 2)*df0(sproc, nperp -1, npar -1, 1))
 
+      vv_eval(nperp-1,npar-1)=pp(sproc, nperp-1,npar-1, 2) *&
+      (df0(sproc, nperp-1,npar-1, 2)*pp(sproc, nperp-1,npar-1, 1) - &
+      pp(sproc, nperp-1,npar-1, 2)*df0(sproc, nperp-1,npar-1, 1))   
 
 	do iperp = 2, nperp-2
 		do ipar = 2, npar-2
@@ -1401,7 +1434,12 @@ double complex function int_ee(om)
 				   4.d0*(&
 				   pp(sproc, iperp, ipar, 2) *&
 				   (df0(sproc, iperp, ipar, 2)*pp(sproc, iperp, ipar, 1) - &
-				   pp(sproc, iperp, ipar, 2)*df0(sproc, iperp, ipar, 1)) )
+				   pp(sproc, iperp, ipar, 2)*df0(sproc, iperp, ipar, 1)))
+               
+
+               vv_eval(iperp,ipar)=pp(sproc, iperp,ipar, 2) *&
+               (df0(sproc, iperp,ipar, 2)*pp(sproc, iperp,ipar, 1) - &
+               pp(sproc, iperp,ipar, 2)*df0(sproc, iperp,ipar, 1)) 
 		enddo
 	enddo
 
@@ -1415,12 +1453,20 @@ double complex function int_ee(om)
 				(df0(sproc, 1, ipar, 2)*pp(sproc, 1, ipar, 1) - &
 				pp(sproc, 1, ipar, 2)*df0(sproc, 1, ipar, 1)) )
 
+            vv_eval(1,ipar)=pp(sproc, 1,ipar, 2) *&
+            (df0(sproc, 1,ipar, 2)*pp(sproc, 1,ipar, 1) - &
+            pp(sproc, 1,ipar, 2)*df0(sproc, 1,ipar, 1)) 
+
 
 			int_ee = int_ee + &
 				2.d0*(&
 				pp(sproc, nperp -1, ipar, 2) *&
 				(df0(sproc, nperp -1, ipar, 2)*pp(sproc, nperp -1, ipar, 1) - &
 				pp(sproc, nperp -1, ipar, 2)*df0(sproc, nperp -1, ipar, 1)) )
+
+            vv_eval(nperp-1,ipar)=pp(sproc, nperp-1,ipar, 2) *&
+            (df0(sproc, nperp-1,ipar, 2)*pp(sproc, nperp-1,ipar, 1) - &
+            pp(sproc, nperp-1,ipar, 2)*df0(sproc, nperp-1,ipar, 1)) 
 	enddo
 
 	do iperp = 2, nperp-2
@@ -1431,15 +1477,48 @@ double complex function int_ee(om)
 				(df0(sproc, iperp, 1, 2)*pp(sproc, iperp, 1, 1) - &
 				pp(sproc, iperp, 1, 2)*df0(sproc, iperp, 1, 1)) )
 
+            vv_eval(iperp,1)=pp(sproc, iperp,1, 2) *&
+            (df0(sproc, iperp,1, 2)*pp(sproc, iperp,1, 1) - &
+            pp(sproc, iperp,1, 2)*df0(sproc, iperp,1, 1)) 
+
 			int_ee = int_ee + &
 				2.d0*(&
 				pp(sproc, iperp, npar -1, 2) *&
 				(df0(sproc, iperp, npar -1, 2)*pp(sproc, iperp, npar -1, 1) - &
 				pp(sproc, iperp, npar -1, 2)*df0(sproc, iperp, npar -1, 1)))
+
+            vv_eval(iperp,npar-1)=pp(sproc, iperp,npar-1, 2) *&
+            (df0(sproc, iperp,npar-1, 2)*pp(sproc, iperp,npar-1, 1) - &
+            pp(sproc, iperp,npar-1, 2)*df0(sproc, iperp,npar-1, 1)) 
 	enddo
 
 	int_ee = int_ee * 2.d0 * pi * qs(sproc) / ms(sproc)
 	int_ee = int_ee * dpperp * dppar * 0.25d0
+
+   write(*,*)'INT_ee',sproc,int_ee
+
+   !write(runname,'(a)')'LH2000_mu1836_point_AC1'
+   write(runname,'(a)')'LH2000_iso_mu1836_point_AC1'
+
+   write(*,'(3a,i0,a)') &
+   'solution/',trim(runname),'_',sproc,'.vv'
+
+   write(vv_Name,'(3a,i0,a)') &
+      'solution/',trim(runname),'_',sproc,'.vv'
+   call get_unused_unit(unit_vv)
+   open(unit=unit_vv,file=trim(vv_Name),status='replace')
+
+   do iperp=1,nperp-1
+      do ipar=1,npar-1
+         write(unit_vv,'(5es14.4)')&
+         pp(sproc,iperp,ipar,1),pp(sproc,iperp,ipar,2),&         
+         df0(sproc,iperp,ipar,1),df0(sproc,iperp,ipar,2),&
+         vv_eval(iperp,ipar)
+      enddo
+      write(unit_vv,*)
+   enddo
+
+   close(unit_vv)
 
 	return
 
@@ -2865,7 +2944,7 @@ subroutine map_search
   if (ni.GT.1) di=(gamf-gami)/(1.d0*(ni-1))
 
   if (proc0) then
-     write(mapName,'(3a)') 'solution/',trim(runname),'.map'
+      write(mapName,'(3a)') 'solution/',trim(runname),'.map'
      call get_unused_unit(unit_map)
      open(unit=unit_map,file=trim(mapName),status='replace')
      close(unit_map)
