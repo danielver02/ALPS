@@ -253,7 +253,7 @@ end subroutine derivative_f0
     use alps_var, only : wave, kperp, kpar, ns, qs, vA, chi0, usebM
     use alps_nhds, only: calc_chi
     use alps_fns_rel, only : int_ee_rel
-    use alps_var, only : arrayName
+    use alps_var, only : runname
     use alps_io, only : get_unused_unit
     use mpi
     implicit none
@@ -439,7 +439,7 @@ end subroutine derivative_f0
       eps=cmplx(0.d0,0.d0,kind(1.d0))
 
       write(writeName,'(3a,i0,a)')&
-               'solution/',trim(arrayName),'_chiS.array'
+               'solution/',trim(runname),'_chiS.array'
       call get_unused_unit(unit_f)
       open(unit=unit_f,file=trim(writeName),status='replace')
 
