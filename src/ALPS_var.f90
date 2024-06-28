@@ -243,6 +243,7 @@ module alps_var
   integer, dimension(:), allocatable :: poly_kind
   !!Selection of Orthogonal Basis Function, (1:nspec)
   !! 1) Chebyshev Polynomials
+  !! 2) Legendre Polynomials
   !! Other Polynomials can be added in future releases.
 
   double precision, dimension(:), allocatable :: poly_log_max
