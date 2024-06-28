@@ -248,6 +248,9 @@ contains
              case (1)
                 write(*,'(a,i0,a,i0)')&
                      'Chebyshev Representation of Order ',poly_order(is),' for species ',is
+             case (2) 
+               write(*,'(a,i0,a,i0)')&
+                     'Legendre Representation of Order ',poly_order(is),' for species ',is
              case default
                 call alps_error(10)
              end select

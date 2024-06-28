@@ -357,6 +357,43 @@ double complex function fit_function_poly(is,iperp,ppar_val,n_poly,fit_coeffs)
        endif
     endif
  endif
+
+case (2)
+    !Legendre polynomials range from [-1,1]
+    norm_1=5.d-1*(pp(is,iperp,npar,2)+pp(is,iperp,0,2))
+    norm_2=5.d-1*(pp(is,iperp,npar,2)-pp(is,iperp,0,2))
+    ppar_val_tmp=(ppar_val-norm_1)/norm_2
+
+    if (abs(ppar_val_tmp).gt.1.d0) then !!kgk: should this be .gt. or .ge. ?
+       fit_function_poly=0.d0
+    else
+    n=0
+    poly_basis(n)=1.d0
+    fit_function_poly=fit_function_poly+fit_coeffs(n)*poly_basis(n)
+    n=1
+    poly_basis(n)=ppar_val_tmp
+    fit_function_poly=fit_function_poly+fit_coeffs(n)*poly_basis(n)
+    do n=2,n_poly
+		poly_basis(n) = &
+                ((2.d0*n-1.d0) * ppar_val_tmp  * poly_basis(n-1) - &
+				(n-1.d0)*poly_basis(n-2))/&
+                (1.d0*n)       
+       fit_function_poly=fit_function_poly+fit_coeffs(n)*poly_basis(n)
+    enddo
+    if (logfit(is)) then
+
+       if ((real(fit_function_poly).lt.-poly_log_max(is)).or.& !??
+            (aimag(fit_function_poly).lt.-poly_log_max(is)).or.&
+            (real(fit_function_poly).gt. poly_log_max(is)).or.& !??
+            (aimag(fit_function_poly).gt.poly_log_max(is))) then 
+
+          fit_function_poly=cmplx(0.d0,0.d0,kind(1.d0))
+       else
+          fit_function_poly=10.d0**(fit_function_poly)          
+       endif
+    endif
+ endif
+
 end select
  
  return
@@ -847,6 +884,21 @@ subroutine set_polynomial_basis(is)
                 2.0 * yy * polynomials(is,ipar,n-1) - polynomials(is,ipar,n-2)
         end do
      enddo
+	case (2) !Legendre Polynomial Basis
+		if (writeOut) & 
+			 write(*,'(a,i2)')'Constructing Legendre Basis for Component ',is
+		
+		polynomials(is,:,0) = 1.0
+		do ipar = 0, npar
+		   yy=-1.d0+ipar*(2.d0/npar)
+		   polynomials(is,ipar,1) = yy
+		   do n = 2, poly_order(is)
+				polynomials(is,ipar,n) = &
+                ((2.d0*n-1.d0) * yy * polynomials(is,ipar,n-1) - &
+				(n-1.d0)*polynomials(is,ipar,n-2))/&
+                (1.d0*n)			  
+		   end do
+		enddo
   case default
      call alps_error(10)
   end select
