@@ -404,7 +404,7 @@ subroutine determine_param_fit
 	!! the full field [[alps_var(module):param_fit(variable)]].
 	use alps_var, only : writeOut, fit_type, param_fit, n_fits, nspec, f0, nperp, npar, logfit, runname
         use alps_var, only : relativistic,npparbar,f0_rel,ngamma, perp_correction, gamma_rel, usebM
-        use alps_var, only : ACmethod, poly_fit_coeffs 
+        use alps_var, only : ACmethod, poly_fit_coeffs, poly_order 
 	implicit none
 
 	integer :: ifit
@@ -419,6 +419,9 @@ subroutine determine_param_fit
 	integer :: iperp
 	!! Index of perpendicular momentum.
 
+        integer :: n
+        !! Polynomial Order Index
+ 
 	integer :: is
 	!! Index of species.
 
@@ -513,8 +516,12 @@ subroutine determine_param_fit
                                      //trim(runname)//'.poly_parameters.'//trim(specwrite)&
                                      //'.out', status = 'replace')
                                 do iperp=0,nperp
-                                   write(unit_spec,*)&
-                                        iperp,poly_fit_coeffs(is,iperp,:)
+                                   do n=0,poly_order(is)
+                                      write(unit_spec,'(2i5,es14.4e3)')&
+                                           iperp,n,poly_fit_coeffs(is,iperp,n)
+                                   enddo
+                                   write(unit_spec,*)
+                                   write(unit_spec,*)
                                 enddo
 
                                 close(unit_spec)
@@ -788,7 +795,10 @@ subroutine determine_GLLS(is)
      else
         f0_fit(:)=f0(is,iperp,:)
      endif
+     !call least_squares_fit(polynomials(is,:,:),f0_fit,poly_fit_coeffs(is,iperp,:),poly_order(is))
      call least_squares_fit(polynomials(is,:,:),f0_fit,poly_fit_coeffs(is,iperp,:),poly_order(is))
+     if ((iperp.eq.0).and.(is.eq.1)) &
+               write(*,*)poly_fit_coeffs(is,iperp,:)
   enddo
   deallocate(f0_fit)
   
@@ -854,7 +864,7 @@ subroutine set_polynomial_basis(is)
   !! to the distribution function for component 'is' using the selected
   !! polynomial basis functions.
   use alps_var, only : polynomials, poly_kind, poly_order
-  use alps_var, only : writeOut, npar
+  use alps_var, only : writeOut, npar, runname
   use alps_io, only : alps_error
   implicit none
 
@@ -870,6 +880,15 @@ subroutine set_polynomial_basis(is)
   double precision :: yy
   !! Argument of Polynomial
 
+  integer :: unit_spec
+  !! Unit to write fit results to file.
+
+  character (10) :: specwrite
+  !! File name to write fit results to file.
+
+  character (50) :: fmt
+  !! Output format for file i/o.
+  
   select case (poly_kind(is))
   case (1) !Chebyshev Polynomial Basis
      if (writeOut) & 
@@ -884,24 +903,39 @@ subroutine set_polynomial_basis(is)
                 2.0 * yy * polynomials(is,ipar,n-1) - polynomials(is,ipar,n-2)
         end do
      enddo
-	case (2) !Legendre Polynomial Basis
-		if (writeOut) & 
-			 write(*,'(a,i2)')'Constructing Legendre Basis for Component ',is
+  case (2) !Legendre Polynomial Basis
+     if (writeOut) & 
+      write(*,'(a,i2)')'Constructing Legendre Basis for Component ',is
 		
-		polynomials(is,:,0) = 1.0
-		do ipar = 0, npar
-		   yy=-1.d0+ipar*(2.d0/npar)
-		   polynomials(is,ipar,1) = yy
-		   do n = 2, poly_order(is)
-				polynomials(is,ipar,n) = &
+	polynomials(is,:,0) = 1.d0
+	do ipar = 0, npar
+           yy=-1.d0+ipar*(2.d0/npar)
+           polynomials(is,ipar,1) = yy
+           do n = 2, poly_order(is)
+		polynomials(is,ipar,n) = &
                 ((2.d0*n-1.d0) * yy * polynomials(is,ipar,n-1) - &
-				(n-1.d0)*polynomials(is,ipar,n-2))/&
+		(n-1.d0)*polynomials(is,ipar,n-2))/&
                 (1.d0*n)			  
-		   end do
-		enddo
+          end do
+       enddo
   case default
      call alps_error(10)
   end select
+
+  unit_spec=2000+is
+  write(specwrite,'(i0)') is
+  open(unit = unit_spec,file = 'distribution/'&
+       //trim(runname)//'.poly_basis.'//trim(specwrite)&
+       //'.out', status = 'replace')
+
+  write(fmt,'(a,i0,a)') '(es14.4,',(poly_order(is)+1),'es14.4e3)'
+  
+    do ipar = 0, npar
+       yy=-1.d0+ipar*(2.d0/npar)
+       write(unit_spec,fmt)yy,polynomials(is,ipar,0:poly_order(is))
+    enddo
+  
+  close(unit_spec)
   
 end subroutine set_polynomial_basis
 

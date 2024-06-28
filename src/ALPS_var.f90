@@ -235,7 +235,7 @@ module alps_var
   !! poly_order is taken to be the maximum order across all species.
 
   double precision, dimension(:,:,:), allocatable :: poly_fit_coeffs
-  !! Fit Coefficients for Polynomials from Generarl Linear Least Squares Method
+  !! Fit Coefficients for Polynomials from General Linear Least Squares Method
   !! (1:nspec,0:nperp,0:poly_order)
   !! poly_order is taken to be the maximum order across all species.
   !! The fit is taken in one dimension at each perpendicular momentum value.
