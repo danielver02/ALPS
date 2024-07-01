@@ -172,10 +172,8 @@ double complex function eval_fit(is,iperp,ppar_valC)
 case (2)
    ! use the orthogonal polynomials of kind described in &poly_is
    
-   !write(*,*)iproc,is,iperp,ppar_valC
    eval_fit=fit_function_poly(is,iperp,ppar_valC,poly_order(is),&
         poly_fit_coeffs(is,iperp,0:poly_order(is)))
-   !write(*,*)iproc,is,iperp,ppar_valC,eval_fit
    
 end select
 end function eval_fit
