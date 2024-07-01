@@ -270,7 +270,7 @@ double complex function fit_function_poly(is,iperp,ppar_val,n_poly,fit_coeffs)
   !! function.
   !! For the evaluation in ALPS, use [[eval_fit(function)]].
   use alps_var, only : pp, poly_kind, npar, logfit
-  use alps_var, only : poly_log_max
+  use alps_var, only : poly_log_max, pi
  implicit none
 
  integer :: n_poly
@@ -299,6 +299,9 @@ double complex function fit_function_poly(is,iperp,ppar_val,n_poly,fit_coeffs)
 
  double precision :: norm_1, norm_2
  !! Range of p_parallel for rescaling polynomials
+
+ double precision :: mfac
+ !! The factorial normalization \sqrt[2^m pi^1/2 m!]
 
  fit_function_poly=cmplx(0.d0,0.d0,kind(1.d0))
  
@@ -391,6 +394,56 @@ case (2)
        endif
     endif
  endif
+
+case(3)
+	!Hermite Functions range from [pp(is,0,0,2) to pp(is,0,npar,2)]
+
+	ppar_val_tmp=ppar_val
+
+    if ((real(ppar_val_tmp).lt.pp(is,0,0,2)).or.&
+		(real(ppar_val_tmp).gt.pp(is,0,npar,2))) then 
+		fit_function_poly=0.d0
+	 else
+	!Construct the Hermite Polynomials
+	n=0
+	poly_basis(n)=1.d0
+
+	n=1
+	poly_basis(n)=2.d0*ppar_val_tmp
+
+	do n=2,n_poly
+		poly_basis(n)=&
+		2.d0*ppar_val_tmp*poly_basis(n-1)-&
+		2.d0*(n-1.d0)*poly_basis(n-2)
+
+	enddo
+
+	!Construct the Hermite Functions
+	 do n=0,n_poly
+		write(*,*)'n,p_par:',n,ppar_val_tmp
+		write(*,*)'polynomial:',poly_basis(n)
+		mfac=(2.d0**(1.d0*n)*pi**(5.d-1)*factorial(n))**(5.d-1)
+		!poly_basis(n) = poly_basis(n)*exp(-(abs(ppar_val_tmp))**2.d0)/mfac
+		write(*,*)'mfactor:',mfac
+		poly_basis(n) = poly_basis(n)*exp(-(ppar_val_tmp)**2.d0/2.d0)/mfac
+		write(*,*)'Modified basis',poly_basis(n)	
+		write(*,*)'prior to sum',fit_function_poly	
+		fit_function_poly=fit_function_poly+fit_coeffs(n)*poly_basis(n)		
+		write(*,*)'post sum:',fit_function_poly
+	 enddo
+	 if (logfit(is)) then
+ 
+		if ((real(fit_function_poly).lt.-poly_log_max(is)).or.& !??
+			 (aimag(fit_function_poly).lt.-poly_log_max(is)).or.&
+			 (real(fit_function_poly).gt. poly_log_max(is)).or.& !??
+			 (aimag(fit_function_poly).gt.poly_log_max(is))) then 
+ 
+		   fit_function_poly=cmplx(0.d0,0.d0,kind(1.d0))
+		else
+		   fit_function_poly=10.d0**(fit_function_poly)          
+		endif
+	 endif
+  endif
 
 end select
  
@@ -863,6 +916,7 @@ subroutine set_polynomial_basis(is)
   !! polynomial basis functions.
   use alps_var, only : polynomials, poly_kind, poly_order
   use alps_var, only : writeOut, npar, runname
+  use alps_var, only : pp, pi
   use alps_io, only : alps_error
   implicit none
 
@@ -878,6 +932,18 @@ subroutine set_polynomial_basis(is)
   double precision :: yy
   !! Argument of Polynomial
 
+  double precision :: dy
+  !! Spacing of polynomial argument
+
+  double precision :: ymin
+  !! Minimum of polynomial argument
+
+  double precision :: ymax
+  !! Maximum of polynomial argument
+
+  double precision :: mfac
+  !! The factorial normalization \sqrt[2^m pi^1/2 m!]
+
   integer :: unit_spec
   !! Unit to write fit results to file.
 
@@ -890,11 +956,14 @@ subroutine set_polynomial_basis(is)
   select case (poly_kind(is))
   case (1) !Chebyshev Polynomial Basis
      if (writeOut) & 
-          write(*,'(a,i2)')'Constructing Chebyshev Basis for Component ',is
-     
+          write(*,'(a,i2)')'Constructing Chebyshev Polynomial Basis for Component ',is
+     !Basis maps from -1 to 1
+	 ymin=-1.d0
+	 ymax= 1.d0
+	 dy=(ymax-ymin)/(1.d0*npar)
      polynomials(is,:,0) = 1.0
      do ipar = 0, npar
-        yy=-1.d0+ipar*(2.d0/npar)
+        yy=ymin+ipar*dy
         polynomials(is,ipar,1) = yy
         do n = 2, poly_order(is)
            polynomials(is,ipar,n) = &
@@ -903,11 +972,14 @@ subroutine set_polynomial_basis(is)
      enddo
   case (2) !Legendre Polynomial Basis
      if (writeOut) & 
-      write(*,'(a,i2)')'Constructing Legendre Basis for Component ',is
-		
+      write(*,'(a,i2)')'Constructing Legendre Polynomial Basis for Component ',is
+	!Basis maps from -1 to 1
+	  ymin=-1.d0
+	  ymax= 1.d0
+	  dy=(ymax-ymin)/(1.d0*npar)
 	polynomials(is,:,0) = 1.d0
 	do ipar = 0, npar
-           yy=-1.d0+ipar*(2.d0/npar)
+           yy=ymin+ipar*dy
            polynomials(is,ipar,1) = yy
            do n = 2, poly_order(is)
 		polynomials(is,ipar,n) = &
@@ -916,6 +988,39 @@ subroutine set_polynomial_basis(is)
                 (1.d0*n)			  
           end do
        enddo
+
+ case (3) !Hermite Function Basis
+		if (writeOut) & 
+		 write(*,'(a,i2)')'Constructing Hermite Function Basis for Component ',is
+		   
+	!Basis is not limited in p_par; use full extent of p_par grid for component is.
+		 ymin=pp(is,0,0,2)
+		 ymax=pp(is,0,npar,2)
+		 dy=(ymax-ymin)/(1.d0*npar)
+
+		 !These are the Hermite Polynomials H_m(p_parallel)
+	   polynomials(is,:,0) = 1.d0
+	   do ipar = 0, npar
+			  yy=ymin+ipar*dy
+			  polynomials(is,ipar,1) = 2.d0*yy
+			  do n = 2, poly_order(is)
+		   polynomials(is,ipar,n) = &
+				   (2.d0* yy * polynomials(is,ipar,n-1) - &
+		   2.d0*(n-1.d0)*polynomials(is,ipar,n-2))
+			 end do
+		  enddo
+
+		  !These are the Hermite Functions, phi_m(p_parallel)
+		  !phi_m(p_parallel)=H_m(p_parallel) exp(-p_parallel^2)/sqrt(2^m pi^1/2 m!)		  
+		do n=0,poly_order(is)
+			mfac=(2.d0**(1.d0*n)*pi**(5.d-1)*factorial(n))**(5.d-1)
+			do ipar = 0, npar
+				yy=ymin+ipar*dy
+				polynomials(is,ipar,n)=&
+					polynomials(is,ipar,n)*exp(-yy**2.d0/2.d0)/mfac
+			enddo
+		enddo
+
   case default
      call alps_error(10)
   end select

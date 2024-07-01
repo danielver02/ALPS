@@ -244,6 +244,7 @@ module alps_var
   !!Selection of Orthogonal Basis Function, (1:nspec)
   !! 1) Chebyshev Polynomials
   !! 2) Legendre Polynomials
+  !! 3) Hermite Functions \phi_m
   !! Other Polynomials can be added in future releases.
 
   double precision, dimension(:), allocatable :: poly_log_max
