@@ -254,6 +254,8 @@ contains
             case (3) 
                   write(*,'(a,i0,a,i0)')&
                      'Hermitian Function Representation of Order ',poly_order(is),' for species ',is
+                     write(*,'(A)') 'CAUTION: HERMITE FUNCTIONS CAN LEAD TO NEGATIVE f(p_par) VALUES'
+                     write(*,'(A)') 'FOR THE HYBRID ANALYTIC CONTINUATION. CONSIDER A DIFFERENT BASIS'
              case default
                 call alps_error(10)
              end select

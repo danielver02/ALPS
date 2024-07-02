@@ -420,16 +420,22 @@ case(3)
 
 	!Construct the Hermite Functions
 	 do n=0,n_poly
-		write(*,*)'n,p_par:',n,ppar_val_tmp
-		write(*,*)'polynomial:',poly_basis(n)
+		!write(*,*)'n,p_par:',n,ppar_val_tmp
+		!write(*,*)'polynomial:',poly_basis(n)
 		mfac=(2.d0**(1.d0*n)*pi**(5.d-1)*factorial(n))**(5.d-1)
 		!poly_basis(n) = poly_basis(n)*exp(-(abs(ppar_val_tmp))**2.d0)/mfac
-		write(*,*)'mfactor:',mfac
-		poly_basis(n) = poly_basis(n)*exp(-(ppar_val_tmp)**2.d0/2.d0)/mfac
-		write(*,*)'Modified basis',poly_basis(n)	
-		write(*,*)'prior to sum',fit_function_poly	
+		!write(*,*)'mfactor:',mfac
+		!write(*,*)exp(-ppar_val_tmp)
+		!write(*,*)-ppar_val_tmp**2
+		!write(*,*)exp(-ppar_val_tmp**2)
+		poly_basis(n) = poly_basis(n)*exp(-(ppar_val_tmp)**2/2.d0)/mfac
+		!write(*,*)'Modified basis',poly_basis(n)	
+		!write(*,*)'prior to sum',fit_function_poly	
 		fit_function_poly=fit_function_poly+fit_coeffs(n)*poly_basis(n)		
-		write(*,*)'post sum:',fit_function_poly
+		!write(*,*)'post sum:',fit_function_poly
+		
+		!IS THE COMPLEX PLANE BEING TREATED CORRECTLY?
+		!LOOK INTO SANDBOX CODE!!!
 	 enddo
 	 if (logfit(is)) then
  
@@ -1006,7 +1012,7 @@ subroutine set_polynomial_basis(is)
 			  do n = 2, poly_order(is)
 		   polynomials(is,ipar,n) = &
 				   (2.d0* yy * polynomials(is,ipar,n-1) - &
-		   2.d0*(n-1.d0)*polynomials(is,ipar,n-2))
+		   			2.d0*(n-1.d0)*polynomials(is,ipar,n-2))
 			 end do
 		  enddo
 
@@ -1034,7 +1040,7 @@ subroutine set_polynomial_basis(is)
   write(fmt,'(a,i0,a)') '(es14.4,',(poly_order(is)+1),'es14.4e3)'
   
     do ipar = 0, npar
-       yy=-1.d0+ipar*(2.d0/npar)
+       yy=ymin+ipar*dy
        write(unit_spec,fmt)yy,polynomials(is,ipar,0:poly_order(is))
     enddo
   
