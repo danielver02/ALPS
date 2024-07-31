@@ -38,6 +38,7 @@ jobs:
         brew install gcc openmpi
         # For some reason GitHub actions can't find gfortran unless
         # we explicitly link it
+        brew unlink gcc
         brew link gcc
         ln -s /usr/local/bin/gfortran-12 /usr/local/bin/gfortran
 
