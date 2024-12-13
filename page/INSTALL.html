@@ -126,7 +126,7 @@ Daniel Verscharen  (d.verscharen@ucl.ac.uk)</p>
 <li>GNU make, in some cases it is useful to have the autoconf/automake tools</li>
 <li>Fortran 90 compiler (e.g., gfortran) - we recommend using the latest version
   of the compiler to avoid any surprises in the evaluation.</li>
-<li>MPI (e.g., openmpi) - likewise, this should also be the latest version</li>
+<li>MPI (e.g., Open MPI or MPICH) - likewise, this should also be the latest version</li>
 <li>BLAS and LAPACK - these two libraries are used for the polyharmonic spline
   interpolation in ALPS. They are directly linked during the compilation</li>
 </ul>
@@ -146,7 +146,12 @@ sudo apt-get install -y libopenblas-dev libblas-dev liblapack-dev
 <p>If an older compiler or MPI version is still installed, it may be necessary to
 deinstall this before using apt-get.</p>
 <p>On macOS, homebrew is a good way to install the necessary packages:</p>
-<div class="codehilite"><pre><span></span><code>brew install gcc openmpi
+<div class="codehilite"><pre><span></span><code>brew install gcc open-mpi
+</code></pre></div>
+
+<p>There have been reports about issues with Open MPI when used with certain compilers on macOS. In that case, it is worth trying MPICH instead of Open MPI:</p>
+<div class="codehilite"><pre><span></span><code><span class="nv">brew</span><span class="w"> </span><span class="k">unlink</span><span class="w"> </span><span class="nv">open</span><span class="o">-</span><span class="nv">mpi</span>
+<span class="nv">brew</span><span class="w"> </span><span class="nv">install</span><span class="w"> </span><span class="nv">mpich</span>
 </code></pre></div>
 
 <h2>GETTING THE ALPS CODE</h2>
