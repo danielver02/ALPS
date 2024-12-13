@@ -24,7 +24,7 @@ ALPS has the following requirements:
 - GNU make, in some cases it is useful to have the autoconf/automake tools
 - Fortran 90 compiler (e.g., gfortran) - we recommend using the latest version
   of the compiler to avoid any surprises in the evaluation.
-- MPI (e.g., openmpi or MPICH) - likewise, this should also be the latest version
+- MPI (e.g., Open MPI or MPICH) - likewise, this should also be the latest version
 - BLAS and LAPACK - these two libraries are used for the polyharmonic spline
   interpolation in ALPS. They are directly linked during the compilation
 
@@ -53,10 +53,10 @@ deinstall this before using apt-get.
 On macOS, homebrew is a good way to install the necessary packages:
 
 ```
-brew install gcc openmpi
+brew install gcc open-mpi
 ```
 
-There have been reports about issues with openmpi when used with certain compilers on macOS. In that case, it is worth trying MPICH instead of openmpi:
+There have been reports about issues with Open MPI when used with certain compilers on macOS. In that case, it is worth trying MPICH instead of Open MPI:
 
 ```
 brew unlink open-mpi
