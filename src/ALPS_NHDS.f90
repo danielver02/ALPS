@@ -162,7 +162,8 @@ contains
      call calc_ypsilon(Ynew,j,n,kz,kperp,x)
      do i=1,3
       do k=1,3
-        Y(i,k)=Y(i,k)+exp(-z)*Ynew(i,k)
+        ! Remember that the Bessel functions give I_n(z)*exp(-z), so the factor exp(-z) is absorbed.
+        Y(i,k)=Y(i,k)+Ynew(i,k)
       enddo
      enddo
   enddo
@@ -681,8 +682,12 @@ double complex function dispfunct(zeta,kpos)
   !     C.W.CLENSHAW, CHEBYSHEV SERIES FOR MATHEMATICAL FUNCTIONS,
   !     MATHEMATICAL TABLES, VOL.5, 1962.
   !
-        PARAMETER (IACC = 40,BIGNO = 1.D10, BIGNI = 1.D-10)
-        REAL *8 X,TOX,BIM,BI,BIP
+  ! This function calculates I_n(x)*exp(-x) instead of I_n(x)
+
+
+        DOUBLE PRECISION :: X,TOX,BIM,BI,BIP
+        INTEGER,PARAMETER :: IACC = 40
+        INTEGER,PARAMETER :: IBIGNO = maxexponent(x)/2
         IF (N.EQ.0) THEN
         BESSI = BESSI0(X)
         RETURN
@@ -704,14 +709,14 @@ double complex function dispfunct(zeta,kpos)
         BIM = BIP+DFLOAT(J)*TOX*BI
         BIP = BI
         BI  = BIM
-        IF (ABS(BI).GT.BIGNO) THEN
-        BI  = BI*BIGNI
-        BIP = BIP*BIGNI
-        BESSI = BESSI*BIGNI
+        IF (EXPONENT(BI).GT.IBIGNO) THEN
+        BI  = scale(BI,-IBIGNO)
+        BIP = scale(BIP,-IBIGNO)
+        BESSI = scale(BESSI,-IBIGNO)
         ENDIF
         IF (J.EQ.N) BESSI = BIP
      12 CONTINUE
-        BESSI = BESSI*BESSI0(X)/BI
+        BESSI = BESSI0(X)*(BESSI/BI)
         RETURN
         END
 
@@ -720,6 +725,7 @@ double complex function dispfunct(zeta,kpos)
 
         double precision FUNCTION BESSI0(X)
         !! Auxiliary Bessel functions for N=0, N=1
+        ! This function calculates I_0(x)*exp(-x) instead of I_0(x)
         REAL *8 X,Y,P1,P2,P3,P4,P5,P6,P7,  &
         Q1,Q2,Q3,Q4,Q5,Q6,Q7,Q8,Q9,AX,BX
         DATA P1,P2,P3,P4,P5,P6,P7/1.D0,3.5156229D0,3.0899424D0,1.2067492D0,  &
@@ -729,11 +735,11 @@ double complex function dispfunct(zeta,kpos)
         0.2635537D-1,-0.1647633D-1,0.392377D-2/
         IF(ABS(X).LT.3.75D0) THEN
         Y=(X/3.75D0)**2
-        BESSI0=P1+Y*(P2+Y*(P3+Y*(P4+Y*(P5+Y*(P6+Y*P7)))))
+        BESSI0=P1+Y*(P2+Y*(P3+Y*(P4+Y*(P5+Y*(P6+Y*P7)))))*EXP(-AX)
         ELSE
         AX=ABS(X)
         Y=3.75D0/AX
-        BX=EXP(AX)/SQRT(AX)
+        BX=1.d0/SQRT(AX)
         AX=Q1+Y*(Q2+Y*(Q3+Y*(Q4+Y*(Q5+Y*(Q6+Y*(Q7+Y*(Q8+Y*Q9)))))))
         BESSI0=AX*BX
         ENDIF
@@ -744,7 +750,7 @@ double complex function dispfunct(zeta,kpos)
 
         double precision FUNCTION BESSI1(X)
         !! Modified Bessel function of order 1.
-
+        ! This function calculates I_1(x)*exp(-x) instead of I_1(x)
         REAL *8 X,Y,P1,P2,P3,P4,P5,P6,P7,  &
         Q1,Q2,Q3,Q4,Q5,Q6,Q7,Q8,Q9,AX,BX
         DATA P1,P2,P3,P4,P5,P6,P7/0.5D0,0.87890594D0,0.51498869D0,  &
@@ -754,11 +760,11 @@ double complex function dispfunct(zeta,kpos)
         -0.2895312D-1,0.1787654D-1,-0.420059D-2/
         IF(ABS(X).LT.3.75D0) THEN
         Y=(X/3.75D0)**2
-        BESSI1=X*(P1+Y*(P2+Y*(P3+Y*(P4+Y*(P5+Y*(P6+Y*P7))))))
+        BESSI1=X*(P1+Y*(P2+Y*(P3+Y*(P4+Y*(P5+Y*(P6+Y*P7))))))*EXP(-ABS(X))
         ELSE
         AX=ABS(X)
         Y=3.75D0/AX
-        BX=EXP(AX)/SQRT(AX)
+        BX=1.d0/SQRT(AX)
         AX=Q1+Y*(Q2+Y*(Q3+Y*(Q4+Y*(Q5+Y*(Q6+Y*(Q7+Y*(Q8+Y*Q9)))))))
         BESSI1=AX*BX
         ENDIF
