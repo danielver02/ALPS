@@ -733,13 +733,13 @@ double complex function dispfunct(zeta,kpos)
         DATA Q1,Q2,Q3,Q4,Q5,Q6,Q7,Q8,Q9/0.39894228D0,0.1328592D-1, &
         0.225319D-2,-0.157565D-2,0.916281D-2,-0.2057706D-1,  &
         0.2635537D-1,-0.1647633D-1,0.392377D-2/
-        IF(ABS(X).LT.3.75D0) THEN
-        Y=(X/3.75D0)**2
-        BESSI0=P1+Y*(P2+Y*(P3+Y*(P4+Y*(P5+Y*(P6+Y*P7)))))*EXP(-AX)
-        ELSE
         AX=ABS(X)
+        IF(AX.LT.3.75D0) THEN
+        Y=(X/3.75D0)**2
+        BESSI0=(P1+Y*(P2+Y*(P3+Y*(P4+Y*(P5+Y*(P6+Y*P7))))))*EXP(-AX)
+        ELSE
         Y=3.75D0/AX
-        BX=1.d0/SQRT(AX)
+        BX=1.D0/SQRT(AX)
         AX=Q1+Y*(Q2+Y*(Q3+Y*(Q4+Y*(Q5+Y*(Q6+Y*(Q7+Y*(Q8+Y*Q9)))))))
         BESSI0=AX*BX
         ENDIF
@@ -758,18 +758,18 @@ double complex function dispfunct(zeta,kpos)
         DATA Q1,Q2,Q3,Q4,Q5,Q6,Q7,Q8,Q9/0.39894228D0,-0.3988024D-1, &
         -0.362018D-2,0.163801D-2,-0.1031555D-1,0.2282967D-1, &
         -0.2895312D-1,0.1787654D-1,-0.420059D-2/
-        IF(ABS(X).LT.3.75D0) THEN
-        Y=(X/3.75D0)**2
-        BESSI1=X*(P1+Y*(P2+Y*(P3+Y*(P4+Y*(P5+Y*(P6+Y*P7))))))*EXP(-ABS(X))
-        ELSE
         AX=ABS(X)
-        Y=3.75D0/AX
-        BX=1.d0/SQRT(AX)
-        AX=Q1+Y*(Q2+Y*(Q3+Y*(Q4+Y*(Q5+Y*(Q6+Y*(Q7+Y*(Q8+Y*Q9)))))))
-        BESSI1=AX*BX
+        IF(AX.LT.3.75D0) THEN
+          Y=(X/3.75D0)**2
+          BESSI1=X*(P1+Y*(P2+Y*(P3+Y*(P4+Y*(P5+Y*(P6+Y*P7))))))*EXP(-AX)
+        ELSE
+          Y=3.75D0/AX
+          BX=1.D0/SQRT(AX)
+          AX=Q1+Y*(Q2+Y*(Q3+Y*(Q4+Y*(Q5+Y*(Q6+Y*(Q7+Y*(Q8+Y*Q9)))))))
+          BESSI1=AX*BX
         ENDIF
         RETURN
-        END
+      END
 
 
 
