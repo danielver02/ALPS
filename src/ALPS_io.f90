@@ -56,7 +56,7 @@ contains
     use alps_var, only : maxsteps_fit, n_fits, lambda_initial_fit, lambdafac_fit, epsilon_fit
     use alps_var, only : bMnmaxs, bMBessel_zeros, bMbetas, bMalphas, bMpdrifts
     use alps_var, only : ACmethod, poly_kind, poly_order, polynomials, poly_fit_coeffs
-    use alps_var, only : poly_log_max
+    use alps_var, only : poly_log_max, secant_method
     implicit none
 
     integer :: ik
@@ -77,7 +77,8 @@ contains
     !Namelist read in from input file:
     nameList /system/ &
          kperp, kpar, nspec, nroots, use_map, writeOut,&
-         nperp, npar, ngamma, npparbar, vA, arrayName, Bessel_zero, numiter, D_threshold, &
+         nperp, npar, ngamma, npparbar, vA, arrayName, Bessel_zero, &
+         secant_method, numiter, D_threshold, &
          D_prec, D_gap, positions_principal, Tlim, &
          maxsteps_fit, lambda_initial_fit, lambdafac_fit, epsilon_fit, fit_check, &
          determine_minima, n_resonance_interval, scan_option, n_scan

@@ -24,7 +24,6 @@ src_dir:  ./src
           ./distribution
 favicon: favicon.ico
 
-
 ---
 
 [![DOI](https://zenodo.org/badge/243310181.svg)](https://zenodo.org/badge/latestdoi/243310181)
