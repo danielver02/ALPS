@@ -1752,7 +1752,7 @@ subroutine secant_osc(om, in)
   !! Damping factor to reduce step size in case of oscillation.
 
   ii = cmplx(0.d0, 1.d0, kind(1.d0))
-  delta = cmplx(1.d-6, 0.d0, kind(1.d0))  !! Small delta for numerical derivative
+  delta = cmplx(1.d-6, 1.d-6, kind(1.d0))
 
   prevom = om * (1.d0 - D_prec)
   prevD = disp(prevom)
@@ -1814,8 +1814,8 @@ subroutine secant_osc(om, in)
 
       !! If oscillation persists, use finite-difference Newton step
       if (oscillation_count > 2) then
-        !! Compute finite-difference derivative approximation
-        Dprime = (disp(om + delta) - D) / delta
+         !! Compute finite-difference derivative approximation
+         Dprime = (disp(om + delta) - disp(om - delta)) / (2.d0 * delta)
 
         if (abs(Dprime) > 1.d-12) then
           jump = D / Dprime  !! Newton-like update
@@ -1831,7 +1831,12 @@ subroutine secant_osc(om, in)
 
       !! Apply update
       om = om - jump
-    endif
+
+      if (proc0 .AND. writeOut) then
+         write(*,'(i3,10es14.4)')iter,om,prevom,D,abs(D),prevD,abs(prevD)
+      endif
+
+   endif
 
     !! Update previous values
     prev4om = prev3om
