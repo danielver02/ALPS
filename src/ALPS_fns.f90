@@ -1706,7 +1706,7 @@ end subroutine secant
 
 subroutine secant_osc(om, in)
   !! This subroutine applies the secant method to find the roots of the dispersion tensor.
-  !! It improves on secant to escape oscillatory loops of the secant method.
+  !! If oscillations persist, it switches to a Newton-type search with finite differences.
   use ALPS_var, only : numiter, D_threshold, ierror, proc0, writeOut, D_prec
   use mpi
   implicit none
@@ -1723,8 +1723,9 @@ subroutine secant_osc(om, in)
   double complex :: ii
   !! Imaginary unit.
 
-  double complex :: D, prevD, prev2D, prev3D, prev4D
+  double complex :: D, prevD, prev2D, prev3D, prev4D, Dprime
   !! Dispersion tensor and its previous values.
+  !! Dprime is the finite-difference derivative approximation.
 
   double complex :: jump
   !! Difference to be added to om.
@@ -1735,8 +1736,11 @@ subroutine secant_osc(om, in)
   double complex :: minD
   !! Best known function value.
 
-  integer :: iter
-  !! Iteration counter.
+  double complex :: delta
+  !! Small perturbation for finite-difference Newton step.
+
+  integer :: iter, oscillation_count
+  !! Iteration counter and oscillation detector.
 
   logical :: go_for_secant
   !! Check whether a secant-method step is required.
@@ -1748,6 +1752,7 @@ subroutine secant_osc(om, in)
   !! Damping factor to reduce step size in case of oscillation.
 
   ii = cmplx(0.d0, 1.d0, kind(1.d0))
+  delta = cmplx(1.d-6, 0.d0, kind(1.d0))  !! Small delta for numerical derivative
 
   prevom = om * (1.d0 - D_prec)
   prevD = disp(prevom)
@@ -1767,6 +1772,7 @@ subroutine secant_osc(om, in)
   go_for_secant = .TRUE.
   oscillating = .FALSE.
   damping_factor = 1.d0
+  oscillation_count = 0
 
   do while ((iter .LE. (numiter - 1)) .AND. go_for_secant)
     iter = iter + 1
@@ -1779,7 +1785,7 @@ subroutine secant_osc(om, in)
     endif
 
     !! Check convergence
-    if ((abs(D) .LT. D_threshold)) then
+    if ((abs(D) .LT. max(D_threshold, 0.01 * abs(D)))) then
       jump = 0.d0
       go_for_secant = .FALSE.
       if (proc0 .AND. writeOut) then
@@ -1787,31 +1793,45 @@ subroutine secant_osc(om, in)
         write(*, '(a,2es14.4e3,a,2es14.4e3)') ' D(', real(om), aimag(om), ')= ', D
       endif
     else
-      !! Detect oscillations over the last four iterations
-      if ((abs(om - prev2om) .LT. 1.d-9) .OR. &
-          (abs(om - prev3om) .LT. 1.d-9) .OR. &
-          (abs(om - prev4om) .LT. 1.d-9)) then
-        oscillating = .TRUE.
-        damping_factor = 0.5d0  !! Reduce step size by 50%
+      !! Detect oscillations over last four iterations
+      if ((abs(om - prev2om) .LT. 1.d-6) .OR. &
+          (abs(om - prev3om) .LT. 1.d-6) .OR. &
+          (abs(om - prev4om) .LT. 1.d-6)) then
+        oscillation_count = oscillation_count + 1
+        damping_factor = max(0.5d0, damping_factor * 0.75d0)  !! Reduce step size
         if (proc0 .AND. writeOut) then
            write(*, '(a,i0,a,2es14.4,a,2es14.4,a,2es14.4,a,2es14.4,a)') &
-                ' Caught in oscillation: Step ',j,' (',&
+                ' Caught in oscillation: Step ',iter,' (',&
                 om,') -> (',&
                 prev2om,') -> (',&
                 prev3om,') -> (',&
                 prev4om,')'
         endif
       else
-        oscillating = .FALSE.
+         !oscillation_count = 0
         damping_factor = 1.d0
       endif
 
-      !! Compute secant step with damping if oscillations occur
-      jump = damping_factor * D * (om - prevom) / (D - prevD)
-      if (proc0 .AND. writeOut) then
-         write(*,'(i3,10es14.4)')j,om,prevom,D,abs(D),prevD,abs(prevD)
+      !! If oscillation persists, use finite-difference Newton step
+      if (oscillation_count > 2) then
+        !! Compute finite-difference derivative approximation
+        Dprime = (disp(om + delta) - D) / delta
+
+        if (abs(Dprime) > 1.d-12) then
+          jump = D / Dprime  !! Newton-like update
+          if (proc0 .AND. writeOut) then
+            write(*, '(a,2es14.4)') ' Switching to Newton step. Jump=', jump
+          endif
+        else
+          jump = damping_factor * D * (om - prevom) / (D - prevD)  !! Fall back to secant
+        endif
+      else
+        jump = damping_factor * D * (om - prevom) / (D - prevD)
       endif
-   endif
+
+      !! Apply update
+      om = om - jump
+    endif
 
     !! Update previous values
     prev4om = prev3om
@@ -1824,17 +1844,14 @@ subroutine secant_osc(om, in)
     prev2D = prevD
     prevD = D
 
-    !! Apply the jump
-    om = om - jump
-
-    !! Track the best value found so far
+    !! Track best value found
     if (abs(D) .LT. abs(minD)) then
       minom = om
       minD = D
     endif
   enddo
 
-  !! If max iterations reached, use best known solution
+  !! If max iterations reached, return the best known root
   if (proc0 .AND. writeOut .AND. (iter .GE. numiter)) then
     write(*, '(a,i4,a)') ' Maximum iteration ', iter, ' reached.'
     om = minom
