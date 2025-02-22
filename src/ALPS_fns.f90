@@ -1794,8 +1794,8 @@ subroutine secant_osc(om, in)
         oscillating = .TRUE.
         damping_factor = 0.5d0  !! Reduce step size by 50%
         if (proc0 .AND. writeOut) then
-           write(*, '(a,2es14.4,a,2es14.4,a,2es14.4,a,2es14.4,a)') &
-                ' Caught in oscillation: (',&
+           write(*, '(a,i0,a,2es14.4,a,2es14.4,a,2es14.4,a,2es14.4,a)') &
+                ' Caught in oscillation: Step ',j,' (',&
                 om,') -> (',&
                 prev2om,') -> (',&
                 prev3om,') -> (',&
@@ -1808,7 +1808,10 @@ subroutine secant_osc(om, in)
 
       !! Compute secant step with damping if oscillations occur
       jump = damping_factor * D * (om - prevom) / (D - prevD)
-    endif
+      if (proc0 .AND. writeOut) then
+         write(*,'(i3,10es14.4)')j,om,prevom,D,abs(D),prevD,abs(prevD)
+      endif
+   endif
 
     !! Update previous values
     prev4om = prev3om
