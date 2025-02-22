@@ -1706,7 +1706,7 @@ end subroutine secant
 
 subroutine secant_osc(om, in)
   !! This subroutine applies the secant method to find the roots of the dispersion tensor.
-  !! It improves on secant to escape osillatory loops of the secant method.
+  !! It improves on secant to escape oscillatory loops of the secant method.
   use ALPS_var, only : numiter, D_threshold, ierror, proc0, writeOut, D_prec
   use mpi
   implicit none
@@ -1717,13 +1717,13 @@ subroutine secant_osc(om, in)
   integer, intent(in) :: in
   !! Root number
 
-  double complex :: prevom, prev2om
+  double complex :: prevom, prev2om, prev3om, prev4om
   !! Storage of previous entries of om.
 
   double complex :: ii
   !! Imaginary unit.
 
-  double complex :: D, prevD, prev2D
+  double complex :: D, prevD, prev2D, prev3D, prev4D
   !! Dispersion tensor and its previous values.
 
   double complex :: jump
@@ -1753,6 +1753,11 @@ subroutine secant_osc(om, in)
   prevD = disp(prevom)
   prev2om = prevom
   prev2D = prevD
+  prev3om = prevom
+  prev3D = prevD
+  prev4om = prevom
+  prev4D = prevD
+
   minD = prevD
   minom = prevom
 
@@ -1782,12 +1787,19 @@ subroutine secant_osc(om, in)
         write(*, '(a,2es14.4e3,a,2es14.4e3)') ' D(', real(om), aimag(om), ')= ', D
       endif
     else
-      !! Check for oscillation: if we are revisiting a previous `om`
-      if ((abs(om - prev2om) .LT. 1.d-6)) then
+      !! Detect oscillations over the last four iterations
+      if ((abs(om - prev2om) .LT. 1.d-9) .OR. &
+          (abs(om - prev3om) .LT. 1.d-9) .OR. &
+          (abs(om - prev4om) .LT. 1.d-9)) then
         oscillating = .TRUE.
-        damping_factor = 0.5d0
+        damping_factor = 0.5d0  !! Reduce step size by 50%
         if (proc0 .AND. writeOut) then
-           write(*, '(a,4es14.4)') ' Caught in oscillation', om, prev2om
+           write(*, '(a,2es14.4,a,2es14.4,a,2es14.4,a,2es14.4,a)') &
+                ' Caught in oscillation: (',&
+                om,') -> (',&
+                prev2om,') -> (',&
+                prev3om,') -> (',&
+                prev4om,')'
         endif
       else
         oscillating = .FALSE.
@@ -1799,8 +1811,13 @@ subroutine secant_osc(om, in)
     endif
 
     !! Update previous values
+    prev4om = prev3om
+    prev3om = prev2om
     prev2om = prevom
     prevom = om
+
+    prev4D = prev3D
+    prev3D = prev2D
     prev2D = prevD
     prevD = D
 
@@ -1822,7 +1839,6 @@ subroutine secant_osc(om, in)
   endif
   
 end subroutine secant_osc
-
 
 double complex function rtsec(func,xin,iflag)
   !! An alternative implementation of the secant method, adapted from PLUME.
@@ -3214,7 +3230,7 @@ subroutine refine_guess
      case (1)
         omega=rtsec(disp,omega,iflag)
      case (2)
-        call secant(omega,iw)
+        call secant_osc(omega,iw)
      end select
      
      wroots(iw)=omega
