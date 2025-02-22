@@ -139,10 +139,11 @@ module alps_var
   integer :: sproc
   !! The species number on which this process is working.
 
-  integer :: secant_method=1
+  integer :: secant_method=2
   !! Selection of root finding method.
   !! 0: secant
   !! 1: rtsec
+  !! 2: secant_osc: an improvement to reduce oscillatory loops.
   
   integer :: numiter=50
   !! Maximum number of iterations in secant method.

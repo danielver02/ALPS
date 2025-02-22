@@ -1704,6 +1704,126 @@ subroutine secant(om,in)
 
 end subroutine secant
 
+subroutine secant_osc(om, in)
+  !! This subroutine applies the secant method to find the roots of the dispersion tensor.
+  !! It improves on secant to escape osillatory loops of the secant method.
+  use ALPS_var, only : numiter, D_threshold, ierror, proc0, writeOut, D_prec
+  use mpi
+  implicit none
+
+  double complex, intent(inout) :: om
+  !! Complex wave frequency \(\omega\).
+
+  integer, intent(in) :: in
+  !! Root number
+
+  double complex :: prevom, prev2om
+  !! Storage of previous entries of om.
+
+  double complex :: ii
+  !! Imaginary unit.
+
+  double complex :: D, prevD, prev2D
+  !! Dispersion tensor and its previous values.
+
+  double complex :: jump
+  !! Difference to be added to om.
+
+  double complex :: minom
+  !! Best known solution.
+
+  double complex :: minD
+  !! Best known function value.
+
+  integer :: iter
+  !! Iteration counter.
+
+  logical :: go_for_secant
+  !! Check whether a secant-method step is required.
+
+  logical :: oscillating
+  !! Flag to track oscillation.
+
+  double precision :: damping_factor
+  !! Damping factor to reduce step size in case of oscillation.
+
+  ii = cmplx(0.d0, 1.d0, kind(1.d0))
+
+  prevom = om * (1.d0 - D_prec)
+  prevD = disp(prevom)
+  prev2om = prevom
+  prev2D = prevD
+  minD = prevD
+  minom = prevom
+
+  call mpi_barrier(mpi_comm_world, ierror)
+
+  iter = 0
+  go_for_secant = .TRUE.
+  oscillating = .FALSE.
+  damping_factor = 1.d0
+
+  do while ((iter .LE. (numiter - 1)) .AND. go_for_secant)
+    iter = iter + 1
+    D = disp(om)
+
+    !! Ensure we don’t divide by a tiny value
+    if ((abs(D - prevD) .LT. 1.d-80)) then
+      prevom = prevom + 1.d-8
+      prevD = disp(prevom)
+    endif
+
+    !! Check convergence
+    if ((abs(D) .LT. D_threshold)) then
+      jump = 0.d0
+      go_for_secant = .FALSE.
+      if (proc0 .AND. writeOut) then
+        write(*, '(a,i2,a,i4)') ' Root ', in, ' converged after iteration ', iter
+        write(*, '(a,2es14.4e3,a,2es14.4e3)') ' D(', real(om), aimag(om), ')= ', D
+      endif
+    else
+      !! Check for oscillation: if we are revisiting a previous `om`
+      if ((abs(om - prev2om) .LT. 1.d-6)) then
+        oscillating = .TRUE.
+        damping_factor = 0.5d0
+        if (proc0 .AND. writeOut) then
+           write(*, '(a,4es14.4)') ' Caught in oscillation', om, prev2om
+        endif
+      else
+        oscillating = .FALSE.
+        damping_factor = 1.d0
+      endif
+
+      !! Compute secant step with damping if oscillations occur
+      jump = damping_factor * D * (om - prevom) / (D - prevD)
+    endif
+
+    !! Update previous values
+    prev2om = prevom
+    prevom = om
+    prev2D = prevD
+    prevD = D
+
+    !! Apply the jump
+    om = om - jump
+
+    !! Track the best value found so far
+    if (abs(D) .LT. abs(minD)) then
+      minom = om
+      minD = D
+    endif
+  enddo
+
+  !! If max iterations reached, use best known solution
+  if (proc0 .AND. writeOut .AND. (iter .GE. numiter)) then
+    write(*, '(a,i4,a)') ' Maximum iteration ', iter, ' reached.'
+    om = minom
+    write(*, '(a,2es14.4e3,a,2es14.4e3)') ' D(', real(om), aimag(om), ')= ', minD
+  endif
+  
+end subroutine secant_osc
+
+
 double complex function rtsec(func,xin,iflag)
   !! An alternative implementation of the secant method, adapted from PLUME.
      use alps_var, only : proc0,writeOut,D_threshold,numiter,D_prec
@@ -2063,7 +2183,9 @@ subroutine om_scan(ik)
            case (0)
               call secant(omega,in)
            case (1)
-               omega=rtsec(disp,omega,iflag)
+              omega=rtsec(disp,omega,iflag)
+           case (2)
+              call secant_osc(omega,in)
            end select
 
            wroots(in)=omega
@@ -2721,6 +2843,8 @@ subroutine om_double_scan
                    call secant(omega,in)
                 case (1)
                    omega=rtsec(disp,omega,iflag)
+                case (2)
+                   call secant_osc(omega,in)
                 end select
 
 
@@ -3089,6 +3213,8 @@ subroutine refine_guess
         call secant(omega,iw)
      case (1)
         omega=rtsec(disp,omega,iflag)
+     case (2)
+        call secant(omega,iw)
      end select
      
      wroots(iw)=omega
