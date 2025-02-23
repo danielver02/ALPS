@@ -1751,9 +1751,14 @@ subroutine secant_osc(om, in)
   double precision :: damping_factor
   !! Damping factor to reduce step size in case of oscillation.
 
+  double precision :: osc_threshold
+  !! Threshold precentage for oscillation detection.
+  
   ii = cmplx(0.d0, 1.d0, kind(1.d0))
-  delta = cmplx(1.d-6, 1.d-6, kind(1.d0))
+  delta = cmplx(1.d-6, 1.d-8, kind(1.d0))
 
+  osc_threshold=1.E-6
+  
   prevom = om * (1.d0 - D_prec)
   prevD = disp(prevom)
   prev2om = prevom
@@ -1777,6 +1782,7 @@ subroutine secant_osc(om, in)
   do while ((iter .LE. (numiter - 1)) .AND. go_for_secant)
     iter = iter + 1
     D = disp(om)
+    damping_factor = 1.d0
 
     !! Ensure we don’t divide by a tiny value
     if ((abs(D - prevD) .LT. 1.d-80)) then
@@ -1785,7 +1791,7 @@ subroutine secant_osc(om, in)
     endif
 
     !! Check convergence
-    if ((abs(D) .LT. max(D_threshold, 0.01 * abs(D)))) then
+    if ((abs(D) .LT. D_threshold)) then
       jump = 0.d0
       go_for_secant = .FALSE.
       if (proc0 .AND. writeOut) then
@@ -1794,11 +1800,20 @@ subroutine secant_osc(om, in)
       endif
     else
       !! Detect oscillations over last four iterations
-      if ((abs(om - prev2om) .LT. 1.d-6) .OR. &
-          (abs(om - prev3om) .LT. 1.d-6) .OR. &
-          (abs(om - prev4om) .LT. 1.d-6)) then
+!      if ((abs(om - prev2om) .LT. 1.d-6) .OR. &
+!          (abs(om - prev3om) .LT. 1.d-6) .OR. &
+!          (abs(om - prev4om) .LT. 1.d-6)) then
+
+       if (iter.gt.4) then
+       if ( (((abs(real(om) -   real(prev2om))) .LT. (abs(real(om))*osc_threshold)).and.&
+            ((abs(aimag(om) -  aimag(prev2om))) .LT. (abs(aimag(om))*osc_threshold))) .OR. &
+            (((abs(real(om) -   real(prev3om))) .LT. (abs(real(om))*osc_threshold)).and.&
+            ((abs(aimag(om) -  aimag(prev3om))) .LT. (abs(aimag(om))*osc_threshold))) .OR. &
+            (((abs(real(om) -   real(prev4om))) .LT. (abs(real(om))*osc_threshold)).and.&
+            ((abs(aimag(om) -  aimag(prev4om))) .LT. (abs(aimag(om))*osc_threshold))) ) then
         oscillation_count = oscillation_count + 1
         damping_factor = max(0.5d0, damping_factor * 0.75d0)  !! Reduce step size
+        !damping_factor = 1.d0
         if (proc0 .AND. writeOut) then
            write(*, '(a,i0,a,2es14.4,a,2es14.4,a,2es14.4,a,2es14.4,a)') &
                 ' Caught in oscillation: Step ',iter,' (',&
@@ -1808,16 +1823,22 @@ subroutine secant_osc(om, in)
                 prev4om,')'
         endif
       else
-         !oscillation_count = 0
+        !oscillation_count = 0
+        !damping_factor = 1.d0
+     endif
+  else
+        oscillation_count = 0
         damping_factor = 1.d0
-      endif
+  endif
 
       !! If oscillation persists, use finite-difference Newton step
-      if (oscillation_count > 2) then
+      if (oscillation_count .gt. 1) then
          !! Compute finite-difference derivative approximation
-         Dprime = (disp(om + delta) - disp(om - delta)) / (2.d0 * delta)
+         HERE!
+         Dprime = (disp(om*(1 + delta)) - disp(om*(1 - delta))) / (2.d0 * om*delta)
+         !Dprime = (disp(om + delta) - disp(om - delta)) / (2.d0 * delta)
 
-        if (abs(Dprime) > 1.d-12) then
+        if (abs(Dprime) > D_threshold) then
           jump = D / Dprime  !! Newton-like update
           if (proc0 .AND. writeOut) then
             write(*, '(a,2es14.4)') ' Switching to Newton step. Jump=', jump
@@ -1829,14 +1850,9 @@ subroutine secant_osc(om, in)
         jump = damping_factor * D * (om - prevom) / (D - prevD)
       endif
 
-      !! Apply update
-      om = om - jump
-
       if (proc0 .AND. writeOut) then
-         write(*,'(i3,10es14.4)')iter,om,prevom,D,abs(D),prevD,abs(prevD)
+         write(*,'(i3,12es14.4)')iter,om,prevom,D,abs(D),prevD,abs(prevD),jump
       endif
-
-   endif
 
     !! Update previous values
     prev4om = prev3om
@@ -1848,7 +1864,16 @@ subroutine secant_osc(om, in)
     prev3D = prev2D
     prev2D = prevD
     prevD = D
+      
+      !! Apply update
+      om = om - jump
 
+   endif
+
+
+
+
+    
     !! Track best value found
     if (abs(D) .LT. abs(minD)) then
       minom = om
