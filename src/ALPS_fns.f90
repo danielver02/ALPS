@@ -1705,60 +1705,26 @@ subroutine secant(om,in)
 end subroutine secant
 
 subroutine secant_osc(om, in)
-  !! This subroutine applies the secant method to find the roots of the dispersion tensor.
-  !! If oscillations persist, it switches to a Newton-type search with finite differences.
+  !! Secant method with adaptive damping and Newton fallback.
   use ALPS_var, only : numiter, D_threshold, ierror, proc0, writeOut, D_prec
   use mpi
   implicit none
 
   double complex, intent(inout) :: om
-  !! Complex wave frequency \(\omega\).
-
   integer, intent(in) :: in
-  !! Root number
 
   double complex :: prevom, prev2om, prev3om, prev4om
-  !! Storage of previous entries of om.
-
-  double complex :: ii
-  !! Imaginary unit.
-
-  double complex :: D, prevD, prev2D, prev3D, prev4D, Dprime
-  !! Dispersion tensor and its previous values.
-  !! Dprime is the finite-difference derivative approximation.
-
-  double complex :: jump
-  !! Difference to be added to om.
-
-  double complex :: minom
-  !! Best known solution.
-
-  double complex :: minD
-  !! Best known function value.
-
-  double complex :: delta
-  !! Small perturbation for finite-difference Newton step.
-
+  double complex :: ii, D, prevD, prev2D, prev3D, prev4D, Dprime
+  double complex :: jump, prev_jump, minom, minD, delta
   integer :: iter, oscillation_count
-  !! Iteration counter and oscillation detector.
+  logical :: go_for_secant, oscillating
+  double precision :: damping_factor, osc_threshold, lambda
 
-  logical :: go_for_secant
-  !! Check whether a secant-method step is required.
-
-  logical :: oscillating
-  !! Flag to track oscillation.
-
-  double precision :: damping_factor
-  !! Damping factor to reduce step size in case of oscillation.
-
-  double precision :: osc_threshold
-  !! Threshold precentage for oscillation detection.
-  
   ii = cmplx(0.d0, 1.d0, kind(1.d0))
   delta = cmplx(1.d-6, 1.d-8, kind(1.d0))
+  lambda = 0.1
+  osc_threshold = 1.E-6
 
-  osc_threshold=1.E-6
-  
   prevom = om * (1.d0 - D_prec)
   prevD = disp(prevom)
   prev2om = prevom
@@ -1770,6 +1736,7 @@ subroutine secant_osc(om, in)
 
   minD = prevD
   minom = prevom
+  prev_jump = cmplx(0.d0, 0.d0, kind(1.d0))
 
   call mpi_barrier(mpi_comm_world, ierror)
 
@@ -1800,88 +1767,62 @@ subroutine secant_osc(om, in)
       endif
     else
       !! Detect oscillations over last four iterations
-!      if ((abs(om - prev2om) .LT. 1.d-6) .OR. &
-!          (abs(om - prev3om) .LT. 1.d-6) .OR. &
-!          (abs(om - prev4om) .LT. 1.d-6)) then
-
-       if (iter.gt.4) then
-       if ( (((abs(real(om) -   real(prev2om))) .LT. (abs(real(om))*osc_threshold)).and.&
-            ((abs(aimag(om) -  aimag(prev2om))) .LT. (abs(aimag(om))*osc_threshold))) .OR. &
-            (((abs(real(om) -   real(prev3om))) .LT. (abs(real(om))*osc_threshold)).and.&
-            ((abs(aimag(om) -  aimag(prev3om))) .LT. (abs(aimag(om))*osc_threshold))) .OR. &
-            (((abs(real(om) -   real(prev4om))) .LT. (abs(real(om))*osc_threshold)).and.&
-            ((abs(aimag(om) -  aimag(prev4om))) .LT. (abs(aimag(om))*osc_threshold))) ) then
-        oscillation_count = oscillation_count + 1
-        damping_factor = max(0.5d0, damping_factor * 0.75d0)  !! Reduce step size
-        !damping_factor = 1.d0
-        if (proc0 .AND. writeOut) then
-           write(*, '(a,i0,a,2es14.4,a,2es14.4,a,2es14.4,a,2es14.4,a)') &
-                ' Caught in oscillation: Step ',iter,' (',&
-                om,') -> (',&
-                prev2om,') -> (',&
-                prev3om,') -> (',&
-                prev4om,')'
+      if (iter .gt. 4) then
+         if ( (((abs(real(om) -   real(prev2om))) .LT. (abs(real(om))*osc_threshold)).and.&
+               ((abs(aimag(om) -  aimag(prev2om))) .LT. (abs(aimag(om))*osc_threshold))) .OR. &
+              (((abs(real(om) -   real(prev3om))) .LT. (abs(real(om))*osc_threshold)).and.&
+               ((abs(aimag(om) -  aimag(prev3om))) .LT. (abs(aimag(om))*osc_threshold))) .OR. &
+              (((abs(real(om) -   real(prev4om))) .LT. (abs(real(om))*osc_threshold)).and.&
+               ((abs(aimag(om) -  aimag(prev4om))) .LT. (abs(aimag(om))*osc_threshold))) ) then
+          oscillation_count = oscillation_count + 1
+          damping_factor = max(0.5d0, damping_factor * 0.75d0)  !! Reduce step size
         endif
       else
-        !oscillation_count = 0
-        !damping_factor = 1.d0
-     endif
-  else
         oscillation_count = 0
         damping_factor = 1.d0
-  endif
+      endif
 
       !! If oscillation persists, use finite-difference Newton step
       if (oscillation_count .gt. 1) then
-         !! Compute finite-difference derivative approximation
-         HERE!
          Dprime = (disp(om*(1 + delta)) - disp(om*(1 - delta))) / (2.d0 * om*delta)
-         !Dprime = (disp(om + delta) - disp(om - delta)) / (2.d0 * delta)
-
-        if (abs(Dprime) > D_threshold) then
-          jump = D / Dprime  !! Newton-like update
-          if (proc0 .AND. writeOut) then
-            write(*, '(a,2es14.4)') ' Switching to Newton step. Jump=', jump
-          endif
-        else
-          jump = damping_factor * D * (om - prevom) / (D - prevD)  !! Fall back to secant
-        endif
+         jump = D / (Dprime + lambda * D)  !! Regularized Newton step
       else
-        jump = damping_factor * D * (om - prevom) / (D - prevD)
+         jump = damping_factor * D * (om - prevom) / (D - prevD)
+      endif
+
+      !! Apply jump limits to prevent large jumps
+      if (abs(jump) > 0.1 * abs(om)) then
+          jump = (0.1 * abs(om)) * (jump / abs(jump))  !! Cap jump at 10% of om
+      endif
+
+      !! Smooth jump size using previous steps
+      jump = 0.5 * (jump + prev_jump)
+      prev_jump = jump
+
+      !! If |D| increases, reduce jump
+      if (abs(D) > abs(prevD)) then
+          jump = 0.5 * jump
       endif
 
       if (proc0 .AND. writeOut) then
-         write(*,'(i3,12es14.4)')iter,om,prevom,D,abs(D),prevD,abs(prevD),jump
+         write(*,'(i3,12es14.4)') iter, om, prevom, D, abs(D), prevD, abs(prevD), jump
       endif
 
-    !! Update previous values
-    prev4om = prev3om
-    prev3om = prev2om
-    prev2om = prevom
-    prevom = om
+      !! Update previous values
+      prev4om = prev3om
+      prev3om = prev2om
+      prev2om = prevom
+      prevom = om
+      prev4D = prev3D
+      prev3D = prev2D
+      prev2D = prevD
+      prevD = D
 
-    prev4D = prev3D
-    prev3D = prev2D
-    prev2D = prevD
-    prevD = D
-      
       !! Apply update
       om = om - jump
-
    endif
-
-
-
-
-    
-    !! Track best value found
-    if (abs(D) .LT. abs(minD)) then
-      minom = om
-      minD = D
-    endif
   enddo
 
-  !! If max iterations reached, return the best known root
   if (proc0 .AND. writeOut .AND. (iter .GE. numiter)) then
     write(*, '(a,i4,a)') ' Maximum iteration ', iter, ' reached.'
     om = minom
