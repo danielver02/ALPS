@@ -1686,7 +1686,12 @@ subroutine secant(om,in)
 
 		else
 			jump = D*(om-prevom)/(D-Dprev)
-		endif
+                endif
+
+      if (proc0 .AND. writeOut) then
+         write(*,'(i3,12es14.4)') iter, om, prevom, D, abs(D), Dprev, abs(Dprev), jump
+      endif
+
 		prevom = om
 		om = om - jump
 		Dprev = D
@@ -1776,6 +1781,7 @@ subroutine secant_osc(om, in)
                ((abs(aimag(om) -  aimag(prev4om))) .LT. (abs(aimag(om))*osc_threshold))) ) then
           oscillation_count = oscillation_count + 1
           damping_factor = max(0.5d0, damping_factor * 0.75d0)  !! Reduce step size
+          !if (proc0) write(*,*)'oscillation detected'
         endif
       else
         oscillation_count = 0
@@ -1796,17 +1802,17 @@ subroutine secant_osc(om, in)
       endif
 
       !! Smooth jump size using previous steps
-      jump = 0.5 * (jump + prev_jump)
-      prev_jump = jump
+      !jump = 0.5 * (jump + prev_jump)
+      !prev_jump = jump
 
       !! If |D| increases, reduce jump
       if (abs(D) > abs(prevD)) then
           jump = 0.5 * jump
       endif
 
-      if (proc0 .AND. writeOut) then
-         write(*,'(i3,12es14.4)') iter, om, prevom, D, abs(D), prevD, abs(prevD), jump
-      endif
+      !if (proc0 .AND. writeOut) then
+      !   write(*,'(i3,12es14.4)') iter, om, prevom, D, abs(D), prevD, abs(prevD), jump
+      !endif
 
       !! Update previous values
       prev4om = prev3om
@@ -1818,6 +1824,11 @@ subroutine secant_osc(om, in)
       prev2D = prevD
       prevD = D
 
+      if (abs(D).LT.abs(minD)) then
+         minom=om
+         minD=D
+      endif
+  
       !! Apply update
       om = om - jump
    endif
