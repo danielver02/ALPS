@@ -1730,17 +1730,29 @@ subroutine secant_osc(om, in)
   lambda = 0.1
   osc_threshold = 1.E-6
 
+  !On some coarse maps, the current location is the best minima
+  minD=1.E13
+  D = disp(om)
+  if (abs(D).LT.abs(minD)) then
+     minom=om
+     minD=D
+  endif
+  
   prevom = om * (1.d0 - D_prec)
-  prevD = disp(prevom)
-  prev2om = prevom
-  prev2D = prevD
-  prev3om = prevom
-  prev3D = prevD
-  prev4om = prevom
-  prev4D = prevD
+  prev2om = om
+  prev3om = om
+  prev4om = om
 
-  minD = prevD
-  minom = prevom
+  prevD = disp(prevom)
+  prev2D = D
+  prev3D = D
+  prev4D = D
+
+  if (abs(prevD).LT.abs(minD)) then
+     minom=prevom
+     minD=prevD
+  endif
+  
   prev_jump = cmplx(0.d0, 0.d0, kind(1.d0))
 
   call mpi_barrier(mpi_comm_world, ierror)
