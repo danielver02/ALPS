@@ -1649,10 +1649,10 @@ subroutine secant(om,in)
   double complex :: minD
   !! Check variable for convergence.
 
-	integer :: iter
+  integer :: iter
   !! Index to loop over iterations.
 
-	logical :: go_for_secant
+ logical :: go_for_secant
   !! Check whether a secant-method step is required.
 
 	ii = cmplx(0.d0,1.d0,kind(1.d0))
@@ -1710,25 +1710,66 @@ subroutine secant(om,in)
 end subroutine secant
 
 subroutine secant_osc(om, in)
-  !! Secant method with adaptive damping and Newton fallback.
+  !! Secant method with adaptive damping and Newton search fallback.
   use ALPS_var, only : numiter, D_threshold, ierror, proc0, writeOut, D_prec
   use mpi
   implicit none
 
   double complex, intent(inout) :: om
+  !! Complex wave frequency \(\omega\).
+  
   integer, intent(in) :: in
+  !! Root number
 
+  double complex :: D
+  !! Dispersion Tensor.
+
+  double complex :: Dprime
+  !! Dispersion Tensor if we have to revert to the Newton Search fall back
+  
   double complex :: prevom, prev2om, prev3om, prev4om
-  double complex :: ii, D, prevD, prev2D, prev3D, prev4D, Dprime
-  double complex :: jump, prev_jump, minom, minD, delta
-  integer :: iter, oscillation_count
-  logical :: go_for_secant, oscillating
-  double precision :: damping_factor, osc_threshold, lambda
+  !! Storage of previous four complex frequnecy values
 
+  double complex :: prevD, prev2D, prev3D, prev4D
+  !! Storage of previous entries of D
+
+  double complex :: jump
+  !! Difference to be added to om.
+
+  double complex :: delta
+  !!Step size for Newton Search
+  
+  double complex :: minom
+  !! Check variable for convergence.
+
+  double complex :: minD
+  !! Check variable for convergence.
+
+  integer :: iter
+  !! Index to loop over iterations.
+
+  logical :: go_for_secant
+  !! Check whether a secant-method step is required.
+  
+  integer :: oscillation_count
+  !! Number of previous frequency values in the secant cycle match with the current frequency.
+
+  double precision :: osc_threshold
+  !! Threshold for determining is the current frequency matches a previous guess.
+
+  double precision :: damping_factor
+  !! Reduction of secant jump if inside oscillation around a solution
+
+  double precision :: lambda
+  !! Step size for Newton search backup.
+
+  double complex :: ii
+  !! Imaginary Unit
+  
   ii = cmplx(0.d0, 1.d0, kind(1.d0))
   delta = cmplx(1.d-6, 1.d-8, kind(1.d0))
   lambda = 0.1
-  osc_threshold = 1.E-6
+  osc_threshold = 1.E-3
 
   !On some coarse maps, the current location is the best minima
   minD=1.E13
@@ -1753,20 +1794,16 @@ subroutine secant_osc(om, in)
      minD=prevD
   endif
   
-  prev_jump = cmplx(0.d0, 0.d0, kind(1.d0))
-
   call mpi_barrier(mpi_comm_world, ierror)
 
   iter = 0
   go_for_secant = .TRUE.
-  oscillating = .FALSE.
   damping_factor = 1.d0
   oscillation_count = 0
 
   do while ((iter .LE. (numiter - 1)) .AND. go_for_secant)
     iter = iter + 1
     D = disp(om)
-    damping_factor = 1.d0
 
     !! Ensure we don’t divide by a tiny value
     if ((abs(D - prevD) .LT. 1.d-80)) then
@@ -1785,19 +1822,19 @@ subroutine secant_osc(om, in)
     else
       !! Detect oscillations over last four iterations
       if (iter .gt. 4) then
-         if ( (((abs(real(om) -   real(prev2om))) .LT. (abs(real(om))*osc_threshold)).and.&
+         if ( (((abs(real(om) -   real(prevom))) .LT. (abs(real(om))*osc_threshold)).and.&
+              ((abs(aimag(om) -  aimag(prevom))) .LT. (abs(aimag(om))*osc_threshold))) .OR. &
+              (((abs(real(om) -   real(prev2om))) .LT. (abs(real(om))*osc_threshold)).and.&
                ((abs(aimag(om) -  aimag(prev2om))) .LT. (abs(aimag(om))*osc_threshold))) .OR. &
               (((abs(real(om) -   real(prev3om))) .LT. (abs(real(om))*osc_threshold)).and.&
                ((abs(aimag(om) -  aimag(prev3om))) .LT. (abs(aimag(om))*osc_threshold))) .OR. &
               (((abs(real(om) -   real(prev4om))) .LT. (abs(real(om))*osc_threshold)).and.&
                ((abs(aimag(om) -  aimag(prev4om))) .LT. (abs(aimag(om))*osc_threshold))) ) then
           oscillation_count = oscillation_count + 1
-          damping_factor = max(0.5d0, damping_factor * 0.75d0)  !! Reduce step size
-          !if (proc0) write(*,*)'oscillation detected'
+          damping_factor = min(0.5d0, damping_factor * 0.75d0)  !! Reduce step size
+          if (proc0) write(*,*)'oscillation detected',damping_factor,om,prevom
         endif
-      else
-        oscillation_count = 0
-        damping_factor = 1.d0
+
       endif
 
       !! If oscillation persists, use finite-difference Newton step
@@ -1813,18 +1850,14 @@ subroutine secant_osc(om, in)
           jump = (0.1 * abs(om)) * (jump / abs(jump))  !! Cap jump at 10% of om
       endif
 
-      !! Smooth jump size using previous steps
-      !jump = 0.5 * (jump + prev_jump)
-      !prev_jump = jump
-
       !! If |D| increases, reduce jump
       if (abs(D) > abs(prevD)) then
           jump = 0.5 * jump
       endif
 
-      !if (proc0 .AND. writeOut) then
-      !   write(*,'(i3,12es14.4)') iter, om, prevom, D, abs(D), prevD, abs(prevD), jump
-      !endif
+      if (proc0 .AND. writeOut) then
+         write(*,'(i3,12es14.4)') iter, om, prevom, D, abs(D), prevD, abs(prevD), jump
+      endif
 
       !! Update previous values
       prev4om = prev3om
