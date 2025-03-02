@@ -35,7 +35,7 @@ subroutine derivative_f0
   !! This subroutine calculates the perpendicular and parallel derivatives of the background velocity distribution function f0.
     use alps_var, only : f0, pp, df0, nperp, npar, nspec, arrayName, ns, qs, ms, bMpdrifts
     use alps_var, only : f0_rel, gamma_rel, pparbar_rel,nspec_rel,df0_rel,ngamma,npparbar
-    use alps_var, only : current_int
+    use alps_var, only : current_int, density_int
     use alps_var, only : writeOut, pi, relativistic, usebM
     use alps_io,  only : get_unused_unit
     use alps_fns_rel, only : derivative_f0_rel
@@ -69,8 +69,8 @@ subroutine derivative_f0
     character (100) :: writename
     !! File name for file i/o.
 
-    double precision :: integrate
-    !! Integral of the distribution function.
+    !double precision :: integrate
+    !! Integral of the distribution function. KGK: replaced with density_int(is)
 
     double precision, dimension(0:nspec) :: charge
     !! Charge density.
@@ -83,6 +83,7 @@ subroutine derivative_f0
     !! Inifinitesimal step in parallel momentum.
 
     allocate(current_int(0:nspec)); current_int=0.d0
+    allocate(density_int(0:nspec)); density_int=0.d0
 
     if (writeOut) then
        write(*,'(a)')&
@@ -155,21 +156,22 @@ subroutine derivative_f0
 
     charge=0.d0
     current_int=0.d0
+    density_int=0.d0
 
     do is = 1, nspec
        if (usebM(is)) then
-          integrate = 1.d0
+          density_int(is) = 1.d0
           charge(is)=ns(is)*qs(is)
           current_int(is)=ns(is)*qs(is)*&
                bMpdrifts(is)/ms(is)
        else
-       integrate = 0.d0
+       density_int(is) = 0.d0
        dpperp = pp(is, 2, 2, 1) - pp(is, 1, 2, 1)
        dppar  = abs(pp(is, 2, 2, 2) - pp(is, 2, 1, 2))
 
        do iperp = 0, nperp
           do ipar = 0, npar
-             integrate = integrate + &
+             density_int(is) = density_int(is) + &
                   pp(is,iperp,ipar,1) * f0(is,iperp,ipar) * &
                   2.d0 * pi * dpperp * dppar
 
@@ -190,7 +192,7 @@ subroutine derivative_f0
        write(*,'(a,i3,a)')&
             'Species ',is,':'
        write(*,'(a, 2es14.4e3)') &
-            ' Integration:              ', integrate
+            ' Integration:              ', density_int(is)
        write(*,'(a, 2es14.4e3)') &
             ' Charge density:           ', charge(is)
        write(*,'(a, 2es14.4e3)') &
