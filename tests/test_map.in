@@ -37,6 +37,8 @@ vA=1.d-4
 arrayName='test_map'
 !Maximum amplitude of Bessel function to determine nmax
 Bessel_zero = 1.d-50
+!Select Kind of Secant Search
+secant_method=2
 !Maximum number of iterations in secant method
 numiter = 50
 !Value of "zero" for secant method
