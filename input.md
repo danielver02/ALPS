@@ -53,6 +53,12 @@ Name of input array, located in 'distribution' folder.
 **`Bessel_zero`**  
 Maximum amplitude of Bessel function to determine `nmax`.
 
+**`secant_method`**  
+Selection for root finding method.
+0: secant method from NHDS
+1: rtsec method from PLUME
+2: Improved secant method to reduce oscillations around solutions.
+
 **`numiter`**  
 Maximum number of iterations in secant method.
 

@@ -139,9 +139,15 @@ module alps_var
   integer :: sproc
   !! The species number on which this process is working.
 
+  integer :: secant_method=2
+  !! Selection of root finding method.
+  !! 0: secant
+  !! 1: rtsec
+  !! 2: secant_osc: an improvement to reduce oscillatory loops.
+  
   integer :: numiter=50
   !! Maximum number of iterations in secant method.
-
+  
   double precision :: D_threshold=1.d-5
   !! Minimum threshold for secant method.
 
@@ -399,7 +405,7 @@ module alps_var
   public :: determine_minima, n_resonance_interval
   public :: unit_error, scan_option, n_scan, scan
   public :: kperp_last, kpar_last, kperp_0, kpar_0
-  public :: relativistic, logfit, usebM
+  public :: secant_method, relativistic, logfit, usebM
   public :: f0_rel,df0_rel,nspec_rel,gamma_rel,pparbar_rel,ngamma,npparbar
   public :: bMnmaxs,bMBessel_zeros,bMbetas,bMalphas,bMpdrifts
   public :: ACmethod, poly_kind, poly_order, polynomials, poly_fit_coeffs

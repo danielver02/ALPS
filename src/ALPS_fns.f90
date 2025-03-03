@@ -483,9 +483,9 @@ end subroutine derivative_f0
        !The below relies on the symmetries of the T_n tensor:
        !Again, c.f. Stix Equation 10.48; pg 255
        !---------------------------------------------------------------------
-       disp = wave(1,1)*( wave(2,2)*wave(3,3) + wave(2,3)**2 ) + &
-            2.d0*wave(1,2)*wave(2,3)*wave(1,3) - wave(1,3)**2*wave(2,2) + &
-            wave(1,2)**2*wave(3,3)
+       disp = wave(1,1)*( wave(2,2)*wave(3,3) + wave(2,3)**2.d0 ) + &
+            2.d0*wave(1,2)*wave(2,3)*wave(1,3) - wave(1,3)**2 *wave(2,2) + &
+            wave(1,2)**2 *wave(3,3)
 
     endif
 
@@ -1630,7 +1630,7 @@ subroutine secant(om,in)
   integer, intent(in) :: in
   !! Root number
 
-	double complex :: prevom
+  double complex :: prevom
   !! Storage of previous entry of om.
 
   double complex :: ii
@@ -1651,10 +1651,10 @@ subroutine secant(om,in)
   double complex :: minD
   !! Check variable for convergence.
 
-	integer :: iter
+  integer :: iter
   !! Index to loop over iterations.
 
-	logical :: go_for_secant
+ logical :: go_for_secant
   !! Check whether a secant-method step is required.
 
 	ii = cmplx(0.d0,1.d0,kind(1.d0))
@@ -1688,7 +1688,12 @@ subroutine secant(om,in)
 
 		else
 			jump = D*(om-prevom)/(D-Dprev)
-		endif
+                endif
+
+      if (proc0 .AND. writeOut) then
+         write(*,'(i3,12es14.4)') iter, om, prevom, D, abs(D), Dprev, abs(Dprev), jump
+      endif
+
 		prevom = om
 		om = om - jump
 		Dprev = D
@@ -1706,12 +1711,271 @@ subroutine secant(om,in)
 
 end subroutine secant
 
+subroutine secant_osc(om, in)
+  !! Secant method with adaptive damping and Newton search fallback.
+  use ALPS_var, only : numiter, D_threshold, ierror, proc0, writeOut, D_prec
+  use mpi
+  implicit none
+
+  double complex, intent(inout) :: om
+  !! Complex wave frequency \(\omega\).
+  
+  integer, intent(in) :: in
+  !! Root number
+
+  double complex :: D
+  !! Dispersion Tensor.
+
+  double complex :: Dprime
+  !! Dispersion Tensor if we have to revert to the Newton Search fall back
+  
+  double complex :: prevom, prev2om, prev3om, prev4om
+  !! Storage of previous four complex frequnecy values
+
+  double complex :: prevD, prev2D, prev3D, prev4D
+  !! Storage of previous entries of D
+
+  double complex :: jump
+  !! Difference to be added to om.
+
+  double complex :: delta
+  !!Step size for Newton Search
+  
+  double complex :: minom
+  !! Check variable for convergence.
+
+  double complex :: minD
+  !! Check variable for convergence.
+
+  integer :: iter
+  !! Index to loop over iterations.
+
+  logical :: go_for_secant
+  !! Check whether a secant-method step is required.
+  
+  integer :: oscillation_count
+  !! Number of previous frequency values in the secant cycle match with the current frequency.
+
+  double precision :: osc_threshold
+  !! Threshold for determining is the current frequency matches a previous guess.
+
+  double precision :: damping_factor
+  !! Reduction of secant jump if inside oscillation around a solution
+
+  double precision :: lambda
+  !! Step size for Newton search backup.
+
+  double complex :: ii
+  !! Imaginary Unit
+  
+  ii = cmplx(0.d0, 1.d0, kind(1.d0))
+  delta = cmplx(1.d-6, 1.d-8, kind(1.d0))
+  lambda = 0.1
+  osc_threshold = 1.E-3
+
+  !On some coarse maps, the current location is the best minima
+  minD=1.E13
+  D = disp(om)
+  if (abs(D).LT.abs(minD)) then
+     minom=om
+     minD=D
+  endif
+  
+  prevom = om * (1.d0 - D_prec)
+  prev2om = om
+  prev3om = om
+  prev4om = om
+
+  prevD = disp(prevom)
+  prev2D = D
+  prev3D = D
+  prev4D = D
+
+  if (abs(prevD).LT.abs(minD)) then
+     minom=prevom
+     minD=prevD
+  endif
+  
+  call mpi_barrier(mpi_comm_world, ierror)
+
+  iter = 0
+  go_for_secant = .TRUE.
+  damping_factor = 1.d0
+  oscillation_count = 0
+
+  do while ((iter .LE. (numiter - 1)) .AND. go_for_secant)
+    iter = iter + 1
+    D = disp(om)
+
+    !! Ensure we don’t divide by a tiny value
+    if ((abs(D - prevD) .LT. 1.d-80)) then
+      prevom = prevom + 1.d-8
+      prevD = disp(prevom)
+    endif
+
+    !! Check convergence
+    if ((abs(D) .LT. D_threshold)) then
+      jump = 0.d0
+      go_for_secant = .FALSE.
+      if (proc0 .AND. writeOut) then
+        write(*, '(a,i2,a,i4)') ' Root ', in, ' converged after iteration ', iter
+        write(*, '(a,2es14.4e3,a,2es14.4e3)') ' D(', real(om), aimag(om), ')= ', D
+      endif
+    else
+      !! Detect oscillations over last four iterations
+      if (iter .gt. 4) then
+         if ( (((abs(real(om) -   real(prevom))) .LT. (abs(real(om))*osc_threshold)).and.&
+              ((abs(aimag(om) -  aimag(prevom))) .LT. (abs(aimag(om))*osc_threshold))) .OR. &
+              (((abs(real(om) -   real(prev2om))) .LT. (abs(real(om))*osc_threshold)).and.&
+               ((abs(aimag(om) -  aimag(prev2om))) .LT. (abs(aimag(om))*osc_threshold))) .OR. &
+              (((abs(real(om) -   real(prev3om))) .LT. (abs(real(om))*osc_threshold)).and.&
+               ((abs(aimag(om) -  aimag(prev3om))) .LT. (abs(aimag(om))*osc_threshold))) .OR. &
+              (((abs(real(om) -   real(prev4om))) .LT. (abs(real(om))*osc_threshold)).and.&
+               ((abs(aimag(om) -  aimag(prev4om))) .LT. (abs(aimag(om))*osc_threshold))) ) then
+          oscillation_count = oscillation_count + 1
+          damping_factor = min(0.5d0, damping_factor * 0.75d0)  !! Reduce step size
+          if (proc0) write(*,*)'oscillation detected',damping_factor,om,prevom
+        endif
+
+      endif
+
+      !! If oscillation persists, use finite-difference Newton step
+      if (oscillation_count .gt. 1) then
+         Dprime = (disp(om*(1 + delta)) - disp(om*(1 - delta))) / (2.d0 * om*delta)
+         jump = D / (Dprime + lambda * D)  !! Regularized Newton step
+      else
+         jump = damping_factor * D * (om - prevom) / (D - prevD)
+      endif
+
+      !! Apply jump limits to prevent large jumps
+      if (abs(jump) > 0.1 * abs(om)) then
+          jump = (0.1 * abs(om)) * (jump / abs(jump))  !! Cap jump at 10% of om
+      endif
+
+      !! If |D| increases, reduce jump
+      if (abs(D) > abs(prevD)) then
+          jump = 0.5 * jump
+      endif
+
+      if (proc0 .AND. writeOut) then
+         write(*,'(i3,12es14.4)') iter, om, prevom, D, abs(D), prevD, abs(prevD), jump
+      endif
+
+      !! Update previous values
+      prev4om = prev3om
+      prev3om = prev2om
+      prev2om = prevom
+      prevom = om
+      prev4D = prev3D
+      prev3D = prev2D
+      prev2D = prevD
+      prevD = D
+
+      if (abs(D).LT.abs(minD)) then
+         minom=om
+         minD=D
+      endif
+  
+      !! Apply update
+      om = om - jump
+   endif
+  enddo
+
+  if (proc0 .AND. writeOut .AND. (iter .GE. numiter)) then
+    write(*, '(a,i4,a)') ' Maximum iteration ', iter, ' reached.'
+    om = minom
+    write(*, '(a,2es14.4e3,a,2es14.4e3)') ' D(', real(om), aimag(om), ')= ', minD
+  endif
+  
+end subroutine secant_osc
+
+double complex function rtsec(func,xin,iflag)
+  !! An alternative implementation of the secant method, adapted from PLUME.
+     use alps_var, only : proc0,writeOut,D_threshold,numiter,D_prec
+     implicit none
+
+     double complex :: xin
+     !! Initial Guess for complex frequency.
+     
+     double complex :: func
+     !! Function whose roots are to be identified.
+     !! For ALPS, this is the dispersion relation.
+     
+     double complex :: x1
+     !! Lower bound complex frequency at which func is evaluated.
+
+     double complex :: x2
+     !! Upper bound complex frequency at which func is evaluated.
+     
+     double complex :: xl
+     !! Swapping complex frequency.
+
+     double complex :: fl
+     !! Dispersion evaluation at x1.
+     
+     double complex :: f
+     !! Dispersion evaluation at x2.
+
+     double complex :: swap
+     !! Temporary variable for swapping function values.
+
+     double complex :: dx
+     !! Step Size.
+
+     integer :: iflag
+     !! Flag for number of steps taken.
+
+     integer ::j
+     !! Step index.
+
+     x1=xin*(1.d0-D_prec)
+     x2=xin*(1.d0+D_prec)
+     
+     fl=func(x1)
+     f=func(x2)
+
+     if(abs(fl).lt.abs(f))then
+        rtsec=x1
+        xl=x2
+        swap=fl
+        fl=f
+        f=swap
+     else
+        xl=x1
+        rtsec=x2
+     endif
+     do  j=1,numiter-1
+        iflag = j
+        if (abs(f-fl) .GT. 1.d-40) then
+           dx=(xl-rtsec)*f/(f-fl)
+				else
+           dx = (x2-x1)/25.d0
+        end if
+        xl=rtsec
+        fl=f
+
+        rtsec=rtsec+dx/2.d0
+
+        f=func(rtsec)
+        !if((abs(dx).LT.D_threshold).OR.(abs(f).EQ.0.d0)) then
+        if((abs(f).LT.D_threshold)) then
+	     	if (proc0.AND.writeOut) write(*,'(a,i4)') 'Converged after iteration ',j
+	        return
+        endif
+     enddo
+
+     if (proc0.AND.writeOut) write(*,'(a,i4,a)') 'Maximum iteration ',j,' reached.'
+
+     return
+
+   end function rtsec
 
 
 subroutine om_scan(ik)
   !! This subroutine scans solutions along a single prescribed path in wavevector space.
   use ALPS_var, only : proc0, nroots, runname, ierror, wroots, scan, sproc
-  use ALPS_var, only : kperp,kpar,kperp_last,kpar_last, D_gap
+  use ALPS_var, only : kperp,kpar,kperp_last,kpar_last
+  use ALPS_var, only : secant_method, D_gap
   use ALPS_var, only : nspec
   use ALPS_io,  only : get_unused_unit, isnancheck, alps_error
   use mpi
@@ -1772,6 +2036,9 @@ subroutine om_scan(ik)
   logical :: alljump
   !! Check whether any root has jumped.
 
+  integer :: iflag
+  !! Number of steps taken for root finding in rtsec.
+  
   double complex :: tmp
   !! Storage variable for determinant of dispersion tensor.
 
@@ -1965,17 +2232,29 @@ subroutine om_scan(ik)
         if (jump(in)) then
 
            omega=wroots(in)
+           
            ! Extrapolate the initial guess along the direction in k-scans:
            !!KGK: This line causes the solution to (occasionally)
            !!smoothly transition to unphysical values.
            !!Suppressing until we understand the error.
            !omega=omega+domegadk(in)*Deltakstep
 
-           call secant(omega,in)
+           !call secant(omega,in)
+           !domegadk(in)=omega-wroots(in)
+           !wroots(in)=omega
 
-           domegadk(in)=omega-wroots(in)
+           !KGK: Testing Alternative Root Finding Schemes
+           select case (secant_method)
+           case (0)
+              call secant(omega,in)
+           case (1)
+              omega=rtsec(disp,omega,iflag)
+           case (2)
+              call secant_osc(omega,in)
+           end select
+
            wroots(in)=omega
-
+           
            call mpi_bcast(wroots(in), 1, &
                 MPI_DOUBLE_COMPLEX, 0, MPI_COMM_WORLD, ierror)
 
@@ -2241,7 +2520,8 @@ end subroutine calc_eigen
 subroutine om_double_scan
   !! This subroutine scans along a prescribed plane in wavevector space to map out \(\omega\) in this space. It is required that n_scan=2.
   use ALPS_var, only : proc0, nroots, runname, ierror, wroots, scan, sproc
-  use ALPS_var, only : kperp,kpar,kperp_last,kpar_last, D_gap
+  use ALPS_var, only : kperp,kpar,kperp_last,kpar_last
+  use ALPS_var, only : secant_method, D_gap
   use ALPS_var, only : ierror, nspec
   use ALPS_io,  only : get_unused_unit, alps_error, isnancheck
   use mpi
@@ -2353,7 +2633,9 @@ subroutine om_double_scan
   double precision :: Deltakstep
   !! Step through k-space (can be kperp, kpar, theta, or k-magnitude).
 
-
+  integer :: iflag
+  !! Number of steps taken for root finding in rtsec.
+  
   allocate(jump(1:nroots)); jump=.true.
   allocate(domegadk(1:nroots)); domegadk=cmplx(0.d0,0.d0,kind(1.d0))
 
@@ -2614,11 +2896,21 @@ subroutine om_double_scan
                 !!smoothly transition to unphysical values.
                 !!Suppressing until we understand the error.
                 !omega=omega+domegadk(in)*Deltakstep
+                
+                !call secant(omega,in)
+                !domegadk(in)=omega-wroots(in)
+                !wroots(in)=omega
 
-                call secant(omega,in)
 
-                domegadk(in)=omega-wroots(in)
-                wroots(in)=omega
+                !KGK: Testing Alternative Root Finding Schemes
+                select case (secant_method)
+                case (0)
+                   call secant(omega,in)
+                case (1)
+                   omega=rtsec(disp,omega,iflag)
+                case (2)
+                   call secant_osc(omega,in)
+                end select
 
 
                 call mpi_bcast(wroots(in), 1, &
@@ -2943,10 +3235,10 @@ subroutine refine_guess
   !! This subroutine refines the guess at the starting point of the search for solutions to the dispersion relation when scanning. It is also used by [[map_search]] to identify the roots on the map.
   use alps_var, only : wroots, nroots, writeOut, proc0
   use alps_var, only : ierror,runname
+  use alps_var, only : secant_method
   use alps_io,  only : get_unused_unit
   use mpi
   implicit none
-
 
   double complex :: omega
   !! Complex wave frequency \(\omega\).
@@ -2963,7 +3255,9 @@ subroutine refine_guess
   integer :: unit_refine
   !! File unit for refinement output.
 
-
+  integer :: iflag
+  !! Number of steps taken for root finding in rtsec.
+  
   if (proc0) then
      if (writeOut) write(*,'(a)')' Refining Roots:'
      write(mapName,'(3a)') 'solution/',trim(runname),'.roots'
@@ -2978,9 +3272,16 @@ subroutine refine_guess
 
      omega=wroots(iw)
 
-     call secant(omega,iw)
-
-
+     !KGK: Testing Alternative Root Finding Schemes
+     select case (secant_method)
+     case (0)
+        call secant(omega,iw)
+     case (1)
+        omega=rtsec(disp,omega,iflag)
+     case (2)
+        call secant_osc(omega,iw)
+     end select
+     
      wroots(iw)=omega
 
 
