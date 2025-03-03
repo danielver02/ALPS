@@ -77,7 +77,7 @@
 
             <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
               <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
-                 title=" 2.6% of total for modules and submodules.">125 statements</a>
+                 title=" 2.6% of total for modules and submodules.">127 statements</a>
             </li>
 
         </ul>
@@ -111,8 +111,8 @@
       </a>
       <div id="vars-0" class="collapse">
         <div class="list-group list-group-flush">
-            <a class="list-group-item" href="../module/alps_var.html#variable-runname~3">runname</a>
-            <a class="list-group-item" href="../module/alps_var.html#variable-foldername~3">foldername</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-runname~2">runname</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-foldername~2">foldername</a>
             <a class="list-group-item" href="../module/alps_var.html#variable-nroots~2">nroots</a>
             <a class="list-group-item" href="../module/alps_var.html#variable-nroots_max">nroots_max</a>
             <a class="list-group-item" href="../module/alps_var.html#variable-use_map">use_map</a>
@@ -138,8 +138,8 @@
             <a class="list-group-item" href="../module/alps_var.html#variable-loggridg">loggridg</a>
             <a class="list-group-item" href="../module/alps_var.html#variable-nr">nr</a>
             <a class="list-group-item" href="../module/alps_var.html#variable-ni">ni</a>
-            <a class="list-group-item" href="../module/alps_var.html#variable-nperp~4">nperp</a>
-            <a class="list-group-item" href="../module/alps_var.html#variable-npar~4">npar</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-nperp">nperp</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-npar">npar</a>
             <a class="list-group-item" href="../module/alps_var.html#variable-ngamma~2">ngamma</a>
             <a class="list-group-item" href="../module/alps_var.html#variable-npparbar~2">npparbar</a>
             <a class="list-group-item" href="../module/alps_var.html#variable-positions_principal">positions_principal</a>
@@ -157,11 +157,12 @@
             <a class="list-group-item" href="../module/alps_var.html#variable-df0_rel">df0_rel</a>
             <a class="list-group-item" href="../module/alps_var.html#variable-pp">pp</a>
             <a class="list-group-item" href="../module/alps_var.html#variable-current_int">current_int</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-density_int">density_int</a>
             <a class="list-group-item" href="../module/alps_var.html#variable-gamma_rel~2">gamma_rel</a>
             <a class="list-group-item" href="../module/alps_var.html#variable-pparbar_rel">pparbar_rel</a>
             <a class="list-group-item" href="../module/alps_var.html#variable-nmax">nmax</a>
             <a class="list-group-item" href="../module/alps_var.html#variable-nlim">nlim</a>
-            <a class="list-group-item" href="../module/alps_var.html#variable-ns">ns</a>
+            <a class="list-group-item" href="../module/alps_var.html#variable-ns~2">ns</a>
             <a class="list-group-item" href="../module/alps_var.html#variable-qs">qs</a>
             <a class="list-group-item" href="../module/alps_var.html#variable-ms~2">ms</a>
             <a class="list-group-item" href="../module/alps_var.html#variable-relativistic">relativistic</a>
@@ -1405,7 +1406,7 @@ modules which it uses.
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-runname~3"></span>
+              <span class="anchor" id="variable-runname~2"></span>
               character(len=500),
             </td>
               <td>public</td>
@@ -1422,7 +1423,7 @@ modules which it uses.
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-foldername~3"></span>
+              <span class="anchor" id="variable-foldername~2"></span>
               character(len=500),
             </td>
               <td>public</td>
@@ -1870,7 +1871,7 @@ inverse reference inertial length, <script type="math/tex">k_\parallel d_p</scri
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-nperp~4"></span>
+              <span class="anchor" id="variable-nperp"></span>
               integer,
             </td>
               <td>public</td>
@@ -1887,7 +1888,7 @@ inverse reference inertial length, <script type="math/tex">k_\parallel d_p</scri
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-npar~4"></span>
+              <span class="anchor" id="variable-npar"></span>
               integer,
             </td>
               <td>public</td>
@@ -2209,6 +2210,24 @@ Zeroth index is sum over all species</p>
         </tr>
         <tr>
             <td>
+              <span class="anchor" id="variable-density_int"></span>
+              double precision,
+            </td>
+              <td>public,</td>
+            <td>
+              dimension(:), allocatable
+            </td>
+            <td>::</td>
+            <td><strong>density_int</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                <p>density, (0:nspec)
+Zeroth index is sum over all species</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
               <span class="anchor" id="variable-gamma_rel~2"></span>
               double precision,
             </td>
@@ -2279,7 +2298,7 @@ Zeroth index is sum over all species</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-ns"></span>
+              <span class="anchor" id="variable-ns~2"></span>
               double precision,
             </td>
               <td>public,</td>
