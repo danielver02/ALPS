@@ -857,9 +857,10 @@ subroutine output_fit(qualitytotal)
 	!! This subroutine outputs the fit parameters for iperp=0 to stdout to monitor the fit.
 	use alps_io, only : isnancheck, alps_error
 	use alps_var, only : fit_type, param_fit, n_fits, nspec, nperp, npar, pp, f0, pi, vA, runname
- use alps_var, only : relativistic,gamma_rel,pparbar_rel,ngamma,npparbar,f0_rel, ms, usebM
- use alps_var, only : ACmethod
- use alps_var, only : ns, qs, ms, bMpdrifts
+        use alps_var, only : relativistic,gamma_rel,pparbar_rel,ngamma,npparbar,f0_rel, ms, usebM
+        use alps_var, only : ACmethod
+        use alps_var, only : ns, qs, ms, bMpdrifts
+        use alps_var, only : density_int, current_int, poly_order
 	implicit none
 
 	double precision, intent(in) :: qualitytotal
@@ -1111,13 +1112,17 @@ case (2)
         'Species ',is,':'
    write(*,'(a, 2es14.4)') &
         ' Integration of polynomial representation:              ', integrate
+   write(*,'(a, i0, es14.4)') &
+        ' Relative Error in density for Order:', poly_order(is), abs(density_int(is)-integrate)/abs(density_int(is))
    write(*,'(a, 2es14.4)') &
         ' Charge density of polynomial representation:           ', charge(is)
    if (relativistic(is)) then
       write(*,'(a)')'Relativistic parallel current density not yet implemented!'
    else
-      write(*,'(a, 2es14.4)') &
-         ' Parallel current density of polynomial representation: ', current(is)
+      write(*,'(a, es14.4)') &
+           ' Parallel current density of polynomial representation: ', current(is)
+      write(*,'(a, i0, es14.4)') &
+         ' Relative Error in current density for Order:', poly_order(is), abs(current(is)-current_int(is))/abs(current_int(is))
    endif
 
 
