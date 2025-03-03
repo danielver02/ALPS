@@ -77,7 +77,7 @@
 
             <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
               <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
-                 title="37.1% of total for modules and submodules.">1819 statements</a>
+                 title="39.3% of total for modules and submodules.">1999 statements</a>
             </li>
 
         </ul>
@@ -131,6 +131,7 @@
             <a class="list-group-item" href="../module/alps_fns.html#proc-resu">resU</a>
             <a class="list-group-item" href="../module/alps_fns.html#proc-int_t">int_T</a>
             <a class="list-group-item" href="../module/alps_fns.html#proc-int_t_res">int_T_res</a>
+            <a class="list-group-item" href="../module/alps_fns.html#proc-rtsec">rtsec</a>
         </div>
       </div>
     </div>
@@ -145,6 +146,7 @@
             <a class="list-group-item" href="../module/alps_fns.html#proc-derivative_f0">derivative_f0</a>
             <a class="list-group-item" href="../module/alps_fns.html#proc-determine_resonances">determine_resonances</a>
             <a class="list-group-item" href="../module/alps_fns.html#proc-secant">secant</a>
+            <a class="list-group-item" href="../module/alps_fns.html#proc-secant_osc">secant_osc</a>
             <a class="list-group-item" href="../module/alps_fns.html#proc-om_scan">om_scan</a>
             <a class="list-group-item" href="../module/alps_fns.html#proc-calc_eigen">calc_eigen</a>
             <a class="list-group-item" href="../module/alps_fns.html#proc-om_double_scan">om_double_scan</a>
@@ -1109,6 +1111,82 @@ accounting for the Landau contour integral. It is called by <a href="../proc/ful
     </div>
   </div>
 
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-rtsec"></span> <h3>public  function <a href='../proc/rtsec.html'>rtsec</a>(func, xin, iflag)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>An alternative implementation of the secant method, adapted from PLUME.</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-func"></span>
+              double complex
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>func</strong></td>
+            <td>
+<p>Function whose roots are to be identified.
+For ALPS, this is the dispersion relation.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-xin"></span>
+              double complex
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>xin</strong></td>
+            <td>
+<p>Initial Guess for complex frequency.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-iflag"></span>
+              integer
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>iflag</strong></td>
+            <td>
+<p>Flag for number of steps taken.</p>
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <h4>
+    Return Value
+    <small>doublecomplex</small>
+    </h4>
+    
+
+    </div>
+  </div>
+
         </section>
         <br>
 
@@ -1248,6 +1326,72 @@ accounting for the Landau contour integral. It is called by <a href="../proc/ful
         <tr>
             <td>
               <span class="anchor" id="variable-in"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>in</strong></td>
+            <td>
+<p>Root number</p>
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-secant_osc"></span> <h3>public  subroutine <a href='../proc/secant_osc.html'>secant_osc</a>(om, in)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>Secant method with adaptive damping and Newton search fallback.
+Ensure we don’t divide by a tiny value
+Check convergence
+Detect oscillations over last four iterations
+Reduce step size
+If oscillation persists, use finite-difference Newton step
+Regularized Newton step
+Apply jump limits to prevent large jumps
+Cap jump at 10% of om
+If |D| increases, reduce jump
+Update previous values
+Apply update</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-om~11"></span>
+              double complex,
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>om</strong></td>
+            <td>
+<p>Complex wave frequency <script type="math/tex">\omega</script>.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-in~2"></span>
               integer,
             </td>
 <td>intent(in)</td>
