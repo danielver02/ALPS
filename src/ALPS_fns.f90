@@ -1857,9 +1857,9 @@ subroutine secant_osc(om, in)
           jump = 0.5 * jump
       endif
 
-      if (proc0 .AND. writeOut) then
-         write(*,'(i3,12es14.4)') iter, om, prevom, D, abs(D), prevD, abs(prevD), jump
-      endif
+      !if (proc0 .AND. writeOut) then
+      !   write(*,'(i3,12es14.4)') iter, om, prevom, D, abs(D), prevD, abs(prevD), jump
+      !endif
 
       !! Update previous values
       prev4om = prev3om
