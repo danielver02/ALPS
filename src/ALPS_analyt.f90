@@ -1114,7 +1114,7 @@ case (2)
         ' Integration of polynomial representation:              ', integrate
    write(*,'(a, i0, es14.4)') &
         ' Relative Percent Difference in density for Order:', poly_order(is), &
-        2.d0*(abs(density_int(is)-integrate))/(abs(density_int(is))+abs(integrate))
+        2.d0*(abs(density_int(is))-abs(integrate))/(abs(density_int(is))+abs(integrate))
    write(*,'(a, 2es14.4)') &
         ' Charge density of polynomial representation:           ', charge(is)
    if (relativistic(is)) then
@@ -1124,7 +1124,7 @@ case (2)
            ' Parallel current density of polynomial representation: ', current(is)
       write(*,'(a, i0, es14.4)') &
            ' Relative Percent Difference in current density for Order:', poly_order(is), &
-           2.d0*(abs(current(is)-current_int(is)))/(abs(current_int(is))+abs(current(is)))
+           2.d0*(abs(current(is))-abs(current_int(is)))/(abs(current_int(is))+abs(current(is)))
    endif
 
 
