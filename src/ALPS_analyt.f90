@@ -742,12 +742,47 @@ subroutine determine_GLLS(is)
   integer :: iperp
   !! Perpendicular index.
 
+  integer :: ipar
+  !! parallel index
+
   double precision, dimension(:), allocatable :: f0_fit
 
+  double precision :: min_val
+
+  write(*,'(a,i2)')'Determining GLLS Coefficients for Component: ',is
+  
   allocate(f0_fit(0:npar));f0_fit=0.d0
   do iperp=0,nperp
      if (logfit(is)) then
-        f0_fit(:)=log10(f0(is,iperp,:))
+
+        if (minval(f0(is,iperp,:)) .gt. 0.d0) then
+           f0_fit(:)=log10(f0(is,iperp,:))
+        else
+           ! Get min nonzero value from f0(is,iperp,:) before log10 conversion:
+           if (any(f0(is,iperp,:) > 0.d0)) then
+              min_val = minval(f0(is,iperp,:), mask=(f0(is,iperp,:) > 0.d0))
+           else
+              ! Fallback value if all entries are zero; adjust as needed.
+              min_val = 1.0d-6
+           endif
+           
+           ! Copy the slice and replace zeros with 0.01*min_val:
+           f0_fit(:) = f0(is,iperp,:)
+           do ipar = 0, npar
+              if (f0_fit(ipar) == 0.d0) then
+                 f0_fit(ipar) = 0.01d0 * min_val
+              endif
+           enddo
+           
+           do ipar = 0, npar
+              if (f0_fit(ipar) <= 0.0d0) then
+                 print*, 'Non-positive value at index', ipar, f0_fit(ipar)
+              endif
+           enddo
+           f0_fit(:)=log10(f0_fit(:))
+        !else
+        !   f0_fit(:)=log10(f0(is,iperp,:))
+        endif
      else
         f0_fit(:)=f0(is,iperp,:)
      endif
@@ -1089,9 +1124,15 @@ case (2)
      do iperp=0,nperp
         do ipar=0,npar
            ppar_comp=pp(is,iperp,ipar,2)
-           write (unit_spec,*) pp(is,iperp,ipar,1), pp(is,iperp,ipar,2), &
-                real(eval_fit(is,iperp,ppar_comp)), &
-           abs(real(eval_fit(is,iperp,ppar_comp))-f0(is,iperp,ipar))/f0(is,iperp,ipar)
+           if (f0(is,iperp,ipar).gt.0.d0) then
+              write (unit_spec,*) pp(is,iperp,ipar,1), pp(is,iperp,ipar,2), &
+                   real(eval_fit(is,iperp,ppar_comp)), &
+                   abs(real(eval_fit(is,iperp,ppar_comp))-f0(is,iperp,ipar))/f0(is,iperp,ipar)
+           else
+              write (unit_spec,*) pp(is,iperp,ipar,1), pp(is,iperp,ipar,2), &
+                   real(eval_fit(is,iperp,ppar_comp)), &
+                   0.d0
+           endif
 
     integrate = integrate + pp(is,iperp,ipar,1) * real(eval_fit(is,iperp,ppar_comp)) * &
              2.d0 * pi * dpperp * dppar
