@@ -755,7 +755,7 @@ subroutine determine_GLLS(is)
   do iperp=0,nperp
      if (logfit(is)) then
 
-        if (min(f0(is,iperp,:) .gt. 0.d0)) then
+        if (minval(f0(is,iperp,:)) .gt. 0.d0) then
            f0_fit(:)=log10(f0(is,iperp,:))
         else
            ! Get min nonzero value from f0(is,iperp,:) before log10 conversion:
@@ -782,7 +782,7 @@ subroutine determine_GLLS(is)
            f0_fit(:)=log10(f0_fit(:))
         !else
         !   f0_fit(:)=log10(f0(is,iperp,:))
-        !endif
+        endif
      else
         f0_fit(:)=f0(is,iperp,:)
      endif
