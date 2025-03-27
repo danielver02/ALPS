@@ -12,14 +12,29 @@
 
     <title>alps &ndash; ALPS</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-    <link href="../css/pygments.css" rel="stylesheet">
-    <link href="../css/font-awesome.min.css" rel="stylesheet">
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
     <link href="../css/local.css" rel="stylesheet">
-      <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
-
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <link href="../css/pygments.css" rel="stylesheet">
     <script src="../js/svg-pan-zoom.min.js"></script>
   </head>
 
@@ -91,9 +106,11 @@
     </div>
   </div>
   <script>
-    $(function () {
-    $('[data-bs-toggle="tooltip"]').tooltip()
-    })
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
   </script>
 
   </div>
@@ -110,7 +127,7 @@
       </a>
       <div id="vars-0" class="collapse">
         <div class="list-group list-group-flush">
-            <a class="list-group-item" href="../program/alps.html#variable-ik~3">ik</a>
+            <a class="list-group-item" href="../program/alps.html#variable-ik~4">ik</a>
         </div>
       </div>
     </div>
@@ -146,11 +163,11 @@
         <ul class="list-group list-group-flush">
             <li class="list-group-item">
               <ul class="list-inline">
-                  <li class="list-inline-item"><a href='../module/alps_var.html'>alps_var</a></li>
-                  <li class="list-inline-item"><a href='../module/alps_fns.html'>alps_fns</a></li>
                   <li class="list-inline-item"><a href='../module/alps_io.html'>alps_io</a></li>
                   <li class="list-inline-item"><a href='http://www.mpi-forum.org/docs/mpi-3.1/mpi31-report/node410.htm'>mpi</a></li>
                   <li class="list-inline-item"><a href='../module/alps_analyt.html'>alps_analyt</a></li>
+                  <li class="list-inline-item"><a href='../module/alps_fns.html'>alps_fns</a></li>
+                  <li class="list-inline-item"><a href='../module/alps_var.html'>alps_var</a></li>
                   <li class="list-inline-item"><a href='../module/alps_com.html'>alps_com</a></li>
               </ul>
             </li>
@@ -1356,18 +1373,18 @@ modules which it uses.
 <path fill="none" stroke="#000000" d="M375.02,-705.38C403.41,-699.77 439.35,-692.67 469.32,-686.75"/>
 <polygon fill="#000000" stroke="#000000" points="470.1,-690.17 479.23,-684.8 468.74,-683.3 470.1,-690.17"/>
 </g>
-<!-- proc~polyharmonic_spline~2 -->
+<!-- proc~polyharmonic_spline -->
 <g id="program~~alps~~CallsGraph_node67" class="node">
-<title>proc~polyharmonic_spline~2</title>
-<g id="a_program~~alps~~CallsGraph_node67"><a xlink:href="../proc/polyharmonic_spline~2.html" xlink:title="polyharmonic_spline">
+<title>proc~polyharmonic_spline</title>
+<g id="a_program~~alps~~CallsGraph_node67"><a xlink:href="../proc/polyharmonic_spline.html" xlink:title="polyharmonic_spline">
 <polygon fill="#d9534f" stroke="#d9534f" points="759,-807.06 636,-807.06 636,-783.06 759,-783.06 759,-807.06"/>
 <text text-anchor="middle" x="697.5" y="-792.66" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">polyharmonic_spline</text>
 </a>
 </g>
 </g>
-<!-- proc~derivative_f0_rel&#45;&gt;proc~polyharmonic_spline~2 -->
+<!-- proc~derivative_f0_rel&#45;&gt;proc~polyharmonic_spline -->
 <g id="program~~alps~~CallsGraph_edge93" class="edge">
-<title>proc~derivative_f0_rel&#45;&gt;proc~polyharmonic_spline~2</title>
+<title>proc~derivative_f0_rel&#45;&gt;proc~polyharmonic_spline</title>
 <path fill="none" stroke="#000000" d="M375.2,-725.69C440.91,-739.87 557.5,-765.05 630.71,-780.86"/>
 <polygon fill="#000000" stroke="#000000" points="630.23,-784.33 640.74,-783.02 631.7,-777.49 630.23,-784.33"/>
 </g>
@@ -1875,9 +1892,9 @@ modules which it uses.
 <path fill="none" stroke="#000000" d="M1232.35,-996.03C1256.31,-989.6 1285.43,-981.78 1307.92,-975.75"/>
 <polygon fill="#000000" stroke="#000000" points="1308.99,-979.08 1317.74,-973.11 1307.18,-972.32 1308.99,-979.08"/>
 </g>
-<!-- proc~polyharmonic_spline~2&#45;&gt;dgesv -->
+<!-- proc~polyharmonic_spline&#45;&gt;dgesv -->
 <g id="program~~alps~~CallsGraph_edge139" class="edge">
-<title>proc~polyharmonic_spline~2&#45;&gt;dgesv</title>
+<title>proc~polyharmonic_spline&#45;&gt;dgesv</title>
 <path fill="none" stroke="#000000" d="M747.68,-807.22C751.87,-809.65 755.74,-812.57 759,-816.06 800.77,-860.85 746.95,-911.1 795,-949.06 835.04,-980.7 1191.99,-971.31 1307.86,-967.39"/>
 <polygon fill="#000000" stroke="#000000" points="1308.12,-970.88 1317.99,-967.04 1307.87,-963.89 1308.12,-970.88"/>
 </g>
@@ -2055,33 +2072,33 @@ modules which it uses.
 <path fill="none" stroke="#000000" d="M1372.04,-1181.74C1383.42,-1185.02 1396.53,-1189.95 1407,-1197.06 1427.33,-1210.88 1424.03,-1223.43 1443,-1239.06 1444.33,-1240.16 1445.73,-1241.23 1447.17,-1242.28"/>
 <polygon fill="#000000" stroke="#000000" points="1445.44,-1245.32 1455.72,-1247.89 1449.28,-1239.47 1445.44,-1245.32"/>
 </g>
-<!-- proc~bessi0~2 -->
+<!-- proc~bessi0 -->
 <g id="program~~alps~~CallsGraph_node91" class="node">
-<title>proc~bessi0~2</title>
-<g id="a_program~~alps~~CallsGraph_node91"><a xlink:href="../proc/bessi0~2.html" xlink:title="BESSI0">
+<title>proc~bessi0</title>
+<g id="a_program~~alps~~CallsGraph_node91"><a xlink:href="../proc/bessi0.html" xlink:title="BESSI0">
 <polygon fill="#d94e8f" stroke="#d94e8f" points="1508,-1230.06 1454,-1230.06 1454,-1206.06 1508,-1206.06 1508,-1230.06"/>
 <text text-anchor="middle" x="1481" y="-1215.66" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">BESSI0</text>
 </a>
 </g>
 </g>
-<!-- proc~bessi&#45;&gt;proc~bessi0~2 -->
+<!-- proc~bessi&#45;&gt;proc~bessi0 -->
 <g id="program~~alps~~CallsGraph_edge156" class="edge">
-<title>proc~bessi&#45;&gt;proc~bessi0~2</title>
+<title>proc~bessi&#45;&gt;proc~bessi0</title>
 <path fill="none" stroke="#000000" d="M1372.15,-1184.26C1392.72,-1190.71 1421.59,-1199.76 1444.29,-1206.87"/>
 <polygon fill="#000000" stroke="#000000" points="1443.32,-1210.23 1453.91,-1209.89 1445.42,-1203.56 1443.32,-1210.23"/>
 </g>
-<!-- proc~bessi1~2 -->
+<!-- proc~bessi1 -->
 <g id="program~~alps~~CallsGraph_node92" class="node">
-<title>proc~bessi1~2</title>
-<g id="a_program~~alps~~CallsGraph_node92"><a xlink:href="../proc/bessi1~2.html" xlink:title="BESSI1">
+<title>proc~bessi1</title>
+<g id="a_program~~alps~~CallsGraph_node92"><a xlink:href="../proc/bessi1.html" xlink:title="BESSI1">
 <polygon fill="#d94e8f" stroke="#d94e8f" points="1508,-1188.06 1454,-1188.06 1454,-1164.06 1508,-1164.06 1508,-1188.06"/>
 <text text-anchor="middle" x="1481" y="-1173.66" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">BESSI1</text>
 </a>
 </g>
 </g>
-<!-- proc~bessi&#45;&gt;proc~bessi1~2 -->
+<!-- proc~bessi&#45;&gt;proc~bessi1 -->
 <g id="program~~alps~~CallsGraph_edge157" class="edge">
-<title>proc~bessi&#45;&gt;proc~bessi1~2</title>
+<title>proc~bessi&#45;&gt;proc~bessi1</title>
 <path fill="none" stroke="#000000" d="M1372.15,-1176.06C1392.54,-1176.06 1421.08,-1176.06 1443.68,-1176.06"/>
 <polygon fill="#000000" stroke="#000000" points="1443.91,-1179.56 1453.91,-1176.06 1443.91,-1172.56 1443.91,-1179.56"/>
 </g>
@@ -2375,7 +2392,7 @@ implementation in a submodule of an interface in a parent module.
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-ik~3"></span>
+              <span class="anchor" id="variable-ik~4"></span>
               integer
             </td>
             <td>
@@ -2429,27 +2446,5 @@ or <a href="../proc/om_double_scan.html">om_double_scan</a></p>
         <br>
       </div> <!-- /container -->
     </footer>
-
-    <!-- Bootstrap core JavaScript -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>    
-
-    <!-- MathJax JavaScript
-             ================================================== -->
-             <!-- Placed at the end of the document so the pages load faster -->
-        <script type="text/x-mathjax-config">
-          MathJax.Hub.Config({
-          TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
-          jax: ['input/TeX','input/MathML','output/HTML-CSS'],
-          extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
-          });
-        </script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-          <script src="../tipuesearch/tipuesearch_content.js"></script>
-          <script src="../tipuesearch/tipuesearch_set.js"></script>
-          <script src="../tipuesearch/tipuesearch.js"></script>
-
   </body>
 </html>

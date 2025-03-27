@@ -12,14 +12,29 @@
 
     <title>derivative_f0 &ndash; ALPS</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-    <link href="../css/pygments.css" rel="stylesheet">
-    <link href="../css/font-awesome.min.css" rel="stylesheet">
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
     <link href="../css/local.css" rel="stylesheet">
-      <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
-
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <link href="../css/pygments.css" rel="stylesheet">
     <script src="../js/svg-pan-zoom.min.js"></script>
   </head>
 
@@ -93,9 +108,11 @@
     </div>
   </div>
   <script>
-    $(function () {
-    $('[data-bs-toggle="tooltip"]').tooltip()
-    })
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
   </script>
 
   </div>
@@ -140,8 +157,8 @@
         <ul class="list-group list-group-flush">
             <li class="list-group-item">
               <ul class="list-inline">
-                  <li class="list-inline-item"><a href='../module/alps_var.html'>alps_var</a></li>
                   <li class="list-inline-item"><a href='../module/alps_io.html'>alps_io</a></li>
+                  <li class="list-inline-item"><a href='../module/alps_var.html'>alps_var</a></li>
                   <li class="list-inline-item"><a href='../module/alps_fns_rel.html'>alps_fns_rel</a></li>
               </ul>
             </li>
@@ -366,18 +383,18 @@ modules which it uses.
 <path fill="none" stroke="#000000" d="M212.65,-26C227.84,-30.17 245.04,-34.9 260.93,-39.27"/>
 <polygon fill="#000000" stroke="#000000" points="260.05,-42.66 270.62,-41.94 261.91,-35.91 260.05,-42.66"/>
 </g>
-<!-- proc~polyharmonic_spline~2 -->
+<!-- proc~polyharmonic_spline -->
 <g id="proc~~derivative_f0~~CallsGraph_node4" class="node">
-<title>proc~polyharmonic_spline~2</title>
-<g id="a_proc~~derivative_f0~~CallsGraph_node4"><a xlink:href="../proc/polyharmonic_spline~2.html" xlink:title="polyharmonic_spline">
+<title>proc~polyharmonic_spline</title>
+<g id="a_proc~~derivative_f0~~CallsGraph_node4"><a xlink:href="../proc/polyharmonic_spline.html" xlink:title="polyharmonic_spline">
 <polygon fill="#d9534f" stroke="#d9534f" points="377,-24 254,-24 254,0 377,0 377,-24"/>
 <text text-anchor="middle" x="315.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">polyharmonic_spline</text>
 </a>
 </g>
 </g>
-<!-- proc~derivative_f0_rel&#45;&gt;proc~polyharmonic_spline~2 -->
+<!-- proc~derivative_f0_rel&#45;&gt;proc~polyharmonic_spline -->
 <g id="proc~~derivative_f0~~CallsGraph_edge4" class="edge">
-<title>proc~derivative_f0_rel&#45;&gt;proc~polyharmonic_spline~2</title>
+<title>proc~derivative_f0_rel&#45;&gt;proc~polyharmonic_spline</title>
 <path fill="none" stroke="#000000" d="M218.26,-13.32C226.5,-13.21 235.18,-13.09 243.83,-12.97"/>
 <polygon fill="#000000" stroke="#000000" points="243.98,-16.47 253.93,-12.83 243.89,-9.47 243.98,-16.47"/>
 </g>
@@ -387,9 +404,9 @@ modules which it uses.
 <polygon fill="#777777" stroke="#777777" points="467,-24 413,-24 413,0 467,0 467,-24"/>
 <text text-anchor="middle" x="440" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">dgesv</text>
 </g>
-<!-- proc~polyharmonic_spline~2&#45;&gt;dgesv -->
+<!-- proc~polyharmonic_spline&#45;&gt;dgesv -->
 <g id="proc~~derivative_f0~~CallsGraph_edge5" class="edge">
-<title>proc~polyharmonic_spline~2&#45;&gt;dgesv</title>
+<title>proc~polyharmonic_spline&#45;&gt;dgesv</title>
 <path fill="none" stroke="#000000" d="M377.03,-12C385.83,-12 394.66,-12 402.77,-12"/>
 <polygon fill="#000000" stroke="#000000" points="402.97,-15.5 412.97,-12 402.97,-8.5 402.97,-15.5"/>
 </g>
@@ -629,27 +646,5 @@ implementation in a submodule of an interface in a parent module.
         <br>
       </div> <!-- /container -->
     </footer>
-
-    <!-- Bootstrap core JavaScript -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>    
-
-    <!-- MathJax JavaScript
-             ================================================== -->
-             <!-- Placed at the end of the document so the pages load faster -->
-        <script type="text/x-mathjax-config">
-          MathJax.Hub.Config({
-          TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
-          jax: ['input/TeX','input/MathML','output/HTML-CSS'],
-          extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
-          });
-        </script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-          <script src="../tipuesearch/tipuesearch_content.js"></script>
-          <script src="../tipuesearch/tipuesearch_set.js"></script>
-          <script src="../tipuesearch/tipuesearch.js"></script>
-
   </body>
 </html>
