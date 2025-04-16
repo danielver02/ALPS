@@ -1061,10 +1061,9 @@ subroutine output_fit(qualitytotal)
              qs(is)* ns(is)* gamma_rel(is_rel,igamma,ipparbar) * real(eval_fit(is,igamma,ppar_comp)) * &
              2.d0 * pi * dgamma * dpparbar * (ms(is) / vA)**3
 
-        !Relativistic current not yet implemented
-        !current(is) = current(is) + &
-        !     qs(is)* ns(is)* gamma_rel(is_rel,igamma,ipparbar) * real(eval_fit(is,igamma,ppar_comp)) * &
-        !     2.d0 * pi * dgamma * dpparbar * (ms(is) / vA)**3
+        current(is) = current(is) + &
+             (ppar_comp/ms(is))*qs(is)* ns(is)* real(eval_fit(is,igamma,ppar_comp)) * &
+             2.d0 * pi * dgamma * dpparbar * (ms(is) / vA)**3
 
 			endif
 		 enddo
@@ -1103,12 +1102,8 @@ enddo
         ' Integration of fit/analytical function:              ', integrate
    write(*,'(a, 2es14.4e3)') &
         ' Charge density of fit/analytical function:           ', charge(is)
-   if (relativistic(is)) then
-      write(*,'(a)')'Relativistic parallel current density not yet implemented!'
-   else
-      write(*,'(a, 2es14.4e3)') &
-         ' Parallel current density of fit/analytical function: ', current(is)
-   endif
+   write(*,'(a, 2es14.4e3)') &
+        ' Parallel current density of fit/analytical function: ', current(is)
 
 case (2)
 

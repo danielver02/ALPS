@@ -483,7 +483,7 @@ end subroutine derivative_f0
        !The below relies on the symmetries of the T_n tensor:
        !Again, c.f. Stix Equation 10.48; pg 255
        !---------------------------------------------------------------------
-       disp = wave(1,1)*( wave(2,2)*wave(3,3) + wave(2,3)**2.d0 ) + &
+       disp = wave(1,1)*( wave(2,2)*wave(3,3) + wave(2,3)**2 ) + &
             2.d0*wave(1,2)*wave(2,3)*wave(1,3) - wave(1,3)**2 *wave(2,2) + &
             wave(1,2)**2 *wave(3,3)
 

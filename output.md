@@ -97,6 +97,6 @@ The data is ordered as
 2. $k_\parallel d_p$  
 3. $\omega_{\textrm{r}}/\Omega_p$   
 4. $\gamma/\Omega_p$   
-5. [+(is-1)] $\gamma_{is}/\omega$
+5. [+(is-1)] $\gamma_{is}/\omega_{\textrm{r}}$
 
 This same data structure is preserved for the output from `om_double_scan`.
