@@ -899,7 +899,7 @@ double complex function integrate_res(om,nn,mode)
 		integrate_res = integrate_res + funct_g(ppar,nperp-1,om,nn,mode)/(ppar-denomR-ii*denomI)
 		integrate_res = integrate_res - funct_g(2.d0*denomR-ppar,nperp-1,om,nn,mode)/(ppar-denomR+ii*denomI)
 
-		ppar=capDelta+real(p_res)	! right end of integration interval:
+		ppar=real(p_res)+capDelta	! right end of integration interval:
 
 		integrate_res = integrate_res + 2.d0 * funct_g(ppar,1,om,nn,mode)/(ppar-denomR-ii*denomI)
 		integrate_res = integrate_res - 2.d0 * funct_g(2.d0*denomR-ppar,1,om,nn,mode)/(ppar-denomR+ii*denomI)
