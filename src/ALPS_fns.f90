@@ -879,15 +879,18 @@ double complex function integrate_res(om,nn,mode)
 	! a tiny rest left on the right side that needs to be integrated.
 	! split the range between the resonance and the upper limit into n_resonance_interval steps:
 
-	denomR=real(ms(sproc)*om/kpar - (1.d0*nn) * qs(sproc) /kpar )
-	denomI=aimag(ms(sproc)*om/kpar)
+	denomR=real(p_res)
+	denomI=aimag(p_res)
 
 	capDelta=real(p_res)-pp(sproc,1,ipar_res-positions_principal,2)
 	smdelta=capDelta/(1.d0*n_resonance_interval)
 
-	if (abs(denomI).GT.Tlim) then ! regular integration:
+
+
+	if (abs(denomI).GT.Tlim) then ! regular integration according to Eq. (3.5) of the code paper:
+
 		! Integrate the boundaries:
-		ppar=real(p_res) ! left end of integration interval
+		ppar=real(p_res) ! left end of integration interval:
 
     ! At iperp=1, we are already missing the part from iperp=0, where we should actually start. Therefore, we use 4 instead of 2 in the trapezoid integration:
 		integrate_res = integrate_res + 2.d0 * funct_g(ppar,1,om,nn,mode)/(ppar-denomR-ii*denomI)
@@ -896,7 +899,7 @@ double complex function integrate_res(om,nn,mode)
 		integrate_res = integrate_res + funct_g(ppar,nperp-1,om,nn,mode)/(ppar-denomR-ii*denomI)
 		integrate_res = integrate_res - funct_g(2.d0*denomR-ppar,nperp-1,om,nn,mode)/(ppar-denomR+ii*denomI)
 
-		ppar=capDelta+real(p_res)	! right end of integration interval
+		ppar=capDelta+real(p_res)	! right end of integration interval:
 
 		integrate_res = integrate_res + 2.d0 * funct_g(ppar,1,om,nn,mode)/(ppar-denomR-ii*denomI)
 		integrate_res = integrate_res - 2.d0 * funct_g(2.d0*denomR-ppar,1,om,nn,mode)/(ppar-denomR+ii*denomI)
@@ -915,13 +918,14 @@ double complex function integrate_res(om,nn,mode)
 
 			enddo
 
-			ppar=real(p_res)+smdelta
-			ppar=real(p_res)
+
+			ppar=real(p_res) ! left end of integration interval:
 
 			integrate_res = integrate_res + 2.d0 * funct_g(ppar,iperp,om,nn,mode)/(ppar-denomR-ii*denomI)
 			integrate_res = integrate_res - 2.d0 * funct_g(2.d0*denomR-ppar,iperp,om,nn,mode)/(ppar-denomR+ii*denomI)
 
-			ppar=real(p_res)+capDelta
+
+			ppar=real(p_res)+capDelta ! right end of integration interval:
 
 			integrate_res = integrate_res + 2.d0 * funct_g(ppar,iperp,om,nn,mode)/(ppar-denomR-ii*denomI)
 			integrate_res = integrate_res - 2.d0 * funct_g(2.d0*denomR-ppar,iperp,om,nn,mode)/(ppar-denomR+ii*denomI)
@@ -942,35 +946,30 @@ double complex function integrate_res(om,nn,mode)
 		  enddo
 
 
-	else ! analytic approximation according to Eq. (3.7) of the code paper:
 
 
-		ppar=real(p_res)
 
-    ! At iperp=1, we are already missing the part from iperp=0, where we should actually start. Therefore, we use 4 instead of 2 in the trapezoid integration:
+	else ! analytic approximation according to Eq. (3.6) of the code paper:
+
+    ! For ppar=real(p_res) (left end of integration interval):
+    ppar=real(p_res)
+    ! In this case, ppar is equal to denomR, so: no integration needed
+
+    ! For ppar=capDelta+real(p_res) (right end of integration interval):
+		ppar=real(p_res)+capDelta
+
+    ! For iperp = 1:
+    !(at iperp=1, we are already missing the part from iperp=0, where we should actually start. Therefore, we use 4 instead of 2 in the trapezoid integration):
 		gprimetr = (funct_g(denomR+dppar,1,om,nn,mode)-funct_g(denomR-dppar,1,om,nn,mode))/(2.d0*dppar)
-		if (denomI.NE.0.d0) then
-			integrate_res = integrate_res + 2.d0 * 2.d0 * gprimetr * (ppar-denomR)**2 / ((ppar-denomR)**2+denomI**2)
-		else
-			integrate_res = integrate_res + 2.d0 * 2.d0 * gprimetr
-		endif
+		integrate_res = integrate_res + 2.d0 * 2.d0*gprimetr*((ppar-denomR)**2 / ((ppar-denomR)**2+denomI**2))
 
+    ! For iperp = nperp-1:
 		gprimetr = (funct_g(denomR+dppar,nperp-1,om,nn,mode)-funct_g(denomR-dppar,nperp-1,om,nn,mode))/(2.d0*dppar)
-		if (denomI.NE.0.d0) then
-			integrate_res = integrate_res + 2.d0 * gprimetr * (ppar-denomR)**2 / ((ppar-denomR)**2+denomI**2)
-		else
-			integrate_res = integrate_res + 2.d0 * gprimetr
-		endif
+		integrate_res = integrate_res + 2.d0*gprimetr*((ppar-denomR)**2 / ((ppar-denomR)**2+denomI**2))
 
 
-		ppar=capDelta+real(p_res)	! right end of integration interval
-		gprimetr = (funct_g(denomR+dppar,1,om,nn,mode)-funct_g(denomR-dppar,1,om,nn,mode))/(2.d0*dppar)
-		integrate_res = integrate_res + 2.d0 * 2.d0*gprimetr*(ppar-denomR)**2 / ((ppar-denomR)**2+denomI**2)
-
-		gprimetr = (funct_g(denomR+dppar,nperp-1,om,nn,mode)-funct_g(denomR-dppar,nperp-1,om,nn,mode))/(2.d0*dppar)
-		integrate_res = integrate_res + 2.d0*gprimetr*(ppar-denomR)**2 / ((ppar-denomR)**2+denomI**2)
-
-    ! The following lines account for the second term in Eq. (3.7) in the code paper:
+    ! The following lines account for the first term in Eq. (3.6) in the code paper, which is evaluated via Eq. (3.7):
+    ! We have to divide by smdelta, because the integral (at the end) is multiplied by smdelta as the integration measure.
     if (denomI.GT.0.d0) then
       integrate_res = integrate_res + 2.d0 * 2.d0 * ii * pi * funct_g(denomR,1,om,nn,mode)/smdelta
 			integrate_res = integrate_res + 2.d0 * ii * pi * funct_g(denomR,nperp-1,om,nn,mode)/smdelta
@@ -988,7 +987,9 @@ double complex function integrate_res(om,nn,mode)
 
 				gprimetr = (funct_g(denomR+dppar,iperp,om,nn,mode)-&
 					funct_g(denomR-dppar,iperp,om,nn,mode))/(2.d0*dppar)
-				integrate_res = integrate_res + 4.d0 * 2.d0 * gprimetr * (ppar-denomR)**2 / ((ppar-denomR)**2+denomI**2)
+
+        ! This is the second term in Eq. (3.6):
+				integrate_res = integrate_res + 4.d0 * 2.d0 * gprimetr * ((ppar-denomR)**2 / ((ppar-denomR)**2+denomI**2))
 			enddo
 
 			ppar=real(p_res)
@@ -996,10 +997,11 @@ double complex function integrate_res(om,nn,mode)
 
 			ppar=real(p_res)+capDelta
 			gprimetr = (funct_g(denomR+dppar,iperp,om,nn,mode)-funct_g(denomR-dppar,iperp,om,nn,mode))/(2.d0*dppar)
-			integrate_res = integrate_res + 2.d0*2.d0*gprimetr*(ppar-denomR)**2 / ((ppar-denomR)**2+denomI**2)
+			integrate_res = integrate_res + 2.d0*2.d0*gprimetr*((ppar-denomR)**2 / ((ppar-denomR)**2+denomI**2))
 
 
-      ! The following lines account for the second term in Eq. (3.7) in the paper:
+      ! The following lines account for the first term in Eq. (3.6) in the code paper, which is evaluated via Eq. (3.7):
+      ! We have to divide by smdelta, because the integral (at the end) is multiplied by smdelta as the integration measure.
       if (denomI.GT.0.d0) then
         integrate_res = integrate_res + 4.d0 * ii * pi * funct_g(denomR,iperp,om,nn,mode)/smdelta
       else if (denomI.LT.0.d0) then
@@ -1016,10 +1018,10 @@ double complex function integrate_res(om,nn,mode)
 			ppar=real(p_res)+smdelta*ipar
 
 			gprimetr = (funct_g(denomR+dppar,1,om,nn,mode)-funct_g(denomR-dppar,1,om,nn,mode))/(2.d0*dppar)
-			integrate_res = integrate_res + 4.d0*2.d0*gprimetr*(ppar-denomR)**2 / ((ppar-denomR)**2+denomI**2)
+			integrate_res = integrate_res + 4.d0*2.d0*gprimetr*((ppar-denomR)**2 / ((ppar-denomR)**2+denomI**2))
 
 			gprimetr = (funct_g(denomR+dppar,nperp-1,om,nn,mode)-funct_g(denomR-dppar,nperp-1,om,nn,mode))/(2.d0*dppar)
-			integrate_res = integrate_res + 2.d0*2.d0*gprimetr*(ppar-denomR)**2 / ((ppar-denomR)**2+denomI**2)
+			integrate_res = integrate_res + 2.d0*2.d0*gprimetr*((ppar-denomR)**2 / ((ppar-denomR)**2+denomI**2))
 
 		  enddo
 
@@ -1032,6 +1034,7 @@ double complex function integrate_res(om,nn,mode)
 	! pp(sproc,2,upperlimit,2). We split this interval into steps of roughly size smdelta:
 	ntiny=int((pp(sproc,2,upperlimit,2)-real(p_res)-capDelta)/smdelta)
 
+! This integration performs Eq. (3.2) directly on the tiny rest interval.
 	if (ntiny.GT.0) then
 
 		! Correct for the fact that smdelta is not exactly the step width in the tiny-rest integration:
@@ -1719,7 +1722,7 @@ subroutine secant_osc(om, in)
 
   double complex, intent(inout) :: om
   !! Complex wave frequency \(\omega\).
-  
+
   integer, intent(in) :: in
   !! Root number
 
@@ -1728,7 +1731,7 @@ subroutine secant_osc(om, in)
 
   double complex :: Dprime
   !! Dispersion Tensor if we have to revert to the Newton Search fall back
-  
+
   double complex :: prevom, prev2om, prev3om, prev4om
   !! Storage of previous four complex frequnecy values
 
@@ -1740,7 +1743,7 @@ subroutine secant_osc(om, in)
 
   double complex :: delta
   !!Step size for Newton Search
-  
+
   double complex :: minom
   !! Check variable for convergence.
 
@@ -1752,7 +1755,7 @@ subroutine secant_osc(om, in)
 
   logical :: go_for_secant
   !! Check whether a secant-method step is required.
-  
+
   integer :: oscillation_count
   !! Number of previous frequency values in the secant cycle match with the current frequency.
 
@@ -1767,7 +1770,7 @@ subroutine secant_osc(om, in)
 
   double complex :: ii
   !! Imaginary Unit
-  
+
   ii = cmplx(0.d0, 1.d0, kind(1.d0))
   delta = cmplx(1.d-6, 1.d-8, kind(1.d0))
   lambda = 0.1
@@ -1780,7 +1783,7 @@ subroutine secant_osc(om, in)
      minom=om
      minD=D
   endif
-  
+
   prevom = om * (1.d0 - D_prec)
   prev2om = om
   prev3om = om
@@ -1795,7 +1798,7 @@ subroutine secant_osc(om, in)
      minom=prevom
      minD=prevD
   endif
-  
+
   call mpi_barrier(mpi_comm_world, ierror)
 
   iter = 0
@@ -1875,7 +1878,7 @@ subroutine secant_osc(om, in)
          minom=om
          minD=D
       endif
-  
+
       !! Apply update
       om = om - jump
    endif
@@ -1886,7 +1889,7 @@ subroutine secant_osc(om, in)
     om = minom
     write(*, '(a,2es14.4e3,a,2es14.4e3)') ' D(', real(om), aimag(om), ')= ', minD
   endif
-  
+
 end subroutine secant_osc
 
 double complex function rtsec(func,xin,iflag)
@@ -1896,23 +1899,23 @@ double complex function rtsec(func,xin,iflag)
 
      double complex :: xin
      !! Initial Guess for complex frequency.
-     
+
      double complex :: func
      !! Function whose roots are to be identified.
      !! For ALPS, this is the dispersion relation.
-     
+
      double complex :: x1
      !! Lower bound complex frequency at which func is evaluated.
 
      double complex :: x2
      !! Upper bound complex frequency at which func is evaluated.
-     
+
      double complex :: xl
      !! Swapping complex frequency.
 
      double complex :: fl
      !! Dispersion evaluation at x1.
-     
+
      double complex :: f
      !! Dispersion evaluation at x2.
 
@@ -1930,7 +1933,7 @@ double complex function rtsec(func,xin,iflag)
 
      x1=xin*(1.d0-D_prec)
      x2=xin*(1.d0+D_prec)
-     
+
      fl=func(x1)
      f=func(x2)
 
@@ -2038,7 +2041,7 @@ subroutine om_scan(ik)
 
   integer :: iflag
   !! Number of steps taken for root finding in rtsec.
-  
+
   double complex :: tmp
   !! Storage variable for determinant of dispersion tensor.
 
@@ -2232,7 +2235,7 @@ subroutine om_scan(ik)
         if (jump(in)) then
 
            omega=wroots(in)
-           
+
            ! Extrapolate the initial guess along the direction in k-scans:
            !!KGK: This line causes the solution to (occasionally)
            !!smoothly transition to unphysical values.
@@ -2254,7 +2257,7 @@ subroutine om_scan(ik)
            end select
 
            wroots(in)=omega
-           
+
            call mpi_bcast(wroots(in), 1, &
                 MPI_DOUBLE_COMPLEX, 0, MPI_COMM_WORLD, ierror)
 
@@ -2635,7 +2638,7 @@ subroutine om_double_scan
 
   integer :: iflag
   !! Number of steps taken for root finding in rtsec.
-  
+
   allocate(jump(1:nroots)); jump=.true.
   allocate(domegadk(1:nroots)); domegadk=cmplx(0.d0,0.d0,kind(1.d0))
 
@@ -2896,7 +2899,7 @@ subroutine om_double_scan
                 !!smoothly transition to unphysical values.
                 !!Suppressing until we understand the error.
                 !omega=omega+domegadk(in)*Deltakstep
-                
+
                 !call secant(omega,in)
                 !domegadk(in)=omega-wroots(in)
                 !wroots(in)=omega
@@ -3257,7 +3260,7 @@ subroutine refine_guess
 
   integer :: iflag
   !! Number of steps taken for root finding in rtsec.
-  
+
   if (proc0) then
      if (writeOut) write(*,'(a)')' Refining Roots:'
      write(mapName,'(3a)') 'solution/',trim(runname),'.roots'
@@ -3281,7 +3284,7 @@ subroutine refine_guess
      case (2)
         call secant_osc(omega,iw)
      end select
-     
+
      wroots(iw)=omega
 
 
