@@ -230,6 +230,9 @@ module alps_var
   double complex, dimension(:,:,:), allocatable :: chi0
   !!Susceptibility Tensor (1:nspec,1:3,1:3).
 
+  double complex, dimension(:,:,:,:), allocatable :: chi0_low
+  !!Susceptibility Tensor (1:nspec,1:3,1:3,0:1).
+
   double precision, dimension(:,:), allocatable :: bessel_array
   !! Array of Bessel functions; (nlim(1):nlim(2)+1,0:nperp).
 
@@ -396,7 +399,7 @@ module alps_var
   public :: loggridw, loggridg, omi, omf, gami, gamf
   public :: arrayName, nperp, npar, f0, pp, df0, bessel_array
   public :: current_int, density_int
-  public :: nmax, nlim, wave, numiter, D_threshold, D_prec, D_gap, chi0
+  public :: nmax, nlim, wave, numiter, D_threshold, D_prec, D_gap, chi0, chi0_low
   public :: ns, qs, ms, vA, pi, Bessel_zero,sproc
   public :: ni, nr, positions_principal, Tlim
   public :: n_fits, maxsteps_fit,  lambda_initial_fit, lambdafac_fit, epsilon_fit

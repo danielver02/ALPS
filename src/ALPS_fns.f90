@@ -2003,6 +2003,9 @@ subroutine om_scan(ik)
   character(500), dimension(:), allocatable :: heatName
   !! Output file name for heating-rate calculation.
 
+  character(500), dimension(:), allocatable :: heatMechName
+  !! Output file name for heating-mechanism rate calculation.
+
   character(500), dimension(:), allocatable :: eigenName
   !! Output file name for eigenfunction calculation.
 
@@ -2026,6 +2029,9 @@ subroutine om_scan(ik)
 
   integer, dimension(:), allocatable :: heat_unit
   !! File unit for heating-rate output. (1:nroots)
+
+  integer, dimension(:), allocatable :: heat_mech_unit
+  !! File unit for heating-mechanism-rate output. (1:nroots)
 
   integer, dimension(:), allocatable :: eigen_unit
   !! File unit for eigenfunction output. (1:nroots)
@@ -2060,10 +2066,16 @@ subroutine om_scan(ik)
   double precision, dimension(1:nspec) :: Ps
   !! Relative heating rate of a given species.
 
+  double precision, dimension(1:6,1:nspec) :: Ps_split
+  !! Relative heating rate of a given species by component
+
   character (50) :: fmt_eigen
   !! Format string for eigenfunction output.
 
   character (50) :: fmt_heat
+  !! Format string for heating-rate output.
+
+  character (50) :: fmt_heat_mech
   !! Format string for heating-rate output.
 
   double complex, dimension(:),allocatable :: domegadk
@@ -2097,8 +2109,11 @@ subroutine om_scan(ik)
      endif
      if (scan(ik)%heat_s) then
         write(fmt_heat,'(a,i0,a)') '(4es14.4e3,',nspec,'es14.4e3)'
+        write(fmt_heat_mech,'(a,i0,a)') '(4es14.4e3,',6*nspec,'es14.4e3)'
         allocate(heat_unit(nroots))
+        allocate(heat_mech_unit(nroots))
         allocate(heatName(nroots))
+        allocate(heatMechName(nroots))
      endif
      do in=1,nroots
         write(scanName(in),'(4a,i0,a,i0)')&
@@ -2146,6 +2161,15 @@ subroutine om_scan(ik)
               write(heat_unit(in),trim(fmt_heat)) &
                    kperp,kpar,wroots(in),Ps
               close(heat_unit(in))
+
+              write(heatMechName(in),'(4a,i0,a,i0)')&
+                   'solution/',trim(runname),'.heat_mech_',scan_ID,ik,'.root_',in
+              write(*,'(2a)')' => ',trim(heatMechName(in))
+              call get_unused_unit(heat_mech_unit(in))
+              open(unit=heat_mech_unit(in),file=trim(heatMechName(in)),status='replace')
+              write(heat_mech_unit(in),trim(fmt_heat_mech)) &
+                   kperp,kpar,wroots(in),Ps_split
+              close(heat_mech_unit(in))
            endif
 
         endif
@@ -2317,6 +2341,11 @@ subroutine om_scan(ik)
                     write(heat_unit(in),trim(fmt_heat)) &
                          kperp,kpar,wroots(in),Ps
                     close(heat_unit(in))
+
+                    open(unit=heat_mech_unit(in),file=trim(heatMechName(in)),status='old',position='append')
+                    write(heat_mech_unit(in),trim(fmt_heat_mech)) &
+                         kperp,kpar,wroots(in),Ps_split
+                    close(heat_mech_unit(in))
                  endif
 
               endif
@@ -2341,8 +2370,9 @@ end subroutine om_scan
 
 subroutine calc_eigen(omega,electric,magnetic,vmean,ds,Ps,eigen_L,heat_L)
   !! This subroutine calculates the relative electric and magnetic field amplitudes, the relative fluctuations in the density and velocity of all species, and the heating rates of the given solution.
-  !! It is based on the calc_eigen routine by Greg Howes and Kris Klein.
-  use ALPS_var, only : proc0, nspec, ns, qs, wave, chi0, kperp, kpar, vA, current_int
+  !! It is based on the calc_eigen routine by Greg Howes and Kris Klein, found in PLUME.
+  !! The splitting by mechanisms is described in Huang, Howes, and Brown, JPP 2024.
+  use ALPS_var, only : proc0, nspec, ns, qs, wave, chi0, chi0_low, kperp, kpar, vA, current_int
   implicit none
 
   double complex, intent(in) :: omega
@@ -2351,6 +2381,10 @@ subroutine calc_eigen(omega,electric,magnetic,vmean,ds,Ps,eigen_L,heat_L)
   double complex, dimension(1:3), intent(out) :: electric
   !! Relative electric field amplitude (eigenfunction).
 
+  double complex, dimension(1:3) :: electric_xy
+  !! Components of electric field:
+  !! (Ex, Ey, 0)
+  
   double complex, dimension(1:3), intent(out) :: magnetic
   !! Relative magnetic field amplitude (eigenfunction).
 
@@ -2362,6 +2396,9 @@ subroutine calc_eigen(omega,electric,magnetic,vmean,ds,Ps,eigen_L,heat_L)
 
   double precision, dimension(1:nspec), intent(out) :: Ps
   !! Relative heating rate of a given species.
+
+  double precision, dimension(1:6,1:nspec) :: Ps_split
+  !! Relative heating rate of a given species split by component
 
   logical, intent(in) :: eigen_L
   !! Check whether eigenfunction calculation is requested.
@@ -2428,32 +2465,24 @@ subroutine calc_eigen(omega,electric,magnetic,vmean,ds,Ps,eigen_L,heat_L)
 
         if (eigen_L) then
 
-        ! Calculate relative velocity fluctuations:
-        vmean(:,:)=0.d0
-        do j=1,3!x,y,z
-           do jj = 1,nspec !Species velocity fluctuations
-              vmean(j,jj) = -(vA/(qs(jj)*ns(jj)))*&
-                   cmplx(0.d0,1.d0,kind(1.d0))*&
-                   omega*sum(electric(:)*chi0(jj,j,:))
-
+           ! Calculate relative velocity fluctuations:
+           vmean(:,:)=0.d0
+           do j=1,3!x,y,z
+              do jj = 1,nspec !Species velocity fluctuations
+                 vmean(j,jj) = -(vA/(qs(jj)*ns(jj)))*&
+                      cmplx(0.d0,1.d0,kind(1.d0))*&
+                      omega*sum(electric(:)*chi0(jj,j,:))
+                 
+              enddo
            enddo
-        enddo
-
-        ! Calculate relative density fluctuations:
-        do jj=1,nspec
-           ds(jj) = (vmean(1,jj)*kperp+vmean(3,jj)*kpar)/&
-                (omega-kpar * current_int(jj)/(ns(jj)*qs(jj)))
-
-           !TO-DO:
-           !add in correct effects of drift on density fluctuation
-           !e.g. omega-kpar V_0
-           !with a physically meaningful V_0 used.
-           !ds(jj) = 0.d0
-           !ds(jj) = (vmean(1,jj)*kperp+vmean(3,jj)*kpar)/&
-           !     (omega)
-        enddo
+           
+           ! Calculate relative density fluctuations:
+           do jj=1,nspec
+              ds(jj) = (vmean(1,jj)*kperp+vmean(3,jj)*kpar)/&
+                   (omega-kpar * current_int(jj)/(ns(jj)*qs(jj)))
+           enddo
+        endif
      endif
-  endif
 
 
 
@@ -2461,9 +2490,9 @@ if (heat_L) then
 
    ! Calculate component heating-rate:
    temp1 = cmplx(real(omega),0.d0,kind(1.d0))
-   !temp1 = omega
    temp1 = disp(temp1)
 
+   !-=-=-=-
    if (proc0) then
 
       do ii = 1, 3 !tensor index
@@ -2491,9 +2520,11 @@ if (heat_L) then
       enddo
 
    endif
+   !-=-=-=-
 
    temp1 = disp(cmplx(real(omega*1.000001d0),0.d0,kind(1.d0)))
 
+   !-=-=-=-
    if (proc0) then
       do ii = 1, 3
          do j = 1, 3
@@ -2512,6 +2543,77 @@ if (heat_L) then
 
       Ps = Ps/ewave
    endif
+   !-=-=-=-
+
+   !LD, TTD, and CD calculation
+   if (proc0) then
+      do ii = 1, 3 !tensor index
+         do j = 1, 3 !tensor index
+            do jj = 1, nspec !species index
+               chia(jj,ii,j) = -0.5d0*cmplx(0.d0,1.d0)* &
+                    (chi0_low(jj,ii,j,0) - conjg(chi0_low(jj,j,ii,0)))
+            enddo
+         enddo
+      enddo
+      
+      !Initialize Ps_split
+      Ps_split(:,:) = 0.
+        
+      !chi_yy  (TTD term 1)
+      Ps_split(1,:) =-0.5*cmplx(0.,1.)*&
+           conjg(electric(2))*electric(2)* &
+           (chi0_low(:,2,2,0)-conjg(chi0_low(:,2,2,0)))
+        !chi_yz  (TTD term 2)
+        Ps_split(2,:) =-0.5*cmplx(0.,1.)*&
+             (electric(3)*conjg(electric(2))*chi0_low(:,2,3,0) - &
+             conjg(electric(3))*electric(2)*conjg(chi0_low(:,2,3,0)))
+        !chi_zy  (LD term 1)
+        Ps_split(3,:) =-0.5*cmplx(0.,1.)*&
+             (electric(2)*conjg(electric(3))*chi0_low(:,3,2,0) - &
+             conjg(electric(2))*electric(3)*conjg(chi0_low(:,3,2,0)))
+        !chi_zz  (LD term 2)
+        Ps_split(4,:) =-0.5*cmplx(0.,1.)*&
+             conjg(electric(3))*electric(3)* &
+             (chi0_low(:,3,3,0)-conjg(chi0_low(:,3,3,0)))
+
+        !Total n=0 terms
+        term(:,:)=0.
+        do ii = 1, 3
+           do jj = 1, nspec
+              term(jj,ii) = sum(conjg(electric(:))*chia(jj,:,ii))     
+           enddo
+        enddo        
+        Ps_split(5,:) = 0.
+        do jj = 1, nspec
+           Ps_split(5,jj) = sum(term(jj,:)*electric(:))
+        enddo
+
+        !N=1
+        do ii = 1, 3 !tensor index
+           do j = 1, 3 !tensor index
+              do jj = 1, nspec !species index
+                 chia(jj,ii,j) = -0.5*cmplx(0.,1.)* &
+                      (chi0_low(jj,ii,j,1) - conjg(chi0_low(jj,j,ii,1)))
+              enddo
+           enddo
+        enddo
+
+        !Total n=1 terms, Eperp
+        electric_xy=electric; electric_xy(3)=cmplx(0.,0.)
+        term(:,:)=0.
+        term1(:)=0.
+        do ii = 1, 3
+           do jj = 1, nspec
+              term(jj,ii) = sum(conjg(electric_xy(:))*chia(jj,:,ii))     
+           enddo
+        enddo        
+        Ps_split(6,:) = 0.
+        do jj = 1, nspec
+           Ps_split(6,jj) = sum(term(jj,:)*electric_xy(:))
+        enddo
+
+        !Normalization             
+        Ps_split = Ps_split/ewave
 
 endif
 
@@ -2594,6 +2696,9 @@ subroutine om_double_scan
   integer, dimension(:), allocatable :: heat_unit
   !! File unit for heating-rate output. (1:nroots)
 
+  integer, dimension(:), allocatable :: heat_mech_unit
+  !! File unit for heating-rate output. (1:nroots)
+
   integer, dimension(:), allocatable :: eigen_unit
   !! File unit for eigenfunction output. (1:nroots)
 
@@ -2623,6 +2728,9 @@ subroutine om_double_scan
 
   double precision, dimension(1:nspec) :: Ps
   !! Relative heating rate of a given species.
+
+  double precision, dimension(1:6,1:nspec) :: Ps_split
+  !! Relative heating rate of a given species, split by component.
 
   character (50) :: fmt_eigen
   !! Format string for eigenfunction output.
@@ -2693,6 +2801,9 @@ subroutine om_double_scan
         write(fmt_heat,'(a,i0,a)') '(4es14.4e3,',nspec,'es14.4e3)'
         allocate(heat_unit(nroots))
         allocate(heatName(nroots))
+        write(fmt_heat_mech,'(a,i0,a)') '(4es14.4e3,',6*nspec,'es14.4e3)'
+        allocate(heat_mech_unit(nroots))
+        allocate(heatMechName(nroots))
      endif
 
      do in=1,nroots
@@ -2737,6 +2848,13 @@ subroutine om_double_scan
               call get_unused_unit(heat_unit(in))
               open(unit=heat_unit(in),file=trim(heatName(in)),status='replace')
               close(heat_unit(in))
+
+              write(heatMechName(in),'(6a,i0)')&
+                   'solution/',trim(runname),'.heat_mech',scan_ID,scan_ID2,'.root_',in
+              write(*,'(2a)')' => ',trim(heatMechName(in))
+              call get_unused_unit(heat_mech_unit(in))
+              open(unit=heat_mech_unit(in),file=trim(heatMechName(in)),status='replace')
+              close(heat_mech_unit(in))
            endif
         endif
 

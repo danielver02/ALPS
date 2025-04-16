@@ -30,7 +30,7 @@ contains
     use alps_var, only : proc0, ierror, nroots, n_fits, param_fit, fit_type, perp_correction
     use alps_var, only : writeOut, nperp, npar, nmax, nlim, nspec, numroots, ngamma,npparbar
     use alps_var, only : ns, qs, ms, wroots, kperp, kpar, bessel_zero
-    use alps_var, only : wave, chi0, pp, df0, vA, pi
+    use alps_var, only : wave, chi0, chi0_low, pp, df0, vA, pi
     use alps_var, only : secant_method, numiter, D_threshold, D_gap, D_prec
     use alps_var, only : use_map
     use alps_var, only : ni, nr, omi, omf, gami, gamf, loggridg, loggridw
@@ -181,6 +181,7 @@ contains
        allocate(wave(1:3,1:3))
        allocate(chi0(nspec,1:3,1:3))
        wave=cmplx(0.d0,0.d0,kind(1.d0))
+       allocate(chi0_low(nspec,1:3,1:3,0:1))
     else
        !Final fitting parameter arrays:
        allocate(param_fit(1:nspec,0:(max(nperp,ngamma)),5,maxval(n_fits)))
