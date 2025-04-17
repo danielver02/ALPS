@@ -1933,7 +1933,7 @@ subroutine secant_osc(om, in)
                ((abs(aimag(om) -  aimag(prev4om))) .LT. (abs(aimag(om))*osc_threshold))) ) then
           oscillation_count = oscillation_count + 1
           damping_factor = min(0.5d0, damping_factor * 0.75d0)  !! Reduce step size
-          if (proc0) write(*,*)'oscillation detected',damping_factor,om,prevom
+          !if (proc0) write(*,*)'oscillation detected',damping_factor,om,prevom
         endif
 
       endif
@@ -2725,7 +2725,9 @@ end subroutine calc_eigen
 
 
 subroutine om_double_scan
-  !! This subroutine scans along a prescribed plane in wavevector space to map out \(\omega\) in this space. It is required that n_scan=2.
+  !! This subroutine scans along a prescribed plane in wavevector space
+  !! to map out \(\omega\) in this space.
+  !! It is required that n_scan=2, and is invoked with option =2
   use ALPS_var, only : proc0, nroots, runname, ierror, wroots, scan, sproc
   use ALPS_var, only : kperp,kpar,kperp_last,kpar_last
   use ALPS_var, only : secant_method, D_gap
@@ -2733,7 +2735,6 @@ subroutine om_double_scan
   use ALPS_io,  only : get_unused_unit, alps_error, isnancheck
   use mpi
   implicit none
-
 
   integer :: it
   !! Index to loop over steps of first scan.
@@ -2792,6 +2793,12 @@ subroutine om_double_scan
   double complex, dimension(:), allocatable :: om_tmp
   !! Storage variable for frequency omega. (1:nroots)
 
+  complex,dimension(:),allocatable :: omlast
+  !!Arrays with complex frequency for each solution.
+
+  complex,dimension(:),allocatable :: omSafe
+  !!Saved frequency Arrays for each root for second parameter scan.
+  
   double complex :: omega
   !! Complex wave frequency \(\omega\).
 
@@ -2958,7 +2965,7 @@ subroutine om_double_scan
               close(heat_unit(in))
 
               write(heatMechName(in),'(6a,i0)')&
-                   'solution/',trim(runname),'.heat_mech',scan_ID,scan_ID2,'.root_',in
+                   'solution/',trim(runname),'.heat_mech_',scan_ID,scan_ID2,'.root_',in
               write(*,'(2a)')' => ',trim(heatMechName(in))
               call get_unused_unit(heat_mech_unit(in))
               open(unit=heat_mech_unit(in),file=trim(heatMechName(in)),status='replace')
@@ -2970,26 +2977,37 @@ subroutine om_double_scan
 
   endif
 
-
-
   nt = scan(1)%n_out*scan(1)%n_res
   nt2 = scan(2)%n_out*scan(2)%n_res
 
   kperp_last=kperp;kpar_last=kpar
 
+  kperpi=kperp
+  kpari=kpar
+  
   theta_0=atan(kperp_last/kpar_last)
   k_0=sqrt(kperp_last**2+kpar_last**2)
+
+  allocate(omlast(nroots))
+  !allocate(omSafe(nroots)); omSafe=cmplx(0.,0.)
+  do in=1,nroots
+     omlast(in)=wroots(in)
+  enddo 
 
   do it = 0, nt
      ! Scan through wavevector space:
      select case(scan(1)%type_s)
      case (0) ! k_0 to k_1
         if (scan(1)%log_scan) then
-           kperp=10.d0**(log10(kperp_last)+scan(1)%diff*it)
-           kpar=10.d0**(log10(kpar_last)+scan(1)%diff2*it)
+           !kperp=10.d0**(log10(kperp_last)+scan(1)%diff*it)
+           !kpar=10.d0**(log10(kpar_last)+scan(1)%diff2*it)
+           kperp=10.d0**(log10(kperpi)+scan(1)%diff*it)
+           kpar=10.d0**(log10(kpari)+scan(1)%diff2*it)
         else
-           kperp=kperp_last+scan(1)%diff*it
-           kpar= kpar_last +scan(1)%diff2*it
+           !kperp=kperp_last+scan(1)%diff*it
+           !kpar= kpar_last +scan(1)%diff2*it
+           kperp=kperpi+scan(1)%diff*it
+           kpar= kpari +scan(1)%diff2*it
         endif
      case (1) ! theta_0 to theta_1
         if (scan(1)%log_scan) then
@@ -3001,23 +3019,31 @@ subroutine om_double_scan
         kpar=k_0*cos(theta_1)
      case (2) ! |k_0| to |k_1| @ constant theta
         if (scan(1)%log_scan) then
-           kperp=10.d0**(log10(kperp_last)+scan(1)%diff*it)
-           kpar=10.d0**(log10(kpar_last)+scan(1)%diff2*it)
+           !kperp=10.d0**(log10(kperp_last)+scan(1)%diff*it)
+           !kpar=10.d0**(log10(kpar_last)+scan(1)%diff2*it)
+           kperp=10.d0**(log10(kperpi)+scan(1)%diff*it)
+           kpar=10.d0**(log10(kpari)+scan(1)%diff2*it)
         else
-           kperp=kperp_last+scan(1)%diff*it
-           kpar= kpar_last +scan(1)%diff2*it
+           !kperp=kperp_last+scan(1)%diff*it
+           !kpar= kpar_last +scan(1)%diff2*it
+           kperp=kperpi+scan(1)%diff*it
+           kpar= kpari +scan(1)%diff2*it
         endif
      case (3) ! kperp scan
         if (scan(1)%log_scan) then
-           kperp=10.d0**(log10(kperp_last)+scan(1)%diff*it)
+           !kperp=10.d0**(log10(kperp_last)+scan(1)%diff*it)
+           kperp=10.d0**(log10(kperpi)+scan(1)%diff*it)
         else
-           kperp=kperp_last+scan(1)%diff*it
+           !kperp=kperp_last+scan(1)%diff*it
+           kperp=kperpi+scan(1)%diff*it
         endif
      case (4) ! kpar scan
         if (scan(1)%log_scan) then
-           kpar=10.d0**(log10(kpar_last)+scan(1)%diff*it)
+           !kpar=10.d0**(log10(kpar_last)+scan(1)%diff*it)
+           kpar=10.d0**(log10(kpari)+scan(1)%diff*it)
         else
-           kpar=kpar_last+scan(1)%diff*it
+           !kpar=kpar_last+scan(1)%diff*it
+           kpar=kpari+scan(1)%diff*it
         endif
      end select
 
@@ -3042,24 +3068,97 @@ subroutine om_double_scan
 
      if (alljump.EQV..FALSE.) call alps_error(9)
 
+     do in = 1,nroots
+        !Search for new roots
+
+        if (jump(in)) then
+           omega=omlast(in)
+           if (proc0) &
+                write(*,*)'initial guess: ',omlast(in),omega,kperp,kpar
+
+           ! Extrapolate the initial guess along the direction in k-scans:
+           !!KGK: This line causes the solution to (occasionally)
+           !!smoothly transition to unphysical values.
+           !!Suppressing until we understand the error.
+           !omega=omega+domegadk(in)*Deltakstep
+
+           !call secant(omega,in)
+           !domegadk(in)=omega-wroots(in)
+           !wroots(in)=omega
+
+           !KGK: Testing Alternative Root Finding Schemes
+           select case (secant_method)
+           case (0)
+              call secant(omega,in)
+           case (1)
+              omega=rtsec(disp,omega,iflag)
+           case (2)
+              call secant_osc(omega,in)
+           end select
+
+           wroots(in)=omega
+           omlast(in)=omega
+
+           call mpi_bcast(wroots(in), 1, &
+                MPI_DOUBLE_COMPLEX, 0, MPI_COMM_WORLD, ierror)
+
+          ! Run a final instance of disp:
+           tmp = disp(omega)
+
+           call mpi_barrier(mpi_comm_world,ierror)
+
+           !Output and check for root jumps and NaNs:
+           if (proc0) then
+
+              if(isnancheck(real(omega))) then
+              	  omega=cmplx(0.d0,0.d0,kind(1.d0));jump(in)=.false.
+              endif
+!
+              do imm=1,in-1
+                 if (abs(wroots(in)-wroots(imm)).lt.D_gap) then
+                    write(*,'(a,6es14.4e3)')'Root too close!',&
+                         wroots(in),wroots(imm),&
+                         real(wroots(in))-real(wroots(imm)), &
+                         aimag(wroots(in))-aimag(wroots(imm))
+                    wroots(in)=cmplx(0.d0,0.d0);jump(in)=.false.
+                 endif
+              enddo
+
+           endif
+           call mpi_bcast(jump(in),1,MPI_LOGICAL,0,MPI_COMM_WORLD, ierror)
+
+        end if
+        call mpi_barrier(mpi_comm_world,ierror)
+
+     enddo
+
      !Save roots before starting second parameter scan.
      om_tmp=wroots
 
+     if (mod(it,scan(1)%n_res)==0) then
+
+           !Save roots
+        !do in = 1,nroots
+              !omSafe(in) = om_tmp(in)
+        !      if (proc0) then
+        !         write(*,*)'saved root:',omsafe(in)
+        !      endif
+        !   enddo
 
      ! Second scan:
-     do it2 = 0, nt2
+        do it2 = 0, nt2
 
+           
         ! Scan through wavevector space:
         !if (it2==1) then
-        if (it2==0) then
-           kperpi=kperp; kpari=kpar
-           kperpi=kperp; kpari=kpar
-           theta_i=atan(kperpi/kpari)
-           k_i=sqrt(kperpi**2+kpari**2)
-           wroots=om_tmp
-           Deltakstep=0.d0
-           domegadk=cmplx(0.d0,0.d0,kind(1.d0))
-        endif
+           !if (it2==0) then
+           !kperpi=kperp; kpari=kpar
+           !theta_i=atan(kperpi/kpari)
+           !k_i=sqrt(kperpi**2+kpari**2)
+           !wroots=omlast
+           !Deltakstep=0.d0
+           !domegadk=cmplx(0.d0,0.d0,kind(1.d0))
+        !endif
         select case(scan(2)%type_s)
         case (0) ! k_0 to k_1
            if (scan(2)%log_scan) then
@@ -3141,6 +3240,7 @@ subroutine om_double_scan
                    call secant_osc(omega,in)
                 end select
 
+                wroots(in)=omega
 
                 call mpi_bcast(wroots(in), 1, &
                      MPI_DOUBLE_COMPLEX, 0, MPI_COMM_WORLD, ierror)
@@ -3186,7 +3286,6 @@ subroutine om_double_scan
                  endif
               enddo
 
-
               if ((mod(it,scan(1)%n_res)==0).and.((mod(it2,scan(2)%n_res)==0))) then
                  open(unit=scan_unit(in),file=trim(scanName(in)),&
                       status='old',position='append')
@@ -3228,6 +3327,17 @@ subroutine om_double_scan
 
   enddo
 
+  !Recall Saved roots
+  if (proc0) then
+     write(*,*)'-=-=-=-=-='
+     write(*,*)'-=-=-=-=-='
+  endif
+  do in = 1,nroots
+     !omlast(in)=omsafe(in)
+     if (proc0) &
+          write(*,'(a,i3,a,2es14.4)')'Root ',in,': ',omlast(in)
+  enddo
+
   if ((proc0).and.(mod(it,scan(1)%n_res)==0)) then
      do in = 1,nroots
         open(unit=scan_unit(in),file=trim(scanName(in)),&
@@ -3251,11 +3361,11 @@ subroutine om_double_scan
 
      enddo
   endif
+endif
 
 
-
-  kperp=kperp_last
-  kpar=kpar_last
+kperp=kperp_last
+kpar=kpar_last
 
 enddo
 
@@ -3892,9 +4002,9 @@ do is = 1,nspec
 	prev_proc_count = proc_count
 enddo
 
-  if (writeOut) &
-       write(*,'(a,i4,a,i4,a,i4,a,2i4,a)') &
-       'Processor ',iproc,' of ',nproc,' ready. Species ',sproc,': n in [', nlim(1:2),']'
+!if (writeOut) &
+!       write(*,'(a,i4,a,i4,a,i4,a,2i4,a)') &
+!       'Processor ',iproc,' of ',nproc,' ready. Species ',sproc,': n in [', nlim(1:2),']'
 
 end subroutine split_processes
 
