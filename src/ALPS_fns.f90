@@ -252,7 +252,8 @@ end subroutine derivative_f0
  double complex function disp(om)
  !! This function returns the determinant of the dispersion tensor for a given frequency om.
     use alps_var, only : nlim, proc0, nspec, ierror, sproc, relativistic
-    use alps_var, only : wave, kperp, kpar, ns, qs, vA, chi0, usebM
+    use alps_var, only : wave, kperp, kpar, ns, qs, vA, chi0, chi0_low
+    use alps_var, only : usebM
     use alps_nhds, only: calc_chi
     use alps_fns_rel, only : int_ee_rel
     use mpi
@@ -268,8 +269,14 @@ end subroutine derivative_f0
     double complex, dimension(1:nspec,1:3,1:3) :: schi
     !! Susceptibility tensor \(\chi\) of individual process.
 
+    double complex, dimension(1:nspec,1:3,1:3,0:1) :: schi_low
+    !! Susceptibility tensor \(\chi\) of individual process for n=0,\pm 1.
+
     double complex, dimension(1:nspec,1:3,1:3) :: chi
     !! Susceptibility tensor \(\chi\) after summing over processes.
+
+    double complex, dimension(1:nspec,1:3,1:3,0:1) :: chi_low
+    !! Susceptibility tensor \(\chi\) after summing over process for n=0,\pm 1.
 
     double complex, dimension(1:3,1:3) :: eps
     !! Dielectric tensor \(\epsilon\).
@@ -301,7 +308,9 @@ end subroutine derivative_f0
 
     chi=cmplx(0.d0,0.d0,kind(1.d0))
     if (proc0) chi0=cmplx(0.d0,0.d0,kind(1.d0))
+    if (proc0) chi0_low=cmplx(0.d0,0.d0,kind(1.d0))
     schi=cmplx(0.d0,0.d0,kind(1.d0))
+    schi_low=cmplx(0.d0,0.d0,kind(1.d0))
 
     if (proc0)  then
 
@@ -330,6 +339,10 @@ end subroutine derivative_f0
           schi(sproc,1,3)=chi_NHDS(1,3)/(ns(sproc) * qs(sproc))
           schi(sproc,2,3)=chi_NHDS(2,3)/(ns(sproc) * qs(sproc))
 
+          !NOTE TO DANIEL: WE WILL NEED TO CRACK OPEN NHDS AND
+          !DETERMINE CHI0_LOW [which only has contributions from n=0, \pm 2]
+          !FROM THE BIMAX CALCULATION.
+          
        else
 
        do nn = nlim(1),nlim(2)
@@ -344,16 +357,68 @@ end subroutine derivative_f0
              !xz term is zero
 
              !yy term:
-             schi(sproc,2,2) = schi(sproc,2,2) + &
+             schi_low(sproc,2,2,0)=&
                   full_integrate(om,nn,2,found_res_plus)
+             
+             schi(sproc,2,2) = schi(sproc,2,2) + &
+                  schi_low(sproc,2,2,0)
 
              !zz term:
-             schi(sproc,3,3) = schi(sproc,3,3) + &
+             schi_low(sproc,3,3,0)=&
                   full_integrate(om,nn,3,found_res_plus)
+             
+             schi(sproc,3,3) = schi(sproc,3,3) + &
+                  schi_low(sproc,3,3,0)
 
              !yz term:
-             schi(sproc,2,3) = schi(sproc,2,3) + &
+             schi_low(sproc,2,3,0)=&
                   full_integrate(om,nn,6,found_res_plus)
+             
+             schi(sproc,2,3) = schi(sproc,2,3) + &
+                  schi_low(sproc,2,3,0)
+             
+          elseif (nn==1) then
+             !xx term:
+             schi_low(sproc,1,1,1)=&
+                  full_integrate(om,nn,1,found_res_plus) + &
+                  full_integrate(om,-nn,1,found_res_minus)                  
+             schi(sproc,1,1) = schi(sproc,1,1) + &
+                  schi_low(sproc,1,1,1)
+
+             !yy term:
+             schi_low(sproc,2,2,1)=&
+                  full_integrate(om,nn,2,found_res_plus) + &
+                  full_integrate(om,-nn,2,found_res_minus)
+             schi(sproc,2,2) = schi(sproc,2,2) + &
+                  schi_low(sproc,2,2,1)
+             
+             !zz term:
+             schi_low(sproc,3,3,1)=&
+                  full_integrate(om,nn,3,found_res_plus) + &
+                  full_integrate(om,-nn,3,found_res_minus)
+             schi(sproc,3,3) = schi(sproc,3,3) + &
+                  schi_low(sproc,3,3,1)
+
+             !xy term:
+             schi_low(sproc,1,2,1)=&
+                  full_integrate(om,nn,4,found_res_plus) + &
+                  full_integrate(om,-nn,4,found_res_minus)
+             schi(sproc,1,2) = schi(sproc,1,2) + &
+                  schi_low(sproc,1,2,1)
+
+             !xz term:
+             schi_low(sproc,1,3,1)=&
+                  full_integrate(om,nn,5,found_res_plus) + &
+                  full_integrate(om,-nn,5,found_res_minus)
+             schi(sproc,1,3) = schi(sproc,1,3) + &
+                  schi_low(sproc,1,3,1)
+             
+             !yz term:
+             schi_low(sproc,2,3,1)=&
+                  full_integrate(om,nn,6,found_res_plus) + &
+                  full_integrate(om,-nn,6,found_res_minus)
+             schi(sproc,2,3) = schi(sproc,2,3) + &
+                  schi_low(sproc,2,3,1)
 
           else
 
@@ -387,16 +452,17 @@ end subroutine derivative_f0
                   full_integrate(om,nn,6,found_res_plus) + &
                   full_integrate(om,-nn,6,found_res_minus)
 
-          endif
+          endif          
        enddo
 
        ! Add in ee term:
        if (nlim(1)==0) then
-	     if(relativistic(sproc)) then
-	     	    schi(sproc,3,3)=schi(sproc,3,3) + int_ee_rel(om)
-	     else
-	     		schi(sproc,3,3)=schi(sproc,3,3) + int_ee(om)
-	     endif
+          if(relativistic(sproc)) then
+             schi(sproc,3,3)=schi(sproc,3,3) + int_ee_rel(om)
+          else
+             schi(sproc,3,3)=schi(sproc,3,3) + int_ee(om)
+             schi_low(sproc,3,3,0)=schi_low(sproc,3,3,0) + int_ee(om)
+          endif
        endif
 
      endif
@@ -410,10 +476,20 @@ end subroutine derivative_f0
        schi(sproc,1,3) = schi(sproc,1,3) * norm(sproc)
        schi(sproc,2,3) = schi(sproc,2,3) * norm(sproc)
 
+       schi_low(sproc,1,1,:) = schi_low(sproc,1,1,:) * norm(sproc)
+       schi_low(sproc,2,2,:) = schi_low(sproc,2,2,:) * norm(sproc)
+       schi_low(sproc,3,3,:) = schi_low(sproc,3,3,:) * norm(sproc)
+       schi_low(sproc,1,2,:) = schi_low(sproc,1,2,:) * norm(sproc)
+       schi_low(sproc,1,3,:) = schi_low(sproc,1,3,:) * norm(sproc)
+       schi_low(sproc,2,3,:) = schi_low(sproc,2,3,:) * norm(sproc)
+
     endif
 
     ! Return the schi to proc0:
     call MPI_REDUCE (schi, chi, size(chi),&
+         MPI_DOUBLE_COMPLEX, MPI_SUM, 0, MPI_COMM_WORLD, ierror)
+
+    call MPI_REDUCE (schi_low, chi_low, size(chi_low),&
         MPI_DOUBLE_COMPLEX, MPI_SUM, 0, MPI_COMM_WORLD, ierror)
 
 
@@ -428,9 +504,29 @@ end subroutine derivative_f0
        chi0(:,2,1)=-chi0(:,1,2)
        chi0(:,3,1)=-chi0(:,1,3)
        chi0(:,3,2)=-chi0(:,2,3)
+       
+       !The global variable 'chi0_low' is used
+       !for calculations for the n=0 and \pm 1
+       !heating mechanisms.
+       
+       chi0_low=chi_low/(om*om*vA*vA)
 
-    	wave=cmplx(0.d0,0.d0,kind(1.d0))
-      eps=cmplx(0.d0,0.d0,kind(1.d0))
+       chi0_low(:,2,1,:)=-chi0_low(:,1,2,:)
+       chi0_low(:,3,1,:)=-chi0_low(:,1,3,:)
+       chi0_low(:,3,2,:)=-chi0_low(:,2,3,:)
+
+       !write(*,*)'-=-=-=-'
+       !write(*,*)'-=-=-=-'
+       !write(*,*)chi0_low(1,1,1,0),chi0_low(1,1,2,0),chi0_low(1,1,3,0)
+       !write(*,*)chi0_low(1,2,1,0),chi0_low(1,2,2,0),chi0_low(1,2,3,0)
+       !write(*,*)chi0_low(1,3,1,0),chi0_low(1,3,2,0),chi0_low(1,3,3,0)
+       !write(*,*)'-=-=-=-'
+       !write(*,*)chi0_low(1,1,1,1),chi0_low(1,1,2,1),chi0_low(1,1,3,1)
+       !write(*,*)chi0_low(1,2,1,1),chi0_low(1,2,2,1),chi0_low(1,2,3,1)
+       !write(*,*)chi0_low(1,3,1,1),chi0_low(1,3,2,1),chi0_low(1,3,3,1)
+       
+       wave=cmplx(0.d0,0.d0,kind(1.d0))
+       eps=cmplx(0.d0,0.d0,kind(1.d0))
 
        ! Sum over species:
        do is = 1, nspec
@@ -2133,7 +2229,7 @@ subroutine om_scan(ik)
         omega=wroots(in)
         tmp = disp(omega)
 
-        call calc_eigen(omega,ef,bf,Us,ds,Ps,scan(ik)%eigen_s,scan(ik)%heat_s)
+        call calc_eigen(omega,ef,bf,Us,ds,Ps,Ps_split,scan(ik)%eigen_s,scan(ik)%heat_s)
 
         !reassign omega:
         omega=wroots(in)
@@ -2297,7 +2393,7 @@ subroutine om_scan(ik)
 
               if ((scan(ik)%eigen_s).or.((scan(ik)%heat_s))) then
 
-                 call calc_eigen(omega,ef,bf,Us,ds,Ps,scan(ik)%eigen_s,scan(ik)%heat_s)
+                 call calc_eigen(omega,ef,bf,Us,ds,Ps,Ps_split,scan(ik)%eigen_s,scan(ik)%heat_s)
 
                  !reassign omega:
                  omega=wroots(in)
@@ -2368,7 +2464,7 @@ end subroutine om_scan
 
 
 
-subroutine calc_eigen(omega,electric,magnetic,vmean,ds,Ps,eigen_L,heat_L)
+subroutine calc_eigen(omega,electric,magnetic,vmean,ds,Ps,Ps_split,eigen_L,heat_L)
   !! This subroutine calculates the relative electric and magnetic field amplitudes, the relative fluctuations in the density and velocity of all species, and the heating rates of the given solution.
   !! It is based on the calc_eigen routine by Greg Howes and Kris Klein, found in PLUME.
   !! The splitting by mechanisms is described in Huang, Howes, and Brown, JPP 2024.
@@ -2563,45 +2659,50 @@ if (heat_L) then
       Ps_split(1,:) =-0.5*cmplx(0.,1.)*&
            conjg(electric(2))*electric(2)* &
            (chi0_low(:,2,2,0)-conjg(chi0_low(:,2,2,0)))
-        !chi_yz  (TTD term 2)
-        Ps_split(2,:) =-0.5*cmplx(0.,1.)*&
-             (electric(3)*conjg(electric(2))*chi0_low(:,2,3,0) - &
-             conjg(electric(3))*electric(2)*conjg(chi0_low(:,2,3,0)))
-        !chi_zy  (LD term 1)
-        Ps_split(3,:) =-0.5*cmplx(0.,1.)*&
-             (electric(2)*conjg(electric(3))*chi0_low(:,3,2,0) - &
-             conjg(electric(2))*electric(3)*conjg(chi0_low(:,3,2,0)))
-        !chi_zz  (LD term 2)
-        Ps_split(4,:) =-0.5*cmplx(0.,1.)*&
-             conjg(electric(3))*electric(3)* &
-             (chi0_low(:,3,3,0)-conjg(chi0_low(:,3,3,0)))
+      
+      !chi_yz  (TTD term 2)
+      Ps_split(2,:) =-0.5*cmplx(0.,1.)*&
+           (electric(3)*conjg(electric(2))*chi0_low(:,2,3,0) - &
+           conjg(electric(3))*electric(2)*conjg(chi0_low(:,2,3,0)))
+      !chi_zy  (LD term 1)
+      Ps_split(3,:) =-0.5*cmplx(0.,1.)*&
+           (electric(2)*conjg(electric(3))*chi0_low(:,3,2,0) - &
+           conjg(electric(2))*electric(3)*conjg(chi0_low(:,3,2,0)))
+      !chi_zz  (LD term 2)
+      Ps_split(4,:) =-0.5*cmplx(0.,1.)*&
+           conjg(electric(3))*electric(3)* &
+           (chi0_low(:,3,3,0)-conjg(chi0_low(:,3,3,0)))
+      
+      !Total n=0 terms
+      term(:,:)=0.
+      do ii = 1, 3
+         do jj = 1, nspec
+            term(jj,ii) = sum(conjg(electric(:))*chia(jj,:,ii))     
+         enddo
+      enddo
+      Ps_split(5,:) = 0.
+      do jj = 1, nspec
+         Ps_split(5,jj) = sum(term(jj,:)*electric(:))
+      enddo
 
-        !Total n=0 terms
-        term(:,:)=0.
-        do ii = 1, 3
-           do jj = 1, nspec
-              term(jj,ii) = sum(conjg(electric(:))*chia(jj,:,ii))     
-           enddo
-        enddo        
-        Ps_split(5,:) = 0.
-        do jj = 1, nspec
-           Ps_split(5,jj) = sum(term(jj,:)*electric(:))
-        enddo
+   endif
 
-        !N=1
-        do ii = 1, 3 !tensor index
-           do j = 1, 3 !tensor index
-              do jj = 1, nspec !species index
-                 chia(jj,ii,j) = -0.5*cmplx(0.,1.)* &
-                      (chi0_low(jj,ii,j,1) - conjg(chi0_low(jj,j,ii,1)))
-              enddo
-           enddo
-        enddo
-
+   if (proc0) then
+      !N=1
+      do ii = 1, 3 !tensor index
+         do j = 1, 3 !tensor index
+            do jj = 1, nspec !species index
+               chia(jj,ii,j) = -0.5*cmplx(0.,1.)* &
+                    (chi0_low(jj,ii,j,1) - conjg(chi0_low(jj,j,ii,1)))
+            enddo
+         enddo
+      enddo
+      
         !Total n=1 terms, Eperp
         electric_xy=electric; electric_xy(3)=cmplx(0.,0.)
         term(:,:)=0.
         term1(:)=0.
+
         do ii = 1, 3
            do jj = 1, nspec
               term(jj,ii) = sum(conjg(electric_xy(:))*chia(jj,:,ii))     
@@ -2615,7 +2716,8 @@ if (heat_L) then
         !Normalization             
         Ps_split = Ps_split/ewave
 
-endif
+     endif
+  endif
 
 end subroutine calc_eigen
 
@@ -2653,6 +2755,9 @@ subroutine om_double_scan
 
   character(500), dimension(:), allocatable :: heatName
   !! Output file name for heating-rate calculation.
+
+  character(500), dimension(:), allocatable :: heatMechName
+  !! Output file name for heating-rate mechanism calculation.
 
   character(500), dimension(:), allocatable :: eigenName
   !! Output file name for eigenfunction calculation.
@@ -2736,6 +2841,9 @@ subroutine om_double_scan
   !! Format string for eigenfunction output.
 
   character (50) :: fmt_heat
+  !! Format string for heating-rate output.
+
+  character (50) :: fmt_heat_mech
   !! Format string for heating-rate output.
 
   double complex, dimension(:),allocatable :: domegadk
@@ -2824,7 +2932,7 @@ subroutine om_double_scan
         omega=wroots(in)
         tmp = disp(omega)
 
-        call calc_eigen(omega,ef,bf,Us,ds,Ps,scan(1)%eigen_s,scan(1)%heat_s)
+        call calc_eigen(omega,ef,bf,Us,ds,Ps,Ps_split,scan(1)%eigen_s,scan(1)%heat_s)
 
         !reassign omega:
         omega=wroots(in)
@@ -3047,7 +3155,7 @@ subroutine om_double_scan
 
               if ((scan(1)%eigen_s).or.((scan(1)%heat_s))) then
 
-                 call calc_eigen(omega,ef,bf,Us,ds,Ps,scan(1)%eigen_s,scan(1)%heat_s)
+                 call calc_eigen(omega,ef,bf,Us,ds,Ps,Ps_split,scan(1)%eigen_s,scan(1)%heat_s)
 
                  !reassign omega:
                  omega=wroots(in)
@@ -3098,6 +3206,11 @@ subroutine om_double_scan
                     write(heat_unit(in),trim(fmt_heat)) &
                          kperp,kpar,wroots(in),Ps
                     close(heat_unit(in))
+
+                    open(unit=heat_mech_unit(in),file=trim(heatMechName(in)),status='old',position='append')
+                    write(heat_mech_unit(in),trim(fmt_heat_mech)) &
+                         kperp,kpar,wroots(in),Ps_split
+                    close(heat_mech_unit(in))
                  endif
 
               endif
@@ -3131,6 +3244,9 @@ subroutine om_double_scan
            open(unit=heat_unit(in),file=trim(heatName(in)),status='old',position='append')
            write(heat_unit(in),*)
            close(heat_unit(in))
+           open(unit=heat_mech_unit(in),file=trim(heatMechName(in)),status='old',position='append')
+           write(heat_mech_unit(in),*)
+           close(heat_mech_unit(in))
         endif
 
      enddo
