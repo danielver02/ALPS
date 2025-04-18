@@ -1905,7 +1905,7 @@ subroutine secant_osc(om, in)
   do while ((iter .LE. (numiter - 1)) .AND. go_for_secant)
     iter = iter + 1
     D = disp(om)
-
+    
     !! Ensure we don’t divide by a tiny value
     if ((abs(D - prevD) .LT. 1.d-80)) then
       prevom = prevom + 1.d-8
@@ -1932,8 +1932,7 @@ subroutine secant_osc(om, in)
               (((abs(real(om) -   real(prev4om))) .LT. (abs(real(om))*osc_threshold)).and.&
                ((abs(aimag(om) -  aimag(prev4om))) .LT. (abs(aimag(om))*osc_threshold))) ) then
           oscillation_count = oscillation_count + 1
-          damping_factor = min(0.5d0, damping_factor * 0.75d0)  !! Reduce step size
-          !if (proc0) write(*,*)'oscillation detected',damping_factor,om,prevom
+          damping_factor = min(0.5d0, damping_factor * 0.75d0)  !! Reduce step 
         endif
 
       endif
@@ -2338,7 +2337,6 @@ subroutine om_scan(ik)
 
      call mpi_barrier(mpi_comm_world,ierror)
 
-     if (proc0) write(*,'(a,es14.4e3,a,es14.4e3)')'kperp: ',kperp,' kpar: ',kpar
 
 	! Check if all jumps are set to .false.:
 	alljump=.FALSE.
@@ -2742,6 +2740,9 @@ subroutine om_double_scan
   integer :: nt
   !! Number of scans for first scan.
 
+  integer :: itt
+  !! Index for resetting wavevector scan.
+  
   integer :: it2
   !! Index to loop over steps of second scan.
 
@@ -2795,9 +2796,6 @@ subroutine om_double_scan
 
   complex,dimension(:),allocatable :: omlast
   !!Arrays with complex frequency for each solution.
-
-  complex,dimension(:),allocatable :: omSafe
-  !!Saved frequency Arrays for each root for second parameter scan.
   
   double complex :: omega
   !! Complex wave frequency \(\omega\).
@@ -2908,14 +2906,18 @@ subroutine om_double_scan
      end select
 
      if (scan(1)%eigen_s) then
+        !Eigenfunction output.
         write(fmt_eigen,'(a,i0,a)') '(4es14.4e3,12es14.4e3,',nspec*8,'es14.4e3)'
         allocate(eigen_unit(nroots))
         allocate(eigenName(nroots))
      endif
      if (scan(1)%heat_s) then
+        !Heating output.
         write(fmt_heat,'(a,i0,a)') '(4es14.4e3,',nspec,'es14.4e3)'
         allocate(heat_unit(nroots))
         allocate(heatName(nroots))
+
+        !Heating mechanism output.
         write(fmt_heat_mech,'(a,i0,a)') '(4es14.4e3,',6*nspec,'es14.4e3)'
         allocate(heat_mech_unit(nroots))
         allocate(heatMechName(nroots))
@@ -2977,19 +2979,16 @@ subroutine om_double_scan
 
   endif
 
+  !Set number of steps for both scans.
   nt = scan(1)%n_out*scan(1)%n_res
   nt2 = scan(2)%n_out*scan(2)%n_res
 
   kperp_last=kperp;kpar_last=kpar
-
-  kperpi=kperp
-  kpari=kpar
-  
+    
   theta_0=atan(kperp_last/kpar_last)
   k_0=sqrt(kperp_last**2+kpar_last**2)
 
   allocate(omlast(nroots))
-  !allocate(omSafe(nroots)); omSafe=cmplx(0.,0.)
   do in=1,nroots
      omlast(in)=wroots(in)
   enddo 
@@ -2999,15 +2998,11 @@ subroutine om_double_scan
      select case(scan(1)%type_s)
      case (0) ! k_0 to k_1
         if (scan(1)%log_scan) then
-           !kperp=10.d0**(log10(kperp_last)+scan(1)%diff*it)
-           !kpar=10.d0**(log10(kpar_last)+scan(1)%diff2*it)
-           kperp=10.d0**(log10(kperpi)+scan(1)%diff*it)
-           kpar=10.d0**(log10(kpari)+scan(1)%diff2*it)
+           kperp=10.d0**(log10(kperp_last)+scan(1)%diff*it)
+           kpar=10.d0**(log10(kpar_last)+scan(1)%diff2*it)
         else
-           !kperp=kperp_last+scan(1)%diff*it
-           !kpar= kpar_last +scan(1)%diff2*it
-           kperp=kperpi+scan(1)%diff*it
-           kpar= kpari +scan(1)%diff2*it
+           kperp=kperp_last+scan(1)%diff*it
+           kpar= kpar_last +scan(1)%diff2*it
         endif
      case (1) ! theta_0 to theta_1
         if (scan(1)%log_scan) then
@@ -3019,31 +3014,23 @@ subroutine om_double_scan
         kpar=k_0*cos(theta_1)
      case (2) ! |k_0| to |k_1| @ constant theta
         if (scan(1)%log_scan) then
-           !kperp=10.d0**(log10(kperp_last)+scan(1)%diff*it)
-           !kpar=10.d0**(log10(kpar_last)+scan(1)%diff2*it)
-           kperp=10.d0**(log10(kperpi)+scan(1)%diff*it)
-           kpar=10.d0**(log10(kpari)+scan(1)%diff2*it)
+           kperp=10.d0**(log10(kperp_last)+scan(1)%diff*it)
+           kpar=10.d0**(log10(kpar_last)+scan(1)%diff2*it)
         else
-           !kperp=kperp_last+scan(1)%diff*it
-           !kpar= kpar_last +scan(1)%diff2*it
-           kperp=kperpi+scan(1)%diff*it
-           kpar= kpari +scan(1)%diff2*it
+           kperp=kperp_last+scan(1)%diff*it
+           kpar= kpar_last +scan(1)%diff2*it
         endif
      case (3) ! kperp scan
         if (scan(1)%log_scan) then
-           !kperp=10.d0**(log10(kperp_last)+scan(1)%diff*it)
-           kperp=10.d0**(log10(kperpi)+scan(1)%diff*it)
+           kperp=10.d0**(log10(kperp_last)+scan(1)%diff*it)
         else
-           !kperp=kperp_last+scan(1)%diff*it
-           kperp=kperpi+scan(1)%diff*it
+           kperp=kperp_last+scan(1)%diff*it
         endif
      case (4) ! kpar scan
         if (scan(1)%log_scan) then
-           !kpar=10.d0**(log10(kpar_last)+scan(1)%diff*it)
-           kpar=10.d0**(log10(kpari)+scan(1)%diff*it)
+           kpar=10.d0**(log10(kpar_last)+scan(1)%diff*it)
         else
-           !kpar=kpar_last+scan(1)%diff*it
-           kpar=kpari+scan(1)%diff*it
+           kpar=kpar_last+scan(1)%diff*it
         endif
      end select
 
@@ -3073,9 +3060,8 @@ subroutine om_double_scan
 
         if (jump(in)) then
            omega=omlast(in)
-           if (proc0) &
-                write(*,*)'initial guess: ',omlast(in),omega,kperp,kpar
-
+           wroots(in)=omlast(in)
+           
            ! Extrapolate the initial guess along the direction in k-scans:
            !!KGK: This line causes the solution to (occasionally)
            !!smoothly transition to unphysical values.
@@ -3086,7 +3072,7 @@ subroutine om_double_scan
            !domegadk(in)=omega-wroots(in)
            !wroots(in)=omega
 
-           !KGK: Testing Alternative Root Finding Schemes
+           !KGK: Alternative Root Finding Schemes
            select case (secant_method)
            case (0)
               call secant(omega,in)
@@ -3137,28 +3123,20 @@ subroutine om_double_scan
 
      if (mod(it,scan(1)%n_res)==0) then
 
-           !Save roots
-        !do in = 1,nroots
-              !omSafe(in) = om_tmp(in)
-        !      if (proc0) then
-        !         write(*,*)'saved root:',omsafe(in)
-        !      endif
-        !   enddo
-
      ! Second scan:
         do it2 = 0, nt2
 
            
         ! Scan through wavevector space:
         !if (it2==1) then
-           !if (it2==0) then
-           !kperpi=kperp; kpari=kpar
-           !theta_i=atan(kperpi/kpari)
-           !k_i=sqrt(kperpi**2+kpari**2)
-           !wroots=omlast
+           if (it2==0) then
+              kperpi=kperp; kpari=kpar
+              theta_i=atan(kperpi/kpari)
+              k_i=sqrt(kperpi**2+kpari**2)
+              wroots=omlast
            !Deltakstep=0.d0
            !domegadk=cmplx(0.d0,0.d0,kind(1.d0))
-        !endif
+           endif
         select case(scan(2)%type_s)
         case (0) ! k_0 to k_1
            if (scan(2)%log_scan) then
@@ -3362,12 +3340,56 @@ subroutine om_double_scan
      enddo
   endif
 endif
+itt=0
+     select case(scan(2)%type_s)
+     case (0) ! k_0 to k_1
+        if (scan(2)%log_scan) then
+           kperp=10.d0**(log10(kperp_last)+scan(2)%diff*itt)
+           kpar=10.d0**(log10(kpar_last)+scan(2)%diff2*itt)
+        else
+           kperp=kperp_last+scan(2)%diff*itt
+           kpar= kpar_last +scan(2)%diff2*itt
+        endif
+     case (1) ! theta_0 to theta_1
+        if (scan(2)%log_scan) then
+           theta_1=10.d0**(log10(theta_0)+scan(2)%diff*itt)
+        else
+           theta_1=theta_0+scan(2)%diff*itt
+        endif
+        kperp=k_0*sin(theta_1)
+        kpar=k_0*cos(theta_1)
+     case (2) ! |k_0| to |k_1| @ constant theta
+        if (scan(2)%log_scan) then
+           kperp=10.d0**(log10(kperp_last)+scan(2)%diff*itt)
+           kpar=10.d0**(log10(kpar_last)+scan(2)%diff2*itt)
+        else
+           kperp=kperp_last+scan(2)%diff*itt
+           kpar= kpar_last +scan(2)%diff2*itt
+        endif
+     case (3) ! kperp scan
+        if (scan(2)%log_scan) then
+           kperp=10.d0**(log10(kperp_last)+scan(2)%diff*itt)
+        else
+           kperp=kperp_last+scan(2)%diff*itt
+        endif
+     case (4) ! kpar scan
+        if (scan(2)%log_scan) then
+           kpar=10.d0**(log10(kpar_last)+scan(2)%diff*itt)
+        else
+           kpar=kpar_last+scan(2)%diff*itt
+        endif
+     end select
 
+     if (scan(2)%type_s.ne.4) then
 
-kperp=kperp_last
-kpar=kpar_last
+        ! Scan types with varying kperp require a re-call of split_processes:
+        call determine_nmax
+        call split_processes
+        if(.NOT.(sproc.EQ.0)) call determine_bessel_array
 
-enddo
+     endif
+     
+  enddo
 
 if (proc0) then
    deallocate(scan_unit)
