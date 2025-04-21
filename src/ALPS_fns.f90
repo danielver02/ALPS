@@ -252,7 +252,8 @@ end subroutine derivative_f0
  double complex function disp(om)
  !! This function returns the determinant of the dispersion tensor for a given frequency om.
     use alps_var, only : nlim, proc0, nspec, ierror, sproc, relativistic
-    use alps_var, only : wave, kperp, kpar, ns, qs, vA, chi0, usebM
+    use alps_var, only : wave, kperp, kpar, ns, qs, vA, chi0, chi0_low
+    use alps_var, only : usebM
     use alps_nhds, only: calc_chi
     use alps_fns_rel, only : int_ee_rel
     use mpi
@@ -268,8 +269,14 @@ end subroutine derivative_f0
     double complex, dimension(1:nspec,1:3,1:3) :: schi
     !! Susceptibility tensor \(\chi\) of individual process.
 
+    double complex, dimension(1:nspec,1:3,1:3,0:1) :: schi_low
+    !! Susceptibility tensor \(\chi\) of individual process for n=0,\pm 1.
+
     double complex, dimension(1:nspec,1:3,1:3) :: chi
     !! Susceptibility tensor \(\chi\) after summing over processes.
+
+    double complex, dimension(1:nspec,1:3,1:3,0:1) :: chi_low
+    !! Susceptibility tensor \(\chi\) after summing over process for n=0,\pm 1.
 
     double complex, dimension(1:3,1:3) :: eps
     !! Dielectric tensor \(\epsilon\).
@@ -301,7 +308,9 @@ end subroutine derivative_f0
 
     chi=cmplx(0.d0,0.d0,kind(1.d0))
     if (proc0) chi0=cmplx(0.d0,0.d0,kind(1.d0))
+    if (proc0) chi0_low=cmplx(0.d0,0.d0,kind(1.d0))
     schi=cmplx(0.d0,0.d0,kind(1.d0))
+    schi_low=cmplx(0.d0,0.d0,kind(1.d0))
 
     if (proc0)  then
 
@@ -330,6 +339,10 @@ end subroutine derivative_f0
           schi(sproc,1,3)=chi_NHDS(1,3)/(ns(sproc) * qs(sproc))
           schi(sproc,2,3)=chi_NHDS(2,3)/(ns(sproc) * qs(sproc))
 
+          !NOTE TO DANIEL: WE WILL NEED TO CRACK OPEN NHDS AND
+          !DETERMINE CHI0_LOW [which only has contributions from n=0, \pm 2]
+          !FROM THE BIMAX CALCULATION.
+          
        else
 
        do nn = nlim(1),nlim(2)
@@ -344,16 +357,68 @@ end subroutine derivative_f0
              !xz term is zero
 
              !yy term:
-             schi(sproc,2,2) = schi(sproc,2,2) + &
+             schi_low(sproc,2,2,0)=&
                   full_integrate(om,nn,2,found_res_plus)
+             
+             schi(sproc,2,2) = schi(sproc,2,2) + &
+                  schi_low(sproc,2,2,0)
 
              !zz term:
-             schi(sproc,3,3) = schi(sproc,3,3) + &
+             schi_low(sproc,3,3,0)=&
                   full_integrate(om,nn,3,found_res_plus)
+             
+             schi(sproc,3,3) = schi(sproc,3,3) + &
+                  schi_low(sproc,3,3,0)
 
              !yz term:
-             schi(sproc,2,3) = schi(sproc,2,3) + &
+             schi_low(sproc,2,3,0)=&
                   full_integrate(om,nn,6,found_res_plus)
+             
+             schi(sproc,2,3) = schi(sproc,2,3) + &
+                  schi_low(sproc,2,3,0)
+             
+          elseif (nn==1) then
+             !xx term:
+             schi_low(sproc,1,1,1)=&
+                  full_integrate(om,nn,1,found_res_plus) + &
+                  full_integrate(om,-nn,1,found_res_minus)                  
+             schi(sproc,1,1) = schi(sproc,1,1) + &
+                  schi_low(sproc,1,1,1)
+
+             !yy term:
+             schi_low(sproc,2,2,1)=&
+                  full_integrate(om,nn,2,found_res_plus) + &
+                  full_integrate(om,-nn,2,found_res_minus)
+             schi(sproc,2,2) = schi(sproc,2,2) + &
+                  schi_low(sproc,2,2,1)
+             
+             !zz term:
+             schi_low(sproc,3,3,1)=&
+                  full_integrate(om,nn,3,found_res_plus) + &
+                  full_integrate(om,-nn,3,found_res_minus)
+             schi(sproc,3,3) = schi(sproc,3,3) + &
+                  schi_low(sproc,3,3,1)
+
+             !xy term:
+             schi_low(sproc,1,2,1)=&
+                  full_integrate(om,nn,4,found_res_plus) + &
+                  full_integrate(om,-nn,4,found_res_minus)
+             schi(sproc,1,2) = schi(sproc,1,2) + &
+                  schi_low(sproc,1,2,1)
+
+             !xz term:
+             schi_low(sproc,1,3,1)=&
+                  full_integrate(om,nn,5,found_res_plus) + &
+                  full_integrate(om,-nn,5,found_res_minus)
+             schi(sproc,1,3) = schi(sproc,1,3) + &
+                  schi_low(sproc,1,3,1)
+             
+             !yz term:
+             schi_low(sproc,2,3,1)=&
+                  full_integrate(om,nn,6,found_res_plus) + &
+                  full_integrate(om,-nn,6,found_res_minus)
+             schi(sproc,2,3) = schi(sproc,2,3) + &
+                  schi_low(sproc,2,3,1)
 
           else
 
@@ -387,16 +452,17 @@ end subroutine derivative_f0
                   full_integrate(om,nn,6,found_res_plus) + &
                   full_integrate(om,-nn,6,found_res_minus)
 
-          endif
+          endif          
        enddo
 
        ! Add in ee term:
        if (nlim(1)==0) then
-	     if(relativistic(sproc)) then
-	     	    schi(sproc,3,3)=schi(sproc,3,3) + int_ee_rel(om)
-	     else
-	     		schi(sproc,3,3)=schi(sproc,3,3) + int_ee(om)
-	     endif
+          if(relativistic(sproc)) then
+             schi(sproc,3,3)=schi(sproc,3,3) + int_ee_rel(om)
+          else
+             schi(sproc,3,3)=schi(sproc,3,3) + int_ee(om)
+             schi_low(sproc,3,3,0)=schi_low(sproc,3,3,0) + int_ee(om)
+          endif
        endif
 
      endif
@@ -410,10 +476,20 @@ end subroutine derivative_f0
        schi(sproc,1,3) = schi(sproc,1,3) * norm(sproc)
        schi(sproc,2,3) = schi(sproc,2,3) * norm(sproc)
 
+       schi_low(sproc,1,1,:) = schi_low(sproc,1,1,:) * norm(sproc)
+       schi_low(sproc,2,2,:) = schi_low(sproc,2,2,:) * norm(sproc)
+       schi_low(sproc,3,3,:) = schi_low(sproc,3,3,:) * norm(sproc)
+       schi_low(sproc,1,2,:) = schi_low(sproc,1,2,:) * norm(sproc)
+       schi_low(sproc,1,3,:) = schi_low(sproc,1,3,:) * norm(sproc)
+       schi_low(sproc,2,3,:) = schi_low(sproc,2,3,:) * norm(sproc)
+
     endif
 
     ! Return the schi to proc0:
     call MPI_REDUCE (schi, chi, size(chi),&
+         MPI_DOUBLE_COMPLEX, MPI_SUM, 0, MPI_COMM_WORLD, ierror)
+
+    call MPI_REDUCE (schi_low, chi_low, size(chi_low),&
         MPI_DOUBLE_COMPLEX, MPI_SUM, 0, MPI_COMM_WORLD, ierror)
 
 
@@ -428,9 +504,29 @@ end subroutine derivative_f0
        chi0(:,2,1)=-chi0(:,1,2)
        chi0(:,3,1)=-chi0(:,1,3)
        chi0(:,3,2)=-chi0(:,2,3)
+       
+       !The global variable 'chi0_low' is used
+       !for calculations for the n=0 and \pm 1
+       !heating mechanisms.
+       
+       chi0_low=chi_low/(om*om*vA*vA)
 
-    	wave=cmplx(0.d0,0.d0,kind(1.d0))
-      eps=cmplx(0.d0,0.d0,kind(1.d0))
+       chi0_low(:,2,1,:)=-chi0_low(:,1,2,:)
+       chi0_low(:,3,1,:)=-chi0_low(:,1,3,:)
+       chi0_low(:,3,2,:)=-chi0_low(:,2,3,:)
+
+       !write(*,*)'-=-=-=-'
+       !write(*,*)'-=-=-=-'
+       !write(*,*)chi0_low(1,1,1,0),chi0_low(1,1,2,0),chi0_low(1,1,3,0)
+       !write(*,*)chi0_low(1,2,1,0),chi0_low(1,2,2,0),chi0_low(1,2,3,0)
+       !write(*,*)chi0_low(1,3,1,0),chi0_low(1,3,2,0),chi0_low(1,3,3,0)
+       !write(*,*)'-=-=-=-'
+       !write(*,*)chi0_low(1,1,1,1),chi0_low(1,1,2,1),chi0_low(1,1,3,1)
+       !write(*,*)chi0_low(1,2,1,1),chi0_low(1,2,2,1),chi0_low(1,2,3,1)
+       !write(*,*)chi0_low(1,3,1,1),chi0_low(1,3,2,1),chi0_low(1,3,3,1)
+       
+       wave=cmplx(0.d0,0.d0,kind(1.d0))
+       eps=cmplx(0.d0,0.d0,kind(1.d0))
 
        ! Sum over species:
        do is = 1, nspec
@@ -1809,7 +1905,7 @@ subroutine secant_osc(om, in)
   do while ((iter .LE. (numiter - 1)) .AND. go_for_secant)
     iter = iter + 1
     D = disp(om)
-
+    
     !! Ensure we don’t divide by a tiny value
     if ((abs(D - prevD) .LT. 1.d-80)) then
       prevom = prevom + 1.d-8
@@ -1836,8 +1932,7 @@ subroutine secant_osc(om, in)
               (((abs(real(om) -   real(prev4om))) .LT. (abs(real(om))*osc_threshold)).and.&
                ((abs(aimag(om) -  aimag(prev4om))) .LT. (abs(aimag(om))*osc_threshold))) ) then
           oscillation_count = oscillation_count + 1
-          damping_factor = min(0.5d0, damping_factor * 0.75d0)  !! Reduce step size
-          if (proc0) write(*,*)'oscillation detected',damping_factor,om,prevom
+          damping_factor = min(0.5d0, damping_factor * 0.75d0)  !! Reduce step 
         endif
 
       endif
@@ -2003,6 +2098,9 @@ subroutine om_scan(ik)
   character(500), dimension(:), allocatable :: heatName
   !! Output file name for heating-rate calculation.
 
+  character(500), dimension(:), allocatable :: heatMechName
+  !! Output file name for heating-mechanism rate calculation.
+
   character(500), dimension(:), allocatable :: eigenName
   !! Output file name for eigenfunction calculation.
 
@@ -2026,6 +2124,9 @@ subroutine om_scan(ik)
 
   integer, dimension(:), allocatable :: heat_unit
   !! File unit for heating-rate output. (1:nroots)
+
+  integer, dimension(:), allocatable :: heat_mech_unit
+  !! File unit for heating-mechanism-rate output. (1:nroots)
 
   integer, dimension(:), allocatable :: eigen_unit
   !! File unit for eigenfunction output. (1:nroots)
@@ -2060,10 +2161,16 @@ subroutine om_scan(ik)
   double precision, dimension(1:nspec) :: Ps
   !! Relative heating rate of a given species.
 
+  double precision, dimension(1:6,1:nspec) :: Ps_split
+  !! Relative heating rate of a given species by component
+
   character (50) :: fmt_eigen
   !! Format string for eigenfunction output.
 
   character (50) :: fmt_heat
+  !! Format string for heating-rate output.
+
+  character (50) :: fmt_heat_mech
   !! Format string for heating-rate output.
 
   double complex, dimension(:),allocatable :: domegadk
@@ -2097,8 +2204,11 @@ subroutine om_scan(ik)
      endif
      if (scan(ik)%heat_s) then
         write(fmt_heat,'(a,i0,a)') '(4es14.4e3,',nspec,'es14.4e3)'
+        write(fmt_heat_mech,'(a,i0,a)') '(4es14.4e3,',6*nspec,'es14.4e3)'
         allocate(heat_unit(nroots))
+        allocate(heat_mech_unit(nroots))
         allocate(heatName(nroots))
+        allocate(heatMechName(nroots))
      endif
      do in=1,nroots
         write(scanName(in),'(4a,i0,a,i0)')&
@@ -2118,7 +2228,7 @@ subroutine om_scan(ik)
         omega=wroots(in)
         tmp = disp(omega)
 
-        call calc_eigen(omega,ef,bf,Us,ds,Ps,scan(ik)%eigen_s,scan(ik)%heat_s)
+        call calc_eigen(omega,ef,bf,Us,ds,Ps,Ps_split,scan(ik)%eigen_s,scan(ik)%heat_s)
 
         !reassign omega:
         omega=wroots(in)
@@ -2146,6 +2256,15 @@ subroutine om_scan(ik)
               write(heat_unit(in),trim(fmt_heat)) &
                    kperp,kpar,wroots(in),Ps
               close(heat_unit(in))
+
+              write(heatMechName(in),'(4a,i0,a,i0)')&
+                   'solution/',trim(runname),'.heat_mech_',scan_ID,ik,'.root_',in
+              write(*,'(2a)')' => ',trim(heatMechName(in))
+              call get_unused_unit(heat_mech_unit(in))
+              open(unit=heat_mech_unit(in),file=trim(heatMechName(in)),status='replace')
+              write(heat_mech_unit(in),trim(fmt_heat_mech)) &
+                   kperp,kpar,wroots(in),Ps_split
+              close(heat_mech_unit(in))
            endif
 
         endif
@@ -2218,7 +2337,6 @@ subroutine om_scan(ik)
 
      call mpi_barrier(mpi_comm_world,ierror)
 
-     if (proc0) write(*,'(a,es14.4e3,a,es14.4e3)')'kperp: ',kperp,' kpar: ',kpar
 
 	! Check if all jumps are set to .false.:
 	alljump=.FALSE.
@@ -2273,7 +2391,7 @@ subroutine om_scan(ik)
 
               if ((scan(ik)%eigen_s).or.((scan(ik)%heat_s))) then
 
-                 call calc_eigen(omega,ef,bf,Us,ds,Ps,scan(ik)%eigen_s,scan(ik)%heat_s)
+                 call calc_eigen(omega,ef,bf,Us,ds,Ps,Ps_split,scan(ik)%eigen_s,scan(ik)%heat_s)
 
                  !reassign omega:
                  omega=wroots(in)
@@ -2317,6 +2435,11 @@ subroutine om_scan(ik)
                     write(heat_unit(in),trim(fmt_heat)) &
                          kperp,kpar,wroots(in),Ps
                     close(heat_unit(in))
+
+                    open(unit=heat_mech_unit(in),file=trim(heatMechName(in)),status='old',position='append')
+                    write(heat_mech_unit(in),trim(fmt_heat_mech)) &
+                         kperp,kpar,wroots(in),Ps_split
+                    close(heat_mech_unit(in))
                  endif
 
               endif
@@ -2339,10 +2462,11 @@ end subroutine om_scan
 
 
 
-subroutine calc_eigen(omega,electric,magnetic,vmean,ds,Ps,eigen_L,heat_L)
+subroutine calc_eigen(omega,electric,magnetic,vmean,ds,Ps,Ps_split,eigen_L,heat_L)
   !! This subroutine calculates the relative electric and magnetic field amplitudes, the relative fluctuations in the density and velocity of all species, and the heating rates of the given solution.
-  !! It is based on the calc_eigen routine by Greg Howes and Kris Klein.
-  use ALPS_var, only : proc0, nspec, ns, qs, wave, chi0, kperp, kpar, vA, current_int
+  !! It is based on the calc_eigen routine by Greg Howes and Kris Klein, found in PLUME.
+  !! The splitting by mechanisms is described in Huang, Howes, and Brown, JPP 2024.
+  use ALPS_var, only : proc0, nspec, ns, qs, wave, chi0, chi0_low, kperp, kpar, vA, current_int
   implicit none
 
   double complex, intent(in) :: omega
@@ -2351,6 +2475,10 @@ subroutine calc_eigen(omega,electric,magnetic,vmean,ds,Ps,eigen_L,heat_L)
   double complex, dimension(1:3), intent(out) :: electric
   !! Relative electric field amplitude (eigenfunction).
 
+  double complex, dimension(1:3) :: electric_xy
+  !! Components of electric field:
+  !! (Ex, Ey, 0)
+  
   double complex, dimension(1:3), intent(out) :: magnetic
   !! Relative magnetic field amplitude (eigenfunction).
 
@@ -2362,6 +2490,9 @@ subroutine calc_eigen(omega,electric,magnetic,vmean,ds,Ps,eigen_L,heat_L)
 
   double precision, dimension(1:nspec), intent(out) :: Ps
   !! Relative heating rate of a given species.
+
+  double precision, dimension(1:6,1:nspec) :: Ps_split
+  !! Relative heating rate of a given species split by component
 
   logical, intent(in) :: eigen_L
   !! Check whether eigenfunction calculation is requested.
@@ -2428,32 +2559,24 @@ subroutine calc_eigen(omega,electric,magnetic,vmean,ds,Ps,eigen_L,heat_L)
 
         if (eigen_L) then
 
-        ! Calculate relative velocity fluctuations:
-        vmean(:,:)=0.d0
-        do j=1,3!x,y,z
-           do jj = 1,nspec !Species velocity fluctuations
-              vmean(j,jj) = -(vA/(qs(jj)*ns(jj)))*&
-                   cmplx(0.d0,1.d0,kind(1.d0))*&
-                   omega*sum(electric(:)*chi0(jj,j,:))
-
+           ! Calculate relative velocity fluctuations:
+           vmean(:,:)=0.d0
+           do j=1,3!x,y,z
+              do jj = 1,nspec !Species velocity fluctuations
+                 vmean(j,jj) = -(vA/(qs(jj)*ns(jj)))*&
+                      cmplx(0.d0,1.d0,kind(1.d0))*&
+                      omega*sum(electric(:)*chi0(jj,j,:))
+                 
+              enddo
            enddo
-        enddo
-
-        ! Calculate relative density fluctuations:
-        do jj=1,nspec
-           ds(jj) = (vmean(1,jj)*kperp+vmean(3,jj)*kpar)/&
-                (omega-kpar * current_int(jj)/(ns(jj)*qs(jj)))
-
-           !TO-DO:
-           !add in correct effects of drift on density fluctuation
-           !e.g. omega-kpar V_0
-           !with a physically meaningful V_0 used.
-           !ds(jj) = 0.d0
-           !ds(jj) = (vmean(1,jj)*kperp+vmean(3,jj)*kpar)/&
-           !     (omega)
-        enddo
+           
+           ! Calculate relative density fluctuations:
+           do jj=1,nspec
+              ds(jj) = (vmean(1,jj)*kperp+vmean(3,jj)*kpar)/&
+                   (omega-kpar * current_int(jj)/(ns(jj)*qs(jj)))
+           enddo
+        endif
      endif
-  endif
 
 
 
@@ -2461,9 +2584,9 @@ if (heat_L) then
 
    ! Calculate component heating-rate:
    temp1 = cmplx(real(omega),0.d0,kind(1.d0))
-   !temp1 = omega
    temp1 = disp(temp1)
 
+   !-=-=-=-
    if (proc0) then
 
       do ii = 1, 3 !tensor index
@@ -2491,9 +2614,11 @@ if (heat_L) then
       enddo
 
    endif
+   !-=-=-=-
 
    temp1 = disp(cmplx(real(omega*1.000001d0),0.d0,kind(1.d0)))
 
+   !-=-=-=-
    if (proc0) then
       do ii = 1, 3
          do j = 1, 3
@@ -2512,8 +2637,85 @@ if (heat_L) then
 
       Ps = Ps/ewave
    endif
+   !-=-=-=-
 
-endif
+   !LD, TTD, and CD calculation
+   if (proc0) then
+      do ii = 1, 3 !tensor index
+         do j = 1, 3 !tensor index
+            do jj = 1, nspec !species index
+               chia(jj,ii,j) = -0.5d0*cmplx(0.d0,1.d0)* &
+                    (chi0_low(jj,ii,j,0) - conjg(chi0_low(jj,j,ii,0)))
+            enddo
+         enddo
+      enddo
+      
+      !Initialize Ps_split
+      Ps_split(:,:) = 0.
+        
+      !chi_yy  (TTD term 1)
+      Ps_split(1,:) =-0.5*cmplx(0.,1.)*&
+           conjg(electric(2))*electric(2)* &
+           (chi0_low(:,2,2,0)-conjg(chi0_low(:,2,2,0)))
+      
+      !chi_yz  (TTD term 2)
+      Ps_split(2,:) =-0.5*cmplx(0.,1.)*&
+           (electric(3)*conjg(electric(2))*chi0_low(:,2,3,0) - &
+           conjg(electric(3))*electric(2)*conjg(chi0_low(:,2,3,0)))
+      !chi_zy  (LD term 1)
+      Ps_split(3,:) =-0.5*cmplx(0.,1.)*&
+           (electric(2)*conjg(electric(3))*chi0_low(:,3,2,0) - &
+           conjg(electric(2))*electric(3)*conjg(chi0_low(:,3,2,0)))
+      !chi_zz  (LD term 2)
+      Ps_split(4,:) =-0.5*cmplx(0.,1.)*&
+           conjg(electric(3))*electric(3)* &
+           (chi0_low(:,3,3,0)-conjg(chi0_low(:,3,3,0)))
+      
+      !Total n=0 terms
+      term(:,:)=0.
+      do ii = 1, 3
+         do jj = 1, nspec
+            term(jj,ii) = sum(conjg(electric(:))*chia(jj,:,ii))     
+         enddo
+      enddo
+      Ps_split(5,:) = 0.
+      do jj = 1, nspec
+         Ps_split(5,jj) = sum(term(jj,:)*electric(:))
+      enddo
+
+   endif
+
+   if (proc0) then
+      !N=1
+      do ii = 1, 3 !tensor index
+         do j = 1, 3 !tensor index
+            do jj = 1, nspec !species index
+               chia(jj,ii,j) = -0.5*cmplx(0.,1.)* &
+                    (chi0_low(jj,ii,j,1) - conjg(chi0_low(jj,j,ii,1)))
+            enddo
+         enddo
+      enddo
+      
+        !Total n=1 terms, Eperp
+        electric_xy=electric; electric_xy(3)=cmplx(0.,0.)
+        term(:,:)=0.
+        term1(:)=0.
+
+        do ii = 1, 3
+           do jj = 1, nspec
+              term(jj,ii) = sum(conjg(electric_xy(:))*chia(jj,:,ii))     
+           enddo
+        enddo        
+        Ps_split(6,:) = 0.
+        do jj = 1, nspec
+           Ps_split(6,jj) = sum(term(jj,:)*electric_xy(:))
+        enddo
+
+        !Normalization             
+        Ps_split = Ps_split/ewave
+
+     endif
+  endif
 
 end subroutine calc_eigen
 
@@ -2521,7 +2723,9 @@ end subroutine calc_eigen
 
 
 subroutine om_double_scan
-  !! This subroutine scans along a prescribed plane in wavevector space to map out \(\omega\) in this space. It is required that n_scan=2.
+  !! This subroutine scans along a prescribed plane in wavevector space
+  !! to map out \(\omega\) in this space.
+  !! It is required that n_scan=2, and is invoked with option =2
   use ALPS_var, only : proc0, nroots, runname, ierror, wroots, scan, sproc
   use ALPS_var, only : kperp,kpar,kperp_last,kpar_last
   use ALPS_var, only : secant_method, D_gap
@@ -2530,13 +2734,15 @@ subroutine om_double_scan
   use mpi
   implicit none
 
-
   integer :: it
   !! Index to loop over steps of first scan.
 
   integer :: nt
   !! Number of scans for first scan.
 
+  integer :: itt
+  !! Index for resetting wavevector scan.
+  
   integer :: it2
   !! Index to loop over steps of second scan.
 
@@ -2551,6 +2757,9 @@ subroutine om_double_scan
 
   character(500), dimension(:), allocatable :: heatName
   !! Output file name for heating-rate calculation.
+
+  character(500), dimension(:), allocatable :: heatMechName
+  !! Output file name for heating-rate mechanism calculation.
 
   character(500), dimension(:), allocatable :: eigenName
   !! Output file name for eigenfunction calculation.
@@ -2585,6 +2794,9 @@ subroutine om_double_scan
   double complex, dimension(:), allocatable :: om_tmp
   !! Storage variable for frequency omega. (1:nroots)
 
+  complex,dimension(:),allocatable :: omlast
+  !!Arrays with complex frequency for each solution.
+  
   double complex :: omega
   !! Complex wave frequency \(\omega\).
 
@@ -2592,6 +2804,9 @@ subroutine om_double_scan
   !! File unit for scan output. (1:nroots)
 
   integer, dimension(:), allocatable :: heat_unit
+  !! File unit for heating-rate output. (1:nroots)
+
+  integer, dimension(:), allocatable :: heat_mech_unit
   !! File unit for heating-rate output. (1:nroots)
 
   integer, dimension(:), allocatable :: eigen_unit
@@ -2624,10 +2839,16 @@ subroutine om_double_scan
   double precision, dimension(1:nspec) :: Ps
   !! Relative heating rate of a given species.
 
+  double precision, dimension(1:6,1:nspec) :: Ps_split
+  !! Relative heating rate of a given species, split by component.
+
   character (50) :: fmt_eigen
   !! Format string for eigenfunction output.
 
   character (50) :: fmt_heat
+  !! Format string for heating-rate output.
+
+  character (50) :: fmt_heat_mech
   !! Format string for heating-rate output.
 
   double complex, dimension(:),allocatable :: domegadk
@@ -2685,14 +2906,21 @@ subroutine om_double_scan
      end select
 
      if (scan(1)%eigen_s) then
+        !Eigenfunction output.
         write(fmt_eigen,'(a,i0,a)') '(4es14.4e3,12es14.4e3,',nspec*8,'es14.4e3)'
         allocate(eigen_unit(nroots))
         allocate(eigenName(nroots))
      endif
      if (scan(1)%heat_s) then
+        !Heating output.
         write(fmt_heat,'(a,i0,a)') '(4es14.4e3,',nspec,'es14.4e3)'
         allocate(heat_unit(nroots))
         allocate(heatName(nroots))
+
+        !Heating mechanism output.
+        write(fmt_heat_mech,'(a,i0,a)') '(4es14.4e3,',6*nspec,'es14.4e3)'
+        allocate(heat_mech_unit(nroots))
+        allocate(heatMechName(nroots))
      endif
 
      do in=1,nroots
@@ -2713,7 +2941,7 @@ subroutine om_double_scan
         omega=wroots(in)
         tmp = disp(omega)
 
-        call calc_eigen(omega,ef,bf,Us,ds,Ps,scan(1)%eigen_s,scan(1)%heat_s)
+        call calc_eigen(omega,ef,bf,Us,ds,Ps,Ps_split,scan(1)%eigen_s,scan(1)%heat_s)
 
         !reassign omega:
         omega=wroots(in)
@@ -2737,6 +2965,13 @@ subroutine om_double_scan
               call get_unused_unit(heat_unit(in))
               open(unit=heat_unit(in),file=trim(heatName(in)),status='replace')
               close(heat_unit(in))
+
+              write(heatMechName(in),'(6a,i0)')&
+                   'solution/',trim(runname),'.heat_mech_',scan_ID,scan_ID2,'.root_',in
+              write(*,'(2a)')' => ',trim(heatMechName(in))
+              call get_unused_unit(heat_mech_unit(in))
+              open(unit=heat_mech_unit(in),file=trim(heatMechName(in)),status='replace')
+              close(heat_mech_unit(in))
            endif
         endif
 
@@ -2744,15 +2979,19 @@ subroutine om_double_scan
 
   endif
 
-
-
+  !Set number of steps for both scans.
   nt = scan(1)%n_out*scan(1)%n_res
   nt2 = scan(2)%n_out*scan(2)%n_res
 
   kperp_last=kperp;kpar_last=kpar
-
+    
   theta_0=atan(kperp_last/kpar_last)
   k_0=sqrt(kperp_last**2+kpar_last**2)
+
+  allocate(omlast(nroots))
+  do in=1,nroots
+     omlast(in)=wroots(in)
+  enddo 
 
   do it = 0, nt
      ! Scan through wavevector space:
@@ -2816,24 +3055,88 @@ subroutine om_double_scan
 
      if (alljump.EQV..FALSE.) call alps_error(9)
 
+     do in = 1,nroots
+        !Search for new roots
+
+        if (jump(in)) then
+           omega=omlast(in)
+           wroots(in)=omlast(in)
+           
+           ! Extrapolate the initial guess along the direction in k-scans:
+           !!KGK: This line causes the solution to (occasionally)
+           !!smoothly transition to unphysical values.
+           !!Suppressing until we understand the error.
+           !omega=omega+domegadk(in)*Deltakstep
+
+           !call secant(omega,in)
+           !domegadk(in)=omega-wroots(in)
+           !wroots(in)=omega
+
+           !KGK: Alternative Root Finding Schemes
+           select case (secant_method)
+           case (0)
+              call secant(omega,in)
+           case (1)
+              omega=rtsec(disp,omega,iflag)
+           case (2)
+              call secant_osc(omega,in)
+           end select
+
+           wroots(in)=omega
+           omlast(in)=omega
+
+           call mpi_bcast(wroots(in), 1, &
+                MPI_DOUBLE_COMPLEX, 0, MPI_COMM_WORLD, ierror)
+
+          ! Run a final instance of disp:
+           tmp = disp(omega)
+
+           call mpi_barrier(mpi_comm_world,ierror)
+
+           !Output and check for root jumps and NaNs:
+           if (proc0) then
+
+              if(isnancheck(real(omega))) then
+              	  omega=cmplx(0.d0,0.d0,kind(1.d0));jump(in)=.false.
+              endif
+!
+              do imm=1,in-1
+                 if (abs(wroots(in)-wroots(imm)).lt.D_gap) then
+                    write(*,'(a,6es14.4e3)')'Root too close!',&
+                         wroots(in),wroots(imm),&
+                         real(wroots(in))-real(wroots(imm)), &
+                         aimag(wroots(in))-aimag(wroots(imm))
+                    wroots(in)=cmplx(0.d0,0.d0);jump(in)=.false.
+                 endif
+              enddo
+
+           endif
+           call mpi_bcast(jump(in),1,MPI_LOGICAL,0,MPI_COMM_WORLD, ierror)
+
+        end if
+        call mpi_barrier(mpi_comm_world,ierror)
+
+     enddo
+
      !Save roots before starting second parameter scan.
      om_tmp=wroots
 
+     if (mod(it,scan(1)%n_res)==0) then
 
      ! Second scan:
-     do it2 = 0, nt2
+        do it2 = 0, nt2
 
+           
         ! Scan through wavevector space:
         !if (it2==1) then
-        if (it2==0) then
-           kperpi=kperp; kpari=kpar
-           kperpi=kperp; kpari=kpar
-           theta_i=atan(kperpi/kpari)
-           k_i=sqrt(kperpi**2+kpari**2)
-           wroots=om_tmp
-           Deltakstep=0.d0
-           domegadk=cmplx(0.d0,0.d0,kind(1.d0))
-        endif
+           if (it2==0) then
+              kperpi=kperp; kpari=kpar
+              theta_i=atan(kperpi/kpari)
+              k_i=sqrt(kperpi**2+kpari**2)
+              wroots=omlast
+           !Deltakstep=0.d0
+           !domegadk=cmplx(0.d0,0.d0,kind(1.d0))
+           endif
         select case(scan(2)%type_s)
         case (0) ! k_0 to k_1
            if (scan(2)%log_scan) then
@@ -2915,6 +3218,7 @@ subroutine om_double_scan
                    call secant_osc(omega,in)
                 end select
 
+                wroots(in)=omega
 
                 call mpi_bcast(wroots(in), 1, &
                      MPI_DOUBLE_COMPLEX, 0, MPI_COMM_WORLD, ierror)
@@ -2929,7 +3233,7 @@ subroutine om_double_scan
 
               if ((scan(1)%eigen_s).or.((scan(1)%heat_s))) then
 
-                 call calc_eigen(omega,ef,bf,Us,ds,Ps,scan(1)%eigen_s,scan(1)%heat_s)
+                 call calc_eigen(omega,ef,bf,Us,ds,Ps,Ps_split,scan(1)%eigen_s,scan(1)%heat_s)
 
                  !reassign omega:
                  omega=wroots(in)
@@ -2960,7 +3264,6 @@ subroutine om_double_scan
                  endif
               enddo
 
-
               if ((mod(it,scan(1)%n_res)==0).and.((mod(it2,scan(2)%n_res)==0))) then
                  open(unit=scan_unit(in),file=trim(scanName(in)),&
                       status='old',position='append')
@@ -2980,6 +3283,11 @@ subroutine om_double_scan
                     write(heat_unit(in),trim(fmt_heat)) &
                          kperp,kpar,wroots(in),Ps
                     close(heat_unit(in))
+
+                    open(unit=heat_mech_unit(in),file=trim(heatMechName(in)),status='old',position='append')
+                    write(heat_mech_unit(in),trim(fmt_heat_mech)) &
+                         kperp,kpar,wroots(in),Ps_split
+                    close(heat_mech_unit(in))
                  endif
 
               endif
@@ -2995,6 +3303,17 @@ subroutine om_double_scan
 
      enddo
 
+  enddo
+
+  !Recall Saved roots
+  if (proc0) then
+     write(*,*)'-=-=-=-=-='
+     write(*,*)'-=-=-=-=-='
+  endif
+  do in = 1,nroots
+     !omlast(in)=omsafe(in)
+     if (proc0) &
+          write(*,'(a,i3,a,2es14.4)')'Root ',in,': ',omlast(in)
   enddo
 
   if ((proc0).and.(mod(it,scan(1)%n_res)==0)) then
@@ -3013,17 +3332,64 @@ subroutine om_double_scan
            open(unit=heat_unit(in),file=trim(heatName(in)),status='old',position='append')
            write(heat_unit(in),*)
            close(heat_unit(in))
+           open(unit=heat_mech_unit(in),file=trim(heatMechName(in)),status='old',position='append')
+           write(heat_mech_unit(in),*)
+           close(heat_mech_unit(in))
         endif
 
      enddo
   endif
+endif
+itt=0
+     select case(scan(2)%type_s)
+     case (0) ! k_0 to k_1
+        if (scan(2)%log_scan) then
+           kperp=10.d0**(log10(kperp_last)+scan(2)%diff*itt)
+           kpar=10.d0**(log10(kpar_last)+scan(2)%diff2*itt)
+        else
+           kperp=kperp_last+scan(2)%diff*itt
+           kpar= kpar_last +scan(2)%diff2*itt
+        endif
+     case (1) ! theta_0 to theta_1
+        if (scan(2)%log_scan) then
+           theta_1=10.d0**(log10(theta_0)+scan(2)%diff*itt)
+        else
+           theta_1=theta_0+scan(2)%diff*itt
+        endif
+        kperp=k_0*sin(theta_1)
+        kpar=k_0*cos(theta_1)
+     case (2) ! |k_0| to |k_1| @ constant theta
+        if (scan(2)%log_scan) then
+           kperp=10.d0**(log10(kperp_last)+scan(2)%diff*itt)
+           kpar=10.d0**(log10(kpar_last)+scan(2)%diff2*itt)
+        else
+           kperp=kperp_last+scan(2)%diff*itt
+           kpar= kpar_last +scan(2)%diff2*itt
+        endif
+     case (3) ! kperp scan
+        if (scan(2)%log_scan) then
+           kperp=10.d0**(log10(kperp_last)+scan(2)%diff*itt)
+        else
+           kperp=kperp_last+scan(2)%diff*itt
+        endif
+     case (4) ! kpar scan
+        if (scan(2)%log_scan) then
+           kpar=10.d0**(log10(kpar_last)+scan(2)%diff*itt)
+        else
+           kpar=kpar_last+scan(2)%diff*itt
+        endif
+     end select
 
+     if (scan(2)%type_s.ne.4) then
 
+        ! Scan types with varying kperp require a re-call of split_processes:
+        call determine_nmax
+        call split_processes
+        if(.NOT.(sproc.EQ.0)) call determine_bessel_array
 
-  kperp=kperp_last
-  kpar=kpar_last
-
-enddo
+     endif
+     
+  enddo
 
 if (proc0) then
    deallocate(scan_unit)
@@ -3658,9 +4024,9 @@ do is = 1,nspec
 	prev_proc_count = proc_count
 enddo
 
-  if (writeOut) &
-       write(*,'(a,i4,a,i4,a,i4,a,2i4,a)') &
-       'Processor ',iproc,' of ',nproc,' ready. Species ',sproc,': n in [', nlim(1:2),']'
+!if (writeOut) &
+!       write(*,'(a,i4,a,i4,a,i4,a,2i4,a)') &
+!       'Processor ',iproc,' of ',nproc,' ready. Species ',sproc,': n in [', nlim(1:2),']'
 
 end subroutine split_processes
 
