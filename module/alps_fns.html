@@ -92,7 +92,7 @@
 
             <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
               <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
-                 title="38.9% of total for modules and submodules.">1983 statements</a>
+                 title="41.2% of total for modules and submodules.">2184 statements</a>
             </li>
 
         </ul>
@@ -1371,7 +1371,7 @@ For ALPS, this is the dispersion relation.</p>
 Ensure we don’t divide by a tiny value
 Check convergence
 Detect oscillations over last four iterations
-Reduce step size
+Reduce step
 If oscillation persists, use finite-difference Newton step
 Regularized Newton step
 Apply jump limits to prevent large jumps
@@ -1451,7 +1451,7 @@ Suppressing until we understand the error.</p>
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-ik~4"></span>
+              <span class="anchor" id="variable-ik~3"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -1472,12 +1472,13 @@ Suppressing until we understand the error.</p>
   </div>
 
               <div class="card">
-    <div class="card-header codesum"><span class="anchor" id="proc-calc_eigen"></span> <h3>public  subroutine <a href='../proc/calc_eigen.html'>calc_eigen</a>(omega, electric, magnetic, vmean, ds, Ps, eigen_L, heat_L)  
+    <div class="card-header codesum"><span class="anchor" id="proc-calc_eigen"></span> <h3>public  subroutine <a href='../proc/calc_eigen.html'>calc_eigen</a>(omega, electric, magnetic, vmean, ds, Ps, Ps_split, eigen_L, heat_L)  
 </h3></div>
     <div class="card-body">
           
   <p>This subroutine calculates the relative electric and magnetic field amplitudes, the relative fluctuations in the density and velocity of all species, and the heating rates of the given solution.
-It is based on the calc_eigen routine by Greg Howes and Kris Klein.</p>
+It is based on the calc_eigen routine by Greg Howes and Kris Klein, found in PLUME.
+The splitting by mechanisms is described in Huang, Howes, and Brown, JPP 2024.</p>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
@@ -1582,6 +1583,21 @@ It is based on the calc_eigen routine by Greg Howes and Kris Klein.</p>
         </tr>
         <tr>
             <td>
+              <span class="anchor" id="variable-ps_split~2"></span>
+              double precision,
+            </td>
+<td></td>
+              <td></td>            <td>
+              dimension(1:6,1:nspec)
+            </td>
+            <td>::</td>
+            <td><strong>Ps_split</strong></td>
+            <td>
+<p>Relative heating rate of a given species split by component</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
               <span class="anchor" id="variable-eigen_l"></span>
               logical,
             </td>
@@ -1622,10 +1638,12 @@ It is based on the calc_eigen routine by Greg Howes and Kris Klein.</p>
 </h3></div>
     <div class="card-body">
           
-  <p>This subroutine scans along a prescribed plane in wavevector space to map out <script type="math/tex">\omega</script> in this space. It is required that n_scan=2.
+  <p>This subroutine scans along a prescribed plane in wavevector space
+ to map out <script type="math/tex">\omega</script> in this space.
+ It is required that n_scan=2, and is invoked with option =2
 KGK: This line causes the solution to (occasionally)
 smoothly transition to unphysical values.
-Suppressing until we understand the error.</p>
+Suppressing until we understand the error.</p><a href="../proc/om_double_scan.html" class="pull-right"><emph>Read more&hellip;</emph></a>
 
   <h4>Arguments</h4>
     <em>None</em>

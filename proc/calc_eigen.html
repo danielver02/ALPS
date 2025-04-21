@@ -92,7 +92,7 @@
 
             <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
               <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
-                 title=" 1.7% of total for procedures.">89 statements</a>
+                 title=" 2.5% of total for procedures.">138 statements</a>
             </li>
 
         </ul>
@@ -148,7 +148,7 @@
     </div>
     
     <div class="col-md-9" id='text'>
-    <h2>public  subroutine calc_eigen(omega, electric, magnetic, vmean, ds, Ps, eigen_L, heat_L)  
+    <h2>public  subroutine calc_eigen(omega, electric, magnetic, vmean, ds, Ps, Ps_split, eigen_L, heat_L)  
 </h2>
         <div class="card mb-4">
       <h3 class="card-header card-title bg-light">Uses</h3>
@@ -286,7 +286,8 @@ modules which it uses.
 
 
     <p>This subroutine calculates the relative electric and magnetic field amplitudes, the relative fluctuations in the density and velocity of all species, and the heating rates of the given solution.
-It is based on the calc_eigen routine by Greg Howes and Kris Klein.</p>
+It is based on the calc_eigen routine by Greg Howes and Kris Klein, found in PLUME.
+The splitting by mechanisms is described in Huang, Howes, and Brown, JPP 2024.</p>
 
 
     <h3>Arguments</h3>
@@ -388,6 +389,21 @@ It is based on the calc_eigen routine by Greg Howes and Kris Klein.</p>
             <td><strong>Ps</strong></td>
             <td>
                 <p>Relative heating rate of a given species.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ps_split~2"></span>
+              double precision,
+            </td>
+<td></td>
+              <td></td>            <td>
+              dimension(1:6,1:nspec)
+            </td>
+            <td>::</td>
+            <td><strong>Ps_split</strong></td>
+            <td>
+                <p>Relative heating rate of a given species split by component</p>
             </td>
         </tr>
         <tr>

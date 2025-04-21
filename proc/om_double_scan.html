@@ -92,7 +92,7 @@
 
             <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
               <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
-                 title=" 6.1% of total for procedures.">329 statements</a>
+                 title=" 7.8% of total for procedures.">435 statements</a>
             </li>
 
         </ul>
@@ -157,9 +157,9 @@
         <ul class="list-group list-group-flush">
             <li class="list-group-item">
               <ul class="list-inline">
+                  <li class="list-inline-item"><a href='../module/alps_var.html'>alps_var</a></li>
                   <li class="list-inline-item"><a href='../module/alps_io.html'>alps_io</a></li>
                   <li class="list-inline-item"><a href='http://www.mpi-forum.org/docs/mpi-3.1/mpi31-report/node410.htm'>mpi</a></li>
-                  <li class="list-inline-item"><a href='../module/alps_var.html'>alps_var</a></li>
               </ul>
             </li>
             <li class="list-group-item">
@@ -309,8 +309,13 @@ modules which it uses.
     </div>
 
 
-    <p>This subroutine scans along a prescribed plane in wavevector space to map out <script type="math/tex">\omega</script> in this space. It is required that n_scan=2.
+    <p>This subroutine scans along a prescribed plane in wavevector space
+ to map out <script type="math/tex">\omega</script> in this space.
+ It is required that n_scan=2, and is invoked with option =2
 KGK: This line causes the solution to (occasionally)
+smoothly transition to unphysical values.
+Suppressing until we understand the error.</p>
+<p>KGK: This line causes the solution to (occasionally)
 smoothly transition to unphysical values.
 Suppressing until we understand the error.</p>
 
