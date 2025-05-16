@@ -266,6 +266,9 @@ end subroutine derivative_f0
     double complex :: chi_NHDS(3,3)
     !! Susceptibility tensor \(\chi\) as calculated from NHDS in [[alps_nhds(module)]].
 
+    double complex :: chi_NHDS_low(3,3,0:1)
+    !! Susceptibility tensor \(\chi\) as calculated from NHDS in [[alps_nhds(module)]].
+
     double complex, dimension(1:nspec,1:3,1:3) :: schi
     !! Susceptibility tensor \(\chi\) of individual process.
 
@@ -329,7 +332,7 @@ end subroutine derivative_f0
         if (usebM(sproc).and.(nlim(2).GE.0).and.(nlim(1).EQ.0)) then
 
           ! This is the case to use NHDS for the calculation of chi:
-          call calc_chi(chi_NHDS,sproc,kpar,kperp,om)
+          call calc_chi(chi_NHDS,chi_NHDS_low,sproc,kpar,kperp,om)
 
           ! Account for norm below, which is already included in NHDS:
           schi(sproc,1,1)=chi_NHDS(1,1)/(ns(sproc) * qs(sproc))
@@ -340,8 +343,15 @@ end subroutine derivative_f0
           schi(sproc,2,3)=chi_NHDS(2,3)/(ns(sproc) * qs(sproc))
 
           !NOTE TO DANIEL: WE WILL NEED TO CRACK OPEN NHDS AND
-          !DETERMINE CHI0_LOW [which only has contributions from n=0, \pm 2]
+          !DETERMINE CHI0_LOW [which only has contributions from n=0, \pm 1]
           !FROM THE BIMAX CALCULATION.
+
+          schi_low(sproc,1,1,:)=chi_NHDS_low(1,1,:)/(ns(sproc) * qs(sproc))
+          schi_low(sproc,2,2,:)=chi_NHDS_low(2,2,:)/(ns(sproc) * qs(sproc))
+          schi_low(sproc,3,3,:)=chi_NHDS_low(3,3,:)/(ns(sproc) * qs(sproc))
+          schi_low(sproc,1,2,:)=chi_NHDS_low(1,2,:)/(ns(sproc) * qs(sproc))
+          schi_low(sproc,1,3,:)=chi_NHDS_low(1,3,:)/(ns(sproc) * qs(sproc))
+          schi_low(sproc,2,3,:)=chi_NHDS_low(2,3,:)/(ns(sproc) * qs(sproc))
           
        else
 
@@ -483,9 +493,9 @@ end subroutine derivative_f0
        schi_low(sproc,1,3,:) = schi_low(sproc,1,3,:) * norm(sproc)
        schi_low(sproc,2,3,:) = schi_low(sproc,2,3,:) * norm(sproc)
 
-       if ((sproc.eq.1).and.(nlim(1).eq.0)) then
-          write(*,'(2i3,6es14.4)') nlim(1),nlim(2),schi(sproc,1,2),schi_low(sproc,1,2,:)
-       endif
+       !if ((sproc.eq.1).and.(nlim(1).eq.0)) then
+       !   write(*,'(2i3,6es14.4)') nlim(1),nlim(2),schi(sproc,1,2),schi_low(sproc,1,2,:)
+       !endif
        
     endif
 
@@ -2654,11 +2664,11 @@ if (heat_L) then
          enddo
       enddo
 
-      write(*,*)'-=-=- chia, n=0'
-      jj=1
-      do ii=1,3
-         write(*,'(6es14.4)')chia(jj,ii,1),chia(jj,ii,2),chia(jj,ii,3)
-      enddo
+      !write(*,*)'-=-=- chia, n=0'
+      !jj=1
+      !do ii=1,3
+      !   write(*,'(6es14.4)')chia(jj,ii,1),chia(jj,ii,2),chia(jj,ii,3)
+      !enddo
       
       !Initialize Ps_split
       Ps_split(:,:) = 0.
@@ -2708,21 +2718,21 @@ if (heat_L) then
          enddo
       enddo
       jj=1
-      write(*,*)'-=-=- chi0_low'
-      do ii=1,3
-         write(*,'(6es14.4)')chi0_low(jj,ii,1,1),chi0_low(jj,ii,2,1),chi0_low(jj,ii,3,1)
-      enddo
+      !write(*,*)'-=-=- chi0_low'
+      !do ii=1,3
+      !   write(*,'(6es14.4)')chi0_low(jj,ii,1,1),chi0_low(jj,ii,2,1),chi0_low(jj,ii,3,1)
+      !enddo
 
-      write(*,*)'-=-=- chi0_low cong'
-      do ii=1,3
-         write(*,'(6es14.4)')conjg(chi0_low(jj,1,ii,1)),conjg(chi0_low(jj,2,ii,1)),&
-              conjg(chi0_low(jj,3,ii,1))
-      enddo
+      !write(*,*)'-=-=- chi0_low cong'
+      !do ii=1,3
+      !   write(*,'(6es14.4)')conjg(chi0_low(jj,1,ii,1)),conjg(chi0_low(jj,2,ii,1)),&
+      !        conjg(chi0_low(jj,3,ii,1))
+      !enddo
       
-      write(*,*)'-=-=- chia, n=\pm1'
-      do ii=1,3
-         write(*,'(6es14.4)')chia(jj,ii,1),chia(jj,ii,2),chia(jj,ii,3)
-      enddo
+      !write(*,*)'-=-=- chia, n=\pm1'
+      !do ii=1,3
+      !   write(*,'(6es14.4)')chia(jj,ii,1),chia(jj,ii,2),chia(jj,ii,3)
+      !enddo
       
         !Total n=1 terms, Eperp
         electric_xy=electric; electric_xy(3)=cmplx(0.,0.)
