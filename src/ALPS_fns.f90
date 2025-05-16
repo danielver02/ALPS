@@ -465,7 +465,7 @@ end subroutine derivative_f0
           endif
        endif
 
-     endif
+    endif
 
        norm(sproc) = ns(sproc) * qs(sproc)
 
@@ -483,6 +483,10 @@ end subroutine derivative_f0
        schi_low(sproc,1,3,:) = schi_low(sproc,1,3,:) * norm(sproc)
        schi_low(sproc,2,3,:) = schi_low(sproc,2,3,:) * norm(sproc)
 
+       if ((sproc.eq.1).and.(nlim(1).eq.0)) then
+          write(*,'(2i3,6es14.4)') nlim(1),nlim(2),schi(sproc,1,2),schi_low(sproc,1,2,:)
+       endif
+       
     endif
 
     ! Return the schi to proc0:
@@ -502,7 +506,7 @@ end subroutine derivative_f0
        chi0=chi/(om*om*vA*vA)
 
        chi0(:,2,1)=-chi0(:,1,2)
-       chi0(:,3,1)=-chi0(:,1,3)
+       chi0(:,3,1)= chi0(:,1,3)
        chi0(:,3,2)=-chi0(:,2,3)
        
        !The global variable 'chi0_low' is used
@@ -512,15 +516,15 @@ end subroutine derivative_f0
        chi0_low=chi_low/(om*om*vA*vA)
 
        chi0_low(:,2,1,:)=-chi0_low(:,1,2,:)
-       chi0_low(:,3,1,:)=-chi0_low(:,1,3,:)
+       chi0_low(:,3,1,:)= chi0_low(:,1,3,:)
        chi0_low(:,3,2,:)=-chi0_low(:,2,3,:)
 
        !write(*,*)'-=-=-=-'
-       !write(*,*)'-=-=-=-'
+       !write(*,*)'-=-=-=- n = 0'
        !write(*,*)chi0_low(1,1,1,0),chi0_low(1,1,2,0),chi0_low(1,1,3,0)
        !write(*,*)chi0_low(1,2,1,0),chi0_low(1,2,2,0),chi0_low(1,2,3,0)
        !write(*,*)chi0_low(1,3,1,0),chi0_low(1,3,2,0),chi0_low(1,3,3,0)
-       !write(*,*)'-=-=-=-'
+       !write(*,*)'-=-=-=- n = \pm 1'
        !write(*,*)chi0_low(1,1,1,1),chi0_low(1,1,2,1),chi0_low(1,1,3,1)
        !write(*,*)chi0_low(1,2,1,1),chi0_low(1,2,2,1),chi0_low(1,2,3,1)
        !write(*,*)chi0_low(1,3,1,1),chi0_low(1,3,2,1),chi0_low(1,3,3,1)
@@ -2649,6 +2653,12 @@ if (heat_L) then
             enddo
          enddo
       enddo
+
+      write(*,*)'-=-=- chia, n=0'
+      jj=1
+      do ii=1,3
+         write(*,'(6es14.4)')chia(jj,ii,1),chia(jj,ii,2),chia(jj,ii,3)
+      enddo
       
       !Initialize Ps_split
       Ps_split(:,:) = 0.
@@ -2656,12 +2666,12 @@ if (heat_L) then
       !chi_yy  (TTD term 1)
       Ps_split(1,:) =-0.5*cmplx(0.,1.)*&
            conjg(electric(2))*electric(2)* &
-           (chi0_low(:,2,2,0)-conjg(chi0_low(:,2,2,0)))
-      
+           (chi0_low(:,2,2,0)-conjg(chi0_low(:,2,2,0)))      
       !chi_yz  (TTD term 2)
       Ps_split(2,:) =-0.5*cmplx(0.,1.)*&
            (electric(3)*conjg(electric(2))*chi0_low(:,2,3,0) - &
            conjg(electric(3))*electric(2)*conjg(chi0_low(:,2,3,0)))
+      
       !chi_zy  (LD term 1)
       Ps_split(3,:) =-0.5*cmplx(0.,1.)*&
            (electric(2)*conjg(electric(3))*chi0_low(:,3,2,0) - &
@@ -2683,6 +2693,8 @@ if (heat_L) then
          Ps_split(5,jj) = sum(term(jj,:)*electric(:))
       enddo
 
+      
+      
    endif
 
    if (proc0) then
@@ -2694,6 +2706,22 @@ if (heat_L) then
                     (chi0_low(jj,ii,j,1) - conjg(chi0_low(jj,j,ii,1)))
             enddo
          enddo
+      enddo
+      jj=1
+      write(*,*)'-=-=- chi0_low'
+      do ii=1,3
+         write(*,'(6es14.4)')chi0_low(jj,ii,1,1),chi0_low(jj,ii,2,1),chi0_low(jj,ii,3,1)
+      enddo
+
+      write(*,*)'-=-=- chi0_low cong'
+      do ii=1,3
+         write(*,'(6es14.4)')conjg(chi0_low(jj,1,ii,1)),conjg(chi0_low(jj,2,ii,1)),&
+              conjg(chi0_low(jj,3,ii,1))
+      enddo
+      
+      write(*,*)'-=-=- chia, n=\pm1'
+      do ii=1,3
+         write(*,'(6es14.4)')chia(jj,ii,1),chia(jj,ii,2),chia(jj,ii,3)
       enddo
       
         !Total n=1 terms, Eperp
@@ -2709,6 +2737,7 @@ if (heat_L) then
         Ps_split(6,:) = 0.
         do jj = 1, nspec
            Ps_split(6,jj) = sum(term(jj,:)*electric_xy(:))
+           !write(*,*)'n=\pm1: ',jj,Ps_split(6,jj)
         enddo
 
         !Normalization             
