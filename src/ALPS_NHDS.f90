@@ -56,15 +56,16 @@ contains
 
 
 
-  subroutine calc_chi(chi,j,kz,kperp,x)
+  subroutine calc_chi(chi,chi_low,j,kz,kperp,x)
   !! Subroutine that calculates the susceptibility of species j based on NHDS.
   use alps_var, only : bMnmaxs, bMBessel_zeros, bMbetas, bMalphas,bMpdrifts
   use alps_var, only : ms, qs, ns
   implicit none
 
-
-
   double complex, intent(out) :: chi(3,3)
+  !! Susceptibility tensor of species j.
+
+  double complex, intent(out) :: chi_low(3,3,0:1)
   !! Susceptibility tensor of species j.
 
   integer, intent(in) :: j
@@ -81,6 +82,12 @@ contains
 
   double complex :: Y(3,3)
   !! Y-tensor according to Stix.
+
+  double complex :: Y0(3,3)
+  !! n=0 contribution to Y-tensor according to Stix.
+
+  double complex :: Y1(3,3)
+  !! n=\pm 1 contribution to Y-tensor according to Stix.
 
   double complex :: Ynew(3,3)
   !! Iteration of Y-tensor according to Stix.
@@ -125,8 +132,9 @@ contains
   ! Check if you can use the cold-plasma dispersion relation:
   if (bMbetas(j).EQ.0.d0) then
 
-    call calc_chi_cold(chi,j,kz,kperp,x)
-
+     call calc_chi_cold(chi,j,kz,kperp,x)
+     !No LD, TTD, or CD contribution from a cold species
+     chi_low=cmplx(0.d0,0.d0,kind(1.d0))
   else
 
   Omega=qs(j)/ms(j)
@@ -140,7 +148,9 @@ contains
 
   do i=1,3
    do k=1,3
-    Y(i,k)=0.d0
+      Y(i,k)=0.d0
+      Y0(i,k)=0.d0
+      Y1(i,k)=0.d0
    enddo
   enddo
 
@@ -163,7 +173,10 @@ contains
      do i=1,3
       do k=1,3
         ! Remember that the Bessel functions give I_n(z)*exp(-z), so the factor exp(-z) is absorbed.
-        Y(i,k)=Y(i,k)+Ynew(i,k)
+         Y(i,k)=Y(i,k)+Ynew(i,k)
+         if (n== 0) Y0(i,k)=Ynew(i,k)
+         if (n==-1) Y1(i,k)=Y1(i,k)+Ynew(i,k)
+         if (n== 1) Y1(i,k)=Y1(i,k)+Ynew(i,k)
       enddo
      enddo
   enddo
@@ -177,6 +190,28 @@ contains
   chi(3,1)=Y(3,1)/(ell*ell)
   chi(3,2)=Y(3,2)/(ell*ell)
   chi(3,3)=2.d0*x*vdrift/(ell*ell*kz*vtherm*vtherm*bMalphas(j))+Y(3,3)/(ell*ell)
+
+  n=0
+  chi_low(1,1,n)=Y0(1,1)/(ell*ell)
+  chi_low(1,2,n)=Y0(1,2)/(ell*ell)
+  chi_low(1,3,n)=Y0(1,3)/(ell*ell)
+  chi_low(2,1,n)=Y0(2,1)/(ell*ell)
+  chi_low(2,2,n)=Y0(2,2)/(ell*ell)
+  chi_low(2,3,n)=Y0(2,3)/(ell*ell)
+  chi_low(3,1,n)=Y0(3,1)/(ell*ell)
+  chi_low(3,2,n)=Y0(3,2)/(ell*ell)
+  chi_low(3,3,n)=Y0(3,3)/(ell*ell)+2.d0*x*vdrift/(ell*ell*kz*vtherm*vtherm*bMalphas(j))
+
+  n=1
+  chi_low(1,1,n)=Y1(1,1)/(ell*ell)
+  chi_low(1,2,n)=Y1(1,2)/(ell*ell)
+  chi_low(1,3,n)=Y1(1,3)/(ell*ell)
+  chi_low(2,1,n)=Y1(2,1)/(ell*ell)
+  chi_low(2,2,n)=Y1(2,2)/(ell*ell)
+  chi_low(2,3,n)=Y1(2,3)/(ell*ell)
+  chi_low(3,1,n)=Y1(3,1)/(ell*ell)
+  chi_low(3,2,n)=Y1(3,2)/(ell*ell)
+  chi_low(3,3,n)=Y1(3,3)/(ell*ell)
 
   endif
 
