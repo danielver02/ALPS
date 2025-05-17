@@ -94,7 +94,7 @@
       <div class="col">
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb justify-content-end mb-0">
-                <li class="breadcrumb-item"><a href='../program/generate_distribution.html'>generate_distribution</a></li>
+                <li class="breadcrumb-item"><a href='../program/interpolate.html'>interpolate</a></li>
                 <li class="breadcrumb-item"><a href='../proc/read_in_params.html'>read_in_params</a></li>
             <li class="breadcrumb-item active" aria-current="page">system</li>
           </ol>
@@ -124,13 +124,21 @@
       </a>
       <div id="vars-0" class="collapse">
         <div class="list-group list-group-flush">
-            <a class="list-group-item" href="../namelist/system.html#variable-nspec">nspec</a>
-            <a class="list-group-item" href="../namelist/system.html#variable-beta~3">beta</a>
-            <a class="list-group-item" href="../namelist/system.html#variable-va">vA</a>
+            <a class="list-group-item" href="../namelist/system.html#variable-filename">filename</a>
+            <a class="list-group-item" href="../namelist/system.html#variable-smoothing">smoothing</a>
             <a class="list-group-item" href="../namelist/system.html#variable-nperp">nperp</a>
-            <a class="list-group-item" href="../namelist/system.html#variable-npar~2">npar</a>
-            <a class="list-group-item" href="../namelist/system.html#variable-maxp">maxP</a>
-            <a class="list-group-item" href="../namelist/system.html#variable-writename">writeName</a>
+            <a class="list-group-item" href="../namelist/system.html#variable-npar">npar</a>
+            <a class="list-group-item" href="../namelist/system.html#variable-ppar_min_set">ppar_min_set</a>
+            <a class="list-group-item" href="../namelist/system.html#variable-ppar_max_set">ppar_max_set</a>
+            <a class="list-group-item" href="../namelist/system.html#variable-pperp_min_set">pperp_min_set</a>
+            <a class="list-group-item" href="../namelist/system.html#variable-pperp_max_set">pperp_max_set</a>
+            <a class="list-group-item" href="../namelist/system.html#variable-mode">mode</a>
+            <a class="list-group-item" href="../namelist/system.html#variable-threshold">threshold</a>
+            <a class="list-group-item" href="../namelist/system.html#variable-out_to_file">out_to_file</a>
+            <a class="list-group-item" href="../namelist/system.html#variable-do_normalize">do_normalize</a>
+            <a class="list-group-item" href="../namelist/system.html#variable-mult_pperp">mult_pperp</a>
+            <a class="list-group-item" href="../namelist/system.html#variable-mult_ppar">mult_ppar</a>
+            <a class="list-group-item" href="../namelist/system.html#variable-mult_f">mult_f</a>
         </div>
       </div>
     </div>
@@ -172,53 +180,109 @@
           <th>Description</th>
       </tr></thead>
       <tbody>
-              <tr id="variable-nspec">
-      <td><a href="#variable-nspec">nspec</a></td>
-      <td>integer</td>
+              <tr id="variable-filename">
+      <td><a href="#variable-filename">filename</a></td>
+      <td>character(len=256)</td>
       <td>None</td>
-      <td><p>Total number of plasma species.</p></td>
+      <td><p>File name of input file for interpolation.</p></td>
     </tr>
 
-              <tr id="variable-beta~3">
-      <td><a href="#variable-beta~3">beta</a></td>
+              <tr id="variable-smoothing">
+      <td><a href="#variable-smoothing">smoothing</a></td>
       <td>double precision</td>
       <td>None</td>
-      <td><p>Plasma beta.</p></td>
-    </tr>
-
-              <tr id="variable-va">
-      <td><a href="#variable-va">vA</a></td>
-      <td>double precision</td>
-      <td>None</td>
-      <td><p>Ratio of Alfven speed to c.</p></td>
+      <td><p>Smoothing parameter for spline interpolation.</p></td>
     </tr>
 
               <tr id="variable-nperp">
       <td><a href="#variable-nperp">nperp</a></td>
       <td>integer</td>
       <td>None</td>
-      <td><p>Number of steps in perpendicular momentum.</p></td>
+      <td><p>Number of perpendicular steps on fine output grid.</p></td>
     </tr>
 
-              <tr id="variable-npar~2">
-      <td><a href="#variable-npar~2">npar</a></td>
+              <tr id="variable-npar">
+      <td><a href="#variable-npar">npar</a></td>
       <td>integer</td>
       <td>None</td>
-      <td><p>Number of steps in parallel momentum.</p></td>
+      <td><p>Number of parallel steps on fine output grid.</p></td>
     </tr>
 
-              <tr id="variable-maxp">
-      <td><a href="#variable-maxp">maxP</a></td>
+              <tr id="variable-ppar_min_set">
+      <td><a href="#variable-ppar_min_set">ppar_min_set</a></td>
       <td>double precision</td>
       <td>None</td>
-      <td><p>Maximum momentum.</p></td>
+      <td><p>Forced minimum perpendicular momentum for output.</p></td>
     </tr>
 
-              <tr id="variable-writename">
-      <td><a href="#variable-writename">writeName</a></td>
-      <td>character(len=500)</td>
+              <tr id="variable-ppar_max_set">
+      <td><a href="#variable-ppar_max_set">ppar_max_set</a></td>
+      <td>double precision</td>
       <td>None</td>
-      <td><p>String for part of file name.</p></td>
+      <td><p>Forced maximum parallel momentum for output.</p></td>
+    </tr>
+
+              <tr id="variable-pperp_min_set">
+      <td><a href="#variable-pperp_min_set">pperp_min_set</a></td>
+      <td>double precision</td>
+      <td>None</td>
+      <td><p>Forced minimum perpendicular momentum for output.</p></td>
+    </tr>
+
+              <tr id="variable-pperp_max_set">
+      <td><a href="#variable-pperp_max_set">pperp_max_set</a></td>
+      <td>double precision</td>
+      <td>None</td>
+      <td><p>Forced maximum perpendicular momentum for output.</p></td>
+    </tr>
+
+              <tr id="variable-mode">
+      <td><a href="#variable-mode">mode</a></td>
+      <td>integer</td>
+      <td>None</td>
+      <td><p>Format of input grid (order pperp/ppar).</p></td>
+    </tr>
+
+              <tr id="variable-threshold">
+      <td><a href="#variable-threshold">threshold</a></td>
+      <td>double precision</td>
+      <td>None</td>
+      <td><p>Lower treshold for f0-values (coarse grid) to be included.</p></td>
+    </tr>
+
+              <tr id="variable-out_to_file">
+      <td><a href="#variable-out_to_file">out_to_file</a></td>
+      <td>logical</td>
+      <td>None</td>
+      <td><p>Check whether output should be written to file.</p></td>
+    </tr>
+
+              <tr id="variable-do_normalize">
+      <td><a href="#variable-do_normalize">do_normalize</a></td>
+      <td>logical</td>
+      <td>None</td>
+      <td><p>Check whether normalisation should be applied.</p></td>
+    </tr>
+
+              <tr id="variable-mult_pperp">
+      <td><a href="#variable-mult_pperp">mult_pperp</a></td>
+      <td>double precision</td>
+      <td>None</td>
+      <td><p>Scaling factor for perpendicular momentum.</p></td>
+    </tr>
+
+              <tr id="variable-mult_ppar">
+      <td><a href="#variable-mult_ppar">mult_ppar</a></td>
+      <td>double precision</td>
+      <td>None</td>
+      <td><p>Scaling factor for parallel momentum.</p></td>
+    </tr>
+
+              <tr id="variable-mult_f">
+      <td><a href="#variable-mult_f">mult_f</a></td>
+      <td>double precision</td>
+      <td>None</td>
+      <td><p>Scaling factor for f0.</p></td>
     </tr>
 
       </tbody>
