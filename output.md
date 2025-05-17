@@ -100,3 +100,22 @@ The data is ordered as
 5. [+(is-1)] $\gamma_{is}/\omega_{\textrm{r}}$
 
 This same data structure is preserved for the output from `om_double_scan`.
+
+## *filename*.heat_mech*scan_type_l*.root_m
+
+The heating rates associated with Landau damping, Transit Time damping, and the $n=\pm 1$ cyclotron resonance are computed following Huang et al 2024 JPP and expressed in Appendix C of Klein & Verscharen (in prep). The values associated with solution *m* are calculated in the routine `om_scan` when `heating` is set to .true.
+in the *&scan_input_l* namelist.
+The Transit time damping terms given by the sum of $\gamma_{is}^{yy}/\omega_{\textrm{r}}$ and $\gamma_{is}^{yz}/\omega_{\textrm{r}}$ and the Landau damping terms by the sum of $\gamma_{is}^{zy}/\omega_{\textrm{r}}$ and $\gamma_{is}^{zz}/\omega_{\textrm{r}}$. These calculations are accurate in weak damping limit $\gamma < \omega_{\textrm{r}}$.
+
+
+The data is ordered as  
+1. $k_\perp d_p$
+2. $k_\parallel d_p$  
+3. $\omega_{\textrm{r}}/\Omega_p$   
+4. $\gamma/\Omega_p$   
+5. [+6(is-1)] $\gamma_{is}^{yy}/\omega_{\textrm{r}}$
+6. [+6(is-1)] $\gamma_{is}^{yz}/\omega_{\textrm{r}}$
+7. [+6(is-1)] $\gamma_{is}^{zy}/\omega_{\textrm{r}}$
+8. [+6(is-1)] $\gamma_{is}^{zz}/\omega_{\textrm{r}}$
+9. [+6(is-1)] $\gamma_{is}^{n=0}/\omega_{\textrm{r}}$
+10. [+6(is-1)] $\gamma_{is}^{n=\pm 1}/\omega_{\textrm{r}}$
