@@ -315,13 +315,13 @@ double complex function fit_function_poly(is,iperp,ppar_val,n_poly,fit_coeffs)
        fit_function_poly=0.d0
     else
     n=0
-    poly_basis(n)=1.d0
+    poly_basis(n)=cmplx(1.d0,0.d0,kind(1.d0))
     fit_function_poly=fit_function_poly+fit_coeffs(n)*poly_basis(n)
     n=1
     poly_basis(n)=ppar_val_tmp
     fit_function_poly=fit_function_poly+fit_coeffs(n)*poly_basis(n)
     do n=2,n_poly
-       poly_basis(n) = 2.d0 * ppar_val_tmp * poly_basis(n-1) - poly_basis(n-2)
+       poly_basis(n) = cmplx(1.d0,0.d0,kind(1.d0)) * ppar_val_tmp * poly_basis(n-1) - poly_basis(n-2)
        fit_function_poly=fit_function_poly+fit_coeffs(n)*poly_basis(n)
     enddo
     if (logfit(is)) then
