@@ -54,7 +54,7 @@ contains
   !of the authors and should not be interpreted as representing official policies,
   !either expressed or implied, of the NHDS project.
 
-
+  !2025-05-28: We are multiplying all of the elements of chi by kperp^2 d_p^2, to make the solution more stable.
 
   subroutine calc_chi(chi,chi_low,j,kz,kperp,x)
   !! Subroutine that calculates the susceptibility of species j based on NHDS.
@@ -189,7 +189,7 @@ contains
   chi(2,3)=Y(2,3)/(ell*ell)
   chi(3,1)=Y(3,1)/(ell*ell)
   chi(3,2)=Y(3,2)/(ell*ell)
-  chi(3,3)=2.d0*x*vdrift/(ell*ell*kz*vtherm*vtherm*bMalphas(j))+Y(3,3)/(ell*ell)
+  chi(3,3)=kperp*kperp*2.d0*x*vdrift/(ell*ell*kz*vtherm*vtherm*bMalphas(j))+Y(3,3)/(ell*ell)
 
   n=0
   chi_low(1,1,n)=Y0(1,1)/(ell*ell)
@@ -200,7 +200,7 @@ contains
   chi_low(2,3,n)=Y0(2,3)/(ell*ell)
   chi_low(3,1,n)=Y0(3,1)/(ell*ell)
   chi_low(3,2,n)=Y0(3,2)/(ell*ell)
-  chi_low(3,3,n)=Y0(3,3)/(ell*ell)+2.d0*x*vdrift/(ell*ell*kz*vtherm*vtherm*bMalphas(j))
+  chi_low(3,3,n)=Y0(3,3)/(ell*ell)+kperp*kperp*2.d0*x*vdrift/(ell*ell*kz*vtherm*vtherm*bMalphas(j))
 
   n=1
   chi_low(1,1,n)=Y1(1,1)/(ell*ell)
@@ -268,6 +268,9 @@ contains
   double precision :: z
   !! Argument of Bessel function.
 
+  double precision :: zp
+  !! Argument of Bessel function, multiplied by kperp^2
+
   double precision :: Omega
   !! Normalised gyro-frequency.
 
@@ -298,6 +301,8 @@ contains
   zeta=(x-kz*vdrift-1.d0*n*Omega)/(kz*vtherm)
   resfac=x-kz*vdrift-1.d0*n*Omega
   z=0.5d0*(kperp*vtherm/Omega)*(kperp*vtherm/Omega)*bMalphas(j)
+  !zp=z*kperp^2 d_ref^2
+  zp=0.5d0*(vtherm/Omega)*(vtherm/Omega)*bMalphas(j)
 
   An=(bMalphas(j)-1.d0)
   An=An+(1.d0/(kz*vtherm)) *( bMalphas(j)*resfac + 1.d0*n*Omega)*dispfunct(zeta,kpos)
@@ -306,24 +311,39 @@ contains
   Bn=Bn+((x-1.d0*n*Omega)*(bMalphas(j)*resfac+1.d0*n*Omega)/(kz*kz*vtherm) )*dispfunct(zeta,kpos)
 
   if (n.GE.0) then
-  	BInz=1.d0*besselI(n,z)
-  	dBInzdz=besselI(n+1,z)+1.d0*n*BInz/z
+     BInz=1.d0*besselI(n,z)
+     dBInzdz = 5.d-1*(besselI(n+1,z)+besselI(n-1,z))     
+     !Changing definition of derivative to avoid division by z
+     !dBInzdz=besselI(n+1,z)+1.d0*n*BInz/z
   else
-  	BInz=1.d0*besselI(-n,z)
-  	dBInzdz=besselI(-n-1,z)+1.d0*n*BInz/z
+     BInz=1.d0*besselI(-n,z)
+     dBInzdz = 5.d-1*(besselI(n+1,z)+besselI(n-1,z))     
+     !Changing definition of derivative to avoid division by z
+     !dBInzdz=besselI(-n-1,z)+1.d0*n*BInz/z
   endif
 
 
   ! The tensor in Stix's (10-57)
-  Y(1,1)=1.d0*(n*n)*BInz*An/z
-  Y(1,2)=-uniti*n*(BInz-dBInzdz)*An
-  Y(1,3)=kperp*n*BInz*Bn/(Omega*z)
-  Y(2,1)=uniti*n*(BInz-dBInzdz)*An
-  Y(2,2)=(1.d0*(n*n)*BInz/z+2.d0*z*BInz-2.d0*z*dBInzdz)*An
-  Y(2,3)=uniti*kperp*(BInz-dBInzdz)*Bn/Omega
-  Y(3,1)=kperp*BInz*n*Bn/(Omega*z)
-  Y(3,2)=-uniti*kperp*(BInz-dBInzdz)*Bn/Omega
-  Y(3,3)=2.d0*(x-1.d0*n*Omega)*BInz*Bn/(kz*vtherm*vtherm*bMalphas(j))
+  !Y(1,1)=1.d0*(n*n)*BInz*An/z
+  !Y(1,2)=-uniti*n*(BInz-dBInzdz)*An
+  !Y(1,3)=kperp*n*BInz*Bn/(Omega*z)
+  !Y(2,1)=uniti*n*(BInz-dBInzdz)*An
+  !Y(2,2)=(1.d0*(n*n)*BInz/z+2.d0*z*BInz-2.d0*z*dBInzdz)*An
+  !Y(2,3)=uniti*kperp*(BInz-dBInzdz)*Bn/Omega
+  !Y(3,1)=kperp*BInz*n*Bn/(Omega*z)
+  !Y(3,2)=-uniti*kperp*(BInz-dBInzdz)*Bn/Omega
+  !Y(3,3)=2.d0*(x-1.d0*n*Omega)*BInz*Bn/(kz*vtherm*vtherm*bMalphas(j))
+
+  ! The tensor in Stix's (10-57), multiplied by kperp^2 d_ref^2
+  Y(1,1)=1.d0*(n*n)*BInz*An/zp
+  Y(1,2)=-uniti*n*(BInz-dBInzdz)*An*kperp*kperp
+  Y(1,3)=kperp*n*BInz*Bn/(Omega*zp)
+  Y(2,1)=uniti*n*(BInz-dBInzdz)*An*kperp*kperp
+  Y(2,2)=(1.d0*(n*n)*BInz/zp+kperp*kperp*2.d0*z*BInz-kperp*kperp*2.d0*z*dBInzdz)*An
+  Y(2,3)=uniti*kperp*kperp*kperp*(BInz-dBInzdz)*Bn/Omega
+  Y(3,1)=kperp*BInz*n*Bn/(Omega*zp)
+  Y(3,2)=-uniti*kperp*kperp*kperp*(BInz-dBInzdz)*Bn/Omega
+  Y(3,3)=kperp*kperp*2.d0*(x-1.d0*n*Omega)*BInz*Bn/(kz*vtherm*vtherm*bMalphas(j))
 
 
   end subroutine
