@@ -189,11 +189,15 @@ commands:</p>
 <span class="w">                             </span><span class="nv">make</span><span class="w"> </span><span class="nv">the</span><span class="w"> </span><span class="nv">ALPS</span><span class="w"> </span><span class="nv">executable</span><span class="w"> </span><span class="nv">available</span><span class="w"> </span><span class="nv">to</span><span class="w"> </span><span class="nv">all</span><span class="w"> </span><span class="nv">users</span><span class="ss">)</span>
 </code></pre></div>
 
-<p>The <code>Makefile.in</code> in the repository has been generated with <code>automake-1.15</code> from <code>Makefile.am</code>. If you have a different version of <code>automake</code>, <code>make</code> may fail. In that case, start again with</p>
+<p>The <code>Makefile.in</code> in the repository has been generated with <code>automake</code> from <code>Makefile.am</code>. If you have a different version of <code>automake</code>, <code>make</code> may fail. In that case, start again with</p>
 <div class="codehilite"><pre><span></span><code>autoreconf -i -f
 </code></pre></div>
 
 <p>before the execution of <code>./configure</code>.</p>
+<p>If you want to use a different version of the BLAS or LAPACK libraries, you can specify this with the options <code>--with-blas</code> and <code>--with-lapack</code>. For example, if you want to use Intel MKL instead:</p>
+<div class="codehilite"><pre><span></span><code>./configure --with-blas=&quot;-lmkl_rt&quot; --with-lapack=&quot;-lmkl_rt&quot;
+</code></pre></div>
+
 <h2>EXECUTION OF TEST RUNS</h2>
 <p>ALPS comes with a selection of test runs that cycle through various test
 problems. To execute a small set of tests, execute the following shell script:</p>
