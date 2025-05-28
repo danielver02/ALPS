@@ -268,6 +268,9 @@ contains
   double precision :: z
   !! Argument of Bessel function.
 
+  double precision :: zp
+  !! Argument of Bessel function, multiplied by kperp^2
+
   double precision :: Omega
   !! Normalised gyro-frequency.
 
@@ -339,7 +342,7 @@ contains
   Y(2,2)=(1.d0*(n*n)*BInz/zp+kperp*kperp*2.d0*z*BInz-kperp*kperp*2.d0*z*dBInzdz)*An
   Y(2,3)=uniti*kperp*kperp*kperp*(BInz-dBInzdz)*Bn/Omega
   Y(3,1)=kperp*BInz*n*Bn/(Omega*zp)
-  Y(3,2)=-uniti*kperp*kperp*kperp(BInz-dBInzdz)*Bn/Omega
+  Y(3,2)=-uniti*kperp*kperp*kperp*(BInz-dBInzdz)*Bn/Omega
   Y(3,3)=kperp*kperp*2.d0*(x-1.d0*n*Omega)*BInz*Bn/(kz*vtherm*vtherm*bMalphas(j))
 
 
