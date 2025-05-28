@@ -317,10 +317,10 @@ end subroutine derivative_f0
 
     if (proc0)  then
 
-       !Indices of refraction for the dispersion relation in NHDS normalisation:
-       enx2=kperp**2
-       enz2=kpar**2
-       enxnz=kperp*kpar
+       !Indices of refraction for the dispersion relation in NHDS normalisation (with an additional kperp**2):
+       enx2=kperp**4
+       enz2=kpar**2*kperp**2
+       enxnz=kpar*kperp**3
 
     else
         ! Integrate:
@@ -468,10 +468,10 @@ end subroutine derivative_f0
        ! Add in ee term:
        if (nlim(1)==0) then
           if(relativistic(sproc)) then
-             schi(sproc,3,3)=schi(sproc,3,3) + int_ee_rel(om)
+             schi(sproc,3,3)=schi(sproc,3,3) + kperp**2*int_ee_rel(om)
           else
-             schi(sproc,3,3)=schi(sproc,3,3) + int_ee(om)
-             schi_low(sproc,3,3,0)=schi_low(sproc,3,3,0) + int_ee(om)
+             schi(sproc,3,3)=schi(sproc,3,3) + kperp**2*int_ee(om)
+             schi_low(sproc,3,3,0)=schi_low(sproc,3,3,0) + kperp**2*int_ee(om)
           endif
        endif
 
@@ -513,7 +513,7 @@ end subroutine derivative_f0
        !The global variable 'chi0' is used
        !for heating & eigenfunction calculation.
 
-       chi0=chi/(om*om*vA*vA)
+       chi0=chi/(om*om*vA*vA*kperp*kperp)
 
        chi0(:,2,1)=-chi0(:,1,2)
        chi0(:,3,1)= chi0(:,1,3)
@@ -523,7 +523,7 @@ end subroutine derivative_f0
        !for calculations for the n=0 and \pm 1
        !heating mechanisms.
        
-       chi0_low=chi_low/(om*om*vA*vA)
+       chi0_low=chi_low/(om*om*vA*vA*kperp*kperp)
 
        chi0_low(:,2,1,:)=-chi0_low(:,1,2,:)
        chi0_low(:,3,1,:)= chi0_low(:,1,3,:)
@@ -566,9 +566,9 @@ end subroutine derivative_f0
 
 
        ! Add the unit tensor (in our normalisation):
-       eps(1,1) = eps(1,1) + (om*vA)**2
-       eps(2,2) = eps(2,2) + (om*vA)**2
-       eps(3,3) = eps(3,3) + (om*vA)**2
+       eps(1,1) = eps(1,1) + (kperp*om*vA)**2
+       eps(2,2) = eps(2,2) + (kperp*om*vA)**2
+       eps(3,3) = eps(3,3) + (kperp*om*vA)**2
 
 
        !Calculate dispersion tensor:
@@ -1392,7 +1392,6 @@ double complex function landau_integrate(om, nn, mode)
 
 enddo
 
-!KGK: an investigation... (4/4/24)
 
 iperp=0
 h = 0.5d0
@@ -1591,7 +1590,7 @@ double complex function int_T(nn, iperp, ipar, mode)
   !! Index of the entries in the T-tensor of Eq. (2.10).
 
 	double precision :: z
-  !! Argument of the Bessel functions.
+  !! Argument of the Bessel functions, but in after multiplying with 1./(pperp*kperp).
 
 	double precision :: bessel
   !! Bessel function.
@@ -1603,7 +1602,7 @@ double complex function int_T(nn, iperp, ipar, mode)
   !! Imaginary unit.
 
 	!Bessel function argument:
-	z= kperp/qs(sproc)
+	z= 1.d0/qs(sproc)
 
 	! Look up array of Bessel functions:
 	if (nn.LT.0) then
@@ -1631,19 +1630,19 @@ double complex function int_T(nn, iperp, ipar, mode)
 		 int_T = 1.d0 * (nn * nn) * bessel * bessel / (z * z)
 
 	  case(2) !T yy
-		 int_T = (pp(sproc, iperp, ipar, 1)**2)*besselP * besselP
+		 int_T = kperp * kperp * (pp(sproc, iperp, ipar, 1)**2)*besselP * besselP
 
 	  case(3) !T zz
-		 int_T = bessel * bessel * pp( sproc, iperp, ipar, 2)**2
+		 int_T = kperp * kperp * bessel * bessel * pp( sproc, iperp, ipar, 2)**2
 
 	  case(4) !T xy
-		 int_T = (pp(sproc, iperp, ipar, 1))*ii*(1.d0 * (nn)) * bessel * besselP / z
+		 int_T = kperp * (pp(sproc, iperp, ipar, 1))*ii*(1.d0 * (nn)) * bessel * besselP / z
 
 	  case(5) !T xz
-		 int_T = (1.d0 * nn) * bessel * bessel* pp(sproc, iperp, ipar, 2)  / z
+		 int_T = (1.d0 * nn) * kperp * bessel * bessel* pp(sproc, iperp, ipar, 2)  / z
 
 	  case(6) !T yz
-		 int_T = (-1.d0 * ii) * bessel * besselP * pp(sproc, iperp, ipar, 2) *pp(sproc, iperp, ipar,1)
+		 int_T = (-1.d0 * ii) * kperp * kperp * bessel * besselP * pp(sproc, iperp, ipar, 2) *pp(sproc, iperp, ipar,1)
 
 	end select
 
@@ -1671,7 +1670,7 @@ double complex function int_T_res(nn, iperp, p_res, mode)
   !! Index of the entries in the T-tensor of Eq. (2.10).
 
   double precision :: z
-  !! Argument of the Bessel functions.
+  !! Argument of the Bessel functions, but in after multiplying with 1./(pperp*kperp).
 
 	double precision :: bessel
   !! Bessel function.
@@ -1683,7 +1682,7 @@ double complex function int_T_res(nn, iperp, p_res, mode)
   !! Imaginary unit.
 
 	!Bessel function argument:
-	z = kperp / qs(sproc)
+	z = 1.d0 / qs(sproc)
 
 	! Look up array of Bessel functions:
 	if (nn.LT.0) then
@@ -1710,19 +1709,19 @@ double complex function int_T_res(nn, iperp, p_res, mode)
 		 int_T_res = 1.d0 * (nn * nn) * bessel * bessel / (z * z)
 
 	  case(2) !T yy
-		 int_T_res = (pp(sproc, iperp, 1, 1)**2)*besselP * besselP
+		 int_T_res = kperp * kperp * (pp(sproc, iperp, 1, 1)**2)*besselP * besselP
 
 	  case(3) !T zz
-		 int_T_res = bessel * bessel * p_res**2
+		 int_T_res = kperp * kperp * bessel * bessel * p_res**2
 
 	  case(4) !T xy
-		 int_T_res = (pp(sproc, iperp, 1, 1))*ii*(1.d0 * (nn)) * bessel * besselP/z
+		 int_T_res = kperp * (pp(sproc, iperp, 1, 1))*ii*(1.d0 * (nn)) * bessel * besselP/z
 
 	  case(5) !T xz
-		 int_T_res = (1.d0 * nn) * bessel * bessel* p_res/z
+		 int_T_res = (1.d0 * nn) * kperp * bessel * bessel* p_res/z
 
 	  case(6) !T yz
-		 int_T_res = (-1.d0 * ii) * bessel * besselP * p_res*pp(sproc, iperp, 1, 1)
+		 int_T_res = (-1.d0 * ii) * kperp * kperp * bessel * besselP * p_res*pp(sproc, iperp, 1, 1)
 
 	end select
 
@@ -2000,6 +1999,8 @@ subroutine secant_osc(om, in)
   endif
 
 end subroutine secant_osc
+
+
 
 double complex function rtsec(func,xin,iflag)
   !! An alternative implementation of the secant method, adapted from PLUME.

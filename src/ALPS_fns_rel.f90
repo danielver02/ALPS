@@ -1274,10 +1274,10 @@ double complex function int_T_rel(sproc_rel,nn, igamma, ipparbar, mode)
   !! Index of the entries in the T-tensor of Eq. (2.10).
 
 	double precision :: z
-  !! Argument of the Bessel function.
+  !! Argument of the Bessel functions.
 
   double precision :: zbar
-  !! Argument of the Bessel function, renormalised.
+  !! Argument of the Bessel function, renormalised  by multiplying with 1./(pperpbar*kperp).
 
 	double precision :: pperpbar
   !! Relativistic parallel momentum.
@@ -1295,7 +1295,7 @@ double complex function int_T_rel(sproc_rel,nn, igamma, ipparbar, mode)
 	! Bessel function argument:
 	pperpbar = sqrt(gamma_rel(sproc_rel,igamma,ipparbar)**2-1.d0-pparbar_rel(sproc_rel,igamma,ipparbar)**2)
 	z= (kperp*ms(sproc)/(vA*qs(sproc)))*pperpbar
-	zbar = kperp*ms(sproc)/(vA*qs(sproc))
+	zbar = ms(sproc)/(vA*qs(sproc))
 
 	! Look up array of Bessel functions:
 	if (nn.LT.0) then
@@ -1323,19 +1323,19 @@ double complex function int_T_rel(sproc_rel,nn, igamma, ipparbar, mode)
 		 int_T_rel = 1.d0 * (nn * nn) * bessel * bessel / (zbar * zbar)
 
 	  case(2) !T yy
-		 int_T_rel = besselP * besselP * pperpbar * pperpbar
+		 int_T_rel = kperp * kperp * besselP * besselP * pperpbar * pperpbar
 
 	  case(3) !T zz
-		 int_T_rel = bessel * bessel * pparbar_rel( sproc_rel, igamma, ipparbar)**2
+		 int_T_rel = kperp * kperp * bessel * bessel * pparbar_rel( sproc_rel, igamma, ipparbar)**2
 
 	  case(4) !T xy
-		 int_T_rel = ii*(1.d0 * (nn)) * bessel * besselP * pperpbar / zbar
+		 int_T_rel = ii*(1.d0 * (nn)) * kperp * bessel * besselP * pperpbar / zbar
 
 	  case(5) !T xz
-		 int_T_rel = (1.d0 * nn) * bessel * bessel* pparbar_rel(sproc_rel,igamma,ipparbar)  / zbar
+		 int_T_rel = (1.d0 * nn) * kperp * bessel * bessel* pparbar_rel(sproc_rel,igamma,ipparbar)  / zbar
 
 	  case(6) !T yz
-		 int_T_rel = (-1.d0 * ii) * bessel * besselP * pparbar_rel(sproc_rel,igamma,ipparbar) * pperpbar
+		 int_T_rel = (-1.d0 * ii) * kperp * kperp * bessel * besselP * pparbar_rel(sproc_rel,igamma,ipparbar) * pperpbar
 
 	end select
 
@@ -1370,7 +1370,7 @@ double complex function int_T_res_rel(sproc_rel,nn, igamma, pparbar, mode)
   !! Argument of the Bessel function.
 
   double precision :: zbar
-  !! Argument of the Bessel function, renormalised.
+  !! Argument of the Bessel function, renormalised  by multiplying with 1./(pperpbar*kperp).
 
 	double complex :: pperpbar
   !! Relativistic parallel momentum.
@@ -1390,7 +1390,7 @@ double complex function int_T_res_rel(sproc_rel,nn, igamma, pparbar, mode)
 	! Bessel function argument:
 	pperpbar = sqrt(gamma_rel(sproc_rel,igamma,1)**2-1.d0-pparbar**2)
 	z= (kperp*ms(sproc)/(vA*qs(sproc)))*pperpbar
-	zbar = kperp*ms(sproc)/(vA*qs(sproc))
+	zbar = ms(sproc)/(vA*qs(sproc))
 
 	! Look up array of Bessel functions:
 	if (nn.LT.0) then
@@ -1426,19 +1426,19 @@ double complex function int_T_res_rel(sproc_rel,nn, igamma, pparbar, mode)
 		 int_T_res_rel = 1.d0 * (nn * nn) * bessel * bessel / (zbar * zbar)
 
 	  case(2) !T yy
-		 int_T_res_rel = besselP * besselP * pperpbar * pperpbar
+		 int_T_res_rel = kperp * kperp * besselP * besselP * pperpbar * pperpbar
 
 	  case(3) !T zz
-		 int_T_res_rel = bessel * bessel * pparbar**2
+		 int_T_res_rel = kperp * kperp * bessel * bessel * pparbar**2
 
 	  case(4) !T xy
-		 int_T_res_rel = ii*(1.d0 * (nn)) * bessel * besselP * pperpbar / zbar
+		 int_T_res_rel = ii*(1.d0 * (nn)) * kperp * bessel * besselP * pperpbar / zbar
 
 	  case(5) !T xz
-		 int_T_res_rel = (1.d0 * nn) * bessel * bessel* pparbar  / zbar
+		 int_T_res_rel = (1.d0 * nn) * kperp * bessel * bessel* pparbar  / zbar
 
 	  case(6) !T yz
-		 int_T_res_rel = (-1.d0 * ii) * bessel * besselP * pparbar * pperpbar
+		 int_T_res_rel = (-1.d0 * ii) * kperp * kperp * bessel * besselP * pparbar * pperpbar
 	end select
 	return
 
