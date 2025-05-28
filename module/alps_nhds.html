@@ -323,7 +323,7 @@ modules which it uses.
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-n~3"></span>
+              <span class="anchor" id="variable-n~6"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -338,7 +338,7 @@ modules which it uses.
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-x~4"></span>
+              <span class="anchor" id="variable-x~5"></span>
               double precision,
             </td>
 <td>intent(in)</td>
@@ -444,7 +444,7 @@ for any real X.</p>
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-n~2"></span>
+              <span class="anchor" id="variable-n~3"></span>
               integer
             </td>
 <td></td>
@@ -459,7 +459,7 @@ for any real X.</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-x~6"></span>
+              <span class="anchor" id="variable-x~9"></span>
               double precision
             </td>
 <td></td>
@@ -504,7 +504,7 @@ for any real X.</p>
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-x~7"></span>
+              <span class="anchor" id="variable-x~10"></span>
               real(kind=8)
             </td>
 <td></td>
@@ -549,7 +549,7 @@ for any real X.</p>
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-x~8"></span>
+              <span class="anchor" id="variable-x~11"></span>
               real(kind=8)
             </td>
 <td></td>
@@ -599,7 +599,7 @@ for any real X.</p>
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-chi"></span>
+              <span class="anchor" id="variable-chi~2"></span>
               double complex,
             </td>
 <td>intent(out)</td>
@@ -614,7 +614,7 @@ for any real X.</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-chi_low"></span>
+              <span class="anchor" id="variable-chi_low~2"></span>
               double complex,
             </td>
 <td>intent(out)</td>
@@ -629,7 +629,7 @@ for any real X.</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-j"></span>
+              <span class="anchor" id="variable-j~8"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -645,121 +645,6 @@ for any real X.</p>
         <tr>
             <td>
               <span class="anchor" id="variable-kz"></span>
-              double precision,
-            </td>
-<td>intent(in)</td>
-              <td></td>            <td>
-              
-            </td>
-            <td>::</td>
-            <td><strong>kz</strong></td>
-            <td>
-<p>Normalised parallel wavenumber.</p>
-            </td>
-        </tr>
-        <tr>
-            <td>
-              <span class="anchor" id="variable-kperp"></span>
-              double precision,
-            </td>
-<td>intent(in)</td>
-              <td></td>            <td>
-              
-            </td>
-            <td>::</td>
-            <td><strong>kperp</strong></td>
-            <td>
-<p>Normalised perpendicular wavenumber.</p>
-            </td>
-        </tr>
-        <tr>
-            <td>
-              <span class="anchor" id="variable-x"></span>
-              double complex,
-            </td>
-<td>intent(in)</td>
-              <td></td>            <td>
-              
-            </td>
-            <td>::</td>
-            <td><strong>x</strong></td>
-            <td>
-<p>Normalised complex frequency.</p>
-            </td>
-        </tr>
-    </tbody>
-  </table>
-
-
-    </div>
-  </div>
-
-              <div class="card">
-    <div class="card-header codesum"><span class="anchor" id="proc-calc_ypsilon"></span> <h3>private  subroutine <a href='../proc/calc_ypsilon.html'>calc_ypsilon</a>(Y, j, n, kz, kperp, x)  
-</h3></div>
-    <div class="card-body">
-          
-  <p>Calculates the Y-tensor according to Stix for a bi-Maxwelling, using the NHDS calculation.</p>
-
-  <h4>Arguments</h4>
-      <table class="table table-striped varlist">
-    <thead>
-      <tr>
-        <th scope="col">Type</th>
-<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
-        <th scope="col"></th>
-        <th scope="col">Name</th>
-        <th scope="col"></th>
-    </thead>
-    <tbody>
-        <tr>
-            <td>
-              <span class="anchor" id="variable-y~6"></span>
-              double complex,
-            </td>
-<td>intent(out)</td>
-              <td></td>            <td>
-              
-            </td>
-            <td>::</td>
-            <td><strong>Y</strong>(3,3)</td>
-            <td>
-<p>Y-tensor as defined by Stix.</p>
-            </td>
-        </tr>
-        <tr>
-            <td>
-              <span class="anchor" id="variable-j~2"></span>
-              integer,
-            </td>
-<td>intent(in)</td>
-              <td></td>            <td>
-              
-            </td>
-            <td>::</td>
-            <td><strong>j</strong></td>
-            <td>
-<p>Index for species.</p>
-            </td>
-        </tr>
-        <tr>
-            <td>
-              <span class="anchor" id="variable-n~2"></span>
-              integer,
-            </td>
-<td>intent(in)</td>
-              <td></td>            <td>
-              
-            </td>
-            <td>::</td>
-            <td><strong>n</strong></td>
-            <td>
-<p>Index of sum over Bessel functions.</p>
-            </td>
-        </tr>
-        <tr>
-            <td>
-              <span class="anchor" id="variable-kz~2"></span>
               double precision,
             </td>
 <td>intent(in)</td>
@@ -810,11 +695,11 @@ for any real X.</p>
   </div>
 
               <div class="card">
-    <div class="card-header codesum"><span class="anchor" id="proc-calc_chi_cold"></span> <h3>private  subroutine <a href='../proc/calc_chi_cold.html'>calc_chi_cold</a>(chi, j, kz, kperp, x)  
+    <div class="card-header codesum"><span class="anchor" id="proc-calc_ypsilon"></span> <h3>private  subroutine <a href='../proc/calc_ypsilon.html'>calc_ypsilon</a>(Y, j, n, kz, kperp, x)  
 </h3></div>
     <div class="card-body">
           
-  <p>Subroutine that calculates the susceptibility of species j based on the cold-plasma dispersion relation based on the paper Verscharen &amp; Chandran, ApJ 764, 88, 2013.</p>
+  <p>Calculates the Y-tensor according to Stix for a bi-Maxwelling, using the NHDS calculation.</p>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
@@ -829,7 +714,7 @@ for any real X.</p>
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-chi~2"></span>
+              <span class="anchor" id="variable-y~8"></span>
               double complex,
             </td>
 <td>intent(out)</td>
@@ -837,14 +722,14 @@ for any real X.</p>
               
             </td>
             <td>::</td>
-            <td><strong>chi</strong>(3,3)</td>
+            <td><strong>Y</strong>(3,3)</td>
             <td>
-<p>Susceptibility tensor of species j.</p>
+<p>Y-tensor as defined by Stix.</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-j~3"></span>
+              <span class="anchor" id="variable-j~9"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -859,7 +744,22 @@ for any real X.</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-kz~3"></span>
+              <span class="anchor" id="variable-n~5"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>n</strong></td>
+            <td>
+<p>Index of sum over Bessel functions.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-kz~2"></span>
               double precision,
             </td>
 <td>intent(in)</td>
@@ -890,6 +790,106 @@ for any real X.</p>
         <tr>
             <td>
               <span class="anchor" id="variable-x~3"></span>
+              double complex,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>x</strong></td>
+            <td>
+<p>Normalised complex frequency.</p>
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-calc_chi_cold"></span> <h3>private  subroutine <a href='../proc/calc_chi_cold.html'>calc_chi_cold</a>(chi, j, kz, kperp, x)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>Subroutine that calculates the susceptibility of species j based on the cold-plasma dispersion relation based on the paper Verscharen &amp; Chandran, ApJ 764, 88, 2013.</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-chi~3"></span>
+              double complex,
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>chi</strong>(3,3)</td>
+            <td>
+<p>Susceptibility tensor of species j.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-j~10"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>j</strong></td>
+            <td>
+<p>Index for species.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-kz~3"></span>
+              double precision,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>kz</strong></td>
+            <td>
+<p>Normalised parallel wavenumber.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-kperp~4"></span>
+              double precision,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>kperp</strong></td>
+            <td>
+<p>Normalised perpendicular wavenumber.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-x~4"></span>
               double complex,
             </td>
 <td>intent(in)</td>
