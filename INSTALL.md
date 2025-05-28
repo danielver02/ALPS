@@ -90,13 +90,19 @@ sudo make install           (this option is only required if you want to
                              make the ALPS executable available to all users)
 ```
 
-The `Makefile.in` in the repository has been generated with `automake-1.15` from `Makefile.am`. If you have a different version of `automake`, `make` may fail. In that case, start again with
+The `Makefile.in` in the repository has been generated with `automake` from `Makefile.am`. If you have a different version of `automake`, `make` may fail. In that case, start again with
 
 ```
 autoreconf -i -f
 ```
 
 before the execution of `./configure`.
+
+If you want to use a different version of the BLAS or LAPACK libraries, you can specify this with the options `--with-blas` and `--with-lapack`. For example, if you want to use Intel MKL instead:
+
+```
+./configure --with-blas="-lmkl_rt" --with-lapack="-lmkl_rt"
+```
 
 ## EXECUTION OF TEST RUNS
 
