@@ -1,7 +1,7 @@
 # -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_PREREQ([2.72])
+AC_PREREQ([2.69])
 AC_INIT([ALPS], [1.0], [d.verscharen@ucl.ac.uk])
 AC_CONFIG_SRCDIR([src/])
 AM_INIT_AUTOMAKE([foreign subdir-objects])

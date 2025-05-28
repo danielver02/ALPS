@@ -12,14 +12,15 @@ bin_PROGRAMS = ALPS
 # Sources (used only for dependency tracking and rule generation)
 ALPS_SOURCES = \
     ALPS_var.f90 \
+    ../distribution/distribution_analyt.f90 \
     ALPS_io.f90 \
     ALPS_com.f90 \
     ALPS_analyt.f90 \
     ALPS_NHDS.f90 \
     ALPS_fns_rel.f90 \
     ALPS_fns.f90 \
-    ALPS.f90 \
-    ../distribution/distribution_analyt.f90
+    ALPS.f90 
+    
 
 
 # Dependency Tracking
