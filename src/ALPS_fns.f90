@@ -2548,7 +2548,9 @@ subroutine calc_eigen(omega,electric,magnetic,vmean,ds,Ps,Ps_split,eigen_L,heat_
   double precision :: ewave
   !! Normalised wave energy.
 
-
+  double precision, dimension(1:nspec) :: parallel_flow
+  !! U_s/v_A,ref = `current_int`/(n_s q_s)
+  
   if (proc0) then
 
      !The electric and magnetic fields are needed for the heating
@@ -2576,19 +2578,41 @@ subroutine calc_eigen(omega,electric,magnetic,vmean,ds,Ps,Ps_split,eigen_L,heat_
 
            ! Calculate relative velocity fluctuations:
            vmean(:,:)=0.d0
-           do j=1,3!x,y,z
-              do jj = 1,nspec !Species velocity fluctuations
-                 vmean(j,jj) = -(vA/(qs(jj)*ns(jj)))*&
-                      cmplx(0.d0,1.d0,kind(1.d0))*&
-                      omega*sum(electric(:)*chi0(jj,j,:))
-                 
-              enddo
+           do jj = 1,nspec !Species velocity fluctuations
+              !Calculate parallel equilibrium flow.
+              !current_int is defined as n_s q_s P_s/m_s
+              !where P_s is the parallel drift momentum
+              parallel_flow(jj)=current_int(jj)/(ns(jj)*qs(jj))              
+              if (parallel_flow(jj).eq.0.) then
+                 do j=1,3!x,y,z                    
+                    vmean(j,jj) = -(vA**2./(qs(jj)*ns(jj)))*&
+                         cmplx(0.d0,1.d0,kind(1.d0))*&
+                         omega*sum(electric(:)*chi0(jj,j,:))
+                    
+                 enddo
+              else
+                 do j=1,2!x,y
+                    vmean(j,jj) = -(vA**2./(qs(jj)*ns(jj)))*&
+                         cmplx(0.d0,1.d0,kind(1.d0))*&
+                         omega*sum(electric(:)*chi0(jj,j,:))
+                    
+                 enddo
+                 j=3 !z
+                 vmean(j,jj) = -(vA**2./(qs(jj)*ns(jj)))*&
+                         cmplx(0.d0,1.d0,kind(1.d0))*&
+                         omega*sum(electric(:)*chi0(jj,j,:))&
+                         -parallel_flow(jj)*kperp*vmean(1,jj)/&
+                         (omega-kpar*parallel_flow(jj))
+                 vmean(j,jj)=vmean(j,jj)/&
+                      (1+(kpar*parallel_flow(jj))/&
+                      (omega-kpar*parallel_flow(jj)))
+              endif
            enddo
            
-           ! Calculate relative density fluctuations:
+           ! Calculate relative density fluctuations: Normalized to E_x/B_0
            do jj=1,nspec
-              ds(jj) = (vmean(1,jj)*kperp+vmean(3,jj)*kpar)/&
-                   (omega-kpar * current_int(jj)/(ns(jj)*qs(jj)))
+              ds(jj) =(1./vA) *(vmean(1,jj)*kperp+vmean(3,jj)*kpar)/&
+                   (omega-kpar * parallel_flow(jj))
            enddo
         endif
      endif
