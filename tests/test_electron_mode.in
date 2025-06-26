@@ -41,7 +41,7 @@ secant_method=2
 !Maximum number of iterations in secant method
 numiter=200
 !Value of "zero" for secant method
-D_threshold=1.d-8
+D_threshold=1.d-15
 !Size of bounding region for secant method
 D_prec=1.d-5
 !Size of allowable gap between solutions
