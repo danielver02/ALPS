@@ -181,7 +181,7 @@ contains
        allocate(wave(1:3,1:3))
        allocate(chi0(nspec,1:3,1:3))
        wave=cmplx(0.d0,0.d0,kind(1.d0))
-       allocate(chi0_low(nspec,1:3,1:3,0:1))
+       allocate(chi0_low(nspec,1:3,1:3,-1:1))
     else
        !Final fitting parameter arrays:
        allocate(param_fit(1:nspec,0:(max(nperp,ngamma)),5,maxval(n_fits)))

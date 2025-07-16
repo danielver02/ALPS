@@ -266,19 +266,19 @@ end subroutine derivative_f0
     double complex :: chi_NHDS(3,3)
     !! Susceptibility tensor \(\chi\) as calculated from NHDS in [[alps_nhds(module)]].
 
-    double complex :: chi_NHDS_low(3,3,0:1)
+    double complex :: chi_NHDS_low(3,3,-1:1)
     !! Susceptibility tensor \(\chi\) as calculated from NHDS in [[alps_nhds(module)]].
 
     double complex, dimension(1:nspec,1:3,1:3) :: schi
     !! Susceptibility tensor \(\chi\) of individual process.
 
-    double complex, dimension(1:nspec,1:3,1:3,0:1) :: schi_low
-    !! Susceptibility tensor \(\chi\) of individual process for n=0,\pm 1.
+    double complex, dimension(1:nspec,1:3,1:3,-1:1) :: schi_low
+    !! Susceptibility tensor \(\chi\) of individual process for n=-1,0,1.
 
     double complex, dimension(1:nspec,1:3,1:3) :: chi
     !! Susceptibility tensor \(\chi\) after summing over processes.
 
-    double complex, dimension(1:nspec,1:3,1:3,0:1) :: chi_low
+    double complex, dimension(1:nspec,1:3,1:3,-1:1) :: chi_low
     !! Susceptibility tensor \(\chi\) after summing over process for n=0,\pm 1.
 
     double complex, dimension(1:3,1:3) :: eps
@@ -342,8 +342,7 @@ end subroutine derivative_f0
           schi(sproc,1,3)=chi_NHDS(1,3)/(ns(sproc) * qs(sproc))
           schi(sproc,2,3)=chi_NHDS(2,3)/(ns(sproc) * qs(sproc))
 
-          !NOTE TO DANIEL: WE WILL NEED TO CRACK OPEN NHDS AND
-          !DETERMINE CHI0_LOW [which only has contributions from n=0, \pm 1]
+          !WE DETERMINE CHI0_LOW [which only has contributions from n=0, \pm 1]
           !FROM THE BIMAX CALCULATION.
 
           schi_low(sproc,1,1,:)=chi_NHDS_low(1,1,:)/(ns(sproc) * qs(sproc))
@@ -389,46 +388,52 @@ end subroutine derivative_f0
              
           elseif (nn==1) then
              !xx term:
-             schi_low(sproc,1,1,1)=&
-                  full_integrate(om,nn,1,found_res_plus) + &
+             schi_low(sproc,1,1,1)=&                  
+                  full_integrate(om,nn,1,found_res_plus)
+             schi_low(sproc,1,1,-1)=&                  
                   full_integrate(om,-nn,1,found_res_minus)                  
              schi(sproc,1,1) = schi(sproc,1,1) + &
-                  schi_low(sproc,1,1,1)
+                  schi_low(sproc,1,1,1)+schi_low(sproc,1,1,-1)
 
              !yy term:
              schi_low(sproc,2,2,1)=&
-                  full_integrate(om,nn,2,found_res_plus) + &
+                  full_integrate(om,nn,2,found_res_plus)
+             schi_low(sproc,2,2,-1)=&
                   full_integrate(om,-nn,2,found_res_minus)
              schi(sproc,2,2) = schi(sproc,2,2) + &
-                  schi_low(sproc,2,2,1)
+                  schi_low(sproc,2,2,1)+schi_low(sproc,2,2,-1)
              
              !zz term:
              schi_low(sproc,3,3,1)=&
-                  full_integrate(om,nn,3,found_res_plus) + &
+                  full_integrate(om,nn,3,found_res_plus)
+             schi_low(sproc,3,3,-1)=&
                   full_integrate(om,-nn,3,found_res_minus)
              schi(sproc,3,3) = schi(sproc,3,3) + &
-                  schi_low(sproc,3,3,1)
+                  schi_low(sproc,3,3,1)+schi_low(sproc,3,3,-1)
 
              !xy term:
              schi_low(sproc,1,2,1)=&
-                  full_integrate(om,nn,4,found_res_plus) + &
+                  full_integrate(om,nn,4,found_res_plus)
+             schi_low(sproc,1,2,-1)=&
                   full_integrate(om,-nn,4,found_res_minus)
              schi(sproc,1,2) = schi(sproc,1,2) + &
-                  schi_low(sproc,1,2,1)
+                  schi_low(sproc,1,2,1)+schi_low(sproc,1,2,-1)
 
              !xz term:
              schi_low(sproc,1,3,1)=&
-                  full_integrate(om,nn,5,found_res_plus) + &
+                  full_integrate(om,nn,5,found_res_plus)
+             schi_low(sproc,1,3,-1)=&
                   full_integrate(om,-nn,5,found_res_minus)
              schi(sproc,1,3) = schi(sproc,1,3) + &
                   schi_low(sproc,1,3,1)
              
              !yz term:
              schi_low(sproc,2,3,1)=&
-                  full_integrate(om,nn,6,found_res_plus) + &
+                  full_integrate(om,nn,6,found_res_plus)
+             schi_low(sproc,2,3,-1)=&
                   full_integrate(om,-nn,6,found_res_minus)
              schi(sproc,2,3) = schi(sproc,2,3) + &
-                  schi_low(sproc,2,3,1)
+                  schi_low(sproc,2,3,1)+schi_low(sproc,2,3,-1)
 
           else
 
@@ -492,10 +497,6 @@ end subroutine derivative_f0
        schi_low(sproc,1,2,:) = schi_low(sproc,1,2,:) * norm(sproc)
        schi_low(sproc,1,3,:) = schi_low(sproc,1,3,:) * norm(sproc)
        schi_low(sproc,2,3,:) = schi_low(sproc,2,3,:) * norm(sproc)
-
-       !if ((sproc.eq.1).and.(nlim(1).eq.0)) then
-       !   write(*,'(2i3,6es14.4)') nlim(1),nlim(2),schi(sproc,1,2),schi_low(sproc,1,2,:)
-       !endif
        
     endif
 
@@ -2176,7 +2177,7 @@ subroutine om_scan(ik)
   double precision, dimension(1:nspec) :: Ps
   !! Relative heating rate of a given species.
 
-  double precision, dimension(1:6,1:nspec) :: Ps_split
+  double precision, dimension(1:4,1:nspec) :: Ps_split
   !! Relative heating rate of a given species by component
 
   character (50) :: fmt_eigen
@@ -2219,7 +2220,7 @@ subroutine om_scan(ik)
      endif
      if (scan(ik)%heat_s) then
         write(fmt_heat,'(a,i0,a)') '(4es14.4e3,',nspec,'es14.4e3)'
-        write(fmt_heat_mech,'(a,i0,a)') '(4es14.4e3,',6*nspec,'es14.4e3)'
+        write(fmt_heat_mech,'(a,i0,a)') '(4es14.4e3,',4*nspec,'es14.4e3)'
         allocate(heat_unit(nroots))
         allocate(heat_mech_unit(nroots))
         allocate(heatName(nroots))
@@ -2480,7 +2481,8 @@ end subroutine om_scan
 subroutine calc_eigen(omega,electric,magnetic,vmean,ds,Ps,Ps_split,eigen_L,heat_L)
   !! This subroutine calculates the relative electric and magnetic field amplitudes, the relative fluctuations in the density and velocity of all species, and the heating rates of the given solution.
   !! It is based on the calc_eigen routine by Greg Howes and Kris Klein, found in PLUME.
-  !! The splitting by mechanisms is described in Huang, Howes, and Brown, JPP 2024.
+  !! The splitting by mechanisms is described in Huang, Howes, and Brown, JPP 2024, 
+  !! but has been reformated to isolate TTD, LD, and the n=+1 and -1 CD terms separately.
   use ALPS_var, only : proc0, nspec, ns, qs, wave, chi0, chi0_low, kperp, kpar, vA, current_int
   implicit none
 
@@ -2506,7 +2508,7 @@ subroutine calc_eigen(omega,electric,magnetic,vmean,ds,Ps,Ps_split,eigen_L,heat_
   double precision, dimension(1:nspec), intent(out) :: Ps
   !! Relative heating rate of a given species.
 
-  double precision, dimension(1:6,1:nspec) :: Ps_split
+  double precision, dimension(1:4,1:nspec) :: Ps_split
   !! Relative heating rate of a given species split by component
 
   logical, intent(in) :: eigen_L
@@ -2688,12 +2690,6 @@ if (heat_L) then
             enddo
          enddo
       enddo
-
-      !write(*,*)'-=-=- chia, n=0'
-      !jj=1
-      !do ii=1,3
-      !   write(*,'(6es14.4)')chia(jj,ii,1),chia(jj,ii,2),chia(jj,ii,3)
-      !enddo
       
       !Initialize Ps_split
       Ps_split(:,:) = 0.
@@ -2703,36 +2699,27 @@ if (heat_L) then
            conjg(electric(2))*electric(2)* &
            (chi0_low(:,2,2,0)-conjg(chi0_low(:,2,2,0)))      
       !chi_yz  (TTD term 2)
-      Ps_split(2,:) =-0.5*cmplx(0.,1.)*&
+      Ps_split(1,:) = Ps_split(1,:) -0.5*cmplx(0.,1.)*&
            (electric(3)*conjg(electric(2))*chi0_low(:,2,3,0) - &
            conjg(electric(3))*electric(2)*conjg(chi0_low(:,2,3,0)))
       
       !chi_zy  (LD term 1)
-      Ps_split(3,:) =-0.5*cmplx(0.,1.)*&
+      Ps_split(2,:) =-0.5*cmplx(0.,1.)*&
            (electric(2)*conjg(electric(3))*chi0_low(:,3,2,0) - &
            conjg(electric(2))*electric(3)*conjg(chi0_low(:,3,2,0)))
       !chi_zz  (LD term 2)
-      Ps_split(4,:) =-0.5*cmplx(0.,1.)*&
+      Ps_split(2,:) = Ps_split(2,:) -0.5*cmplx(0.,1.)*&
            conjg(electric(3))*electric(3)* &
            (chi0_low(:,3,3,0)-conjg(chi0_low(:,3,3,0)))
       
-      !Total n=0 terms
-      term(:,:)=0.
-      do ii = 1, 3
-         do jj = 1, nspec
-            term(jj,ii) = sum(conjg(electric(:))*chia(jj,:,ii))     
-         enddo
-      enddo
-      Ps_split(5,:) = 0.
-      do jj = 1, nspec
-         Ps_split(5,jj) = sum(term(jj,:)*electric(:))
-      enddo
+
 
       
       
    endif
 
    if (proc0) then
+      electric_xy=electric; electric_xy(3)=cmplx(0.,0.)
       !N=1
       do ii = 1, 3 !tensor index
          do j = 1, 3 !tensor index
@@ -2741,39 +2728,41 @@ if (heat_L) then
                     (chi0_low(jj,ii,j,1) - conjg(chi0_low(jj,j,ii,1)))
             enddo
          enddo
+      enddo      
+      !Total n=1 terms, Eperp
+      term(:,:)=0.
+      term1(:)=0.
+      do ii = 1, 3
+         do jj = 1, nspec
+            term(jj,ii) = sum(conjg(electric_xy(:))*chia(jj,:,ii))     
+         enddo
       enddo
-      jj=1
-      !write(*,*)'-=-=- chi0_low'
-      !do ii=1,3
-      !   write(*,'(6es14.4)')chi0_low(jj,ii,1,1),chi0_low(jj,ii,2,1),chi0_low(jj,ii,3,1)
-      !enddo
+      Ps_split(3,:) = 0.
+      do jj = 1, nspec
+         Ps_split(3,jj) = sum(term(jj,:)*electric_xy(:))
+      enddo
 
-      !write(*,*)'-=-=- chi0_low cong'
-      !do ii=1,3
-      !   write(*,'(6es14.4)')conjg(chi0_low(jj,1,ii,1)),conjg(chi0_low(jj,2,ii,1)),&
-      !        conjg(chi0_low(jj,3,ii,1))
-      !enddo
-      
-      !write(*,*)'-=-=- chia, n=\pm1'
-      !do ii=1,3
-      !   write(*,'(6es14.4)')chia(jj,ii,1),chia(jj,ii,2),chia(jj,ii,3)
-      !enddo
-      
-        !Total n=1 terms, Eperp
-        electric_xy=electric; electric_xy(3)=cmplx(0.,0.)
-        term(:,:)=0.
-        term1(:)=0.
-
-        do ii = 1, 3
-           do jj = 1, nspec
-              term(jj,ii) = sum(conjg(electric_xy(:))*chia(jj,:,ii))     
-           enddo
-        enddo        
-        Ps_split(6,:) = 0.
-        do jj = 1, nspec
-           Ps_split(6,jj) = sum(term(jj,:)*electric_xy(:))
-           !write(*,*)'n=\pm1: ',jj,Ps_split(6,jj)
-        enddo
+      !N=-1
+      do ii = 1, 3 !tensor index
+         do j = 1, 3 !tensor index
+            do jj = 1, nspec !species index
+               chia(jj,ii,j) = -0.5*cmplx(0.,1.)* &
+                    (chi0_low(jj,ii,j,-1) - conjg(chi0_low(jj,j,ii,-1)))
+            enddo
+         enddo
+      enddo      
+      !Total n=-1 terms, Eperp
+      term(:,:)=0.
+      term1(:)=0.
+      do ii = 1, 3
+         do jj = 1, nspec
+            term(jj,ii) = sum(conjg(electric_xy(:))*chia(jj,:,ii))     
+         enddo
+      enddo
+      Ps_split(4,:) = 0.
+      do jj = 1, nspec
+         Ps_split(4,jj) = sum(term(jj,:)*electric_xy(:))
+      enddo
 
         !Normalization             
         Ps_split = Ps_split/ewave
@@ -2903,7 +2892,7 @@ subroutine om_double_scan
   double precision, dimension(1:nspec) :: Ps
   !! Relative heating rate of a given species.
 
-  double precision, dimension(1:6,1:nspec) :: Ps_split
+  double precision, dimension(1:4,1:nspec) :: Ps_split
   !! Relative heating rate of a given species, split by component.
 
   character (50) :: fmt_eigen
@@ -2982,7 +2971,7 @@ subroutine om_double_scan
         allocate(heatName(nroots))
 
         !Heating mechanism output.
-        write(fmt_heat_mech,'(a,i0,a)') '(4es14.4e3,',6*nspec,'es14.4e3)'
+        write(fmt_heat_mech,'(a,i0,a)') '(4es14.4e3,',4*nspec,'es14.4e3)'
         allocate(heat_mech_unit(nroots))
         allocate(heatMechName(nroots))
      endif
