@@ -65,7 +65,7 @@ contains
   double complex, intent(out) :: chi(3,3)
   !! Susceptibility tensor of species j.
 
-  double complex, intent(out) :: chi_low(3,3,0:1)
+  double complex, intent(out) :: chi_low(3,3,-1:1)
   !! Susceptibility tensor of species j.
 
   integer, intent(in) :: j
@@ -87,7 +87,10 @@ contains
   !! n=0 contribution to Y-tensor according to Stix.
 
   double complex :: Y1(3,3)
-  !! n=\pm 1 contribution to Y-tensor according to Stix.
+  !! n=+ 1 contribution to Y-tensor according to Stix.
+
+  double complex :: Yn1(3,3)
+  !! n=- 1 contribution to Y-tensor according to Stix.
 
   double complex :: Ynew(3,3)
   !! Iteration of Y-tensor according to Stix.
@@ -151,6 +154,7 @@ contains
       Y(i,k)=0.d0
       Y0(i,k)=0.d0
       Y1(i,k)=0.d0
+      Yn1(i,k)=0.d0
    enddo
   enddo
 
@@ -176,7 +180,7 @@ contains
          Y(i,k)=Y(i,k)+Ynew(i,k)
          if (n== 0) Y0(i,k)=Ynew(i,k)
          if (n==-1) Y1(i,k)=Y1(i,k)+Ynew(i,k)
-         if (n== 1) Y1(i,k)=Y1(i,k)+Ynew(i,k)
+         if (n== 1) Yn1(i,k)=Yn1(i,k)+Ynew(i,k)
       enddo
      enddo
   enddo
@@ -212,6 +216,17 @@ contains
   chi_low(3,1,n)=Y1(3,1)/(ell*ell)
   chi_low(3,2,n)=Y1(3,2)/(ell*ell)
   chi_low(3,3,n)=Y1(3,3)/(ell*ell)
+
+  n=-1
+  chi_low(1,1,n)=Yn1(1,1)/(ell*ell)
+  chi_low(1,2,n)=Yn1(1,2)/(ell*ell)
+  chi_low(1,3,n)=Yn1(1,3)/(ell*ell)
+  chi_low(2,1,n)=Yn1(2,1)/(ell*ell)
+  chi_low(2,2,n)=Yn1(2,2)/(ell*ell)
+  chi_low(2,3,n)=Yn1(2,3)/(ell*ell)
+  chi_low(3,1,n)=Yn1(3,1)/(ell*ell)
+  chi_low(3,2,n)=Yn1(3,2)/(ell*ell)
+  chi_low(3,3,n)=Yn1(3,3)/(ell*ell)
 
   endif
 
