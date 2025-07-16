@@ -21,8 +21,6 @@ nroots=1
 !T-> use search for roots over a map
 !F-> use input guesses for solutions
 use_map=.false.
-!Choice of kperp dp normalization
-kperp_norm=.true.
 !Write or suppress output to screen:
 writeOut=.true.
 !Momentum space resolution of f0
@@ -42,6 +40,8 @@ Bessel_zero=1.d-50
 secant_method=2
 !Maximum number of iterations in secant method
 numiter=200
+!Choice of kperp dp normalization
+kperp_norm=.true.
 !Value of "zero" for secant method
 D_threshold=1.d-20
 !Size of bounding region for secant method

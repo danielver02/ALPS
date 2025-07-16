@@ -1255,7 +1255,8 @@ end function resU_rel
 !Function to pass T_ij into integrator
 double complex function int_T_rel(sproc_rel,nn, igamma, ipparbar, mode)
 !! This function returns the T-tensor according to Eq. (2.10) of the code paper for the relativistic calculation.
-	use ALPS_var, only : kperp, qs, sproc, pparbar_rel, gamma_rel, vA, ms
+  use ALPS_var, only : kperp, qs, sproc, pparbar_rel, gamma_rel, vA, ms
+  use ALPS_var, only : kperp_norm
 	implicit none
 
   integer, intent(in) :: sproc_rel
@@ -1294,8 +1295,12 @@ double complex function int_T_rel(sproc_rel,nn, igamma, ipparbar, mode)
 
 	! Bessel function argument:
 	pperpbar = sqrt(gamma_rel(sproc_rel,igamma,ipparbar)**2-1.d0-pparbar_rel(sproc_rel,igamma,ipparbar)**2)
-	z= (kperp*ms(sproc)/(vA*qs(sproc)))*pperpbar
-	zbar = ms(sproc)/(vA*qs(sproc))
+ z= (kperp*ms(sproc)/(vA*qs(sproc)))*pperpbar
+ if (kperp_norm) then
+    zbar = kperp*ms(sproc)/(vA*qs(sproc))
+ else
+    zbar = ms(sproc)/(vA*qs(sproc))
+ endif
 
 	! Look up array of Bessel functions:
 	if (nn.LT.0) then
@@ -1322,20 +1327,40 @@ double complex function int_T_rel(sproc_rel,nn, igamma, ipparbar, mode)
 	  case(1) !T xx
 		 int_T_rel = 1.d0 * (nn * nn) * bessel * bessel / (zbar * zbar)
 
-	  case(2) !T yy
-		 int_T_rel = kperp * kperp * besselP * besselP * pperpbar * pperpbar
+case(2) !T yy
+   if (kperp_norm) then
+      int_T_rel = besselP * besselP * pperpbar * pperpbar
+   else
+      int_T_rel = kperp * kperp * besselP * besselP * pperpbar * pperpbar
+   endif
 
-	  case(3) !T zz
-		 int_T_rel = kperp * kperp * bessel * bessel * pparbar_rel( sproc_rel, igamma, ipparbar)**2
+case(3) !T zz
+   if (kperp_norm) then
+      int_T_rel = bessel * bessel * pparbar_rel( sproc_rel, igamma, ipparbar)**2
+   else
+      int_T_rel = kperp * kperp * bessel * bessel * pparbar_rel( sproc_rel, igamma, ipparbar)**2
+   endif
 
-	  case(4) !T xy
-		 int_T_rel = ii*(1.d0 * (nn)) * kperp * bessel * besselP * pperpbar / zbar
+case(4) !T xy
+   if (kperp_norm) then
+      int_T_rel = ii*(1.d0 * (nn)) * bessel * besselP * pperpbar / zbar
+   else
+      int_T_rel = ii*(1.d0 * (nn)) * kperp * bessel * besselP * pperpbar / zbar
+   endif
 
-	  case(5) !T xz
-		 int_T_rel = (1.d0 * nn) * kperp * bessel * bessel* pparbar_rel(sproc_rel,igamma,ipparbar)  / zbar
+case(5) !T xz
+   if (kperp_norm) then
+      int_T_rel = (1.d0 * nn) * bessel * bessel* pparbar_rel(sproc_rel,igamma,ipparbar)  / zbar
+   else
+      int_T_rel = (1.d0 * nn) * kperp * bessel * bessel* pparbar_rel(sproc_rel,igamma,ipparbar)  / zbar
+   endif
 
-	  case(6) !T yz
-		 int_T_rel = (-1.d0 * ii) * kperp * kperp * bessel * besselP * pparbar_rel(sproc_rel,igamma,ipparbar) * pperpbar
+case(6) !T yz
+   if (kperp_norm) then
+      int_T_rel = (-1.d0 * ii) * bessel * besselP * pparbar_rel(sproc_rel,igamma,ipparbar) * pperpbar
+   else
+      int_T_rel = (-1.d0 * ii) * kperp * kperp * bessel * besselP * pparbar_rel(sproc_rel,igamma,ipparbar) * pperpbar
+   endif
 
 	end select
 
@@ -1348,7 +1373,8 @@ end function int_T_rel
 
 double complex function int_T_res_rel(sproc_rel,nn, igamma, pparbar, mode)
 !! This function returns the T-tensor according to Eq. (2.10) of the code paper for the case in which it is evaluated at the complex resonance momentum for the relativistic calculation.
-	use ALPS_var, only : kperp, qs, sproc, gamma_rel, vA, ms
+  use ALPS_var, only : kperp, qs, sproc, gamma_rel, vA, ms
+  use ALPS_var, only : kperp_norm
 	implicit none
 
   integer, intent(in) :: sproc_rel
@@ -1389,8 +1415,12 @@ double complex function int_T_res_rel(sproc_rel,nn, igamma, pparbar, mode)
 
 	! Bessel function argument:
 	pperpbar = sqrt(gamma_rel(sproc_rel,igamma,1)**2-1.d0-pparbar**2)
-	z= (kperp*ms(sproc)/(vA*qs(sproc)))*pperpbar
-	zbar = ms(sproc)/(vA*qs(sproc))
+ z= (kperp*ms(sproc)/(vA*qs(sproc)))*pperpbar
+ if (kperp_norm) then
+    zbar = kperp*ms(sproc)/(vA*qs(sproc))
+ else
+    zbar = ms(sproc)/(vA*qs(sproc))
+ endif
 
 	! Look up array of Bessel functions:
 	if (nn.LT.0) then
@@ -1425,20 +1455,40 @@ double complex function int_T_res_rel(sproc_rel,nn, igamma, pparbar, mode)
 	  case(1) !T xx
 		 int_T_res_rel = 1.d0 * (nn * nn) * bessel * bessel / (zbar * zbar)
 
-	  case(2) !T yy
-		 int_T_res_rel = kperp * kperp * besselP * besselP * pperpbar * pperpbar
+case(2) !T yy
+   if (kperp_norm) then
+      int_T_res_rel = besselP * besselP * pperpbar * pperpbar
+   else
+      int_T_res_rel = kperp * kperp * besselP * besselP * pperpbar * pperpbar
+   endif
 
-	  case(3) !T zz
-		 int_T_res_rel = kperp * kperp * bessel * bessel * pparbar**2
+case(3) !T zz
+   if (kperp_norm) then
+      int_T_res_rel = bessel * bessel * pparbar**2
+   else
+      int_T_res_rel = kperp * kperp * bessel * bessel * pparbar**2
+   endif
 
-	  case(4) !T xy
-		 int_T_res_rel = ii*(1.d0 * (nn)) * kperp * bessel * besselP * pperpbar / zbar
+case(4) !T xy
+   if (kperp_norm) then
+      int_T_res_rel = ii*(1.d0 * (nn)) * bessel * besselP * pperpbar / zbar
+   else
+      int_T_res_rel = ii*(1.d0 * (nn)) * kperp * bessel * besselP * pperpbar / zbar
+   endif
 
-	  case(5) !T xz
-		 int_T_res_rel = (1.d0 * nn) * kperp * bessel * bessel* pparbar  / zbar
+case(5) !T xz
+   if (kperp_norm) then
+      int_T_res_rel = (1.d0 * nn) * bessel * bessel* pparbar  / zbar
+   else
+      int_T_res_rel = (1.d0 * nn) * kperp * bessel * bessel* pparbar  / zbar
+   endif
 
-	  case(6) !T yz
-		 int_T_res_rel = (-1.d0 * ii) * kperp * kperp * bessel * besselP * pparbar * pperpbar
+case(6) !T yz
+   if (kperp_norm) then
+      int_T_res_rel = (-1.d0 * ii) * bessel * besselP * pparbar * pperpbar
+   else
+      int_T_res_rel = (-1.d0 * ii) * kperp * kperp * bessel * besselP * pparbar * pperpbar
+   endif
 	end select
 	return
 

@@ -1599,36 +1599,42 @@ end function resU
 
 
 double complex function int_T(nn, iperp, ipar, mode)
-!! This function returns the T-tensor according to Eq. (2.10) of the code paper.
-	use ALPS_var, only : pp, kperp, qs, bessel_array, sproc
-	implicit none
-
+  !! This function returns the T-tensor according to Eq. (2.10) of the code paper.
+  use ALPS_var, only : pp, kperp, qs, bessel_array, sproc
+  use ALPS_var, only : kperp_norm
+  implicit none
+  
   integer, intent(in) :: nn
   !! Order of the Bessel function.
-
+  
   integer, intent(in) :: iperp
   !! Index to loop over perpendicular momentum.
-
+  
   integer, intent(in) :: ipar
   !! Index to loop over parallel momentum.
-
+  
   integer, intent(in) :: mode
   !! Index of the entries in the T-tensor of Eq. (2.10).
-
-	double precision :: z
-  !! Argument of the Bessel functions, but in after multiplying with 1./(pperp*kperp).
-
-	double precision :: bessel
+  
+  double precision :: z
+  !!  Argument of the Bessel functions,
+  !!  multiplying with 1./(pperp*kperp) if kperp_norm=.false.
+  
+  double precision :: bessel
   !! Bessel function.
-
-	double precision :: besselP
+  
+  double precision :: besselP
   !! First derivative of the Bessel function.
+  
+  double complex :: ii = cmplx(0.d0,1.d0,kind(1.d0))
+ !! Imaginary unit.
 
-	double complex :: ii = cmplx(0.d0,1.d0,kind(1.d0))
-  !! Imaginary unit.
-
-	!Bessel function argument:
-	z= 1.d0/qs(sproc)
+  !Bessel function argument:
+  if (kperp_norm) then
+     z= kperp/qs(sproc)
+  else
+     z= 1.d0/qs(sproc)
+  endif
 
 	! Look up array of Bessel functions:
 	if (nn.LT.0) then
@@ -1655,20 +1661,40 @@ double complex function int_T(nn, iperp, ipar, mode)
 	  case(1) !T xx
 		 int_T = 1.d0 * (nn * nn) * bessel * bessel / (z * z)
 
-	  case(2) !T yy
-		 int_T = kperp * kperp * (pp(sproc, iperp, ipar, 1)**2)*besselP * besselP
+          case(2) !T yy
+             if (kperp_norm) then
+                int_T = (pp(sproc, iperp, ipar, 1)**2)*besselP * besselP
+             else
+                int_T = kperp * kperp * (pp(sproc, iperp, ipar, 1)**2)*besselP * besselP
+             endif
 
 	  case(3) !T zz
-		 int_T = kperp * kperp * bessel * bessel * pp( sproc, iperp, ipar, 2)**2
+             if (kperp_norm) then
+                int_T = bessel * bessel * pp( sproc, iperp, ipar, 2)**2
+             else
+                int_T = kperp * kperp * bessel * bessel * pp( sproc, iperp, ipar, 2)**2
+             endif
 
 	  case(4) !T xy
+              if (kperp_norm) then
+                 int_T = (pp(sproc, iperp, ipar, 1))*ii*(1.d0 * (nn)) * bessel * besselP / z
+              else
 		 int_T = kperp * (pp(sproc, iperp, ipar, 1))*ii*(1.d0 * (nn)) * bessel * besselP / z
+              endif
 
-	  case(5) !T xz
+           case(5) !T xz
+              if (kperp_norm) then
+                 int_T = (1.d0 * nn) * bessel * bessel* pp(sproc, iperp, ipar, 2)  / z
+              else
 		 int_T = (1.d0 * nn) * kperp * bessel * bessel* pp(sproc, iperp, ipar, 2)  / z
+              endif
 
-	  case(6) !T yz
+           case(6) !T yz
+              if (kperp_norm) then
+		 int_T = (-1.d0 * ii) * bessel * besselP * pp(sproc, iperp, ipar, 2) *pp(sproc, iperp, ipar,1)
+              else
 		 int_T = (-1.d0 * ii) * kperp * kperp * bessel * besselP * pp(sproc, iperp, ipar, 2) *pp(sproc, iperp, ipar,1)
+              endif
 
 	end select
 
@@ -1680,7 +1706,8 @@ end function int_T
 
 double complex function int_T_res(nn, iperp, p_res, mode)
   !! This function returns the T-tensor according to Eq. (2.10) of the code paper for the case in which it is evaluated at the complex resonance momentum.
-	use ALPS_var, only : pp, kperp, qs, bessel_array,sproc
+  use ALPS_var, only : pp, kperp, qs, bessel_array,sproc
+  use ALPS_var, only : kperp_norm
 	implicit none
 
   integer, intent(in) :: nn
@@ -1696,9 +1723,10 @@ double complex function int_T_res(nn, iperp, p_res, mode)
   !! Index of the entries in the T-tensor of Eq. (2.10).
 
   double precision :: z
-  !! Argument of the Bessel functions, but in after multiplying with 1./(pperp*kperp).
+  !!  Argument of the Bessel functions,
+  !!  multiplying with 1./(pperp*kperp) if kperp_norm=.false.
 
-	double precision :: bessel
+  double precision :: bessel
   !! Bessel function.
 
 	double precision :: besselP
@@ -1707,8 +1735,12 @@ double complex function int_T_res(nn, iperp, p_res, mode)
 	double complex :: ii = cmplx(0.d0,1.d0,kind(1.d0))
   !! Imaginary unit.
 
-	!Bessel function argument:
-	z = 1.d0 / qs(sproc)
+ !Bessel function argument:
+ if (kperp_norm) then
+    z = kperp / qs(sproc)
+ else
+    z = 1.d0 / qs(sproc)
+ endif
 
 	! Look up array of Bessel functions:
 	if (nn.LT.0) then
@@ -1734,20 +1766,40 @@ double complex function int_T_res(nn, iperp, p_res, mode)
 	  case(1) !T xx
 		 int_T_res = 1.d0 * (nn * nn) * bessel * bessel / (z * z)
 
-	  case(2) !T yy
-		 int_T_res = kperp * kperp * (pp(sproc, iperp, 1, 1)**2)*besselP * besselP
+          case(2) !T yy
+             if (kperp_norm) then
+                int_T_res = (pp(sproc, iperp, 1, 1)**2)*besselP * besselP
+             else
+                int_T_res = kperp * kperp * (pp(sproc, iperp, 1, 1)**2)*besselP * besselP
+             endif
 
 	  case(3) !T zz
-		 int_T_res = kperp * kperp * bessel * bessel * p_res**2
+      if (kperp_norm) then
+         int_T_res = bessel * bessel * p_res**2
+      else
+         int_T_res = kperp * kperp * bessel * bessel * p_res**2
+      endif
 
-	  case(4) !T xy
-		 int_T_res = kperp * (pp(sproc, iperp, 1, 1))*ii*(1.d0 * (nn)) * bessel * besselP/z
+   case(4) !T xy
+      if (kperp_norm) then
+         int_T_res = (pp(sproc, iperp, 1, 1))*ii*(1.d0 * (nn)) * bessel * besselP/z
+      else
+         int_T_res = kperp * (pp(sproc, iperp, 1, 1))*ii*(1.d0 * (nn)) * bessel * besselP/z
+      endif
 
-	  case(5) !T xz
-		 int_T_res = (1.d0 * nn) * kperp * bessel * bessel* p_res/z
+   case(5) !T xz
+      if (kperp_norm) then
+         int_T_res = (1.d0 * nn) * bessel * bessel* p_res/z
+      else
+         int_T_res = (1.d0 * nn) * kperp * bessel * bessel* p_res/z
+      endif
 
-	  case(6) !T yz
-		 int_T_res = (-1.d0 * ii) * kperp * kperp * bessel * besselP * p_res*pp(sproc, iperp, 1, 1)
+   case(6) !T yz
+      if (kperp_norm) then
+         int_T_res = (-1.d0 * ii) * bessel * besselP * p_res*pp(sproc, iperp, 1, 1)
+      else
+         int_T_res = (-1.d0 * ii) * kperp * kperp * bessel * besselP * p_res*pp(sproc, iperp, 1, 1)
+      endif
 
 	end select
 
