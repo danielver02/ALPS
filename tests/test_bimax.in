@@ -41,6 +41,8 @@ Bessel_zero = 1.d-45
 secant_method=2
 !Maximum number of iterations in secant method
 numiter = 50
+!Choice of kperp dp normalization
+kperp_norm=.true.
 !Value of "zero" for secant method
 D_threshold = 1.d-30
 !Size of bounding region for secant method

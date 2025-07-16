@@ -39,6 +39,8 @@ arrayName='test_kperp_alpha'
 Bessel_zero = 1.d-50
 !Maximum number of iterations in secant method
 numiter = 500
+!Choice of kperp dp normalization
+kperp_norm=.true.
 !Value of "zero" for secant method
 D_threshold = 1.d-30
 !Size of bounding region for secant method
