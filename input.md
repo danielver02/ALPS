@@ -62,6 +62,14 @@ Selection for root finding method.
 **`numiter`**  
 Maximum number of iterations in secant method.
 
+**`kperp_norm`**   
+Choice of:  
+
+- True: Follow's Stix (10-57) normalization convention.  
+- False: Multiplies Stix (10-57) by $k_{\perp}^2 d_{ref}^2$.
+
+Depending on the user's choice of normalization, `D_threshold` needs to be adjusted to account for additional factors of $k_{\perp}^6 d_{ref}^6$.
+
 **`D_threshold`**  
 Minimum threshold for secant method.
 

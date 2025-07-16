@@ -21,6 +21,8 @@ nroots=1
 !T-> use search for roots over a map
 !F-> use input guesses for solutions
 use_map=.false.
+!Choice of kperp dp normalization
+kperp_norm=.true.
 !Write or suppress output to screen:
 writeOut=.true.
 !Momentum space resolution of f0

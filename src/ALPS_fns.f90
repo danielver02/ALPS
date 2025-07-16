@@ -253,7 +253,7 @@ end subroutine derivative_f0
  !! This function returns the determinant of the dispersion tensor for a given frequency om.
     use alps_var, only : nlim, proc0, nspec, ierror, sproc, relativistic
     use alps_var, only : wave, kperp, kpar, ns, qs, vA, chi0, chi0_low
-    use alps_var, only : usebM
+    use alps_var, only : usebM, kperp_norm
     use alps_nhds, only: calc_chi
     use alps_fns_rel, only : int_ee_rel
     use mpi
@@ -318,9 +318,15 @@ end subroutine derivative_f0
     if (proc0)  then
 
        !Indices of refraction for the dispersion relation in NHDS normalisation (with an additional kperp**2):
-       enx2=kperp**4
-       enz2=kpar**2*kperp**2
-       enxnz=kpar*kperp**3
+       if (kperp_norm) then
+          enx2=kperp**2
+          enz2=kpar**2
+          enxnz=kpar*kperp
+       else
+          enx2=kperp**4
+          enz2=kpar**2*kperp**2
+          enxnz=kpar*kperp**3
+       endif
 
     else
         ! Integrate:
@@ -473,10 +479,19 @@ end subroutine derivative_f0
        ! Add in ee term:
        if (nlim(1)==0) then
           if(relativistic(sproc)) then
-             schi(sproc,3,3)=schi(sproc,3,3) + kperp**2*int_ee_rel(om)
+             if (kperp_norm) then
+                schi(sproc,3,3)=schi(sproc,3,3) + int_ee_rel(om)
+             else
+                schi(sproc,3,3)=schi(sproc,3,3) + kperp**2*int_ee_rel(om)
+             endif
           else
-             schi(sproc,3,3)=schi(sproc,3,3) + kperp**2*int_ee(om)
-             schi_low(sproc,3,3,0)=schi_low(sproc,3,3,0) + kperp**2*int_ee(om)
+             if (kperp_norm) then
+                schi(sproc,3,3)=schi(sproc,3,3) + int_ee(om)
+                schi_low(sproc,3,3,0)=schi_low(sproc,3,3,0) + int_ee(om)
+             else
+                schi(sproc,3,3)=schi(sproc,3,3) + kperp**2*int_ee(om)
+                schi_low(sproc,3,3,0)=schi_low(sproc,3,3,0) + kperp**2*int_ee(om)
+             endif
           endif
        endif
 
@@ -514,18 +529,22 @@ end subroutine derivative_f0
        !The global variable 'chi0' is used
        !for heating & eigenfunction calculation.
 
-       chi0=chi/(om*om*vA*vA*kperp*kperp)
-
-       chi0(:,2,1)=-chi0(:,1,2)
-       chi0(:,3,1)= chi0(:,1,3)
-       chi0(:,3,2)=-chi0(:,2,3)
-       
        !The global variable 'chi0_low' is used
        !for calculations for the n=0 and \pm 1
        !heating mechanisms.
        
-       chi0_low=chi_low/(om*om*vA*vA*kperp*kperp)
+       if (kperp_norm) then
+          chi0=chi/(om*om*vA*vA)
+          chi0_low=chi_low/(om*om*vA*vA)
+       else          
+          chi0=chi/(om*om*vA*vA*kperp*kperp)
+          chi0_low=chi_low/(om*om*vA*vA*kperp*kperp)
+       endif
 
+       chi0(:,2,1)=-chi0(:,1,2)
+       chi0(:,3,1)= chi0(:,1,3)
+       chi0(:,3,2)=-chi0(:,2,3)
+             
        chi0_low(:,2,1,:)=-chi0_low(:,1,2,:)
        chi0_low(:,3,1,:)= chi0_low(:,1,3,:)
        chi0_low(:,3,2,:)=-chi0_low(:,2,3,:)
@@ -567,9 +586,15 @@ end subroutine derivative_f0
 
 
        ! Add the unit tensor (in our normalisation):
-       eps(1,1) = eps(1,1) + (kperp*om*vA)**2
-       eps(2,2) = eps(2,2) + (kperp*om*vA)**2
-       eps(3,3) = eps(3,3) + (kperp*om*vA)**2
+       if (kperp_norm) then
+          eps(1,1) = eps(1,1) + (om*vA)**2
+          eps(2,2) = eps(2,2) + (om*vA)**2
+          eps(3,3) = eps(3,3) + (om*vA)**2
+       else
+          eps(1,1) = eps(1,1) + (kperp*om*vA)**2
+          eps(2,2) = eps(2,2) + (kperp*om*vA)**2
+          eps(3,3) = eps(3,3) + (kperp*om*vA)**2
+       endif
 
 
        !Calculate dispersion tensor:

@@ -44,6 +44,11 @@ module alps_var
   !! (F) input (nroots) guesses for solutions,
   !! via [[solution_read(subroutine)]]
 
+  logical :: kperp_norm=.true.
+  !! Use the tensor in Stix's (10-57) (true)
+  !! or
+  !! Multiply by kperp^2 d_ref^2 (false)
+    
   logical :: writeOut =.true.
   !! Write or suppress output to screen.
 
@@ -396,6 +401,7 @@ module alps_var
   public :: nproc, iproc, proc0, ierror
   public :: runname, foldername, writeOut
   public :: kperp, kpar, nspec, use_map, wroots
+  public :: kperp_norm
   public :: loggridw, loggridg, omi, omf, gami, gamf
   public :: arrayName, nperp, npar, f0, pp, df0, bessel_array
   public :: current_int, density_int
