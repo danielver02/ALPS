@@ -1196,6 +1196,9 @@ subroutine determine_JT(is,n_params,nJT,JT,params,iperp,upper_limit,ipparbar_low
 	integer, intent(in) :: nJT
 	!! First dimension of matrix JT.
 
+	integer, intent(in) :: upper_limit
+	!! Upper limit of iperp space (relativistic and non-relativistic).
+
 	double precision, intent(out) :: JT(nJT,0:upper_limit)
 	!! Transposed Jacobian matrix of the fit function.
 
@@ -1204,9 +1207,6 @@ subroutine determine_JT(is,n_params,nJT,JT,params,iperp,upper_limit,ipparbar_low
 
 	integer, intent(in) :: iperp
 	!! Index of perpendicular momentum at which JT is evaluated.
-
-	integer, intent(in) :: upper_limit
-	!! Upper limit of iperp space (relativistic and non-relativistic).
 
 	integer, intent(in) :: ipparbar_lower
 	!! Lower index of parallel momentum (relativistic).
