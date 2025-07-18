@@ -156,6 +156,9 @@ program generate_distribution
   character(500) :: runname
   !! String parameter for input file.
 
+  external dgama
+  double precision :: dgama
+
   pi = atan(1.d0)*4.d0
 
   call read_in_params
