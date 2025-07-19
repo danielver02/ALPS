@@ -123,6 +123,10 @@ program generate_distribution
   double precision :: maxP
   !! Maximum momentum.
 
+  external dgamma
+  double precision :: dgamma
+  !! Gamma function for normalisation of kappa-distribution. (GNU extension)
+
   double precision :: pi
   !! Pi.
 
@@ -156,8 +160,6 @@ program generate_distribution
   character(500) :: runname
   !! String parameter for input file.
 
-  external dgama
-  double precision :: dgama
 
   pi = atan(1.d0)*4.d0
 
@@ -204,6 +206,7 @@ program generate_distribution
 	  case (2) ! bi-kappa
 	    a = sqrt((2.d0*kappa(is)-3.d0)/(2.d0*kappa(is)))
 	    norm = 1.d0/((ms(is) * beta * tau(is) * pi * kappa(is))**(3.d0/2.d0)*alph(is) )
+       ! dgamma is the GNU double precision GAMMA-function:
 	    norm = norm*dgamma(kappa(is)+1.d0)/(dgamma(kappa(is)-0.5d0)*a**3)
 
       if (autoscale(is)) then

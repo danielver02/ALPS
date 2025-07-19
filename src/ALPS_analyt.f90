@@ -954,7 +954,7 @@ subroutine output_fit(qualitytotal)
 	double precision :: dppar
 	!! Step size in ppar for integration of fit result.
 
-	double precision :: dgamma
+	double precision :: dgamma_rel
 	!! Step size in gamma for integration of relativistic fit result.
 
 	double precision :: dpparbar
@@ -1038,7 +1038,7 @@ subroutine output_fit(qualitytotal)
 				endif
 		 enddo
 
-		dgamma = gamma_rel(sproc_rel,2,2)-gamma_rel(sproc_rel,1,2)
+		dgamma_rel = gamma_rel(sproc_rel,2,2)-gamma_rel(sproc_rel,1,2)
 		dpparbar = pparbar_rel(sproc_rel,2,2)-pparbar_rel(sproc_rel,2,1)
 
 		do igamma=0,ngamma
@@ -1055,15 +1055,15 @@ subroutine output_fit(qualitytotal)
 
 						  integrate = integrate + &
                      gamma_rel(is_rel,igamma,ipparbar) * real(eval_fit(is,igamma,ppar_comp)) * &
-                     2.d0 * pi * dgamma * dpparbar * (ms(is) / vA)**3
+                     2.d0 * pi * dgamma_rel * dpparbar * (ms(is) / vA)**3
 
         charge(is) = charge(is) + &
              qs(is)* ns(is)* gamma_rel(is_rel,igamma,ipparbar) * real(eval_fit(is,igamma,ppar_comp)) * &
-             2.d0 * pi * dgamma * dpparbar * (ms(is) / vA)**3
+             2.d0 * pi * dgamma_rel * dpparbar * (ms(is) / vA)**3
 
         current(is) = current(is) + &
              (ppar_comp/ms(is))*qs(is)* ns(is)* real(eval_fit(is,igamma,ppar_comp)) * &
-             2.d0 * pi * dgamma * dpparbar * (ms(is) / vA)**3
+             2.d0 * pi * dgamma_rel * dpparbar * (ms(is) / vA)**3
 
 			endif
 		 enddo

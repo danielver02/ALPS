@@ -81,7 +81,7 @@ subroutine derivative_f0_rel(is,is_rel)
     double precision :: gamma_max_use
     !! Maximum usable value of \(\Gamma\).
 
-    double precision :: dgamma
+    double precision :: dgamma_rel
     !! Infinitesimal step in \(\Gamma\).
 
     double precision :: dpparbar
@@ -195,14 +195,14 @@ subroutine derivative_f0_rel(is,is_rel)
 
       integrate = 0.d0
 
-      dgamma=gamma_rel(is_rel,2,2)-gamma_rel(is_rel,1,2)
+      dgamma_rel=gamma_rel(is_rel,2,2)-gamma_rel(is_rel,1,2)
       dpparbar=pparbar_rel(is_rel,2,2)-pparbar_rel(is_rel,2,1)
         do igamma = 0, ngamma
              do ipparbar = 0, npparbar
               if(f0_rel(is_rel,igamma,ipparbar).GT.-1.d0) then
                 integrate = integrate + &
                      gamma_rel(is_rel,igamma,ipparbar) * f0_rel(is_rel,igamma,ipparbar) * &
-                     2.d0 * pi * dgamma * dpparbar * (ms(is) / vA)**3
+                     2.d0 * pi * dgamma_rel * dpparbar * (ms(is) / vA)**3
                 endif
              enddo
         enddo
@@ -477,7 +477,7 @@ double complex function integrate_res_rel(om,nn,mode)
 	integer :: sproc_rel
   !! is_rel of the current process.
 
-  double precision :: dgamma
+  double precision :: dgamma_rel
   !! Infinitesimal step in \(\Gamma\).
 
   double precision :: dpparbar
@@ -491,7 +491,7 @@ double complex function integrate_res_rel(om,nn,mode)
 
 	call determine_sproc_rel(sproc_rel)
 
-	dgamma = gamma_rel(sproc_rel,2,2)-gamma_rel(sproc_rel,1,2)
+	dgamma_rel = gamma_rel(sproc_rel,2,2)-gamma_rel(sproc_rel,1,2)
 	dpparbar = pparbar_rel(sproc_rel,2,2)-pparbar_rel(sproc_rel,2,1)
 
 
@@ -504,7 +504,7 @@ double complex function integrate_res_rel(om,nn,mode)
 	igamma = ngamma - 1
 	integrate_res_rel = integrate_res_rel + integrate_resU_rel(sproc_rel,om,nn,mode,igamma)
 
-	integrate_res_rel = integrate_res_rel * dgamma * 0.25d0
+	integrate_res_rel = integrate_res_rel * dgamma_rel * 0.25d0
 
 	return
 
@@ -559,7 +559,7 @@ double complex function integrate_resU_rel(sproc_rel,om,nn,mode,igamma)
   integer :: ipparbar_upper
   !! Upper boundary of resonance range in relativistic parallel momentum.
 
-  double precision :: dgamma
+  double precision :: dgamma_rel
   !! Infinitesimal step in \(\Gamma\).
 
   double precision :: dpparbar
@@ -584,7 +584,7 @@ double complex function integrate_resU_rel(sproc_rel,om,nn,mode,igamma)
 	ii=cmplx(0.d0,1.d0,kind(1.d0))
 
 
-	dgamma = gamma_rel(sproc_rel,2,2)-gamma_rel(sproc_rel,1,2)
+	dgamma_rel = gamma_rel(sproc_rel,2,2)-gamma_rel(sproc_rel,1,2)
 	dpparbar = pparbar_rel(sproc_rel,2,2)-pparbar_rel(sproc_rel,2,1)
 
 	! Determine the position of the resonance (i.e., the step LEFT of it):
@@ -1025,7 +1025,7 @@ double complex function landau_integrate_rel(om, nn, mode)
  	 integer :: sproc_rel
    !! is_rel of the current process.
 
-   double precision :: dgamma
+   double precision :: dgamma_rel
    !! Infinitesimal step in \(\Gamma\).
 
    double precision :: dpparbar
@@ -1053,7 +1053,7 @@ double complex function landau_integrate_rel(om, nn, mode)
 
 	call determine_sproc_rel(sproc_rel)
 
-	dgamma = gamma_rel(sproc_rel,2,2)-gamma_rel(sproc_rel,1,2)
+	dgamma_rel = gamma_rel(sproc_rel,2,2)-gamma_rel(sproc_rel,1,2)
 	dpparbar = pparbar_rel(sproc_rel,2,2)-pparbar_rel(sproc_rel,2,1)
 
 	! Landau contour integral:
@@ -1070,9 +1070,9 @@ double complex function landau_integrate_rel(om, nn, mode)
       if (igamma.EQ.(ngamma-1)) h = 0.5d0
 
       if (igamma.EQ.1) then
-        dfgamma_C=(eval_fit(sproc,igamma+1,pparbar_res)-eval_fit(sproc,igamma,pparbar_res))/dgamma
+        dfgamma_C=(eval_fit(sproc,igamma+1,pparbar_res)-eval_fit(sproc,igamma,pparbar_res))/dgamma_rel
       else
-          dfgamma_C=(eval_fit(sproc,igamma+1,pparbar_res)-eval_fit(sproc,igamma-1,pparbar_res))/(2.d0*dgamma)
+          dfgamma_C=(eval_fit(sproc,igamma+1,pparbar_res)-eval_fit(sproc,igamma-1,pparbar_res))/(2.d0*dgamma_rel)
       endif
 
       dfpparbar_C=(eval_fit(sproc,igamma,pparbar_res+dpparbar)-eval_fit(sproc,igamma,pparbar_res-dpparbar))/(2.d0*dpparbar)
@@ -1084,7 +1084,7 @@ double complex function landau_integrate_rel(om, nn, mode)
 
 	enddo
 
-	landau_integrate_rel = landau_integrate_rel * ii * dgamma * pi * 2.d0 * pi &
+	landau_integrate_rel = landau_integrate_rel * ii * dgamma_rel * pi * 2.d0 * pi &
 		* (qs(sproc)*vA/(kpar*ms(sproc))) * (ms(sproc)/vA)**3
 
 	return
@@ -1118,7 +1118,7 @@ double complex function int_ee_rel(om)
   integer :: ipparbar_upper
   !! Upper boundary of resonance range in relativistic parallel momentum.
 
-  double precision :: dgamma
+  double precision :: dgamma_rel
   !! Infinitesimal step in \(\Gamma\).
 
   double precision :: dpparbar
@@ -1133,7 +1133,7 @@ double complex function int_ee_rel(om)
 
 	call determine_sproc_rel(sproc_rel)
 
-	dgamma = gamma_rel(sproc_rel,2,2)-gamma_rel(sproc_rel,1,2)
+	dgamma_rel = gamma_rel(sproc_rel,2,2)-gamma_rel(sproc_rel,1,2)
 	dpparbar = pparbar_rel(sproc_rel,2,2)-pparbar_rel(sproc_rel,2,1)
 
 
@@ -1207,7 +1207,7 @@ double complex function int_ee_rel(om)
 
 
 	int_ee_rel = int_ee_rel * 2.d0 * pi * qs(sproc) / (ms(sproc))
-	int_ee_rel = int_ee_rel * dgamma * dpparbar * 0.25d0 * (ms(sproc)/vA)**3
+	int_ee_rel = int_ee_rel * dgamma_rel * dpparbar * 0.25d0 * (ms(sproc)/vA)**3
 
 
 	return
