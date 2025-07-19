@@ -156,8 +156,6 @@ program generate_distribution
   character(500) :: runname
   !! String parameter for input file.
 
-  external dgama
-  double precision :: dgama
 
   pi = atan(1.d0)*4.d0
 
@@ -204,7 +202,8 @@ program generate_distribution
 	  case (2) ! bi-kappa
 	    a = sqrt((2.d0*kappa(is)-3.d0)/(2.d0*kappa(is)))
 	    norm = 1.d0/((ms(is) * beta * tau(is) * pi * kappa(is))**(3.d0/2.d0)*alph(is) )
-	    norm = norm*dgamma(kappa(is)+1.d0)/(dgamma(kappa(is)-0.5d0)*a**3)
+       ! gamma(x) is the GAMMA-function:
+	    norm = norm*gamma(kappa(is)+1.d0)/(gamma(kappa(is)-0.5d0)*a**3)
 
       if (autoscale(is)) then
 		      pperp_max = maxP*sqrt(ms(is) * tau(is) * alph(is)) * sqrt((kappa(is)-1.5d0)/(kappa(1)-1.5d0))
