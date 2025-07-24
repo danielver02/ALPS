@@ -180,8 +180,8 @@ contains
         ! Remember that the Bessel functions give I_n(z)*exp(-z), so the factor exp(-z) is absorbed.
          Y(i,k)=Y(i,k)+Ynew(i,k)
          if (n== 0) Y0(i,k)=Ynew(i,k)
-         if (n==-1) Y1(i,k)=Y1(i,k)+Ynew(i,k)
-         if (n== 1) Yn1(i,k)=Yn1(i,k)+Ynew(i,k)
+         if (n== 1) Y1(i,k)=Y1(i,k)+Ynew(i,k)
+         if (n==-1) Yn1(i,k)=Yn1(i,k)+Ynew(i,k)
       enddo
      enddo
   enddo
