@@ -21,13 +21,17 @@ Daniel Verscharen  (d.verscharen@ucl.ac.uk)
 
 ## 1. Before getting started
 
-Before starting with the steps described in this tutorial, we recommend that you familiarise yourself with the code paper.
+Before starting with the steps described in this tutorial, we recommend that you familiarise yourself with the code papers
 
 [Verscharen, D., Klein, K. G., Chandran, B. D. G., Stevens, M. L., Salem, C. S.,
 and Bale, S. D.: ALPS: the Arbitrary Linear Plasma Solver, J. Plasma Phys. 84,
 905840403, 2018, doi: 10.1017/S0022377818000739](http://doi.org/10.1017/S0022377818000739)
 
-You don't need to go through all details, but it is certainly helpful to know what ALPS does and doesn't calculate. The code paper also explains the numerical techniques used in the code, and the [ALPS Documentation](http://alps.space) often refers explicitly to equations and sections in the code paper. We also recommend checking the [Readme](../README.md) file.
+and
+
+[Klein, K. G. and Verscharen, D.: The Dielectric Response of Plasmas with Arbitrary Gyrotropic Velocity Distributions, Phys. Plasmas 32, 092104, 2025, doi: 10.1063/5.0286477](http://doi.org/10.1063/5.0286477)
+
+You don't need to go through all details, but it is certainly helpful to know what ALPS does and doesn't calculate. The 2018 paper also explains the numerical techniques used in the code, and the [ALPS Documentation](http://alps.space) often refers explicitly to equations and sections in the code paper. We also recommend checking the [Readme](../README.md) file.
 
 ## 2. Installing ALPS
 
