@@ -31,6 +31,7 @@ functions supporting waves with any direction of propagation with respect to
 the background magnetic field.
 
 If you use the code for a science publication,
+
 1. please provide the code website [github.com/danielver02/ALPS](https://github.com/danielver02/ALPS) in the acknowledgements,
 2. cite the DOI of the code:
 ```
@@ -55,6 +56,10 @@ and Bale, S. D.: ALPS: the Arbitrary Linear Plasma Solver, J. Plasma Phys. 84,
 905840403, 2018, doi: 10.1017/S0022377818000739](http://doi.org/10.1017/S0022377818000739)
 
 The documentation of the code can be found on [alps.space](http://alps.space).
+
+Details on updates to the code can be found in:
+
+[Klein, K. G. and Verscharen, D.: The Dielectric Response of Plasmas with Arbitrary Gyrotropic Velocity Distributions, Phys. Plasmas 32, 092104, 2025, doi: 10.1063/5.0286477](http://doi.org/10.1063/5.0286477)
 
 ## 2. Acknowledgements
 
