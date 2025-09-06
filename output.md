@@ -21,8 +21,8 @@ The data is ordered in columns as
 5. Im $[|\mathcal{D}|]$  
 
 The *&maps_1* namelist in *filename*.in determines the structure of *filename*.map.  
-The range of $\omega_{\textrm{r}}/\Omega_p$ is from `omi` to `omi` with `nr` steps. Logorithmic or linear spacing is selected with `loggridw`.
-The range of $\gamma_{\textrm{r}}/\Omega_p$ is from `gami` to `gami` with `ni` steps. Logorithmic or linear spacing is selected with `loggridg`.
+The range of $\omega_{\textrm{r}}/\Omega_{ref}$ is from `omi` to `omi` with `nr` steps. Logorithmic or linear spacing is selected with `loggridw`.
+The range of $\gamma_{\textrm{r}}/\Omega_{ref}$ is from `gami` to `gami` with `ni` steps. Logorithmic or linear spacing is selected with `loggridg`.
 
 ## *filename*.roots
 
@@ -30,8 +30,8 @@ Identified solutions to the dispersion relation $|\mathcal{D}|  =0$, calculated 
 
 The data is ordered as  
 1. Solution number
-2. $\omega_r$  
-3. $\gamma$   
+2. $\omega_r/\Omega_{ref}$  
+3. $\gamma/Omega_{ref}$   
 4. $\log_{10} |\mathcal{D}|$  
 5. Re $[|\mathcal{D}|]$  
 6. Im $[|\mathcal{D}|]$  
@@ -46,10 +46,10 @@ The complex frequencies associated with solution *m* calculated from `om_scan`
 in the *&scan_input_l* namelist.
 
 The data is ordered as  
-1. $k_\perp d_p$
-2. $k_\parallel d_p$  
-3. $\omega_{\textrm{r}}/\Omega_p$   
-4. $\gamma/\Omega_p$   
+1. $k_\perp d_{ref}$
+2. $k_\parallel d_{ref}$  
+3. $\omega_{\textrm{r}}/\Omega_{ref}$   
+4. $\gamma/\Omega_{ref}$   
 
 See the *&scan_input* namelist description in the Quick Guide for details on determining the kind of wavevector scan.  
 This same data structure is preserved for the output from `om_double_scan`.
@@ -60,10 +60,10 @@ The eigenfunctions associated with solution *m* calculated from `om_scan` when `
 in the *&scan_input_l* namelist.
 
 The data is ordered as  
-1. $k_\perp d_p$
-2. $k_\parallel d_p$  
-3. $\omega_{\textrm{r}}/\Omega_p$   
-4. $\gamma/\Omega_p$   
+1. $k_\perp d_{ref}$
+2. $k_\parallel d_{ref}$  
+3. $\omega_{\textrm{r}}/\Omega_{ref}$   
+4. $\gamma/\Omega_{ref}$   
 5. Re $[E_x]$ 
 6. Im $[E_x]$ 
 7. Re $[E_y]$ 
@@ -93,17 +93,17 @@ The heating rates associated with solution *m* calculated from `om_scan` when `h
 in the *&scan_input_l* namelist.
 
 The data is ordered as  
-1. $k_\perp d_p$
-2. $k_\parallel d_p$  
-3. $\omega_{\textrm{r}}/\Omega_p$   
-4. $\gamma/\Omega_p$   
+1. $k_\perp d_{ref}$
+2. $k_\parallel d_{ref}$  
+3. $\omega_{\textrm{r}}/\Omega_{ref}$   
+4. $\gamma/\Omega_{ref}$   
 5. [+(is-1)] $\gamma_{is}/\omega_{\textrm{r}}$
 
 This same data structure is preserved for the output from `om_double_scan`.
 
 ## *filename*.heat_mech*scan_type_l*.root_m
 
-The heating rates associated with Landau damping, Transit Time damping, and the $n=\pm 1$ cyclotron resonance are computed following Huang et al 2024 JPP and expressed in Appendix C of [Klein & Verscharen 2025](https://arxiv.org/abs/2506.16431). The values associated with solution *m* are calculated in the routine `om_scan` when `heating` is set to .true. in the *&scan_input_l* namelist.
+The heating rates associated with Landau damping, Transit Time damping, and the $n=\pm 1$ cyclotron resonance are computed following [Huang et al 2024 JPP](https://www.cambridge.org/core/journals/journal-of-plasma-physics/article/velocityspace-signature-of-transittime-damping/60F34E118AFFC3701071477C52A81174) and expressed in Appendix C of [Klein & Verscharen 2025 PoP](https://doi.org/10.1063/5.0286477). The values associated with solution *m* are calculated in the routine `om_scan` when `heating` is set to .true. in the *&scan_input_l* namelist.
 
 The Transit time damping terms given by the sum of $\gamma_{is}^{yy}/\omega_{\textrm{r}}$ and $\gamma_{is}^{yz}/\omega_{\textrm{r}}$.
 The Landau damping terms by the sum of $\gamma_{is}^{zy}/\omega_{\textrm{r}}$ and $\gamma_{is}^{zz}/\omega_{\textrm{r}}$.
@@ -112,10 +112,10 @@ These calculations are accurate in weak damping limit $\gamma < \omega_{\textrm{
 
 
 The data is ordered as  
-1. $k_\perp d_p$
-2. $k_\parallel d_p$  
-3. $\omega_{\textrm{r}}/\Omega_p$   
-4. $\gamma/\Omega_p$   
+1. $k_\perp d_{ref}$
+2. $k_\parallel d_{ref}$  
+3. $\omega_{\textrm{r}}/\Omega_{ref}$   
+4. $\gamma/\Omega_{ref}$   
 5. [+4(is-1)] $\gamma_{is}^{TTD}/\omega_{\textrm{r}}$
 6. [+4(is-1)] $\gamma_{is}^{LD}/\omega_{\textrm{r}}$
 7. [+4(is-1)] $\gamma_{is}^{n=+1}/\omega_{\textrm{r}}$
