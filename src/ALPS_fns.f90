@@ -573,9 +573,9 @@ end subroutine derivative_f0
           eps(2,3) = eps(2,3) + chi(is,2,3)
 
           !Trouble shooting electron firehose
-          !write(*,'(6es14.4,i3)')chi0(is,1,1),chi0(is,1,2),chi0(is,1,3),is
-          !write(*,'(6es14.4,i3)')chi0(is,2,1),chi0(is,2,2),chi0(is,2,3),is
-          !write(*,'(6es14.4,i3)')chi0(is,3,1),chi0(is,3,2),chi0(is,3,3),is
+          write(*,'(6es14.4,i3)')chi0(is,1,1),chi0(is,1,2),chi0(is,1,3),is
+          write(*,'(6es14.4,i3)')chi0(is,2,1),chi0(is,2,2),chi0(is,2,3),is
+          write(*,'(6es14.4,i3)')chi0(is,3,1),chi0(is,3,2),chi0(is,3,3),is
 
        enddo
 
@@ -3651,16 +3651,22 @@ subroutine map_search
            wi=gami+di*(1.d0*(ii-1))
         endif
         !!check
-        !if (proc0.and.writeOut)&
-        !     write(*,'(a,es11.4)')' gamma = ',wi
+        if (proc0.and.writeOut)&
+             write(*,'(a,es11.4)')' gamma = ',wi
 
         omega=cmplx(wr,wi,kind(1.d0))
         om(ir,ii)=omega
         cal(ir,ii)=disp(omega)
-        !!check
-        !if (proc0.and.writeOut)&
-        !     write(*,'(4es13.6)')omega,cal(ir,ii)
         val(ir,ii)=abs(cal(ir,ii))
+        !check
+        !if (proc0.and.writeOut)&
+        !     write(*,'(5es13.6)')omega,cal(ir,ii),val(ir,ii)
+
+        if (proc0.and.writeOut) then
+           write(*,'(a,2es14.6,a)')'disp=(',cal(ir,ii),')'
+           write(*,'(a,2es14.6)')'|disp=|',val(ir,ii)
+
+        endif
 
         if (proc0) then
            tmp=cal(ir,ii)
