@@ -48,11 +48,11 @@ ALPS calculates the linear Vlasov-Maxwell dispersion relation for a plasma with 
 
 All f0-tables for ALPS are stored in the folder `./distribution` within the ALPS directory structure. The format of f0-tables is a simple ASCII table with three columns. The columns can be separated with tabs or spaces, but don't add empty lines in the file. The three columns have the following meanings:
 
-1. Perpendicular momentum $p_{\perp}$ normalised to $m_{\mathrm p}v_{\mathrm A}$
-2. Parallel momentum $p_{\parallel}$ normalised to $m_{\mathrm p}v_{\mathrm A}$
-3. Value of the background distribution function $f_{0j}$ at momentum $(p_{\perp},p_{\parallel})$ normalised to $(m_{\mathrm p}v_{\mathrm A})^{-3}$
+1. Perpendicular momentum $p_{\perp}$ normalised to $m_{\mathrm ref}v_{\mathrm A}$
+2. Parallel momentum $p_{\parallel}$ normalised to $m_{\mathrm ref}v_{\mathrm A}$
+3. Value of the background distribution function $f_{0j}$ at momentum $(p_{\perp},p_{\parallel})$ normalised to $(m_{\mathrm ref}v_{\mathrm A})^{-3}$
 
-In these definitions, $m_{\mathrm p}$ is the proton mass and $v_{\mathrm A}$ is the proton Alfvén speed. The distribution function $f_{0j}$ must be normalised to one if integrated over cylindrical momentum space.
+In these definitions, $m_{\mathrm ref}$ is the proton mass and $v_{\mathrm A}$ is the proton Alfvén speed. The distribution function $f_{0j}$ must be normalised to one if integrated over cylindrical momentum space.
 
 ### 3.2 Generating f0-tables
 
@@ -286,12 +286,12 @@ The file has the following format:
 
 The format of the columns is as follows:
 
-1. Wavenumber $k_{\perp}$ perpendicular to the background magnetic field in units of $\Omega_{\mathrm p}/v_{\mathrm A}$
-2. Wavenumber $k_{\parallel}$ parallel to the background magnetic field in units of $\Omega_{\mathrm p}/v_{\mathrm A}$
-3. Real part of the wave frequency $\omega$ in units of $\Omega_{\mathrm p}$
-4. Imaginary part of the wave frequency $\omega$ in units of $\Omega_{\mathrm p}$
+1. Wavenumber $k_{\perp}$ perpendicular to the background magnetic field in units of $\Omega_{\mathrm ref}/v_{\mathrm A}$
+2. Wavenumber $k_{\parallel}$ parallel to the background magnetic field in units of $\Omega_{\mathrm ref}/v_{\mathrm A}$
+3. Real part of the wave frequency $\omega$ in units of $\Omega_{\mathrm ref}$
+4. Imaginary part of the wave frequency $\omega$ in units of $\Omega_{\mathrm ref}$
 
-In these definitions, $\Omega_{\mathrm p}$ is the proton gyro-frequency.
+In these definitions, $\Omega_{\mathrm ref}$ is the gyro-frequency of the reference species, which is the first species listed in the input file. This is typically set to be the proton distribution.
 
 Congratulations! You have found the solutions to the Maxwellian example case for the ion-cyclotron wave. Now you can also experiment with the other test cases in the folders `./distribution` and `./tests`. The code also includes a full test suite which you can launch with
 
@@ -321,9 +321,9 @@ Let's have a look at the file `test_interp_coarse.array`. This file includes a t
 
 The overall format is the same as in the f0-table files above in terms of the meaning of the columns:
 
-1. Perpendicular momentum $p_{\perp}$ normalised to $m_{\mathrm p}v_{\mathrm A}$
-2. Parallel momentum $p_{\parallel}$ normalised to $m_{\mathrm p}v_{\mathrm A}$
-3. Value of the background distribution function $f_{0j}$ at momentum $(p_{\perp},p_{\parallel})$ normalised to $(m_{\mathrm p}v_{\mathrm A})^{-3}$
+1. Perpendicular momentum $p_{\perp}$ normalised to $m_{\mathrm ref}v_{\mathrm A}$
+2. Parallel momentum $p_{\parallel}$ normalised to $m_{\mathrm ref}v_{\mathrm A}$
+3. Value of the background distribution function $f_{0j}$ at momentum $(p_{\perp},p_{\parallel})$ normalised to $(m_{\mathrm ref}v_{\mathrm A})^{-3}$
 
 Now let's look at the input file `test_interp.in` for the interpolation routine. This file includes a number of comments to help you with the setting up of the interpolation parameters. The file asks the interpolation routine to take the irregular table from `test_interp_coarse.array` and to interpolate it onto a grid in the ALPS format with `nperp=50` and `npar=100`. If needed, the code can also re-normalise and scale the distribution function depending on your needs.
 

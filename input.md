@@ -10,10 +10,10 @@ The following namelists and associated input parameters are read in by ALPS from
 General system parameters.
 
 **`kperp`**  
-Initial perpendicular wavevector $k_{\perp} d_{p}$.
+Initial perpendicular wavevector $k_{\perp} d_{ref}$.
 
 **`kpar`**  
-Initial parallel wavevector $k_{\parallel} d_{p}$.
+Initial parallel wavevector $k_{\parallel} d_{ref}$.
 
 **`nspec`**   
 Number of plasma species.
@@ -45,7 +45,7 @@ Relativistic momentum space resolution, $N_{\Gamma}$.
 Relativistic parallel momentum space resolution, $N_{\bar{p}_{\parallel}}$.
 
 **`vA`**  
-Reference Alfven velocity, normalized to the speed of light, $v_{A}/c$.
+Reference Alfven velocity, normalized to the speed of light, $v_{A,ref}/c$.
 
 **`arrayName`**  
 Name of input array, located in 'distribution' folder.
@@ -127,10 +127,10 @@ Only used when `use_map`=.false.
 Need to have number of name lists equal to `nroots`.
 
 **`g_om`**  
-Guess for real solution $\omega_{r}/\Omega_{p} $.
+Guess for real solution $\omega_{r}/\Omega_{ref} $.
 
 **`g_gam`**  
-Guess for imaginary solution $\gamma/\Omega_{p} $.
+Guess for imaginary solution $\gamma/\Omega_{ref} $.
 
 
 ### *&maps_1*  
@@ -138,43 +138,44 @@ Range of complex frequencies for map_scan subroutine.
 Only used when `use_map`=.true.
 
 **`loggridw`**  
-Linear (F) or Log (T) spacing for $\omega_{r}/\Omega_{p}$ map search.
+Linear (F) or Log (T) spacing for $\omega_{r}/\Omega_{ref}$ map search.
 Spacing automatically calculated between `omi` and `omf`.  
 
 **`loggridg`**  
-Linear (F) or Log (T) spacing for $\gamma/\Omega_{p}$ map search.
+Linear (F) or Log (T) spacing for $\gamma/\Omega_{ref}$ map search.
 Spacing automatically calculated between `gami` and `gamf`  
 
 **`omi`**  
-Smallest $\omega_{r}/\Omega_{p}$ value for complex map search.
+Smallest $\omega_{r}/\Omega_{ref}$ value for complex map search.
 
 **`omf`**  
-Largest $\omega_{r}/\Omega_{p}$ value for complex map search.
+Largest $\omega_{r}/\Omega_{ref}$ value for complex map search.
 
 **`gami`**      
-Smallest $\gamma/\Omega_{p}$ value for complex map search.
+Smallest $\gamma/\Omega_{ref}$ value for complex map search.
 
 **`gamf`**  
-Largest $\gamma/\Omega_{p}$ value for complex map search.
+Largest $\gamma/\Omega_{ref}$ value for complex map search.
 
 **`ni`**  
 Number of $\gamma/\Omega_{p}$ points in frequency grid.
 
 **`nr`**  
-Number of $\omega_{r}/\Omega_{p}$ points in frequency grid.
+Number of $\omega_{r}/\Omega_{ref}$ points in frequency grid.
 
 
 ### *&spec_j*  
 Species parameters list for distribution $f_{j}$.
+The first species is set as the reference.
 
 **`nn`**  
-Relative density $n_{j}/n_{p}$.
+Relative density $n_{j}/n_{ref}$.
 
 **`qq`**  
-Relative charge $q_{j}/q_{p}$.
+Relative charge $q_{j}/q_{ref}$.
 
 **`mm`**  
-Relative mass $m_{j}/m_{p}$.
+Relative mass $m_{j}/m_{ref}$.
 
 **`ff`**  
 Number of fitted functions for analytical continuation calculation.
@@ -255,7 +256,7 @@ $\beta_{\parallel,j}$ of bi-Maxwellian distribution $f_{j}$. If this variable is
 $T_{\perp,j}/T_{\parallel,j}$ of bi-Maxwellian distribution $f_{j}$.
 
 **`bM_pdrifts`**  
-Relative drift of bi-Maxwellian distribution $f_{j}$ or the cold plasma species in units of $m_{p} v_{A,p}$.
+Relative drift of bi-Maxwellian distribution $f_{j}$ or the cold plasma species in units of $m_{ref} v_{A,ref}$.
 
 
 ### *&poly_spec_j*
