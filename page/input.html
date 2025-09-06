@@ -127,9 +127,9 @@
 <h3><em>&amp;system</em></h3>
 <p>General system parameters.</p>
 <p><strong><code>kperp</code></strong><br>
-Initial perpendicular wavevector $k_{\perp} d_{p}$.</p>
+Initial perpendicular wavevector $k_{\perp} d_{ref}$.</p>
 <p><strong><code>kpar</code></strong><br>
-Initial parallel wavevector $k_{\parallel} d_{p}$.</p>
+Initial parallel wavevector $k_{\parallel} d_{ref}$.</p>
 <p><strong><code>nspec</code></strong> <br>
 Number of plasma species.</p>
 <p><strong><code>nroots</code></strong> <br>
@@ -153,7 +153,7 @@ Relativistic momentum space resolution, $N_{\Gamma}$.</p>
 <p><strong><code>npparbar</code></strong><br>
 Relativistic parallel momentum space resolution, $N_{\bar{p}_{\parallel}}$.</p>
 <p><strong><code>vA</code></strong><br>
-Reference Alfven velocity, normalized to the speed of light, $v_{A}/c$.</p>
+Reference Alfven velocity, normalized to the speed of light, $v_{A,ref}/c$.</p>
 <p><strong><code>arrayName</code></strong><br>
 Name of input array, located in 'distribution' folder.</p>
 <p><strong><code>Bessel_zero</code></strong><br>
@@ -214,38 +214,39 @@ Must be set to 2 for <code>scan_option</code>=2.  </p>
 Only used when <code>use_map</code>=.false.<br>
 Need to have number of name lists equal to <code>nroots</code>.</p>
 <p><strong><code>g_om</code></strong><br>
-Guess for real solution $\omega_{r}/\Omega_{p} $.</p>
+Guess for real solution $\omega_{r}/\Omega_{ref} $.</p>
 <p><strong><code>g_gam</code></strong><br>
-Guess for imaginary solution $\gamma/\Omega_{p} $.</p>
+Guess for imaginary solution $\gamma/\Omega_{ref} $.</p>
 <h3><em>&amp;maps_1</em></h3>
 <p>Range of complex frequencies for map_scan subroutine.<br>
 Only used when <code>use_map</code>=.true.</p>
 <p><strong><code>loggridw</code></strong><br>
-Linear (F) or Log (T) spacing for $\omega_{r}/\Omega_{p}$ map search.
+Linear (F) or Log (T) spacing for $\omega_{r}/\Omega_{ref}$ map search.
 Spacing automatically calculated between <code>omi</code> and <code>omf</code>.  </p>
 <p><strong><code>loggridg</code></strong><br>
-Linear (F) or Log (T) spacing for $\gamma/\Omega_{p}$ map search.
+Linear (F) or Log (T) spacing for $\gamma/\Omega_{ref}$ map search.
 Spacing automatically calculated between <code>gami</code> and <code>gamf</code>  </p>
 <p><strong><code>omi</code></strong><br>
-Smallest $\omega_{r}/\Omega_{p}$ value for complex map search.</p>
+Smallest $\omega_{r}/\Omega_{ref}$ value for complex map search.</p>
 <p><strong><code>omf</code></strong><br>
-Largest $\omega_{r}/\Omega_{p}$ value for complex map search.</p>
+Largest $\omega_{r}/\Omega_{ref}$ value for complex map search.</p>
 <p><strong><code>gami</code></strong>    <br>
-Smallest $\gamma/\Omega_{p}$ value for complex map search.</p>
+Smallest $\gamma/\Omega_{ref}$ value for complex map search.</p>
 <p><strong><code>gamf</code></strong><br>
-Largest $\gamma/\Omega_{p}$ value for complex map search.</p>
+Largest $\gamma/\Omega_{ref}$ value for complex map search.</p>
 <p><strong><code>ni</code></strong><br>
 Number of $\gamma/\Omega_{p}$ points in frequency grid.</p>
 <p><strong><code>nr</code></strong><br>
-Number of $\omega_{r}/\Omega_{p}$ points in frequency grid.</p>
+Number of $\omega_{r}/\Omega_{ref}$ points in frequency grid.</p>
 <h3><em>&amp;spec_j</em></h3>
-<p>Species parameters list for distribution $f_{j}$.</p>
+<p>Species parameters list for distribution $f_{j}$.
+The first species is set as the reference.</p>
 <p><strong><code>nn</code></strong><br>
-Relative density $n_{j}/n_{p}$.</p>
+Relative density $n_{j}/n_{ref}$.</p>
 <p><strong><code>qq</code></strong><br>
-Relative charge $q_{j}/q_{p}$.</p>
+Relative charge $q_{j}/q_{ref}$.</p>
 <p><strong><code>mm</code></strong><br>
-Relative mass $m_{j}/m_{p}$.</p>
+Relative mass $m_{j}/m_{ref}$.</p>
 <p><strong><code>ff</code></strong><br>
 Number of fitted functions for analytical continuation calculation.</p>
 <p><strong><code>relat</code></strong><br>
@@ -322,7 +323,7 @@ $\beta_{\parallel,j}$ of bi-Maxwellian distribution $f_{j}$. If this variable is
 <p><strong><code>bM_alphas</code></strong><br>
 $T_{\perp,j}/T_{\parallel,j}$ of bi-Maxwellian distribution $f_{j}$.</p>
 <p><strong><code>bM_pdrifts</code></strong><br>
-Relative drift of bi-Maxwellian distribution $f_{j}$ or the cold plasma species in units of $m_{p} v_{A,p}$.</p>
+Relative drift of bi-Maxwellian distribution $f_{j}$ or the cold plasma species in units of $m_{ref} v_{A,ref}$.</p>
 <h3><em>&amp;poly_spec_j</em></h3>
 <p>Input for the polynomial representation of the input distribution for the analytical continuation.
 Only used if <code>AC_method=2</code>.</p>
