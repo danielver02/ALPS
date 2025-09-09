@@ -122,7 +122,7 @@
     <div class="col-9" id='text'>
       <h1>ALPS Input</h1>
 <p>This is a reference for the key input parameters used by ALPS.</p>
-<h2>Namelists in input files.</h2>
+<h2>Namelists in execution input files.</h2>
 <p>The following namelists and associated input parameters are read in by ALPS from the input file.</p>
 <h3><em>&amp;system</em></h3>
 <p>General system parameters.</p>
@@ -361,6 +361,55 @@ Resolution between output scan values.</p>
 Calculates heating rates if true.</p>
 <p><strong><code>eigen</code></strong><br>
 Calculates eigenfunctions if true.     </p>
+<h2>Namelists in distribution input files.</h2>
+<p>The following namelists and associated input parameters are read in by the routine <code>generate_distribution</code> from input files. This generates <code>nspec</code> arrays of distributions that are read in by ALPS</p>
+<h3><em>&amp;system</em></h3>
+<p>General system parameters.</p>
+<p><strong><code>nspec</code></strong></p>
+<p>Number of plasma species.</p>
+<p><strong><code>beta</code></strong></p>
+<p>Reference plasma beta.</p>
+<p><strong><code>vA</code></strong></p>
+<p>Reference Alfven velocity, normalized to the speed of light, $v_{A,ref}/c$.</p>
+<p><strong><code>nperp</code></strong>  </p>
+<p>Perpendicular momentum space resolution, $N_{\perp}$.
+The input file will have $N_{\perp}+1$ values spanning parallel momentum space.
+Set the same values of <code>nperp</code> in both the distribution input file and ALPS execution input file.</p>
+<p><strong><code>npar</code></strong>  </p>
+<p>Parallel momentum space resolution, $N_{\parallel}$.
+The input file will have $N_{\parallel}+1$ values spanning parallel momentum space.
+Set the same values of <code>npar</code> in both the distribution input file and ALPS execution input file.</p>
+<p><strong><code>maxP</code></strong></p>
+<p>Maximum value of reference Alfven momentum, $m_{ref} v_{A,ref}$.</p>
+<p><strong><code>writeName</code></strong></p>
+<p>Name of output arrays.</p>
+<h3><em>&amp;spec_j</em></h3>
+<p><strong><code>ms_read</code></strong></p>
+<p>Mass ratio $m_j/m_{ref}$.</p>
+<p><strong><code>taus</code></strong></p>
+<p>Temperature ratio $T_{\parallel,j}/T_{\parallel,ref}$.</p>
+<p><strong><code>alphs</code></strong></p>
+<p>Temperature anisotropy $T_{\perp,j}/T_{\parallel,j}$.</p>
+<p><strong><code>ps</code></strong></p>
+<p>Normalized drift momentum $m_j v_{drift}/m_{ref} v_{A,ref}$.</p>
+<p><strong><code>kappas</code></strong></p>
+<p>$\kappa$ index.
+Only used if <code>distribution</code>=2.</p>
+<p><strong><code>distributions</code></strong></p>
+<p>Type of distribution:</p>
+<ul>
+<li>0: Use distribution from distribution_analyt.</li>
+<li>1: Bi-Maxwellian distribution.</li>
+<li>2: Bi-Kappa distribution.</li>
+<li>3: Anisotropic Juettner distribution.</li>
+<li>4: Bi-Moyal distribution.</li>
+</ul>
+<p><strong><code>autoscaleS</code></strong></p>
+<p>If <code>autoscaleS</code>=.true., define maximum momentum for each array automatically using global value <code>maxP</code>.</p>
+<p><strong><code>maxPperpS</code></strong></p>
+<p>If <code>autoscaleS</code>=.false., force maximum perpendicular momentum for species array.</p>
+<p><strong><code>maxPparS</code></strong></p>
+<p>If <code>autoscaleS</code>=.false., force maximum parallel momentum for species array.</p>
     </div>
   </div>
       <hr>
