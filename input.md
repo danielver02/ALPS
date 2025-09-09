@@ -2,7 +2,7 @@
 
 This is a reference for the key input parameters used by ALPS.
 
-## Namelists in input files.
+## Namelists in execution input files.
 
 The following namelists and associated input parameters are read in by ALPS from the input file.
 
@@ -307,3 +307,91 @@ Calculates heating rates if true.
 
 **`eigen`**  
 Calculates eigenfunctions if true.     
+
+## Namelists in distribution input files.
+
+The following namelists and associated input parameters are read in by the routine `generate_distribution` from input files. This generates `nspec` arrays of distributions that are read in by ALPS
+
+### *&system*
+General system parameters.
+
+**`nspec`**
+
+Number of plasma species.
+
+**`beta`**
+
+Reference plasma beta.
+
+**`vA`**
+
+Reference Alfven velocity, normalized to the speed of light, $v_{A,ref}/c$.
+
+**`nperp`**  
+
+Perpendicular momentum space resolution, $N_{\perp}$.
+The input file will have $N_{\perp}+1$ values spanning parallel momentum space.
+Set the same values of `nperp` in both the distribution input file and ALPS execution input file.
+
+**`npar`**  
+
+Parallel momentum space resolution, $N_{\parallel}$.
+The input file will have $N_{\parallel}+1$ values spanning parallel momentum space.
+Set the same values of `npar` in both the distribution input file and ALPS execution input file.
+
+**`maxP`**
+
+Maximum value of reference Alfven momentum, $m_{ref} v_{A,ref}$.
+
+**`writeName`**
+
+Name of output arrays.
+
+### *&spec_j*
+
+**`ms_read`**
+
+Mass ratio $m_j/m_{ref}$.
+
+**`taus`**
+
+Temperature ratio $T_{\parallel,j}/T_{\parallel,ref}$.
+
+**`alphs`**
+
+Temperature anisotropy $T_{\perp,j}/T_{\parallel,j}$.
+
+**`ps`**
+
+Normalized drift momentum $m_j v_{drift}/m_{ref} v_{A,ref}$.
+
+**`kappas`**
+
+$\kappa$ index.
+Only used if `distribution`=2.
+
+**`distributions`**
+
+Type of distribution:
+
+- 0: Use distribution from distribution_analyt.
+- 1: Bi-Maxwellian distribution.
+- 2: Bi-Kappa distribution.
+- 3: Anisotropic Juettner distribution.
+- 4: Bi-Moyal distribution.
+
+**`autoscaleS`**
+
+If `autoscaleS`=.true., define maximum momentum for each array automatically using global value `maxP`.
+
+**`maxPperpS`**
+
+If `autoscaleS`=.false., force maximum perpendicular momentum for species array.
+
+**`maxPparS`**
+
+If `autoscaleS`=.false., force maximum parallel momentum for species array.
+
+
+
+
