@@ -3,17 +3,25 @@ import json
 import requests
 
 BASE_URL = "https://api.adsabs.harvard.edu/v1"
-ALPS_ADS_BIB_CODE = "2018JPlPh..84d9003V"
 ADS_LIBRARY_ID = "vPWlMyiDRq-YfZ2bGDWS7Q"
 
+BIBCODES = [
+    "2018JPlPh..84d9003V", #2018 JPP
+    "2025PhPl...32i2104K"  #2025 PoP
+]
 
 def query_response() -> requests.Response:
     """Get a response by querying the ADS database for citations of the ALPS code"""
+
+    # build the OR-joined clause:
+    or_clause = " OR ".join(BIBCODES)
+    query = f"citations(bibcode:({or_clause}))"
+    
     response = requests.get(
         url=f"{BASE_URL}/search/query",
         headers={"Authorization": f"Bearer {os.environ['ADS_API_TOKEN']}"},
         params={
-            "q": f"citations(bibcode:{ALPS_ADS_BIB_CODE})",  # Query
+            "q": query,  # Query
             "fl": "bibcode",  # Fields to return
             "rows": 1000  # Max num results to return
         }
