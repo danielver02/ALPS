@@ -519,16 +519,13 @@ contains
           k_0,' to ',swf,' at theta=',theta_0*180.d0/&
           (4.d0*atan(1.d0))
      if (swlog) then
-        scan(is)%diff =(log10(swf*sin(theta_0))-&
-             log10(kperp_last))/(1.d0*ns*nres)
-        scan(is)%diff2=(log10(swf*cos(theta_0))-&
-             log10(kpar_last))/(1.d0*ns*nres)
+        scan(is)%diff =(log10(swf)-log10(k_0))/&
+             (1.d0*ns*nres)
      else
-        scan(is)%diff =(swf*sin(theta_0)-kperp_last)/(1.d0*ns*nres)
-        scan(is)%diff2=(swf*cos(theta_0)-kpar_last )/(1.d0*ns*nres)
+        scan(is)%diff =(swf-k_0)/(1.d0*ns*nres)
      endif
-     kpar_last=swf*cos(theta_0)
-     kperp_last=swf*sin(theta_0)
+     kpar_last=k_0*cos(theta_0)
+     kperp_last=k_0*sin(theta_0)
   case(3)
      !Scan of kperp; kpar constant:
      write(*,'(a,i0,a,es14.4e3,a,es14.4e3)')&

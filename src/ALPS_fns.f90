@@ -2209,6 +2209,9 @@ subroutine om_scan(ik)
   double precision :: k_0
   !! Wavevector magnitude of previous step.
 
+  double precision :: k_tmp
+  !! Temporary value of Wavevector magnitude.
+
   double complex :: omega
   !! Complex wave frequency \(\omega\).
 
@@ -2396,11 +2399,13 @@ subroutine om_scan(ik)
         Deltakstep=theta_1-theta_0
      case (2) ! |k_0| to |k_1| @ constant theta
         if (scan(ik)%log_scan) then
-           kperp=10.d0**(log10(kperp_last)+scan(ik)%diff*it)
-           kpar=10.d0**(log10(kpar_last)+scan(ik)%diff2*it)
+           k_tmp=10.d0**(log10(k_0)+scan(ik)%diff*it)
+           kperp=k_tmp*sin(theta_0)
+           kpar=k_tmp*cos(theta_0)
         else
-           kperp=kperp_last+scan(ik)%diff*it
-           kpar= kpar_last +scan(ik)%diff2*it
+           k_tmp=(k_0)+scan(ik)%diff*it
+           kperp=k_tmp*sin(theta_0)
+           kpar=k_tmp*cos(theta_0)
         endif
         Deltakstep=sqrt(kperp**2+kpar**2)-sqrt(kperp_last**2+kpar_last**2)
      case (3) ! kperp scan
@@ -2909,6 +2914,9 @@ subroutine om_double_scan
   double precision :: k_0
   !! Wavevector magnitude of previous step.
 
+  double precision :: k_tmp
+  !! Temporary value of Wavevector magnitude.
+
   double precision :: theta_i
   !! Wavevector angle of step i.
 
@@ -3144,11 +3152,13 @@ subroutine om_double_scan
         kpar=k_0*cos(theta_1)
      case (2) ! |k_0| to |k_1| @ constant theta
         if (scan(1)%log_scan) then
-           kperp=10.d0**(log10(kperp_last)+scan(1)%diff*it)
-           kpar=10.d0**(log10(kpar_last)+scan(1)%diff2*it)
+           k_tmp=10.d0**(log10(k_0)+scan(1)%diff*it)
+           kperp=k_tmp*sin(theta_0)
+           kpar=k_tmp*cos(theta_0)
         else
-           kperp=kperp_last+scan(1)%diff*it
-           kpar= kpar_last +scan(1)%diff2*it
+           k_tmp=(k_0)+scan(1)%diff*it
+           kperp=k_tmp*sin(theta_0)
+           kpar=k_tmp*cos(theta_0)
         endif
      case (3) ! kperp scan
         if (scan(1)%log_scan) then
@@ -3288,11 +3298,13 @@ subroutine om_double_scan
            Deltakstep=theta_1-theta_i
         case (2) ! |k_0| to |k_1| @ constant theta
            if (scan(2)%log_scan) then
-              kperp=10.d0**(log10(kperpi)+scan(2)%diff*it2)
-              kpar=10.d0**(log10(kpari)+scan(2)%diff2*it2)
+              k_tmp=10.d0**(log10(k_i)+scan(2)%diff*it2)
+              kperp=k_tmp*sin(theta_i)
+              kpar=k_tmp*cos(theta_i)
            else
-              kperp=kperpi+scan(2)%diff*it2
-              kpar= kpari +scan(2)%diff2*it2
+              k_tmp=(k_i)+scan(2)%diff*it2
+              kperp=k_tmp*sin(theta_i)
+              kpar=k_tmp*cos(theta_i)
            endif
            Deltakstep=sqrt(kperp**2+kpar**2)-sqrt(kperpi**2+kpari**2)
         case (3) ! kperp scan
