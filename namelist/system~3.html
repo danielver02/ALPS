@@ -94,8 +94,8 @@
       <div class="col">
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb justify-content-end mb-0">
-                <li class="breadcrumb-item"><a href='../module/alps_io.html'>alps_io</a></li>
-                <li class="breadcrumb-item"><a href='../proc/init_param.html'>init_param</a></li>
+                <li class="breadcrumb-item"><a href='../program/interpolate.html'>interpolate</a></li>
+                <li class="breadcrumb-item"><a href='../proc/read_in_params~2.html'>read_in_params</a></li>
             <li class="breadcrumb-item active" aria-current="page">system</li>
           </ol>
         </nav>
@@ -124,36 +124,21 @@
       </a>
       <div id="vars-0" class="collapse">
         <div class="list-group list-group-flush">
-            <a class="list-group-item" href="../namelist/system~3.html#variable-kperp~4">kperp</a>
-            <a class="list-group-item" href="../namelist/system~3.html#variable-kpar">kpar</a>
-            <a class="list-group-item" href="../namelist/system~3.html#variable-nspec~2">nspec</a>
-            <a class="list-group-item" href="../namelist/system~3.html#variable-nroots~2">nroots</a>
-            <a class="list-group-item" href="../namelist/system~3.html#variable-use_map">use_map</a>
-            <a class="list-group-item" href="../namelist/system~3.html#variable-writeout">writeOut</a>
-            <a class="list-group-item" href="../namelist/system~3.html#variable-nperp~5">nperp</a>
-            <a class="list-group-item" href="../namelist/system~3.html#variable-npar~6">npar</a>
-            <a class="list-group-item" href="../namelist/system~3.html#variable-ngamma~2">ngamma</a>
-            <a class="list-group-item" href="../namelist/system~3.html#variable-npparbar~2">npparbar</a>
-            <a class="list-group-item" href="../namelist/system~3.html#variable-va~2">vA</a>
-            <a class="list-group-item" href="../namelist/system~3.html#variable-arrayname">arrayName</a>
-            <a class="list-group-item" href="../namelist/system~3.html#variable-bessel_zero~2">Bessel_zero</a>
-            <a class="list-group-item" href="../namelist/system~3.html#variable-secant_method">secant_method</a>
-            <a class="list-group-item" href="../namelist/system~3.html#variable-numiter">numiter</a>
-            <a class="list-group-item" href="../namelist/system~3.html#variable-kperp_norm">kperp_norm</a>
-            <a class="list-group-item" href="../namelist/system~3.html#variable-d_threshold">D_threshold</a>
-            <a class="list-group-item" href="../namelist/system~3.html#variable-d_prec">D_prec</a>
-            <a class="list-group-item" href="../namelist/system~3.html#variable-d_gap">D_gap</a>
-            <a class="list-group-item" href="../namelist/system~3.html#variable-positions_principal">positions_principal</a>
-            <a class="list-group-item" href="../namelist/system~3.html#variable-tlim">Tlim</a>
-            <a class="list-group-item" href="../namelist/system~3.html#variable-maxsteps_fit">maxsteps_fit</a>
-            <a class="list-group-item" href="../namelist/system~3.html#variable-lambda_initial_fit">lambda_initial_fit</a>
-            <a class="list-group-item" href="../namelist/system~3.html#variable-lambdafac_fit">lambdafac_fit</a>
-            <a class="list-group-item" href="../namelist/system~3.html#variable-epsilon_fit">epsilon_fit</a>
-            <a class="list-group-item" href="../namelist/system~3.html#variable-fit_check">fit_check</a>
-            <a class="list-group-item" href="../namelist/system~3.html#variable-determine_minima">determine_minima</a>
-            <a class="list-group-item" href="../namelist/system~3.html#variable-n_resonance_interval">n_resonance_interval</a>
-            <a class="list-group-item" href="../namelist/system~3.html#variable-scan_option">scan_option</a>
-            <a class="list-group-item" href="../namelist/system~3.html#variable-n_scan">n_scan</a>
+            <a class="list-group-item" href="../namelist/system~3.html#variable-filename">filename</a>
+            <a class="list-group-item" href="../namelist/system~3.html#variable-smoothing~3">smoothing</a>
+            <a class="list-group-item" href="../namelist/system~3.html#variable-nperp~2">nperp</a>
+            <a class="list-group-item" href="../namelist/system~3.html#variable-npar~3">npar</a>
+            <a class="list-group-item" href="../namelist/system~3.html#variable-ppar_min_set">ppar_min_set</a>
+            <a class="list-group-item" href="../namelist/system~3.html#variable-ppar_max_set">ppar_max_set</a>
+            <a class="list-group-item" href="../namelist/system~3.html#variable-pperp_min_set">pperp_min_set</a>
+            <a class="list-group-item" href="../namelist/system~3.html#variable-pperp_max_set">pperp_max_set</a>
+            <a class="list-group-item" href="../namelist/system~3.html#variable-mode~8">mode</a>
+            <a class="list-group-item" href="../namelist/system~3.html#variable-threshold">threshold</a>
+            <a class="list-group-item" href="../namelist/system~3.html#variable-out_to_file">out_to_file</a>
+            <a class="list-group-item" href="../namelist/system~3.html#variable-do_normalize">do_normalize</a>
+            <a class="list-group-item" href="../namelist/system~3.html#variable-mult_pperp">mult_pperp</a>
+            <a class="list-group-item" href="../namelist/system~3.html#variable-mult_ppar">mult_ppar</a>
+            <a class="list-group-item" href="../namelist/system~3.html#variable-mult_f">mult_f</a>
         </div>
       </div>
     </div>
@@ -195,235 +180,109 @@
           <th>Description</th>
       </tr></thead>
       <tbody>
-              <tr id="variable-kperp~4">
-      <td><a href="#variable-kperp~4">kperp</a></td>
+              <tr id="variable-filename">
+      <td><a href="#variable-filename">filename</a></td>
+      <td>character(len=256)</td>
+      <td>None</td>
+      <td><p>File name of input file for interpolation.</p></td>
+    </tr>
+
+              <tr id="variable-smoothing~3">
+      <td><a href="#variable-smoothing~3">smoothing</a></td>
       <td>double precision</td>
       <td>None</td>
-      <td><p>Perpendicular wavenumber, normalized by
-inverse reference inertial length, <script type="math/tex">k_\perp d_p</script>.</p></td>
+      <td><p>Smoothing parameter for spline interpolation.</p></td>
     </tr>
 
-              <tr id="variable-kpar">
-      <td><a href="#variable-kpar">kpar</a></td>
+              <tr id="variable-nperp~2">
+      <td><a href="#variable-nperp~2">nperp</a></td>
+      <td>integer</td>
+      <td>None</td>
+      <td><p>Number of perpendicular steps on fine output grid.</p></td>
+    </tr>
+
+              <tr id="variable-npar~3">
+      <td><a href="#variable-npar~3">npar</a></td>
+      <td>integer</td>
+      <td>None</td>
+      <td><p>Number of parallel steps on fine output grid.</p></td>
+    </tr>
+
+              <tr id="variable-ppar_min_set">
+      <td><a href="#variable-ppar_min_set">ppar_min_set</a></td>
       <td>double precision</td>
       <td>None</td>
-      <td><p>Parallel wavenumber, normalized by
-inverse reference inertial length, <script type="math/tex">k_\parallel d_p</script>.</p></td>
+      <td><p>Forced minimum perpendicular momentum for output.</p></td>
     </tr>
 
-              <tr id="variable-nspec~2">
-      <td><a href="#variable-nspec~2">nspec</a></td>
+              <tr id="variable-ppar_max_set">
+      <td><a href="#variable-ppar_max_set">ppar_max_set</a></td>
+      <td>double precision</td>
+      <td>None</td>
+      <td><p>Forced maximum parallel momentum for output.</p></td>
+    </tr>
+
+              <tr id="variable-pperp_min_set">
+      <td><a href="#variable-pperp_min_set">pperp_min_set</a></td>
+      <td>double precision</td>
+      <td>None</td>
+      <td><p>Forced minimum perpendicular momentum for output.</p></td>
+    </tr>
+
+              <tr id="variable-pperp_max_set">
+      <td><a href="#variable-pperp_max_set">pperp_max_set</a></td>
+      <td>double precision</td>
+      <td>None</td>
+      <td><p>Forced maximum perpendicular momentum for output.</p></td>
+    </tr>
+
+              <tr id="variable-mode~8">
+      <td><a href="#variable-mode~8">mode</a></td>
       <td>integer</td>
       <td>None</td>
-      <td><p>Number of plasma components.</p></td>
+      <td><p>Format of input grid (order pperp/ppar).</p></td>
     </tr>
 
-              <tr id="variable-nroots~2">
-      <td><a href="#variable-nroots~2">nroots</a></td>
-      <td>integer</td>
+              <tr id="variable-threshold">
+      <td><a href="#variable-threshold">threshold</a></td>
+      <td>double precision</td>
       <td>None</td>
-      <td><p>Number of dispersion solutions under consideration.</p></td>
+      <td><p>Lower treshold for f0-values (coarse grid) to be included.</p></td>
     </tr>
 
-              <tr id="variable-use_map">
-      <td><a href="#variable-use_map">use_map</a></td>
+              <tr id="variable-out_to_file">
+      <td><a href="#variable-out_to_file">out_to_file</a></td>
       <td>logical</td>
       <td>None</td>
-      <td><p>Choice of:
- (T) searching for roots over a map in complex frequency space,
- via <a href="../proc/map_read.html">map_read</a>;
- (F) input (nroots) guesses for solutions,
- via <a href="../proc/solution_read.html">solution_read</a></p></td>
+      <td><p>Check whether output should be written to file.</p></td>
     </tr>
 
-              <tr id="variable-writeout">
-      <td><a href="#variable-writeout">writeOut</a></td>
+              <tr id="variable-do_normalize">
+      <td><a href="#variable-do_normalize">do_normalize</a></td>
       <td>logical</td>
-      <td>.true.</td>
-      <td><p>Write or suppress output to screen.</p></td>
-    </tr>
-
-              <tr id="variable-nperp~5">
-      <td><a href="#variable-nperp~5">nperp</a></td>
-      <td>integer</td>
       <td>None</td>
-      <td><p>Number of perpendicular momentum space grid points, <script type="math/tex">N_\perp</script>.</p></td>
+      <td><p>Check whether normalisation should be applied.</p></td>
     </tr>
 
-              <tr id="variable-npar~6">
-      <td><a href="#variable-npar~6">npar</a></td>
-      <td>integer</td>
-      <td>None</td>
-      <td><p>Number of parallel momentum space grid points, <script type="math/tex">N_\parallel</script>.</p></td>
-    </tr>
-
-              <tr id="variable-ngamma~2">
-      <td><a href="#variable-ngamma~2">ngamma</a></td>
-      <td>integer</td>
-      <td>100</td>
-      <td><p>Number of grid points in relativitic <script type="math/tex">\Gamma=\sqrt{1+\frac{p_\perp^2+p_\parallel^2}{m_j^2c^2}}</script>,
-<script type="math/tex">N_\Gamma</script> (Eqn. 3.14).</p></td>
-    </tr>
-
-              <tr id="variable-npparbar~2">
-      <td><a href="#variable-npparbar~2">npparbar</a></td>
-      <td>integer</td>
-      <td>200</td>
-      <td><p>Number of grid points in dimensionless paralell momentum
-<script type="math/tex">\bar{p}_\parallel = p_\parallel/m_j c</script>, <script type="math/tex">N_{\bar{p}_\parallel}</script>.</p></td>
-    </tr>
-
-              <tr id="variable-va~2">
-      <td><a href="#variable-va~2">vA</a></td>
+              <tr id="variable-mult_pperp">
+      <td><a href="#variable-mult_pperp">mult_pperp</a></td>
       <td>double precision</td>
       <td>None</td>
-      <td><p>Alfven Velocity, normalized to speed of light, <script type="math/tex">v_{Ap}/c</script>.</p></td>
+      <td><p>Scaling factor for perpendicular momentum.</p></td>
     </tr>
 
-              <tr id="variable-arrayname">
-      <td><a href="#variable-arrayname">arrayName</a></td>
-      <td>character(len=75)</td>
+              <tr id="variable-mult_ppar">
+      <td><a href="#variable-mult_ppar">mult_ppar</a></td>
+      <td>double precision</td>
       <td>None</td>
-      <td><p>Name of input files for distributions.</p></td>
+      <td><p>Scaling factor for parallel momentum.</p></td>
     </tr>
 
-              <tr id="variable-bessel_zero~2">
-      <td><a href="#variable-bessel_zero~2">Bessel_zero</a></td>
+              <tr id="variable-mult_f">
+      <td><a href="#variable-mult_f">mult_f</a></td>
       <td>double precision</td>
-      <td>1.d-45</td>
-      <td><p>Calculate Bessel functions until the maximum is less than this value.</p></td>
-    </tr>
-
-              <tr id="variable-secant_method">
-      <td><a href="#variable-secant_method">secant_method</a></td>
-      <td>integer</td>
-      <td>2</td>
-      <td><p>Selection of root finding method.
-0: secant
-1: rtsec
-2: secant_osc: an improvement to reduce oscillatory loops.</p></td>
-    </tr>
-
-              <tr id="variable-numiter">
-      <td><a href="#variable-numiter">numiter</a></td>
-      <td>integer</td>
-      <td>50</td>
-      <td><p>Maximum number of iterations in secant method.</p></td>
-    </tr>
-
-              <tr id="variable-kperp_norm">
-      <td><a href="#variable-kperp_norm">kperp_norm</a></td>
-      <td>logical</td>
-      <td>.true.</td>
-      <td><p>Use the tensor in Stix's (10-57) (true)
-or
-Multiply by kperp^2 d_ref^2 (false)</p></td>
-    </tr>
-
-              <tr id="variable-d_threshold">
-      <td><a href="#variable-d_threshold">D_threshold</a></td>
-      <td>double precision</td>
-      <td>1.d-5</td>
-      <td><p>Minimum threshold for secant method.</p></td>
-    </tr>
-
-              <tr id="variable-d_prec">
-      <td><a href="#variable-d_prec">D_prec</a></td>
-      <td>double precision</td>
-      <td>1.d-5</td>
-      <td><p>Size of bounding region for secant method.</p></td>
-    </tr>
-
-              <tr id="variable-d_gap">
-      <td><a href="#variable-d_gap">D_gap</a></td>
-      <td>double precision</td>
-      <td>1.d-5</td>
-      <td><p>Size of allowable difference between roots.</p></td>
-    </tr>
-
-              <tr id="variable-positions_principal">
-      <td><a href="#variable-positions_principal">positions_principal</a></td>
-      <td>integer</td>
-      <td>5</td>
-      <td><p>Number of parallel momentum steps distant from the resonant momentum
-included in the numerical calculation of Eqn 3.5, <script type="math/tex">M_I</script>.</p></td>
-    </tr>
-
-              <tr id="variable-tlim">
-      <td><a href="#variable-tlim">Tlim</a></td>
-      <td>double precision</td>
-      <td>0.01d0</td>
-      <td><p>Threshold for analytical principal-value integration for
-evaluating Eqn 3.6 and 3.7, <script type="math/tex">t_{\textrm{lim}}</script>.</p></td>
-    </tr>
-
-              <tr id="variable-maxsteps_fit">
-      <td><a href="#variable-maxsteps_fit">maxsteps_fit</a></td>
-      <td>integer</td>
-      <td>500</td>
-      <td><p>Maximum number of fitting iterations.</p></td>
-    </tr>
-
-              <tr id="variable-lambda_initial_fit">
-      <td><a href="#variable-lambda_initial_fit">lambda_initial_fit</a></td>
-      <td>double precision</td>
-      <td>1.d0</td>
-      <td><p>Inital Levenberg-Marquardt damping parameter.</p></td>
-    </tr>
-
-              <tr id="variable-lambdafac_fit">
-      <td><a href="#variable-lambdafac_fit">lambdafac_fit</a></td>
-      <td>double precision</td>
-      <td>1.d1</td>
-      <td><p>Adjustment factor for Levenberg-Marquardt damping parameter.</p></td>
-    </tr>
-
-              <tr id="variable-epsilon_fit">
-      <td><a href="#variable-epsilon_fit">epsilon_fit</a></td>
-      <td>double precision</td>
-      <td>1.d-8</td>
-      <td><p>Convergence for Levenberg-Marquardt fit.</p></td>
-    </tr>
-
-              <tr id="variable-fit_check">
-      <td><a href="#variable-fit_check">fit_check</a></td>
-      <td>logical</td>
-      <td>.true.</td>
-      <td><p>If true, output fitted functions to ASCII file for each species.</p></td>
-    </tr>
-
-              <tr id="variable-determine_minima">
-      <td><a href="#variable-determine_minima">determine_minima</a></td>
-      <td>logical</td>
-      <td>.true.</td>
-      <td><p>If true, after map search, determine minima and refine solutions.</p></td>
-    </tr>
-
-              <tr id="variable-n_resonance_interval">
-      <td><a href="#variable-n_resonance_interval">n_resonance_interval</a></td>
-      <td>integer</td>
-      <td>100</td>
-      <td><p>How many steps should be used to integrate around the resonance,
-<script type="math/tex">M_P</script>, used for integrating near poles (see section 3.1).</p></td>
-    </tr>
-
-              <tr id="variable-scan_option">
-      <td><a href="#variable-scan_option">scan_option</a></td>
-      <td>integer</td>
-      <td>1</td>
-      <td><p>Select case for scans;
-1) consecutive scans along input paths in wavevector space,
-2) double scans of two selected parameters.</p></td>
-    </tr>
-
-              <tr id="variable-n_scan">
-      <td><a href="#variable-n_scan">n_scan</a></td>
-      <td>integer</td>
-      <td>0</td>
-      <td><p>Number of wavevector scans.
-Must be set to 2 for scan_option=2;
-Must be 1 or larger for scan_option=1.
-0 turns off wavevector scans.</p></td>
+      <td>None</td>
+      <td><p>Scaling factor for f0.</p></td>
     </tr>
 
       </tbody>
