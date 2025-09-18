@@ -707,13 +707,23 @@ subroutine determine_resonances(om,nn,found_res_plus,found_res_minus)
 	  ipar = 0
 	  p_res = (ms(sproc) * om - 1.d0 * nn * qs(sproc))/kpar
 
+
+
+   
 	  do while ((ipar.LE.(npar-2)).AND.(.NOT.found_res_plus))
 		 ipar = ipar + 1
 		 if ((pp(sproc,2,ipar,2).LE.real(p_res)).and.&
 			  (pp(sproc,2,ipar+1,2).GT.real(p_res))) found_res_plus = .TRUE.
 
 	  enddo
-
+   if (found_res_plus) then
+      write(*,'(a,i3,a,2es14.4,a,es14.4,a,i3,a,2es14.4,a)')&
+           'spec ',sproc,': p_res[om= (',om,'), kpar=',kpar,' n=',nn,']= ',p_res,': res found'
+   else
+      write(*,'(a,i3,a,2es14.4,a,es14.4,a,i3,a,2es14.4,a)')&
+           'spec ',sproc,': p_res[om= (',om,'), kpar=',kpar,' n=',nn,']= ',p_res,': res not found'
+   endif
+   
 	  ! negative n:
 	  ipar = 0
 	  p_res = (ms(sproc) * om + 1.d0 * nn * qs(sproc))/kpar
@@ -723,7 +733,15 @@ subroutine determine_resonances(om,nn,found_res_plus,found_res_minus)
 		 if ((pp(sproc,2,ipar,2).LE.real(p_res)).and.&
 			  (pp(sproc,2,ipar+1,2).GT.real(p_res))) found_res_minus = .TRUE.
 
-	  enddo
+enddo
+
+   if (found_res_minus) then
+      write(*,'(a,i3,a,2es14.4,a,es14.4,a,i3,a,2es14.4,a)')&
+           'spec ',sproc,': p_res[om= (',om,'), kpar=',kpar,' n=',-nn,']= (',p_res,'): res found'
+   else
+      write(*,'(a,i3,a,2es14.4,a,es14.4,a,i3,a,2es14.4,a)')&
+           'spec ',sproc,': p_res[om= (',om,'), kpar=',kpar,' n=',-nn,']= ',p_res,': res not found'
+   endif
 
 
 	  ! Check if there is a resonance right outside the integration domain:
