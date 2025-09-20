@@ -132,6 +132,10 @@ contains
   logical :: Bessel_run
   !! Check whether maximum n has been achieved.
 
+  integer :: n_select = 1
+  !! limit to only a single |n| resonance
+  !! KGK: Testing. Remove
+
 
   ! Check if you can use the cold-plasma dispersion relation:
   if (bMbetas(j).EQ.0.d0) then
@@ -174,16 +178,19 @@ contains
 
 
   do n=-nmaxrun,nmaxrun
-     call calc_ypsilon(Ynew,j,n,kz,kperp,x)
-     do i=1,3
-      do k=1,3
-        ! Remember that the Bessel functions give I_n(z)*exp(-z), so the factor exp(-z) is absorbed.
-         Y(i,k)=Y(i,k)+Ynew(i,k)
-         if (n== 0) Y0(i,k)=Ynew(i,k)
-         if (n== 1) Y1(i,k)=Y1(i,k)+Ynew(i,k)
-         if (n==-1) Yn1(i,k)=Yn1(i,k)+Ynew(i,k)
-      enddo
-     enddo
+     !if (abs(n)==n_select) then
+     if (n==n_select) then
+        call calc_ypsilon(Ynew,j,n,kz,kperp,x)
+        do i=1,3
+           do k=1,3
+              ! Remember that the Bessel functions give I_n(z)*exp(-z), so the factor exp(-z) is absorbed.
+              Y(i,k)=Y(i,k)+Ynew(i,k)
+              if (n== 0) Y0(i,k)=Ynew(i,k)
+              if (n== 1) Y1(i,k)=Y1(i,k)+Ynew(i,k)
+              if (n==-1) Yn1(i,k)=Yn1(i,k)+Ynew(i,k)
+           enddo
+        enddo
+     endif
   enddo
 
   chi(1,1)=Y(1,1)/(ell*ell)

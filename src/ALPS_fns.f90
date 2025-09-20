@@ -308,6 +308,10 @@ end subroutine derivative_f0
     logical :: found_res_minus
     !! Check whether a resonance is found at negative n.
 
+    integer :: n_select = 1
+    !! limit to only a single |n| resonance
+    !! KGK: Testing. Remove
+
 
     chi=cmplx(0.d0,0.d0,kind(1.d0))
     if (proc0) chi0=cmplx(0.d0,0.d0,kind(1.d0))
@@ -335,7 +339,7 @@ end subroutine derivative_f0
         ! Split into NHDS or ALPS routines:
         ! Only run the NHDS routine if useBM is on for the species
         !   and if process is handling n=0 according to split_processes:
-        if (usebM(sproc).and.(nlim(2).GE.0).and.(nlim(1).EQ.0)) then
+       if (usebM(sproc).and.(nlim(2).GE.0).and.(nlim(1).EQ.0)) then
 
           ! This is the case to use NHDS for the calculation of chi:
           call calc_chi(chi_NHDS,chi_NHDS_low,sproc,kpar,kperp,om)
@@ -362,6 +366,8 @@ end subroutine derivative_f0
 
        do nn = nlim(1),nlim(2)
 
+          if (nn == n_select) then
+          
           call determine_resonances(om,nn,found_res_plus,found_res_minus)
           ! CHIij(nn) function calls:
 
@@ -473,7 +479,10 @@ end subroutine derivative_f0
                   full_integrate(om,nn,6,found_res_plus) + &
                   full_integrate(om,-nn,6,found_res_minus)
 
-          endif          
+          endif
+
+          endif !n_select
+          
        enddo
 
        ! Add in ee term:
@@ -494,7 +503,7 @@ end subroutine derivative_f0
              endif
           endif
        endif
-
+       
     endif
 
        norm(sproc) = ns(sproc) * qs(sproc)
@@ -512,7 +521,7 @@ end subroutine derivative_f0
        schi_low(sproc,1,2,:) = schi_low(sproc,1,2,:) * norm(sproc)
        schi_low(sproc,1,3,:) = schi_low(sproc,1,3,:) * norm(sproc)
        schi_low(sproc,2,3,:) = schi_low(sproc,2,3,:) * norm(sproc)
-       
+
     endif
 
     ! Return the schi to proc0:
