@@ -5,7 +5,7 @@ import requests
 BASE_URL = "https://api.adsabs.harvard.edu/v1"
 ADS_LIBRARY_ID = "vPWlMyiDRq-YfZ2bGDWS7Q"
 
-BIBCODES = [
+ALPS_ADS_BIB_CODES = [
     "2018JPlPh..84d9003V", #2018 JPP
     "2025PhPl...32i2104K"  #2025 PoP
 ]
@@ -14,7 +14,7 @@ def query_response() -> requests.Response:
     """Get a response by querying the ADS database for citations of the ALPS code"""
 
     # build the OR-joined clause:
-    or_clause = " OR ".join(BIBCODES)
+    or_clause = " OR ".join(ALPS_ADS_BIB_CODES)
     query = f"citations(bibcode:({or_clause}))"
     
     response = requests.get(
