@@ -112,7 +112,7 @@ program alps
           write(*,'(a)') 'Starting Secant Method'
      call refine_guess !alps_fns
   endif
-
+  
   if (n_scan.gt.0) then !setting n_scan=0 turns off wavevector scanning
      select case (scan_option)
      case (1)

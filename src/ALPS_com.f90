@@ -31,7 +31,7 @@ contains
     use alps_var, only : writeOut, nperp, npar, nmax, nlim, nspec, numroots, ngamma,npparbar
     use alps_var, only : ns, qs, ms, wroots, kperp, kpar, bessel_zero
     use alps_var, only : wave, chi0, chi0_low, pp, df0, vA, pi
-    use alps_var, only : secant_method, numiter, D_threshold, D_gap, D_prec
+    use alps_var, only : secant_method, numiter, D_threshold, D_gap, D_prec, D_tol
     use alps_var, only : use_map, kperp_norm
     use alps_var, only : ni, nr, omi, omf, gami, gamf, loggridg, loggridw
     use alps_var, only : determine_minima, n_resonance_interval, positions_principal, Tlim
@@ -63,6 +63,7 @@ contains
     call mpi_bcast(D_threshold,1, MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierror)
     call mpi_bcast(D_prec,1, MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierror)
     call mpi_bcast(D_gap,1, MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierror)
+    call mpi_bcast(D_tol,1, MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierror)
     call mpi_bcast(Tlim,       1, MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierror)
     call mpi_bcast(use_map, 1, MPI_LOGICAL, 0, MPI_COMM_WORLD, ierror)
     call mpi_bcast(kperp_norm, 1, MPI_LOGICAL, 0, MPI_COMM_WORLD, ierror)

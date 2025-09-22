@@ -112,11 +112,11 @@ These calculations are accurate in weak damping limit $\gamma < \omega_{\textrm{
 
 
 The data is ordered as  
-1. $k_\perp d_{ref}$
+1. $k_\perp d_{ref}$ 
 2. $k_\parallel d_{ref}$  
 3. $\omega_{\textrm{r}}/\Omega_{ref}$   
 4. $\gamma/\Omega_{ref}$   
-5. [+4(is-1)] $\gamma_{is}^{TTD}/\omega_{\textrm{r}}$
-6. [+4(is-1)] $\gamma_{is}^{LD}/\omega_{\textrm{r}}$
-7. [+4(is-1)] $\gamma_{is}^{n=+1}/\omega_{\textrm{r}}$
-8. [+4(is-1)] $\gamma_{is}^{n=-1}/\omega_{\textrm{r}}$
+5. [+4(is-1)] $\gamma_{is}^{TTD}/\omega_{\textrm{r}}$ 
+6. [+4(is-1)] $\gamma_{is}^{LD}/\omega_{\textrm{r}}$ 
+7. [+4(is-1)] $\gamma_{is}^{n=+1}/\omega_{\textrm{r}}$ 
+8. [+4(is-1)] $\gamma_{is}^{n=-1}/\omega_{\textrm{r}}$ 
