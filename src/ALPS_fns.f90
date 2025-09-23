@@ -1663,24 +1663,41 @@ double complex function int_T(nn, iperp, ipar, mode)
      z= 1.d0/qs(sproc)
   endif
 
-	! Look up array of Bessel functions:
-	if (nn.LT.0) then
-	   bessel=((-1.d0)**nn)*bessel_array(-nn,iperp)
-	else
-	   bessel=bessel_array(nn,iperp)
-	endif
+  
+  
 
-	! Determine derivative of Bessel function:
-	if (nn.GE.1) then
-		besselP = 0.5d0 * (bessel_array(nn-1,iperp)-bessel_array(nn+1,iperp))
-	else if (nn.LT.-1) then
-		besselP = 0.5d0 * ((((-1.d0)**(nn-1))*bessel_array(-(nn-1),iperp))&
-			-(((-1.d0)**(nn+1))*bessel_array(-(nn+1),iperp)))
-	else if (nn.EQ.0) then
-	   besselP = -bessel_array(1,iperp)
-	else if (nn.EQ.-1) then
-		besselP = 0.5d0 * (bessel_array(2,iperp)-bessel_array(0,iperp))
-	endif
+  ! Look up array of Bessel functions:
+  bessel = bessel_lookup(nn, iperp)
+  
+  ! Determine derivative of Bessel function:
+  if (nn == 0) then
+     besselP = -bessel_array(1, iperp)
+  else
+     besselP = 0.5d0 * ( bessel_lookup(nn-1, iperp) - bessel_lookup(nn+1, iperp) )
+  endif
+
+  !if (nn.LT.0) then
+  !   if (mod(abs(nn),2) == 0) then
+  !      bessel =  bessel_array(-nn, iperp)
+  !   else
+  !      bessel = -bessel_array(-nn, iperp)
+  !   endif
+  !   !bessel=((-1.d0)**nn)*bessel_array(-nn,iperp)
+  !else
+  !   bessel=bessel_array(nn,iperp)
+  !endif
+
+  
+	!if (nn.GE.1) then
+	!	besselP = 0.5d0 * (bessel_array(nn-1,iperp)-bessel_array(nn+1,iperp))
+	!else if (nn.LT.-1) then
+	!	besselP = 0.5d0 * ((((-1.d0)**(nn-1))*bessel_array(-(nn-1),iperp))&
+  !			-(((-1.d0)**(nn+1))*bessel_array(-(nn+1),iperp)))
+  !	else if (nn.EQ.0) then
+  !	   besselP = -bessel_array(1,iperp)
+  !	else if (nn.EQ.-1) then
+  !		besselP = 0.5d0 * (bessel_array(2,iperp)-bessel_array(0,iperp))
+  !	endif
 
 
 	select case(mode) ! evaluate the components of the T-tensor:
@@ -1728,6 +1745,31 @@ double complex function int_T(nn, iperp, ipar, mode)
 	return
 
 end function int_T
+
+pure double precision function bessel_lookup(n, iperp)
+  !! This function evaluated the Bessel Function derivative with the
+  !! correct parity logic, without taking a power to negative number,
+  !! which could confuse FORTRAN.
+
+  use ALPS_var, only : bessel_array
+  implicit none
+
+  integer, intent(in) :: n
+  !! Bessel Function Order.
+
+  integer, intent(in) :: iperp
+  !! Index of p_perp.
+  
+  if (n .LT. 0) then
+     if (mod(abs(n),2) .EQ. 0) then
+        bessel_lookup =  bessel_array(-n, iperp)
+     else
+        bessel_lookup = -bessel_array(-n, iperp)
+     endif
+  else
+     bessel_lookup = bessel_array(n, iperp)
+  endif
+end function bessel_lookup
 
 
 
