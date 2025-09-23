@@ -116,7 +116,7 @@ subroutine derivative_f0
     endif
 
     enddo
-    write(*,*)'Derivatives calculated'
+    write(*,'(a)')'Derivatives calculated'
 
 
     !Output df/dv to file:
@@ -1880,9 +1880,9 @@ subroutine secant(om,in)
 			jump = D*(om-prevom)/(D-Dprev)
                 endif
 
-      if (proc0 .AND. writeOut) then
-         write(*,'(i3,12es14.4)') iter, om, prevom, D, abs(D), Dprev, abs(Dprev), jump
-      endif
+      !if (proc0 .AND. writeOut) then
+      !   write(*,'(i3,12es14.4)') iter, om, prevom, D, abs(D), Dprev, abs(Dprev), jump
+      !endif
 
 		prevom = om
 		om = om - jump
@@ -2080,13 +2080,16 @@ end subroutine secant_osc
 
 
 
-double complex function rtsec(func,xin,iflag)
+double complex function rtsec(func,xin,in,iflag)
   !! An alternative implementation of the secant method, adapted from PLUME.
-     use alps_var, only : proc0,writeOut,D_threshold,numiter,D_prec
+     use alps_var, only : proc0,writeOut,numiter,D_prec,D_tol
      implicit none
 
      double complex :: xin
      !! Initial Guess for complex frequency.
+
+     integer, intent(in) :: in
+     !! Root number
 
      double complex :: func
      !! Function whose roots are to be identified.
@@ -2135,11 +2138,12 @@ double complex function rtsec(func,xin,iflag)
         xl=x1
         rtsec=x2
      endif
+
      do  j=1,numiter-1
         iflag = j
         if (abs(f-fl) .GT. 1.d-40) then
            dx=(xl-rtsec)*f/(f-fl)
-				else
+        else
            dx = (x2-x1)/25.d0
         end if
         xl=rtsec
@@ -2148,10 +2152,13 @@ double complex function rtsec(func,xin,iflag)
         rtsec=rtsec+dx/2.d0
 
         f=func(rtsec)
-        !if((abs(dx).LT.D_threshold).OR.(abs(f).EQ.0.d0)) then
-        if((abs(f).LT.D_threshold)) then
-	     	if (proc0.AND.writeOut) write(*,'(a,i4)') 'Converged after iteration ',j
-	        return
+        if((abs(dx).LT.D_tol).OR.(abs(f).EQ.0.d0)) then
+        !if((abs(f).LT.D_threshold)) then
+           if (proc0.AND.writeOut) then
+              write(*,'(a,i2,a,i4)') ' Root ',in,' converged after iteration ',j
+              write(*,'(a,2es14.4e3,a,2es14.4e3)') ' D(',real(xl),aimag(xl),')= ',f
+           endif
+           return
         endif
      enddo
 
@@ -2321,9 +2328,10 @@ subroutine om_scan(ik)
   if ((scan(ik)%eigen_s).or.(scan(ik)%heat_s)) then
 
      do in=1,nroots
+        
         omega=wroots(in)
         tmp = disp(omega)
-
+        
         call calc_eigen(omega,ef,bf,Us,ds,Ps,Ps_split,scan(ik)%eigen_s,scan(ik)%heat_s)
 
         !reassign omega:
@@ -2467,7 +2475,7 @@ subroutine om_scan(ik)
            case (0)
               call secant(omega,in)
            case (1)
-              omega=rtsec(disp,omega,iflag)
+              omega=rtsec(disp,omega,in,iflag)
            case (2)
               call secant_osc(omega,in)
            end select
@@ -3217,7 +3225,7 @@ subroutine om_double_scan
            case (0)
               call secant(omega,in)
            case (1)
-              omega=rtsec(disp,omega,iflag)
+              omega=rtsec(disp,omega,in,iflag)
            case (2)
               call secant_osc(omega,in)
            end select
@@ -3355,7 +3363,7 @@ subroutine om_double_scan
                 case (0)
                    call secant(omega,in)
                 case (1)
-                   omega=rtsec(disp,omega,iflag)
+                   omega=rtsec(disp,omega,in,iflag)
                 case (2)
                    call secant_osc(omega,in)
                 end select
@@ -3788,7 +3796,7 @@ subroutine refine_guess
      case (0)
         call secant(omega,iw)
      case (1)
-        omega=rtsec(disp,omega,iflag)
+        omega=rtsec(disp,omega,iw,iflag)
      case (2)
         call secant_osc(omega,iw)
      end select

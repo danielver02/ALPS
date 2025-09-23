@@ -50,7 +50,8 @@ contains
     use alps_var, only : kperp_last, kpar_last, kperp_0, kpar_0
     use alps_var, only : use_map, writeOut, wroots, nspec, numroots, kperp_norm
     use alps_var, only : nperp, npar, arrayName, fit_check, param_fit, fit_type, perp_correction
-    use alps_var, only : ns, qs, ms, vA, Bessel_zero, numiter, D_threshold,positions_principal
+    use alps_var, only : ns, qs, ms, vA, Bessel_zero, numiter
+    use alps_var, only : D_threshold, D_tol, positions_principal
     use alps_var, only : determine_minima, n_resonance_interval, ngamma, npparbar, Tlim
     use alps_var, only : scan_option, n_scan, scan, relativistic, logfit, usebM
     use alps_var, only : maxsteps_fit, n_fits, lambda_initial_fit, lambdafac_fit, epsilon_fit
@@ -79,7 +80,7 @@ contains
          kperp, kpar, nspec, nroots, use_map, writeOut,&
          nperp, npar, ngamma, npparbar, vA, arrayName, Bessel_zero, &
          secant_method, numiter, kperp_norm, D_threshold, &
-         D_prec, D_gap, positions_principal, Tlim, &
+         D_prec, D_gap, D_tol, positions_principal, Tlim, &
          maxsteps_fit, lambda_initial_fit, lambdafac_fit, epsilon_fit, fit_check, &
          determine_minima, n_resonance_interval, scan_option, n_scan
 

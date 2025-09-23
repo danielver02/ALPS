@@ -79,6 +79,9 @@ Size of bounding region for secant method.
 **`D_gap`**  
 Size of allowable difference between roots.
 
+**`D_tol`**  
+Tolerance for secant method = 1, rtsec.
+
 **`positions_principal`**  
 Number of parallel momentum steps distant from the resonant momentum
 included in the numerical calculation of Eqn 3.5, $M_{I}$.
