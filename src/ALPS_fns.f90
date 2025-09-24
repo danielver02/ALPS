@@ -116,7 +116,7 @@ subroutine derivative_f0
     endif
 
     enddo
-    write(*,*)'Derivatives calculated'
+    write(*,'(a)')'Derivatives calculated'
 
 
     !Output df/dv to file:
@@ -308,11 +308,7 @@ end subroutine derivative_f0
     logical :: found_res_minus
     !! Check whether a resonance is found at negative n.
 
-    integer :: n_select = 1
-    !! limit to only a single |n| resonance
-    !! KGK: Testing. Remove
-
-
+    
     chi=cmplx(0.d0,0.d0,kind(1.d0))
     if (proc0) chi0=cmplx(0.d0,0.d0,kind(1.d0))
     if (proc0) chi0_low=cmplx(0.d0,0.d0,kind(1.d0))
@@ -339,7 +335,7 @@ end subroutine derivative_f0
         ! Split into NHDS or ALPS routines:
         ! Only run the NHDS routine if useBM is on for the species
         !   and if process is handling n=0 according to split_processes:
-       if (usebM(sproc).and.(nlim(2).GE.0).and.(nlim(1).EQ.0)) then
+        if (usebM(sproc).and.(nlim(2).GE.0).and.(nlim(1).EQ.0)) then
 
           ! This is the case to use NHDS for the calculation of chi:
           call calc_chi(chi_NHDS,chi_NHDS_low,sproc,kpar,kperp,om)
@@ -366,7 +362,9 @@ end subroutine derivative_f0
 
        do nn = nlim(1),nlim(2)
 
-          if (nn == n_select) then
+          !if (proc0) then
+          !call evaluate_int_T(om,nn)
+          !endif
           
           call determine_resonances(om,nn,found_res_plus,found_res_minus)
           ! CHIij(nn) function calls:
@@ -437,7 +435,7 @@ end subroutine derivative_f0
              schi_low(sproc,1,3,-1)=&
                   full_integrate(om,-nn,5,found_res_minus)
              schi(sproc,1,3) = schi(sproc,1,3) + &
-                  schi_low(sproc,1,3,1)
+                  schi_low(sproc,1,3,1)+schi_low(sproc,1,3,-1)
              
              !yz term:
              schi_low(sproc,2,3,1)=&
@@ -481,7 +479,6 @@ end subroutine derivative_f0
 
           endif
 
-          endif !n_select
           
        enddo
 
@@ -582,9 +579,9 @@ end subroutine derivative_f0
           eps(2,3) = eps(2,3) + chi(is,2,3)
 
           !Trouble shooting electron firehose
-          write(*,'(6es14.4,i3)')chi0(is,1,1),chi0(is,1,2),chi0(is,1,3),is
-          write(*,'(6es14.4,i3)')chi0(is,2,1),chi0(is,2,2),chi0(is,2,3),is
-          write(*,'(6es14.4,i3)')chi0(is,3,1),chi0(is,3,2),chi0(is,3,3),is
+          !write(*,'(6es14.4,i3)')chi0(is,1,1),chi0(is,1,2),chi0(is,1,3),is
+          !write(*,'(6es14.4,i3)')chi0(is,2,1),chi0(is,2,2),chi0(is,2,3),is
+          !write(*,'(6es14.4,i3)')chi0(is,3,1),chi0(is,3,2),chi0(is,3,3),is
 
        enddo
 
@@ -643,9 +640,6 @@ end subroutine derivative_f0
     return
 
 end function disp
-
-
-
 
 subroutine determine_resonances(om,nn,found_res_plus,found_res_minus)
   !! This subroutine determines whether any kinetic resonances are located in the integration domain.
@@ -725,13 +719,6 @@ subroutine determine_resonances(om,nn,found_res_plus,found_res_minus)
 			  (pp(sproc,2,ipar+1,2).GT.real(p_res))) found_res_plus = .TRUE.
 
 	  enddo
-   if (found_res_plus) then
-      write(*,'(a,i3,a,2es14.4,a,es14.4,a,i3,a,2es14.4,a)')&
-           'spec ',sproc,': p_res[om= (',om,'), kpar=',kpar,' n=',nn,']= ',p_res,': res found'
-   else
-      write(*,'(a,i3,a,2es14.4,a,es14.4,a,i3,a,2es14.4,a)')&
-           'spec ',sproc,': p_res[om= (',om,'), kpar=',kpar,' n=',nn,']= ',p_res,': res not found'
-   endif
    
 	  ! negative n:
 	  ipar = 0
@@ -744,13 +731,6 @@ subroutine determine_resonances(om,nn,found_res_plus,found_res_minus)
 
 enddo
 
-   if (found_res_minus) then
-      write(*,'(a,i3,a,2es14.4,a,es14.4,a,i3,a,2es14.4,a)')&
-           'spec ',sproc,': p_res[om= (',om,'), kpar=',kpar,' n=',-nn,']= (',p_res,'): res found'
-   else
-      write(*,'(a,i3,a,2es14.4,a,es14.4,a,i3,a,2es14.4,a)')&
-           'spec ',sproc,': p_res[om= (',om,'), kpar=',kpar,' n=',-nn,']= ',p_res,': res not found'
-   endif
 
 
 	  ! Check if there is a resonance right outside the integration domain:
@@ -797,8 +777,14 @@ double complex function full_integrate(om, nn, mode, found_res)
 
   if (.not. found_res) then
      !Brute force integrate
-     full_integrate = integrate(om, nn, mode, 1, npar-1)
-	 elseif (found_res.and.relativistic(sproc)) then
+
+     !Trapezoidal Integration
+     !full_integrate = integrate(om, nn, mode, 1, npar-1)
+
+     !Switch to a Simpson's Rule for integration.
+     full_integrate = integrate_simpson(om, nn, mode, 1, npar-1)
+     
+  elseif (found_res.and.relativistic(sproc)) then
        	 	if (aimag(om).GT.0.d0) then
 	    		full_integrate = integrate_res_rel(om,nn,mode)
        	 	elseif (aimag(om).LT.0.d0) then
@@ -818,14 +804,11 @@ double complex function full_integrate(om, nn, mode, found_res)
   return
 end function full_integrate
 
-
-
-
-
-
 double complex function integrate(om, nn, mode, iparmin, iparmax)
-  !! This function performs the integral in Eq. (2.9) of the code paper, but without
-  !! accounting for the Landau contour integral. It is called by [[full_integrate(function)]].
+  !! This function performs the integral in Eq. (2.9) of the code paper, without
+  !! accounting for the Landau contour integral.
+  !! The integration is performed using the Trapezoid Rule.
+  !! It is called by [[full_integrate(function)]].
   use alps_var, only : nperp, pp, pi, sproc
   implicit none
 
@@ -890,8 +873,146 @@ double complex function integrate(om, nn, mode, iparmin, iparmax)
 
 end function integrate
 
+   double complex function integrate_simpson(om, nn, mode, iparmin, iparmax)
+  !! This function performs the integral in Eq. (2.9) of the code paper, without
+  !! accounting for the Landau contour integral.
+  !! The integration is performed using the Simpson's Rule.
+  !! It is called by [[full_integrate(function)]].
+  use alps_var, only : nperp, pp, pi, sproc
+  implicit none
+
+  double complex, intent(in) :: om
+  !! Complex wave frequency \(\omega\).
+
+  integer, intent(in) :: nn
+  !! Order of the Bessel function.
+
+  integer, intent(in) :: mode
+  !! Index of the entries in the T-tensor of Eq. (2.10).
+
+  integer, intent(in) :: iparmin
+  !! Minimum limit index of parallel momentum for integration.
+
+  integer, intent(in) :: iparmax
+  !! Maximum limit index of parallel momentum for integration.
+  
+  integer :: iperp
+  !! Index to loop over perpendicular momentum.
+
+  integer :: ipar
+  !! Index to loop over parallel momentum.
+
+  double precision :: dpperp
+  !! Inifinitesimal step in perpendicular momentum.
+
+  double precision :: dppar
+  !! Inifinitesimal step in parallel momentum.
+  
+  integer :: w_perp
+  !! Simpson's weight for p_perp integral.
+  
+  integer :: w_par
+  !! Simpson's weight for p_par integral.
 
 
+  !Simpson's rule requires an even number of intervals.
+
+  !For p_perp, we have f evaluated on [0,nperp] points.
+  ! df/dv is evaluated on [1,nperp-1] points.
+  ! Thus, if nperp is even,
+  ! f and df/dv are evaluated  at an odd number of points,
+  ! producing an even number of intervals between points.
+  logical :: simpson_perp
+  !! Check for even number of p_perp
+  !! evaluation intervals required by Simpson.
+  
+  !For p_par, we have f evaluated on [0,npar] points
+  ! df/dv is evaluated on [1,npar-1] points.
+  ! Thus, if npar is even,
+  ! f and df/dv are evaluated  at an odd number of points,
+  ! producing an even number of intervals between points.
+
+  !!NOTE: THIS WILL NEED TO BE UPDATED FOR the resonance integration.
+  !with iparmin,iparmax .ne. 1,npar-1
+    
+  logical :: simpson_par
+  !! Check for even number of p_parallel
+  !! evaluation intervals required by Simpson.
+
+  integrate_simpson = cmplx(0.d0, 0.d0, kind(1.d0))
+
+  !Check parity of intervals
+  simpson_perp = mod(nperp, 2) == 0
+  simpson_par  = mod(iparmax - iparmin, 2) == 0
+
+  !if (.not.simpson_perp) write(*,*)'not perp even!'
+  !if (.not.simpson_par) write(*,*)'not par even!'
+
+  !Momentum Steps
+  dpperp = pp(sproc, 2, 2, 1) - pp(sproc, 1, 2, 1)
+  dppar  = abs(pp(sproc, 2, 2, 2) - pp(sproc, 2, 1, 2))
+
+  do iperp = 1, nperp-1
+     ! Simpson’s weights in perp
+     if (simpson_perp) then
+        if (iperp == 1 .or. iperp == nperp-1) then
+           w_perp = 1
+        else if (mod(iperp,2) == 0) then
+           w_perp = 2
+        else
+           w_perp = 4
+        endif
+     else
+        ! Trapezoid fallback
+        if (iperp == 1 .or. iperp == nperp-1) then
+           w_perp = 1
+        else
+           w_perp = 2
+        endif
+     endif
+
+     do ipar = iparmin, iparmax
+        if (simpson_par) then
+           ! Simpson’s weights in parallel
+           if (ipar == iparmin .or. ipar == iparmax) then
+              w_par = 1
+           else if (mod(ipar-iparmin,2) == 0) then
+              w_par = 2
+           else
+              w_par = 4
+           endif
+        else
+           ! trapezoid fallback
+           if (ipar == iparmin .or. ipar == iparmax) then
+              w_par = 1
+           else
+              w_par = 2
+           endif
+        endif
+
+        integrate_simpson = integrate_simpson + &
+             cmplx(real(w_perp*w_par),0.d0,kind(1.d0)) * &
+             resU(om, nn, iperp, ipar) * int_T(nn, iperp, ipar, mode)
+
+     enddo
+  enddo
+
+  ! \Delta p_\perp \Delta p_\parallel / #
+  ! Prefactor depends on which rules were applied
+  if (simpson_perp .and. simpson_par) then
+     !Traditional Simpson
+     integrate_simpson = 2.d0*pi * integrate_simpson * dpperp * dppar / 9.d0
+  else if ((simpson_perp .and. .not.simpson_par).or.&
+       (.not.simpson_perp .and. simpson_par)) then
+     !Hybrid
+     integrate_simpson = 2.d0*pi * integrate_simpson * dpperp * dppar / 6.d0
+  else
+     ! Trapezoid
+     integrate_simpson = 2.d0*pi * integrate_simpson * dpperp * dppar * 0.25d0
+  endif
+  
+  return
+end function integrate_simpson
 
 
 double complex function integrate_res(om,nn,mode)
@@ -1601,28 +1722,28 @@ double complex function resU(om, nn, iperp, ipar)
   integer, intent(in) :: ipar
   !! Index to loop over parallel momentum.
 
-	double precision :: gamma
+  double precision :: gamma
   !! Lorentz factor \(\Gamma\).
 
 
+ resU = cmplx (0.d0, 0.d0,kind(1.d0))
+ 
 	gamma = 1.d0 ! standard for non-relativistic calculation
 
   ! For relativistic calculation:
 	if (relativistic(sproc)) gamma = sqrt((pp(sproc, iperp, ipar, 1)**2 + &
 		pp(sproc, iperp, ipar, 2)**2) * vA**2/ms(sproc)**2 +1.d0)
 
-	resU = qs(sproc) * &
+ resU = qs(sproc) * &
 	   (om*df0(sproc, iperp, ipar, 1) + (kpar / (gamma * ms(sproc)) ) * &
 	   (pp(sproc, iperp, ipar, 1) * df0(sproc, iperp, ipar, 2) -&
 	   pp(sproc, iperp, ipar, 2) * df0(sproc, iperp, ipar, 1) ) )/&
 	   (gamma * ms(sproc)*om - kpar * pp(sproc, iperp, ipar, 2) - &
-	   (1.d0*nn) * qs(sproc)  )
+ 	   (1.d0*nn) * qs(sproc)  )
 
 	return
 
 end function resU
-
-
 
 
 double complex function int_T(nn, iperp, ipar, mode)
@@ -1663,41 +1784,41 @@ double complex function int_T(nn, iperp, ipar, mode)
      z= 1.d0/qs(sproc)
   endif
 
-  
-  
-
-  ! Look up array of Bessel functions:
-  bessel = bessel_lookup(nn, iperp)
-  
-  ! Determine derivative of Bessel function:
-  if (nn == 0) then
-     besselP = -bessel_array(1, iperp)
+  if (.false.) then
+     ! Look up array of Bessel functions:
+     bessel = bessel_lookup(nn, iperp)
+     
+     ! Determine derivative of Bessel function:
+     if (nn == 0) then
+        besselP = -bessel_array(1, iperp)
+     else
+        besselP = 0.5d0 * ( bessel_lookup(nn-1, iperp) - bessel_lookup(nn+1, iperp) )
+     endif
   else
-     besselP = 0.5d0 * ( bessel_lookup(nn-1, iperp) - bessel_lookup(nn+1, iperp) )
+
+  if (nn.LT.0) then
+     !if (mod(abs(nn),2) == 0) then
+     !   bessel =  bessel_array(-nn, iperp)
+     !else
+     !   bessel = -bessel_array(-nn, iperp)
+     !endif
+     bessel=((-1.d0)**nn)*bessel_array(-nn,iperp)
+  else
+     bessel=bessel_array(nn,iperp)
   endif
 
-  !if (nn.LT.0) then
-  !   if (mod(abs(nn),2) == 0) then
-  !      bessel =  bessel_array(-nn, iperp)
-  !   else
-  !      bessel = -bessel_array(-nn, iperp)
-  !   endif
-  !   !bessel=((-1.d0)**nn)*bessel_array(-nn,iperp)
-  !else
-  !   bessel=bessel_array(nn,iperp)
-  !endif
-
   
-	!if (nn.GE.1) then
-	!	besselP = 0.5d0 * (bessel_array(nn-1,iperp)-bessel_array(nn+1,iperp))
-	!else if (nn.LT.-1) then
-	!	besselP = 0.5d0 * ((((-1.d0)**(nn-1))*bessel_array(-(nn-1),iperp))&
-  !			-(((-1.d0)**(nn+1))*bessel_array(-(nn+1),iperp)))
-  !	else if (nn.EQ.0) then
-  !	   besselP = -bessel_array(1,iperp)
-  !	else if (nn.EQ.-1) then
-  !		besselP = 0.5d0 * (bessel_array(2,iperp)-bessel_array(0,iperp))
-  !	endif
+  if (nn.GE.1) then
+     besselP = 0.5d0 * (bessel_array(nn-1,iperp)-bessel_array(nn+1,iperp))
+  else if (nn.LT.-1) then
+     besselP = 0.5d0 * ((((-1.d0)**(nn-1))*bessel_array(-(nn-1),iperp))&
+          -(((-1.d0)**(nn+1))*bessel_array(-(nn+1),iperp)))
+  else if (nn.EQ.0) then
+     besselP = -bessel_array(1,iperp)
+  else if (nn.EQ.-1) then
+     besselP = 0.5d0 * (bessel_array(2,iperp)-bessel_array(0,iperp))
+  endif
+endif
 
 
 	select case(mode) ! evaluate the components of the T-tensor:

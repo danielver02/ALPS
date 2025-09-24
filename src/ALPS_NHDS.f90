@@ -179,7 +179,7 @@ contains
 
   do n=-nmaxrun,nmaxrun
      !if (abs(n)==n_select) then
-     if (n==n_select) then
+     !if (n==n_select) then
         call calc_ypsilon(Ynew,j,n,kz,kperp,x)
         do i=1,3
            do k=1,3
@@ -190,8 +190,8 @@ contains
               if (n==-1) Yn1(i,k)=Yn1(i,k)+Ynew(i,k)
            enddo
         enddo
-     endif
-  enddo
+     !endif
+     enddo
 
   chi(1,1)=Y(1,1)/(ell*ell)
   chi(1,2)=Y(1,2)/(ell*ell)
@@ -247,12 +247,6 @@ contains
   endif
 
   end subroutine
-
-
-
-
-
-
 
   subroutine calc_ypsilon(Y,j,n,kz,kperp,x)
   !! Calculates the Y-tensor according to Stix for a bi-Maxwelling, using the NHDS calculation.
