@@ -431,7 +431,7 @@ end subroutine derivative_f0
              schi_low(sproc,1,3,-1)=&
                   full_integrate(om,-nn,5,found_res_minus)
              schi(sproc,1,3) = schi(sproc,1,3) + &
-                  schi_low(sproc,1,3,1)
+                  schi_low(sproc,1,3,1)+schi_low(sproc,1,3,-1)
              
              !yz term:
              schi_low(sproc,2,3,1)=&
@@ -1658,8 +1658,12 @@ double complex function int_T(nn, iperp, ipar, mode)
 
 	select case(mode) ! evaluate the components of the T-tensor:
 
-	  case(1) !T xx
-		 int_T = 1.d0 * (nn * nn) * bessel * bessel / (z * z)
+ case(1) !T xx
+    if (kperp_norm) then
+       int_T = 1.d0 * (nn * nn) * bessel * bessel / (z * z)
+    else
+       int_T = 1.d0 * (nn * nn) * bessel * bessel / (z * z)
+    endif
 
           case(2) !T yy
              if (kperp_norm) then
