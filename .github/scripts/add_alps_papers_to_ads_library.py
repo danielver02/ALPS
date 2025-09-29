@@ -40,7 +40,7 @@ def bibcodes_from_response(response: requests.Response) -> list:
     try:
         bibcodes = [item["bibcode"] for item in data["response"]["docs"]]
         assert len(bibcodes) == data["response"]["numFound"]
-        print(f"Found {len(bibcodes)} papers citing {ALPS_ADS_BIB_CODE}")
+        print(f"Found {len(bibcodes)} papers citing {ALPS_ADS_BIB_CODES}")
 
     except (KeyError, AssertionError) as e:
         raise RuntimeError(f"Response from {response.url} was not valid") from e
