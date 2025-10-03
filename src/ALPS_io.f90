@@ -50,7 +50,8 @@ contains
     use alps_var, only : kperp_last, kpar_last, kperp_0, kpar_0
     use alps_var, only : use_map, writeOut, wroots, nspec, numroots, kperp_norm
     use alps_var, only : nperp, npar, arrayName, fit_check, param_fit, fit_type, perp_correction
-    use alps_var, only : ns, qs, ms, vA, Bessel_zero, numiter, D_threshold,positions_principal
+    use alps_var, only : ns, qs, ms, vA, Bessel_zero, numiter
+    use alps_var, only : D_threshold, D_tol, positions_principal
     use alps_var, only : determine_minima, n_resonance_interval, ngamma, npparbar, Tlim
     use alps_var, only : scan_option, n_scan, scan, relativistic, logfit, usebM
     use alps_var, only : maxsteps_fit, n_fits, lambda_initial_fit, lambdafac_fit, epsilon_fit
@@ -79,7 +80,7 @@ contains
          kperp, kpar, nspec, nroots, use_map, writeOut,&
          nperp, npar, ngamma, npparbar, vA, arrayName, Bessel_zero, &
          secant_method, numiter, kperp_norm, D_threshold, &
-         D_prec, D_gap, positions_principal, Tlim, &
+         D_prec, D_gap, D_tol, positions_principal, Tlim, &
          maxsteps_fit, lambda_initial_fit, lambdafac_fit, epsilon_fit, fit_check, &
          determine_minima, n_resonance_interval, scan_option, n_scan
 
@@ -185,7 +186,7 @@ contains
 
     !READ IN SPECIES FIT PARAMETERS
     do is = 1, nspec
-       if (usebM(is)) then
+       !if (usebM(is)) then !undo
           write (*,'(a,i2,a)') 'Species ',is,&
                ' uses bi-Maxwellian/cold-plasma calculation... skipping fits. Parameters:'
           call get_indexed_namelist_unit (unit, "bM_spec", is)
@@ -202,7 +203,7 @@ contains
           endif
 
           close(unit)
-       else
+       !else !undo
           !Read in initial guesses for LM fits.
           select case(ACmethod(is))
           case (1)
@@ -254,7 +255,7 @@ contains
              end select
              close(unit)
           end select
-       endif
+       !endif !undo
     enddo
 
     allocate(polynomials(1:nspec,0:npar,0:maxval(poly_order(:)))); polynomials=0.d0

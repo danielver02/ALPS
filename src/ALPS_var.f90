@@ -162,6 +162,9 @@ module alps_var
   double precision :: D_gap =1.d-5
   !! Size of allowable difference between roots.
 
+  double precision :: D_tol =1.d-7
+  !! Tolarence of rtsec root finding method.
+
   double precision :: pi
   !! The ratio of a circle's circumference to its diameter.
 
@@ -405,7 +408,9 @@ module alps_var
   public :: loggridw, loggridg, omi, omf, gami, gamf
   public :: arrayName, nperp, npar, f0, pp, df0, bessel_array
   public :: current_int, density_int
-  public :: nmax, nlim, wave, numiter, D_threshold, D_prec, D_gap, chi0, chi0_low
+  public :: nmax, nlim, wave, numiter
+  public :: D_threshold, D_prec, D_gap, D_tol
+  public :: chi0, chi0_low
   public :: ns, qs, ms, vA, pi, Bessel_zero,sproc
   public :: ni, nr, positions_principal, Tlim
   public :: n_fits, maxsteps_fit,  lambda_initial_fit, lambdafac_fit, epsilon_fit

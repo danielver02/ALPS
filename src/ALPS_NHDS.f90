@@ -175,8 +175,7 @@ contains
     endif
     n=n+1
   enddo
-
-
+  
   do n=-nmaxrun,nmaxrun
      !if (abs(n)==n_select) then
      !if (n==n_select) then

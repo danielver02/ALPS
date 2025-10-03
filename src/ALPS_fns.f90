@@ -253,7 +253,7 @@ end subroutine derivative_f0
  !! This function returns the determinant of the dispersion tensor for a given frequency om.
     use alps_var, only : nlim, proc0, nspec, ierror, sproc, relativistic
     use alps_var, only : wave, kperp, kpar, ns, qs, vA, chi0, chi0_low
-    use alps_var, only : usebM, kperp_norm
+    use alps_var, only : usebM, kperp_norm, ms
     use alps_nhds, only: calc_chi
     use alps_fns_rel, only : int_ee_rel
     use mpi
@@ -308,6 +308,18 @@ end subroutine derivative_f0
     logical :: found_res_minus
     !! Check whether a resonance is found at negative n.
 
+    !These flags turn on/off the ALPS/NHDS susceptability contributions.
+    logical :: xx_alps = .true.
+    logical :: yy_alps = .true.
+    logical :: zz_alps = .true.
+    logical :: xy_alps = .true.
+    logical :: xz_alps = .true.
+    logical :: yz_alps = .true.
+
+    !if using zz_alps, selects to use (true) or not to use int_ee
+    !if false, we use its expected analytical value (for a hardcoded case)
+    logical :: use_intee = .true.
+    
     
     chi=cmplx(0.d0,0.d0,kind(1.d0))
     if (proc0) chi0=cmplx(0.d0,0.d0,kind(1.d0))
@@ -376,107 +388,180 @@ end subroutine derivative_f0
              !xz term is zero
 
              !yy term:
-             schi_low(sproc,2,2,0)=&
-                  full_integrate(om,nn,2,found_res_plus)
-             
-             schi(sproc,2,2) = schi(sproc,2,2) + &
-                  schi_low(sproc,2,2,0)
+             if (yy_alps) then
+                schi_low(sproc,2,2,0)=&
+                     full_integrate(om,nn,2,found_res_plus)             
+                schi(sproc,2,2) = schi(sproc,2,2) + &
+                     schi_low(sproc,2,2,0)
+             else
+                schi_low(sproc,2,2,0)=0.d0
+                schi(sproc,2,2) = 0.d0
+             endif
 
              !zz term:
-             schi_low(sproc,3,3,0)=&
-                  full_integrate(om,nn,3,found_res_plus)
+             if (zz_alps) then
+                schi_low(sproc,3,3,0)= &
+                     full_integrate(om,nn,3,found_res_plus)
+                schi(sproc,3,3) =  schi(sproc,3,3) + &
+                     schi_low(sproc,3,3,0)
+             else
+                schi_low(sproc,3,3,0)= 0.d0
+                schi(sproc,3,3) =  0.d0
+             endif
              
-             schi(sproc,3,3) = schi(sproc,3,3) + &
-                  schi_low(sproc,3,3,0)
-
              !yz term:
-             schi_low(sproc,2,3,0)=&
-                  full_integrate(om,nn,6,found_res_plus)
-             
-             schi(sproc,2,3) = schi(sproc,2,3) + &
-                  schi_low(sproc,2,3,0)
+             if (yz_alps) then
+                schi_low(sproc,2,3,0)= &
+                     full_integrate(om,nn,6,found_res_plus)             
+                schi(sproc,2,3) =  schi(sproc,2,3) + &
+                     schi_low(sproc,2,3,0)
+             else
+                schi_low(sproc,2,3,0)= 0.d0
+                schi(sproc,2,3) =  0.d0
+             endif
+
              
           elseif (nn==1) then
              !xx term:
-             schi_low(sproc,1,1,1)=&                  
-                  full_integrate(om,nn,1,found_res_plus)
-             schi_low(sproc,1,1,-1)=&                  
-                  full_integrate(om,-nn,1,found_res_minus)                  
-             schi(sproc,1,1) = schi(sproc,1,1) + &
-                  schi_low(sproc,1,1,1)+schi_low(sproc,1,1,-1)
+             if (xx_alps) then
+                schi_low(sproc,1,1,1)=&                  
+                     full_integrate(om,nn,1,found_res_plus)
+                schi_low(sproc,1,1,-1)=&                  
+                     full_integrate(om,-nn,1,found_res_minus)                  
+                schi(sproc,1,1) = schi(sproc,1,1) + &
+                     schi_low(sproc,1,1,1)+schi_low(sproc,1,1,-1)
+             else
+                schi_low(sproc,1,1,1)=0.d0
+                schi_low(sproc,1,1,-1)=0.d0
+                schi(sproc,1,1)=0.d0               
+             endif
 
              !yy term:
-             schi_low(sproc,2,2,1)=&
-                  full_integrate(om,nn,2,found_res_plus)
-             schi_low(sproc,2,2,-1)=&
-                  full_integrate(om,-nn,2,found_res_minus)
-             schi(sproc,2,2) = schi(sproc,2,2) + &
-                  schi_low(sproc,2,2,1)+schi_low(sproc,2,2,-1)
-             
-             !zz term:
-             schi_low(sproc,3,3,1)=&
-                  full_integrate(om,nn,3,found_res_plus)
-             schi_low(sproc,3,3,-1)=&
-                  full_integrate(om,-nn,3,found_res_minus)
-             schi(sproc,3,3) = schi(sproc,3,3) + &
-                  schi_low(sproc,3,3,1)+schi_low(sproc,3,3,-1)
+             if (yy_alps) then
+                schi_low(sproc,2,2,1)=&
+                     full_integrate(om,nn,2,found_res_plus)
+                schi_low(sproc,2,2,-1)=&
+                     full_integrate(om,-nn,2,found_res_minus)
+                schi(sproc,2,2) = schi(sproc,2,2) + &
+                     schi_low(sproc,2,2,1)+schi_low(sproc,2,2,-1)
+             else
+                schi_low(sproc,2,2,1)=0.d0
+                schi_low(sproc,2,2,-1)=0.d0
+                schi(sproc,2,2)=0.d0               
+             endif
 
+             ! zz term:
+             if (zz_alps) then
+                schi_low(sproc,3,3,1)= &
+                     full_integrate(om,nn,3,found_res_plus)
+                schi_low(sproc,3,3,-1)= &
+                     full_integrate(om,-nn,3,found_res_plus)
+                schi(sproc,3,3) =  schi(sproc,3,3) + &
+                     schi_low(sproc,3,3,1)+schi_low(sproc,3,3,-1)
+             else
+                schi_low(sproc,3,3,1)=0.d0
+                schi_low(sproc,3,3,-1)=0.d0
+                schi(sproc,3,3)=0.d0               
+             endif
+             
              !xy term:
-             schi_low(sproc,1,2,1)=&
-                  full_integrate(om,nn,4,found_res_plus)
-             schi_low(sproc,1,2,-1)=&
-                  full_integrate(om,-nn,4,found_res_minus)
-             schi(sproc,1,2) = schi(sproc,1,2) + &
-                  schi_low(sproc,1,2,1)+schi_low(sproc,1,2,-1)
+             if (xy_alps) then
+                schi_low(sproc,1,2,1)=&
+                     full_integrate(om,nn,4,found_res_plus)
+                schi_low(sproc,1,2,-1)=&
+                     full_integrate(om,-nn,4,found_res_minus)
+                schi(sproc,1,2) = schi(sproc,1,2) + &
+                     schi_low(sproc,1,2,1)+schi_low(sproc,1,2,-1)
+             else
+                schi_low(sproc,1,2,1)=0.d0
+                schi_low(sproc,1,2,-1)=0.d0
+                schi(sproc,1,2)=0.d0
+             endif
 
              !xz term:
-             schi_low(sproc,1,3,1)=&
-                  full_integrate(om,nn,5,found_res_plus)
-             schi_low(sproc,1,3,-1)=&
-                  full_integrate(om,-nn,5,found_res_minus)
-             schi(sproc,1,3) = schi(sproc,1,3) + &
-                  schi_low(sproc,1,3,1)+schi_low(sproc,1,3,-1)
-             
-             !yz term:
-             schi_low(sproc,2,3,1)=&
-                  full_integrate(om,nn,6,found_res_plus)
-             schi_low(sproc,2,3,-1)=&
-                  full_integrate(om,-nn,6,found_res_minus)
-             schi(sproc,2,3) = schi(sproc,2,3) + &
-                  schi_low(sproc,2,3,1)+schi_low(sproc,2,3,-1)
+             if (xz_alps) then
+                schi_low(sproc,1,3,1)=&
+                     full_integrate(om,nn,5,found_res_plus)
+                schi_low(sproc,1,3,-1)=&
+                     full_integrate(om,-nn,5,found_res_minus)
+                schi(sproc,1,3) = schi(sproc,1,3) + &
+                     schi_low(sproc,1,3,1)+schi_low(sproc,1,3,-1)
+             else
+                schi_low(sproc,1,3,1)=0.d0
+                schi_low(sproc,1,3,-1)=0.d0
+                schi(sproc,1,3)=0.d0
+             endif
 
+             !yz term:
+             if (yz_alps) then
+                schi_low(sproc,2,3,1)= &
+                     full_integrate(om,nn,6,found_res_plus)
+                schi_low(sproc,2,3,-1)= &
+                     full_integrate(om,-nn,6,found_res_minus)
+                schi(sproc,2,3) =  schi(sproc,2,3) + &
+                     schi_low(sproc,2,3,1)+schi_low(sproc,2,3,-1)
+             else
+                schi_low(sproc,2,3,1)= 0.d0
+                schi_low(sproc,2,3,-1)= 0.d0
+                schi(sproc,2,3) =  0.d0
+             endif
+             
           else
 
              !xx term:
-             schi(sproc,1,1) = schi(sproc,1,1) + &
-                  full_integrate(om,nn,1,found_res_plus) + &
-                  full_integrate(om,-nn,1,found_res_minus)
+             if (xx_alps) then
+                schi(sproc,1,1) = schi(sproc,1,1) + &
+                     full_integrate(om,nn,1,found_res_plus) + &
+                     full_integrate(om,-nn,1,found_res_minus)
+             else
+                schi(sproc,1,1)=0.d0
+             endif
 
              !yy term:
-             schi(sproc,2,2) = schi(sproc,2,2) + &
-                  full_integrate(om,nn,2,found_res_plus) + &
-                  full_integrate(om,-nn,2,found_res_minus)
+             if (yy_alps) then
+                schi(sproc,2,2) = schi(sproc,2,2) + &
+                     full_integrate(om,nn,2,found_res_plus) + &
+                     full_integrate(om,-nn,2,found_res_minus)
+             else
+                schi(sproc,2,2)=0.d0
+             endif
 
              !zz term:
-             schi(sproc,3,3) = schi(sproc,3,3) + &
-                  full_integrate(om,nn,3,found_res_plus) + &
-                  full_integrate(om,-nn,3,found_res_minus)
+             if (zz_alps) then
+                schi(sproc,3,3) = schi(sproc,3,3) + &
+                     full_integrate(om,nn,3,found_res_plus) + &
+                     full_integrate(om,-nn,3,found_res_minus)
+             else
+                schi(sproc,3,3)=0.d0
+             endif
 
              !xy term:
-             schi(sproc,1,2) = schi(sproc,1,2) + &
-                  full_integrate(om,nn,4,found_res_plus) + &
-                  full_integrate(om,-nn,4,found_res_minus)
+             if (xy_alps) then
+                schi(sproc,1,2) = schi(sproc,1,2) + &
+                     full_integrate(om,nn,4,found_res_plus) + &
+                     full_integrate(om,-nn,4,found_res_minus)
+             else
+                schi(sproc,1,2)=0.d0
+             endif
 
              !xz term:
-             schi(sproc,1,3) = schi(sproc,1,3) + &
-                  full_integrate(om,nn,5,found_res_plus) + &
-                  full_integrate(om,-nn,5,found_res_minus)
+             if (xz_alps) then
+                schi(sproc,1,3) = schi(sproc,1,3) + &
+                     full_integrate(om,nn,5,found_res_plus) + &
+                     full_integrate(om,-nn,5,found_res_minus)
+             else
+                schi(sproc,1,3)=0.d0
+             endif
 
              !yz term:
-             schi(sproc,2,3) = schi(sproc,2,3) + &
-                  full_integrate(om,nn,6,found_res_plus) + &
-                  full_integrate(om,-nn,6,found_res_minus)
-
+             if (yz_alps) then
+                schi(sproc,2,3) = schi(sproc,2,3) + &
+                     full_integrate(om,nn,6,found_res_plus) + &
+                     full_integrate(om,-nn,6,found_res_minus)
+             else
+                schi(sproc,2,3) = 0.d0
+             endif
+             
           endif
 
           
@@ -486,14 +571,31 @@ end subroutine derivative_f0
        if (nlim(1)==0) then
           if(relativistic(sproc)) then
              if (kperp_norm) then
-                schi(sproc,3,3)=schi(sproc,3,3) + int_ee_rel(om)
+                schi(sproc,3,3)=schi(sproc,3,3) + int_ee_rel(om)                
              else
                 schi(sproc,3,3)=schi(sproc,3,3) + kperp**2*int_ee_rel(om)
              endif
           else
              if (kperp_norm) then
-                schi(sproc,3,3)=schi(sproc,3,3) + int_ee(om)
-                schi_low(sproc,3,3,0)=schi_low(sproc,3,3,0) + int_ee(om)
+                if (zz_alps) then
+                   if (use_intee) then
+                      schi(sproc,3,3)=schi(sproc,3,3) + int_ee(om)
+                      schi_low(sproc,3,3,0)=schi_low(sproc,3,3,0) + int_ee(om)
+                   else
+                      if (sproc.eq.2) then
+                         !electrons should have int_ee = -1836 for this set of parameters
+                         schi(sproc,3,3)=schi(sproc,3,3) -ms(sproc)
+                         schi_low(sproc,3,3,0)=schi_low(sproc,3,3,0) -ms(sproc)
+                      else
+                         !Protons should have int_ee=0
+                         schi(sproc,3,3)=schi(sproc,3,3)
+                         schi_low(sproc,3,3,0)=schi_low(sproc,3,3,0)
+                      endif
+                   endif
+                else
+                   schi(sproc,3,3)=0.d0
+                   schi_low(sproc,3,3,0)=0.d0
+                endif
              else
                 schi(sproc,3,3)=schi(sproc,3,3) + kperp**2*int_ee(om)
                 schi_low(sproc,3,3,0)=schi_low(sproc,3,3,0) + kperp**2*int_ee(om)
@@ -503,6 +605,17 @@ end subroutine derivative_f0
        
     endif
 
+    ! This is the case to use NHDS for the calculation of chi:
+    if ((.not.proc0).and.(nlim(2).GE.0).and.(nlim(1).EQ.0)) then
+       call calc_chi(chi_NHDS,chi_NHDS_low,sproc,kpar,kperp,om)
+       if (.not.xx_alps) schi(sproc,1,1)=chi_NHDS(1,1)/(ns(sproc) * qs(sproc))
+       if (.not.yy_alps) schi(sproc,2,2)=chi_NHDS(2,2)/(ns(sproc) * qs(sproc))
+       if (.not.zz_alps) schi(sproc,3,3)=chi_NHDS(3,3)/(ns(sproc) * qs(sproc))
+       if (.not.xy_alps) schi(sproc,1,2)=chi_NHDS(1,2)/(ns(sproc) * qs(sproc))
+       if (.not.xz_alps) schi(sproc,1,3)=chi_NHDS(1,3)/(ns(sproc) * qs(sproc))
+       if (.not.yz_alps) schi(sproc,2,3)=chi_NHDS(2,3)/(ns(sproc) * qs(sproc))
+    endif
+    
        norm(sproc) = ns(sproc) * qs(sproc)
 
        schi(sproc,1,1) = schi(sproc,1,1) * norm(sproc)
@@ -579,9 +692,9 @@ end subroutine derivative_f0
           eps(2,3) = eps(2,3) + chi(is,2,3)
 
           !Trouble shooting electron firehose
-          !write(*,'(6es14.4,i3)')chi0(is,1,1),chi0(is,1,2),chi0(is,1,3),is
-          !write(*,'(6es14.4,i3)')chi0(is,2,1),chi0(is,2,2),chi0(is,2,3),is
-          !write(*,'(6es14.4,i3)')chi0(is,3,1),chi0(is,3,2),chi0(is,3,3),is
+          write(*,'(6es14.4,i3)')chi0(is,1,1),chi0(is,1,2),chi0(is,1,3),is
+          write(*,'(6es14.4,i3)')chi0(is,2,1),chi0(is,2,2),chi0(is,2,3),is
+          write(*,'(6es14.4,i3)')chi0(is,3,1),chi0(is,3,2),chi0(is,3,3),is
 
        enddo
 
@@ -616,9 +729,9 @@ end subroutine derivative_f0
        wave(2,3) = eps(2,3)
 
        ! Exploit symmetry of dispersion tensor:
-       wave(2,1) = -wave(1,2)
+       wave(2,1) =  -wave(1,2)
        wave(3,1) =  wave(1,3)
-       wave(3,2) = -wave(2,3)
+       wave(3,2) =  -wave(2,3)
        !-=-=-=-=-=-
 
        !Calculate determinant of the dispersion tensor:
@@ -800,7 +913,7 @@ double complex function full_integrate(om, nn, mode, found_res)
         full_integrate = integrate_res(om,nn,mode)+2.d0 * landau_integrate(om, nn, mode)
      elseif ((found_res).and.(aimag(om).EQ.0.d0)) then
         full_integrate = integrate_res(om,nn,mode)+landau_integrate(om, nn, mode)
-  endif
+     endif
   return
 end function full_integrate
 
@@ -2270,14 +2383,17 @@ end subroutine secant_osc
 
 
 
-double complex function rtsec(func,xin,iflag)
+double complex function rtsec(func,xin,in,iflag)
   !! An alternative implementation of the secant method, adapted from PLUME.
-     use alps_var, only : proc0,writeOut,D_threshold,numiter,D_prec
+     use alps_var, only : proc0,writeOut,D_threshold,numiter,D_prec,D_tol
      implicit none
 
      double complex :: xin
      !! Initial Guess for complex frequency.
 
+     integer, intent(in) :: in
+     !! Root number
+     
      double complex :: func
      !! Function whose roots are to be identified.
      !! For ALPS, this is the dispersion relation.
@@ -2338,8 +2454,8 @@ double complex function rtsec(func,xin,iflag)
         rtsec=rtsec+dx/2.d0
 
         f=func(rtsec)
-        !if((abs(dx).LT.D_threshold).OR.(abs(f).EQ.0.d0)) then
-        if((abs(f).LT.D_threshold)) then
+        if((abs(dx).LT.D_tol).OR.(abs(f).EQ.0.d0)) then
+        !if((abs(f).LT.D_threshold)) then
 	     	if (proc0.AND.writeOut) write(*,'(a,i4)') 'Converged after iteration ',j
 	        return
         endif
@@ -2652,7 +2768,7 @@ subroutine om_scan(ik)
            case (0)
               call secant(omega,in)
            case (1)
-              omega=rtsec(disp,omega,iflag)
+              omega=rtsec(disp,omega,in,iflag)
            case (2)
               call secant_osc(omega,in)
            end select
@@ -3397,7 +3513,7 @@ subroutine om_double_scan
            case (0)
               call secant(omega,in)
            case (1)
-              omega=rtsec(disp,omega,iflag)
+              omega=rtsec(disp,omega,in,iflag)
            case (2)
               call secant_osc(omega,in)
            end select
@@ -3533,7 +3649,7 @@ subroutine om_double_scan
                 case (0)
                    call secant(omega,in)
                 case (1)
-                   omega=rtsec(disp,omega,iflag)
+                   omega=rtsec(disp,omega,in,iflag)
                 case (2)
                    call secant_osc(omega,in)
                 end select
@@ -3728,6 +3844,7 @@ subroutine map_search
   use ALPS_var, only : omi, omf, gami, gamf, loggridw, loggridg, determine_minima
   use ALPS_var, only : ni, nr, proc0, ms, ns, qs, runname, nspec
   use ALPS_var, only : writeOut, kperp, kpar, wroots, numroots, nroots, nroots_max
+  use ALPS_var, only : chi0, chi0_low
   use ALPS_io,  only : get_unused_unit
   use mpi
   implicit none
@@ -3878,8 +3995,16 @@ subroutine map_search
            endif
 
            open(unit=unit_map,file=trim(mapName),status='old',position='append')
-           write(unit_map,'(5es16.6e3)') &
-                om(ir,ii),val(ir,ii),cal(ir,ii)
+           !write(unit_map,'(5es16.6e3)') &
+           !     om(ir,ii),val(ir,ii),cal(ir,ii)
+
+           write(unit_map,'(5es16.6e3,12es14.4,12es14.4)') &
+                om(ir,ii),val(ir,ii),cal(ir,ii),&
+                chi0(1,1,1),chi0(1,2,2),chi0(1,3,3),&
+                chi0(1,1,2),chi0(1,1,3),chi0(1,2,3),&
+                chi0(2,1,1),chi0(2,2,2),chi0(2,3,3),&
+                chi0(2,1,2),chi0(2,1,3),chi0(2,2,3)
+           
            close(unit_map)
 
         endif
@@ -3972,7 +4097,7 @@ subroutine refine_guess
      case (0)
         call secant(omega,iw)
      case (1)
-        omega=rtsec(disp,omega,iflag)
+        omega=rtsec(disp,omega,iw,iflag)
      case (2)
         call secant_osc(omega,iw)
      end select
