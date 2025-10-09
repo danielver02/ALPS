@@ -319,6 +319,10 @@ end subroutine derivative_f0
     !if using zz_alps, selects to use (true) or not to use int_ee
     !if false, we use its expected analytical value (for a hardcoded case)
     logical :: use_intee = .true.
+
+    integer :: n_select=0
+    !integer :: n_select=1
+    !select order of bessel function for susceptability calculation.
     
     
     chi=cmplx(0.d0,0.d0,kind(1.d0))
@@ -374,9 +378,8 @@ end subroutine derivative_f0
 
        do nn = nlim(1),nlim(2)
 
-          !if (proc0) then
-          !call evaluate_int_T(om,nn)
-          !endif
+
+          if (n_select.eq.nn) then
           
           call determine_resonances(om,nn,found_res_plus,found_res_minus)
           ! CHIij(nn) function calls:
@@ -564,11 +567,14 @@ end subroutine derivative_f0
              
           endif
 
+       endif !n_select
           
        enddo
 
        ! Add in ee term:
-       if (nlim(1)==0) then
+       !if (nlim(1)==0) then
+       !only add this is for n=0
+       if ((nlim(1)==0).and.(n_select.eq.0)) then
           if(relativistic(sproc)) then
              if (kperp_norm) then
                 schi(sproc,3,3)=schi(sproc,3,3) + int_ee_rel(om)                
@@ -602,8 +608,9 @@ end subroutine derivative_f0
              endif
           endif
        endif
+
        
-    endif
+    endif !nhds vs alps selection
 
     ! This is the case to use NHDS for the calculation of chi:
     if ((.not.proc0).and.(nlim(2).GE.0).and.(nlim(1).EQ.0)) then
