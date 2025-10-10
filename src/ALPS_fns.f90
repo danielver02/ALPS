@@ -379,7 +379,7 @@ end subroutine derivative_f0
        do nn = nlim(1),nlim(2)
 
 
-          if (n_select.eq.nn) then
+          !if (n_select.eq.nn) then
           
           call determine_resonances(om,nn,found_res_plus,found_res_minus)
           ! CHIij(nn) function calls:
@@ -567,14 +567,14 @@ end subroutine derivative_f0
              
           endif
 
-       endif !n_select
+       !endif !n_select
           
        enddo
 
        ! Add in ee term:
-       !if (nlim(1)==0) then
+       if (nlim(1)==0) then
        !only add this is for n=0
-       if ((nlim(1)==0).and.(n_select.eq.0)) then
+       !if ((nlim(1)==0).and.(n_select.eq.0)) then
           if(relativistic(sproc)) then
              if (kperp_norm) then
                 schi(sproc,3,3)=schi(sproc,3,3) + int_ee_rel(om)                
@@ -763,10 +763,11 @@ end function disp
 
 subroutine determine_resonances(om,nn,found_res_plus,found_res_minus)
   !! This subroutine determines whether any kinetic resonances are located in the integration domain.
-	use alps_var, only : npar, pp, vA, ms, qs, sproc, kpar, nperp
-	use alps_var, only : positions_principal, relativistic
-	use alps_io, only  : alps_error
-	implicit none
+  use alps_var, only : npar, pp, vA, ms, qs, sproc, kpar, nperp
+  use alps_var, only : positions_principal, relativistic
+  use alps_var, only : iproc
+  use alps_io, only  : alps_error
+  implicit none
 
   double complex, intent(in) :: om
   !! Complex wave frequency \(\omega\).
@@ -839,34 +840,52 @@ subroutine determine_resonances(om,nn,found_res_plus,found_res_minus)
 			  (pp(sproc,2,ipar+1,2).GT.real(p_res))) found_res_plus = .TRUE.
 
 	  enddo
+
+   ! Check if there is a resonance right outside the integration domain:
+   if ((real(p_res).LT.pp(sproc,2,1,2)).AND.&
+        (real(p_res).GE.(pp(sproc,2,1,2)-(1.d0*positions_principal)*dppar))) found_res_plus=.TRUE.
+   if ((real(p_res).GE.pp(sproc,2,npar-1,2)).AND.&
+        (real(p_res).LT.(pp(sproc,2,npar-1,2)+(1.d0*positions_principal)*dppar))) found_res_plus=.TRUE.
+
+   if (abs(nn).le.3) then
+      if (found_res_plus) then
+         write(*,'(a,i3,a,i3,2es14.4,2es14.4,i4,a)')&
+              'res+: s',sproc,' proc ',iproc,om,p_res,nn,' det_res'
+      else
+         write(*,'(a,i3,a,i3,2es14.4,2es14.4,i4,a)')&
+              'no res+: s',sproc,' proc ',iproc,om,p_res,nn,' det_res'
+      endif
+   endif
+
+   
    
 	  ! negative n:
-	  ipar = 0
-	  p_res = (ms(sproc) * om + 1.d0 * nn * qs(sproc))/kpar
+   ipar = 0
+   p_res = (ms(sproc) * om + 1.d0 * nn * qs(sproc))/kpar
+   
+   do while ((ipar.LE.(npar-2)).AND.(.NOT.found_res_minus))
+      ipar = ipar + 1
+      if ((pp(sproc,2,ipar,2).LE.real(p_res)).and.&
+           (pp(sproc,2,ipar+1,2).GT.real(p_res))) found_res_minus = .TRUE.
+      
+   enddo
+   ! Check if there is a resonance right outside the integration domain:
+   if ((real(p_res).LT.pp(sproc,2,1,2)).AND.&
+        (real(p_res).GE.(pp(sproc,2,1,2)-(1.d0*positions_principal)*dppar))) found_res_minus=.TRUE.
+   if ((real(p_res).GE.pp(sproc,2,npar-1,2)).AND.&
+        (real(p_res).LT.(pp(sproc,2,npar-1,2)+(1.d0*positions_principal)*dppar))) found_res_minus=.TRUE.
 
-	  do while ((ipar.LE.(npar-2)).AND.(.NOT.found_res_minus))
-		 ipar = ipar + 1
-		 if ((pp(sproc,2,ipar,2).LE.real(p_res)).and.&
-			  (pp(sproc,2,ipar+1,2).GT.real(p_res))) found_res_minus = .TRUE.
+   if (abs(nn).le.3) then
+      if (found_res_minus) then
+         write(*,'(a,i3,a,i3,2es14.4,2es14.4,i4,a)')&
+              'res-: s',sproc,' proc ',iproc,om,p_res,nn,' det_res'
+      else
+         write(*,'(a,i3,a,i3,2es14.4,2es14.4,i4,a)')&
+              'no res-: s',sproc,' proc ',iproc,om,p_res,nn,' det_res'
+      endif
+   endif
 
-enddo
-
-
-
-	  ! Check if there is a resonance right outside the integration domain:
-	  p_res = (ms(sproc) * om - 1.d0 * nn * qs(sproc))/kpar
-
-	  if ((real(p_res).LT.pp(sproc,2,1,2)).AND.&
-		(real(p_res).GE.(pp(sproc,2,1,2)-(1.d0*positions_principal)*dppar))) found_res_plus=.TRUE.
-	  if ((real(p_res).GE.pp(sproc,2,npar-1,2)).AND.&
-		(real(p_res).LT.(pp(sproc,2,npar-1,2)+(1.d0*positions_principal)*dppar))) found_res_plus=.TRUE.
-
-	   p_res = (ms(sproc) * om + 1.d0 * nn * qs(sproc))/kpar
-
-	  if ((real(p_res).LT.pp(sproc,2,1,2)).AND.&
-		(real(p_res).GE.(pp(sproc,2,1,2)-(1.d0*positions_principal)*dppar))) found_res_minus=.TRUE.
-	  if ((real(p_res).GE.pp(sproc,2,npar-1,2)).AND.&
-		(real(p_res).LT.(pp(sproc,2,npar-1,2)+(1.d0*positions_principal)*dppar))) found_res_minus=.TRUE.
+   
 endif
 
 end subroutine determine_resonances
@@ -877,6 +896,7 @@ end subroutine determine_resonances
 double complex function full_integrate(om, nn, mode, found_res)
   !! This function returns the full integral expression according to Eq. (2.9) in the code paper.
   use alps_var, only : npar, relativistic, sproc
+  use alps_var, only : iproc
   use alps_fns_rel, only : integrate_res_rel,landau_integrate_rel
   implicit none
 
@@ -889,12 +909,16 @@ double complex function full_integrate(om, nn, mode, found_res)
   integer, intent(in) :: mode
   !! Index of the entries in the T-tensor of Eq. (2.10).
 
-  logical, intent(in) :: found_res
+  !logical, intent(in) :: found_res
+  logical :: found_res
   !! Check whether a resonance is found.
 
 
   full_integrate = cmplx(0.d0,0.d0,kind(1.d0))
 
+  !force this to be false
+  !found_res=.false.
+  
   if (.not. found_res) then
      !Brute force integrate
 
@@ -902,6 +926,9 @@ double complex function full_integrate(om, nn, mode, found_res)
      !full_integrate = integrate(om, nn, mode, 1, npar-1)
 
      !Switch to a Simpson's Rule for integration.
+     if (abs(nn).le.3) &
+          write(*,'(a,i3,a,i3,2es14.4,i3,i3,a)')&
+          'brute: s',sproc,' proc ',iproc,om,nn,mode,' full_int'
      full_integrate = integrate_simpson(om, nn, mode, 1, npar-1)
      
   elseif (found_res.and.relativistic(sproc)) then
@@ -914,7 +941,11 @@ double complex function full_integrate(om, nn, mode, found_res)
         endif
      elseif ((found_res).and.(aimag(om).GT.0.d0)) then
         !Brute force integrate
-        full_integrate = integrate_res(om,nn,mode)
+        if (abs(nn).le.3) &
+             write(*,'(a,i3,a,i3,2es14.4,i3,i3,a)')&
+             'int_res: s',sproc,' proc ',iproc,om,nn,mode,' full_int'
+        !full_integrate = integrate_res(om,nn,mode)
+        full_integrate = integrate_res_alt(om,nn,mode)
      elseif ((found_res).and.(aimag(om).LT.0.d0)) then
         !Landau Integral
         full_integrate = integrate_res(om,nn,mode)+2.d0 * landau_integrate(om, nn, mode)
@@ -1135,10 +1166,11 @@ end function integrate
 end function integrate_simpson
 
 
-double complex function integrate_res(om,nn,mode)
-  !! This function performs the integration near resonances as described in Section 3.1 of the code paper. It is only called if resonances are present in or near the integration domain.
-	use alps_var, only : nperp,npar,pp,ms,qs,kpar,pi,sproc
-	use alps_var, only : positions_principal,n_resonance_interval, Tlim
+double complex function integrate_res_alt(om,nn,mode)
+  !! This function performs the integration near resonances as described in Section 3.1 of the 2018 code paper. It is only called if resonances are present in or near the integration domain.
+  use alps_var, only : nperp,npar,pp,ms,qs,kpar,pi,sproc
+  use alps_var, only : positions_principal,n_resonance_interval, Tlim
+  use alps_var, only : iproc
 	implicit none
 
   double complex, intent(in) :: om
@@ -1150,7 +1182,7 @@ double complex function integrate_res(om,nn,mode)
   integer, intent(in) :: mode
   !! Index of the entries in the T-tensor of Eq. (2.10).
 
-	integer :: ipar_res
+  integer :: ipar_res
   !! Index of the nearest parallel momentum to the resonance.
 
   integer :: ipar
@@ -1161,8 +1193,8 @@ double complex function integrate_res(om,nn,mode)
 
   integer :: ntiny
   !! Small steps for integration near pole according to Eq. (3.5).
-
-	integer :: lowerlimit
+  
+  integer :: lowerlimit
   !! Index of lower limit for integration according to Eq. (3.5).
 
   integer :: upperlimit
@@ -1174,7 +1206,7 @@ double complex function integrate_res(om,nn,mode)
   double precision :: dppar
   !! Inifinitesimal step in parallel momentum.
 
-	double precision :: capDelta
+  double precision :: capDelta
   !! Size of interval \(\Delta\) for integration according to Eq. (3.5).
 
   double precision :: smdelta
@@ -1192,7 +1224,7 @@ double complex function integrate_res(om,nn,mode)
   double precision :: correction
   !! Correction factor for finite size of interval \(\delta\).
 
-	double complex :: p_res
+  double complex :: p_res
   !! Resonance momentum.
 
   double complex :: ii
@@ -1204,76 +1236,556 @@ double complex function integrate_res(om,nn,mode)
   double complex :: gprimetr
   !! Function \(g^{\prime}\) in Eq. (3.6).
 
-	logical :: found_res
+  double precision :: Lg
+  !! \(|g^{\prime}|/|g| \)
+
+  double precision :: yy
+  !! Dummy Change of Variable
+
+  logical :: found_res
   !! Check whether a resonance is found.
 
-	dpperp = pp(sproc, 2, 2, 1) - pp(sproc, 1, 2, 1)
-	dppar  = pp(sproc, 2, 2, 2) - pp(sproc, 2, 1, 2)
+  !Momentum Resolution.
+  dpperp = pp(sproc, 2, 2, 1) - pp(sproc, 1, 2, 1)
+  dppar  = pp(sproc, 2, 2, 2) - pp(sproc, 2, 1, 2)
 
-	integrate_res=cmplx(0.d0,0.d0,kind(1.d0))
-	integrate_norm=cmplx(0.d0,0.d0,kind(1.d0))
+  !Rest variables to zero.
+  integrate_res_alt=cmplx(0.d0,0.d0,kind(1.d0))
+  integrate_norm=cmplx(0.d0,0.d0,kind(1.d0))
 
-	ii=cmplx(0.d0,1.d0,kind(1.d0))
+  !Imaginary unit.
+  ii=cmplx(0.d0,1.d0,kind(1.d0))
 
-	! determine the position of the resonance (i.e., the step LEFT of it):
-	ipar = 0
-	ipar_res=0
-	found_res = .FALSE.
+  !Determine the position of the resonance (i.e., the step LEFT of it):
+  ipar = 0
+  ipar_res=0
+  found_res = .FALSE.
 
-	p_res = (ms(sproc) * om - 1.d0*nn * qs(sproc))/kpar
+  !Resonant Momentum
+  p_res = (ms(sproc) * om - 1.d0*nn * qs(sproc))/kpar
+  do while ((ipar.LT.(npar-2)).AND.(.NOT.found_res))
+     ipar = ipar + 1
+     
+     if ((pp(sproc,2,ipar+1,2).GT.real(p_res)).and.&
+          (pp(sproc,2,ipar,2).LE.real(p_res))) then
+        ipar_res=ipar
+        found_res = .TRUE.
+     endif
+  enddo
 
-	do while ((ipar.LT.(npar-2)).AND.(.NOT.found_res))
-		ipar = ipar + 1
-
-		if ((pp(sproc,2,ipar+1,2).GT.real(p_res)).and.&
-			  (pp(sproc,2,ipar,2).LE.real(p_res))) then
-				ipar_res=ipar
-				found_res = .TRUE.
-		endif
-	enddo
-
-
-	! Handle resonances that are right outside the integration domain:
-	p_res = (ms(sproc) * om - (1.d0*nn) * qs(sproc))/kpar
-
-	do ipar=0,positions_principal
-
-		if ((real(p_res).GE.(pp(sproc,2,0,2)-dppar*ipar)).AND.&
-		  (real(p_res).LT.(pp(sproc,2,0,2)-dppar*(ipar-1)))) ipar_res = -ipar
-
-		if ((real(p_res).GE.(pp(sproc,2,npar-1,2)+dppar*ipar)).AND.&
-		  (real(p_res).LT.(pp(sproc,2,npar-1,2)+dppar*(ipar+1)))) ipar_res = npar-1+ipar
-
-	enddo
-
-
-	! If the resonance is close to the edge, do the normal integration:
-	if ((ipar_res-positions_principal).LE.2) then
-		integrate_res=integrate(om, nn, mode, ipar_res+positions_principal,npar-1)
-		return
-	endif
-
-
-	if ((ipar_res+positions_principal).GE.(npar-2)) then
-		integrate_res=integrate(om, nn, mode, 1, ipar_res-positions_principal)
-		return
-	endif
-
-	! positions_principal defines how close we can go to ipar_res with the "normal" integration.
-	! the following part is the normal function "integrate" on the left and on the right of ipar_res:
-	! left:
-	lowerlimit=ipar_res-positions_principal
-	integrate_norm = integrate(om, nn, mode, 1, lowerlimit)
+  !Testing Output
+  if (abs(nn).le.3) then
+     if (found_res) then
+        write(*,'(a,i3,a,i3,2es14.4,2es14.4,i4,i4,i4)')&
+             'res: s',sproc,' proc ',iproc,om,p_res,ipar_res,mode,nn
+     else
+        write(*,'(a,i3,a,i3,2es14.4,2es14.4,i4,i4)')&
+             'no res: s',sproc,' proc ',iproc,om,p_res,mode,nn
+     endif
+  endif
+  
+  
+  ! Handle resonances that are right outside the integration domain:
+  do ipar=0,positions_principal
+     if ((real(p_res).GE.(pp(sproc,2,0,2)-dppar*ipar)).AND.&
+          (real(p_res).LT.(pp(sproc,2,0,2)-dppar*(ipar-1)))) ipar_res = -ipar
+     
+     if ((real(p_res).GE.(pp(sproc,2,npar-1,2)+dppar*ipar)).AND.&
+       (real(p_res).LT.(pp(sproc,2,npar-1,2)+dppar*(ipar+1)))) ipar_res = npar-1+ipar
+  enddo
 
 
-	! right:
-	if(abs(real(p_res)-pp(sproc,2,ipar_res,2)).LT.(0.5d0*dppar)) then
-		upperlimit=ipar_res+positions_principal+1
-	else
-		upperlimit=ipar_res+positions_principal+2
-	endif
-	integrate_norm = integrate_norm + integrate(om, nn, mode, upperlimit, npar-1)
+  ! If the resonance is close to the left edge, do the normal integration:
+  if ((ipar_res-positions_principal).LE.2) then
+     integrate_res_alt=integrate(om, nn, mode, ipar_res+positions_principal,npar-1)
+     return
+  endif
+  
+  ! If the resonance is close to the right edge, do the normal integration:
+  if ((ipar_res+positions_principal).GE.(npar-2)) then
+     integrate_res_alt=integrate(om, nn, mode, 1, ipar_res-positions_principal)
+     return
+  endif
+  
+  ! positions_principal defines how close we can go to ipar_res with the "normal" integration.
+  ! the following part is the normal function "integrate" on the left and on the right of ipar_res:
+  ! left:
+  lowerlimit=ipar_res-positions_principal
+  integrate_norm = integrate(om, nn, mode, 1, lowerlimit)
 
+
+  ! right:
+  if(abs(real(p_res)-pp(sproc,2,ipar_res,2)).LT.(0.5d0*dppar)) then
+     upperlimit=ipar_res+positions_principal+1
+  else
+     upperlimit=ipar_res+positions_principal+2
+  endif
+  integrate_norm = integrate_norm + integrate(om, nn, mode, upperlimit, npar-1)
+
+  ! The following part includes the analytic switch described in Section 3.1 of the code paper
+  ! We call the function that needs to be integrated WITHOUT the resonance part funct_g.
+  ! We linearize this function. Now we can calculate the even part of the integration.
+  ! We set Delta so that it starts at ipar_res-positions_principal. In that way, there is only
+  ! a tiny rest left on the right side that needs to be integrated.
+  ! split the range between the resonance and the upper limit into n_resonance_interval steps:
+
+  !t_r and t_i in Eqn. 3.2 through 3.7
+  denomR=real(p_res)
+  denomI=aimag(p_res)
+
+  !limits for Eqn. 3.3 and following
+  capDelta=real(p_res)-pp(sproc,1,ipar_res-positions_principal,2)
+  smdelta=capDelta/(1.d0*n_resonance_interval)
+
+  gprimetr=(funct_g(denomR+dppar,1,om,nn,mode)-funct_g(denomR-dppar,1,om,nn,mode))/(2.d0*dppar)
+
+  if (abs(funct_g(denomR,1,om,nn,mode)).gt.1.E-20) then
+     Lg=abs(gprimetr)/abs(funct_g(denomR,1,om,nn,mode))
+  else
+     Lg=0.d0
+  endif
+  
+  if (abs(denomI).GT.Tlim) then ! regular integration according to Eq. (3.5) of the code paper:
+  !if (abs(denomI).GT.Lg*10) then ! regular integration according to Eq. (3.5) of the code paper:
+
+     ! Integrate the boundaries:
+     ppar=real(p_res) ! left end of integration interval:
+
+     !Dummy change of variable
+     yy=ppar-denomR
+     
+     ! At iperp=1, we are already missing the part from iperp=0, where we should actually start.
+     !Therefore, we use 4 instead of 2 in the trapezoid integration:
+     !integrate_res_alt = integrate_res_alt &
+     !     + 2.d0 * funct_g(ppar,1,om,nn,mode)/(ppar-denomR-ii*denomI)
+     !integrate_res_alt = integrate_res_alt &
+     !     - 2.d0 * funct_g(2.d0*denomR-ppar,1,om,nn,mode)/(ppar-denomR+ii*denomI)
+
+     integrate_res_alt=integrate_res_alt + &
+          2.d0 * ((yy+ii*denomI)*funct_g(denomR+yy,1,om,nn,mode)-&
+          (yy-ii*denomI)*funct_g(denomR-yy,1,om,nn,mode))/&
+          (yy**2.d0+denomI**2.d0)
+
+     !integrate_res_alt = integrate_res_alt &
+     !     + funct_g(ppar,nperp-1,om,nn,mode)/(ppar-denomR-ii*denomI)
+     !integrate_res_alt = integrate_res_alt &
+     !     - funct_g(2.d0*denomR-ppar,nperp-1,om,nn,mode)/(ppar-denomR+ii*denomI)
+
+     integrate_res_alt=integrate_res_alt + &
+          ((yy+ii*denomI)*funct_g(denomR+yy,nperp-1,om,nn,mode)-&
+          (yy-ii*denomI)*funct_g(denomR-yy,nperp-1,om,nn,mode))/&
+          (yy**2.d0+denomI**2.d0)
+     
+     ppar=real(p_res)+capDelta	! right end of integration interval:
+     yy=ppar-denomR
+
+     !integrate_res_alt = integrate_res_alt &
+     !     + 2.d0 * funct_g(ppar,1,om,nn,mode)/(ppar-denomR-ii*denomI)
+     !integrate_res_alt = integrate_res_alt &
+     !     - 2.d0 * funct_g(2.d0*denomR-ppar,1,om,nn,mode)/(ppar-denomR+ii*denomI)
+     
+     integrate_res_alt=integrate_res_alt + &
+          2.d0 * ((yy+ii*denomI)*funct_g(denomR+yy,1,om,nn,mode)-&
+          (yy-ii*denomI)*funct_g(denomR-yy,1,om,nn,mode))/&
+          (yy**2.d0+denomI**2.d0)
+     
+
+     !integrate_res_alt = integrate_res_alt &
+     !     + funct_g(ppar,nperp-1,om,nn,mode)/(ppar-denomR-ii*denomI)
+     !integrate_res_alt = integrate_res_alt &
+     !     - funct_g(2.d0*denomR-ppar,nperp-1,om,nn,mode)/(ppar-denomR+ii*denomI)
+
+     integrate_res_alt=integrate_res_alt + &
+          ((yy+ii*denomI)*funct_g(denomR+yy,nperp-1,om,nn,mode)-&
+          (yy-ii*denomI)*funct_g(denomR-yy,nperp-1,om,nn,mode))/&
+          (yy**2.d0+denomI**2.d0)
+
+
+     do iperp = 2, nperp-2
+        do ipar = 1, n_resonance_interval-1
+           ppar=real(p_res)+smdelta*ipar
+           yy=ppar-denomR
+           !integrate_res_alt = integrate_res_alt &
+           !     + 4.d0 * funct_g(ppar,iperp,om,nn,mode)/(ppar-denomR-ii*denomI)
+           !integrate_res_alt = integrate_res_alt &
+           !     - 4.d0 * funct_g(2.d0*denomR-ppar,iperp,om,nn,mode)/(ppar-denomR+ii*denomI)
+           integrate_res_alt=integrate_res_alt + &
+                4.d0 * ((yy+ii*denomI)*funct_g(denomR+yy,iperp,om,nn,mode)-&
+                (yy-ii*denomI)*funct_g(denomR-yy,iperp,om,nn,mode))/&
+                (yy**2.d0+denomI**2.d0)
+        enddo        
+
+        ppar=real(p_res) ! left end of integration interval:
+        yy=ppar-denomR
+        !integrate_res_alt = integrate_res_alt &
+        !     + 2.d0 * funct_g(ppar,iperp,om,nn,mode)/(ppar-denomR-ii*denomI)
+        !integrate_res_alt = integrate_res_alt &
+        !     - 2.d0 * funct_g(2.d0*denomR-ppar,iperp,om,nn,mode)/(ppar-denomR+ii*denomI)
+
+        integrate_res_alt=integrate_res_alt + &
+                2.d0 * ((yy+ii*denomI)*funct_g(denomR+yy,iperp,om,nn,mode)-&
+                (yy-ii*denomI)*funct_g(denomR-yy,iperp,om,nn,mode))/&
+                (yy**2.d0+denomI**2.d0)
+
+        ppar=real(p_res)+capDelta ! right end of integration interval:
+        yy=ppar-denomR
+   
+        !integrate_res_alt = integrate_res_alt &
+        !     + 2.d0 * funct_g(ppar,iperp,om,nn,mode)/(ppar-denomR-ii*denomI)
+        !integrate_res_alt = integrate_res_alt &
+        !     - 2.d0 * funct_g(2.d0*denomR-ppar,iperp,om,nn,mode)/(ppar-denomR+ii*denomI)
+
+        integrate_res_alt=integrate_res_alt + &
+             2.d0 * ((yy+ii*denomI)*funct_g(denomR+yy,iperp,om,nn,mode)-&
+             (yy-ii*denomI)*funct_g(denomR-yy,iperp,om,nn,mode))/&
+             (yy**2.d0+denomI**2.d0)
+
+     enddo
+
+
+     do ipar = 1, n_resonance_interval-1
+        ppar=real(p_res)+smdelta*ipar
+        yy=ppar-denomR
+        
+        ! At iperp=1, we are already missing the part from iperp=0, where we should actually start.
+        !Therefore, we use 4 instead of 2 in the trapezoid integration:
+        !integrate_res_alt = integrate_res_alt &
+        !     + 4.d0 * funct_g(ppar,1,om,nn,mode)/(ppar-denomR-ii*denomI)
+        !integrate_res_alt = integrate_res_alt &
+        !     - 4.d0 * funct_g(2.d0*denomR-ppar,1,om,nn,mode)/(ppar-denomR+ii*denomI)
+
+        integrate_res_alt=integrate_res_alt + &
+             4.d0 * ((yy+ii*denomI)*funct_g(denomR+yy,1,om,nn,mode)-&
+             (yy-ii*denomI)*funct_g(denomR-yy,1,om,nn,mode))/&
+             (yy**2.d0+denomI**2.d0)
+        
+        !integrate_res_alt = integrate_res_alt &
+        !     + 2.d0 * funct_g(ppar,nperp-1,om,nn,mode)/(ppar-denomR-ii*denomI)
+        !integrate_res_alt = integrate_res_alt &
+        !     - 2.d0 * funct_g(2.d0*denomR-ppar,nperp-1,om,nn,mode)/(ppar-denomR+ii*denomI)
+
+        integrate_res_alt=integrate_res_alt + &
+             2.d0 * ((yy+ii*denomI)*funct_g(denomR+yy,nperp-1,om,nn,mode)-&
+             (yy-ii*denomI)*funct_g(denomR-yy,nperp-1,om,nn,mode))/&
+             (yy**2.d0+denomI**2.d0)
+        
+     enddo
+     
+  else ! analytic approximation according to Eq. (3.6) of the code paper:
+
+     ! For ppar=real(p_res) (left end of integration interval):
+     ppar=real(p_res)
+     yy=ppar-denomR
+     ! In this case, ppar is equal to denomR, so: no integration needed
+     
+     ! For ppar=capDelta+real(p_res) (right end of integration interval):
+     ppar=real(p_res)+capDelta
+     yy=ppar-denomR
+     
+     ! For iperp = 1:
+     !(at iperp=1, we are already missing the part from iperp=0, where we should actually start.
+     !Therefore, we use 4 instead of 2 in the trapezoid integration):
+     gprimetr = (funct_g(denomR+dppar,1,om,nn,mode)-&
+          funct_g(denomR-dppar,1,om,nn,mode))/(2.d0*dppar)
+     integrate_res_alt = integrate_res_alt + &
+          2.d0 * 2.d0*gprimetr*((ppar-denomR)**2 / ((ppar-denomR)**2+denomI**2))
+     
+     ! For iperp = nperp-1:
+     gprimetr = (funct_g(denomR+dppar,nperp-1,om,nn,mode)-&
+          funct_g(denomR-dppar,nperp-1,om,nn,mode))/(2.d0*dppar)
+     integrate_res_alt = integrate_res_alt &
+          + 2.d0*gprimetr*((ppar-denomR)**2 / ((ppar-denomR)**2+denomI**2))
+     
+     ! The following lines account for the first term in Eq. (3.6) in the code paper, which is evaluated via Eq. (3.7):
+     ! We have to divide by smdelta, because the integral (at the end) is multiplied by smdelta as the integration measure.
+     if (denomI.GT.0.d0) then
+        integrate_res_alt = integrate_res_alt &
+             + 2.d0 * 2.d0 * ii * pi * funct_g(denomR,1,om,nn,mode)/smdelta
+        integrate_res_alt = integrate_res_alt &
+             + 2.d0 * ii * pi * funct_g(denomR,nperp-1,om,nn,mode)/smdelta
+     else if (denomI.LT.0.d0) then
+        integrate_res_alt = integrate_res_alt &
+             - 2.d0 * 2.d0 * ii * pi * funct_g(denomR,1,om,nn,mode)/smdelta
+        integrate_res_alt = integrate_res_alt &
+             - 2.d0 * ii * pi * funct_g(denomR,nperp-1,om,nn,mode)/smdelta
+     else if (denomI.EQ.0.d0) then
+        integrate_res_alt = integrate_res_alt+0.d0
+     endif
+     
+
+     do iperp = 2, nperp-2
+        do ipar = 1, n_resonance_interval-1
+           ppar=real(p_res)+smdelta*ipar
+           
+           gprimetr = (funct_g(denomR+dppar,iperp,om,nn,mode)-&
+                funct_g(denomR-dppar,iperp,om,nn,mode))/(2.d0*dppar)
+           
+           ! This is the second term in Eq. (3.6):
+           integrate_res_alt = integrate_res_alt &
+                + 4.d0 * 2.d0 * gprimetr * ((ppar-denomR)**2 / ((ppar-denomR)**2+denomI**2))
+        enddo
+
+        ppar=real(p_res)
+        ! In this case, ppar is equal to denomR, so: no integration needed
+        
+        ppar=real(p_res)+capDelta
+        gprimetr = (funct_g(denomR+dppar,iperp,om,nn,mode)-&
+             funct_g(denomR-dppar,iperp,om,nn,mode))/(2.d0*dppar)
+        integrate_res_alt = integrate_res_alt &
+             + 2.d0*2.d0*gprimetr*((ppar-denomR)**2 / ((ppar-denomR)**2+denomI**2))
+
+
+        ! The following lines account for the first term in Eq. (3.6) in the code paper, which is evaluated via Eq. (3.7):
+        ! We have to divide by smdelta, because the integral (at the end) is multiplied by smdelta as the integration measure.
+        if (denomI.GT.0.d0) then
+           integrate_res_alt = integrate_res_alt &
+                + 4.d0 * ii * pi * funct_g(denomR,iperp,om,nn,mode)/smdelta
+        else if (denomI.LT.0.d0) then
+           integrate_res_alt = integrate_res_alt &
+                - 4.d0 * ii * pi * funct_g(denomR,iperp,om,nn,mode)/smdelta
+        else if (denomI.EQ.0.d0) then
+           integrate_res_alt = integrate_res_alt+0.d0
+        endif
+        
+     enddo
+
+     do ipar = 1, n_resonance_interval-1
+        ppar=real(p_res)+smdelta*ipar
+        
+        gprimetr = (funct_g(denomR+dppar,1,om,nn,mode)-&
+             funct_g(denomR-dppar,1,om,nn,mode))/(2.d0*dppar)
+        integrate_res_alt = integrate_res_alt &
+             + 4.d0*2.d0*gprimetr*((ppar-denomR)**2 / ((ppar-denomR)**2+denomI**2))
+        
+        gprimetr = (funct_g(denomR+dppar,nperp-1,om,nn,mode)-&
+             funct_g(denomR-dppar,nperp-1,om,nn,mode))/(2.d0*dppar)
+        integrate_res_alt = integrate_res_alt &
+             + 2.d0*2.d0*gprimetr*((ppar-denomR)**2 / ((ppar-denomR)**2+denomI**2))
+     enddo
+  endif
+
+
+
+  ! Calculate tiny rest left between the point real(p_res)+capDelta and the position
+  ! pp(sproc,2,upperlimit,2). We split this interval into steps of roughly size smdelta:
+  ntiny=int((pp(sproc,2,upperlimit,2)-real(p_res)-capDelta)/smdelta)
+  
+  ! This integration performs Eq. (3.2) directly on the tiny rest interval.
+  if (ntiny.GT.0) then
+     
+     ! Correct for the fact that smdelta is not exactly the step width in the tiny-rest integration:
+     correction=((pp(sproc,2,upperlimit,2)-real(p_res)-capDelta)/(1.d0*ntiny))/smdelta
+
+     ppar=real(p_res)+capDelta
+
+     integrate_res_alt=integrate_res_alt + &
+          2.d0 * correction*(funct_g(ppar,1,om,nn,mode)/(ppar-denomR-ii*denomI))
+
+     integrate_res_alt=integrate_res_alt + &
+          correction*(funct_g(ppar,nperp-1,om,nn,mode)/(ppar-denomR-ii*denomI))
+
+     ppar=real(p_res)+capDelta+correction*smdelta*ntiny
+
+     integrate_res_alt=integrate_res_alt + &
+          2.d0 * correction*(funct_g(ppar,1,om,nn,mode)/(ppar-denomR-ii*denomI))
+
+     integrate_res_alt=integrate_res_alt + &
+          correction*(funct_g(ppar,nperp-1,om,nn,mode)/(ppar-denomR-ii*denomI))
+
+
+     do iperp=2,nperp-2
+        do ipar=1,ntiny-1
+           ppar=real(p_res)+capDelta+correction*smdelta*ipar
+           
+           integrate_res_alt=integrate_res_alt + 4.d0*&
+                correction*(funct_g(ppar,iperp,om,nn,mode)/(ppar-denomR-ii*denomI))
+        enddo
+        
+        
+        ppar=real(p_res)+capDelta
+        
+        integrate_res_alt=integrate_res_alt + 2.d0*&
+             correction*(funct_g(ppar,iperp,om,nn,mode)/(ppar-denomR-ii*denomI))
+        
+        
+        ppar=real(p_res)+capDelta+correction*smdelta*ntiny
+        
+        integrate_res_alt=integrate_res_alt + 2.d0*&
+             correction*(funct_g(ppar,iperp,om,nn,mode)/(ppar-denomR-ii*denomI))
+        
+     enddo
+
+     do ipar=1,ntiny-1
+        ppar=real(p_res)+capDelta+correction*smdelta*ipar
+        
+        integrate_res_alt=integrate_res_alt + 2.d0 * 2.d0*&
+             correction*(funct_g(ppar,1,om,nn,mode)/(ppar-denomR-ii*denomI))
+        
+        integrate_res_alt=integrate_res_alt + 2.d0*&
+        correction*(funct_g(ppar,nperp-1,om,nn,mode)/(ppar-denomR-ii*denomI))
+     enddo
+     
+  endif
+
+
+  integrate_res_alt = 2.d0 * pi * integrate_res_alt * smdelta * dpperp * 0.25d0
+  integrate_res_alt = integrate_res_alt + integrate_norm
+
+  return
+
+end function integrate_res_alt
+
+double complex function integrate_res(om,nn,mode)
+  !! This function performs the integration near resonances as described in Section 3.1 of the 2018 code paper. It is only called if resonances are present in or near the integration domain.
+  use alps_var, only : nperp,npar,pp,ms,qs,kpar,pi,sproc
+  use alps_var, only : positions_principal,n_resonance_interval, Tlim
+  use alps_var, only : iproc
+	implicit none
+
+  double complex, intent(in) :: om
+  !! Complex wave frequency \(\omega\).
+
+  integer, intent(in) :: nn
+  !! Order of the Bessel function.
+
+  integer, intent(in) :: mode
+  !! Index of the entries in the T-tensor of Eq. (2.10).
+
+  integer :: ipar_res
+  !! Index of the nearest parallel momentum to the resonance.
+
+  integer :: ipar
+  !! Index to loop over parallel momentum.
+
+  integer :: iperp
+  !! Index to loop over perpendicular momentum.
+
+  integer :: ntiny
+  !! Small steps for integration near pole according to Eq. (3.5).
+  
+  integer :: lowerlimit
+  !! Index of lower limit for integration according to Eq. (3.5).
+
+  integer :: upperlimit
+  !! Index of upper limit for integration according to Eq. (3.5).
+
+  double precision :: dpperp
+  !! Inifinitesimal step in perpendicular momentum.
+
+  double precision :: dppar
+  !! Inifinitesimal step in parallel momentum.
+
+  double precision :: capDelta
+  !! Size of interval \(\Delta\) for integration according to Eq. (3.5).
+
+  double precision :: smdelta
+  !! Size of sub-interval \(\delta\) for integration according to Eq. (3.5).
+
+  double precision :: denomR
+  !! Real part of denominator of Eq. (3.6).
+
+  double precision :: denomI
+  !! Imaginary part of denominator of Eq. (3.6).
+
+  double precision :: ppar
+  !! Parallel momentum.
+
+  double precision :: correction
+  !! Correction factor for finite size of interval \(\delta\).
+
+  double complex :: p_res
+  !! Resonance momentum.
+
+  double complex :: ii
+  !! Imaginary unit.
+
+  double complex :: integrate_norm
+  !! Variable to host integral without accounting for resonances.
+
+  double complex :: gprimetr
+  !! Function \(g^{\prime}\) in Eq. (3.6).
+
+  logical :: found_res
+  !! Check whether a resonance is found.
+
+  dpperp = pp(sproc, 2, 2, 1) - pp(sproc, 1, 2, 1)
+  dppar  = pp(sproc, 2, 2, 2) - pp(sproc, 2, 1, 2)
+
+  integrate_res=cmplx(0.d0,0.d0,kind(1.d0))
+  integrate_norm=cmplx(0.d0,0.d0,kind(1.d0))
+
+  ii=cmplx(0.d0,1.d0,kind(1.d0))
+
+  ! determine the position of the resonance (i.e., the step LEFT of it):
+  ipar = 0
+  ipar_res=0
+  found_res = .FALSE.
+
+  p_res = (ms(sproc) * om - 1.d0*nn * qs(sproc))/kpar
+
+  do while ((ipar.LT.(npar-2)).AND.(.NOT.found_res))
+     ipar = ipar + 1
+     
+     if ((pp(sproc,2,ipar+1,2).GT.real(p_res)).and.&
+          (pp(sproc,2,ipar,2).LE.real(p_res))) then
+        ipar_res=ipar
+        found_res = .TRUE.
+     endif
+  enddo
+  
+  if (abs(nn).le.3) then
+     if (found_res) then
+        write(*,'(a,i3,a,i3,2es14.4,2es14.4,i4,i4,i4)')&
+             'res: s',sproc,' proc ',iproc,om,p_res,ipar_res,mode,nn
+     else
+        write(*,'(a,i3,a,i3,2es14.4,2es14.4,i4,i4)')&
+             'no res: s',sproc,' proc ',iproc,om,p_res,mode,nn
+     endif
+  endif
+  
+  
+  ! Handle resonances that are right outside the integration domain:
+  p_res = (ms(sproc) * om - (1.d0*nn) * qs(sproc))/kpar
+
+  do ipar=0,positions_principal
+
+     if ((real(p_res).GE.(pp(sproc,2,0,2)-dppar*ipar)).AND.&
+          (real(p_res).LT.(pp(sproc,2,0,2)-dppar*(ipar-1)))) ipar_res = -ipar
+     
+     if ((real(p_res).GE.(pp(sproc,2,npar-1,2)+dppar*ipar)).AND.&
+       (real(p_res).LT.(pp(sproc,2,npar-1,2)+dppar*(ipar+1)))) ipar_res = npar-1+ipar
+
+  enddo
+
+
+  ! If the resonance is close to the left edge, do the normal integration:
+  if ((ipar_res-positions_principal).LE.2) then
+     integrate_res=integrate(om, nn, mode, ipar_res+positions_principal,npar-1)
+     return
+  endif
+  
+  ! If the resonance is close to the right edge, do the normal integration:
+  if ((ipar_res+positions_principal).GE.(npar-2)) then
+     integrate_res=integrate(om, nn, mode, 1, ipar_res-positions_principal)
+     return
+  endif
+  
+  ! positions_principal defines how close we can go to ipar_res with the "normal" integration.
+  ! the following part is the normal function "integrate" on the left and on the right of ipar_res:
+  ! left:
+  lowerlimit=ipar_res-positions_principal
+  integrate_norm = integrate(om, nn, mode, 1, lowerlimit)
+
+
+  ! right:
+  if(abs(real(p_res)-pp(sproc,2,ipar_res,2)).LT.(0.5d0*dppar)) then
+     upperlimit=ipar_res+positions_principal+1
+  else
+     upperlimit=ipar_res+positions_principal+2
+  endif
+  integrate_norm = integrate_norm + integrate(om, nn, mode, upperlimit, npar-1)
+
+  if (.true.) then
 
 
 	! The following part includes the analytic switch described in Section 3.1 of the code paper
@@ -1495,12 +2007,14 @@ double complex function integrate_res(om,nn,mode)
 			correction*(funct_g(ppar,nperp-1,om,nn,mode)/(ppar-denomR-ii*denomI))
 		enddo
 
-	endif
+endif
 
 
 	integrate_res = 2.d0 * pi * integrate_res * smdelta * dpperp * 0.25d0
 	integrate_res = integrate_res + integrate_norm
 
+endif
+ 
 	return
 
 end function integrate_res

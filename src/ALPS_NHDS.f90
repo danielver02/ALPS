@@ -178,7 +178,7 @@ contains
   enddo
   
   do n=-nmaxrun,nmaxrun
-     if (abs(n)==n_select) then
+     !if (abs(n)==n_select) then
      !if (n==n_select) then
         call calc_ypsilon(Ynew,j,n,kz,kperp,x)
         do i=1,3
@@ -190,7 +190,7 @@ contains
               if (n==-1) Yn1(i,k)=Yn1(i,k)+Ynew(i,k)
            enddo
         enddo
-     endif
+     !endif !n_select
   enddo
      
   chi(1,1)=Y(1,1)/(ell*ell)
@@ -201,13 +201,13 @@ contains
   chi(2,3)=Y(2,3)/(ell*ell)
   chi(3,1)=Y(3,1)/(ell*ell)
   chi(3,2)=Y(3,2)/(ell*ell)
-  if (n_select.eq.0) then
+  !if (n_select.eq.0) then
   if (kperp_norm) then
      chi(3,3)=2.d0*x*vdrift/(ell*ell*kz*vtherm*vtherm*bMalphas(j))+Y(3,3)/(ell*ell)
   else
      chi(3,3)=kperp*kperp*2.d0*x*vdrift/(ell*ell*kz*vtherm*vtherm*bMalphas(j))+Y(3,3)/(ell*ell)
   endif
-  endif
+!endif !n_select
 
   n=0
   chi_low(1,1,n)=Y0(1,1)/(ell*ell)
