@@ -847,7 +847,7 @@ subroutine determine_resonances(om,nn,found_res_plus,found_res_minus)
    if ((real(p_res).GE.pp(sproc,2,npar-1,2)).AND.&
         (real(p_res).LT.(pp(sproc,2,npar-1,2)+(1.d0*positions_principal)*dppar))) found_res_plus=.TRUE.
 
-   if (abs(nn).le.3) then
+   if ((abs(nn).le.3).and.(.false.)) then
       if (found_res_plus) then
          write(*,'(a,i3,a,i3,2es14.4,2es14.4,i4,a)')&
               'res+: s',sproc,' proc ',iproc,om,p_res,nn,' det_res'
@@ -875,7 +875,7 @@ subroutine determine_resonances(om,nn,found_res_plus,found_res_minus)
    if ((real(p_res).GE.pp(sproc,2,npar-1,2)).AND.&
         (real(p_res).LT.(pp(sproc,2,npar-1,2)+(1.d0*positions_principal)*dppar))) found_res_minus=.TRUE.
 
-   if (abs(nn).le.3) then
+   if ((abs(nn).le.3).and.(.false.)) then
       if (found_res_minus) then
          write(*,'(a,i3,a,i3,2es14.4,2es14.4,i4,a)')&
               'res-: s',sproc,' proc ',iproc,om,p_res,nn,' det_res'
@@ -923,13 +923,13 @@ double complex function full_integrate(om, nn, mode, found_res)
      !Brute force integrate
 
      !Trapezoidal Integration
-     !full_integrate = integrate(om, nn, mode, 1, npar-1)
+     full_integrate = integrate(om, nn, mode, 1, npar-1)
 
      !Switch to a Simpson's Rule for integration.
-     if (abs(nn).le.3) &
-          write(*,'(a,i3,a,i3,2es14.4,i3,i3,a)')&
-          'brute: s',sproc,' proc ',iproc,om,nn,mode,' full_int'
-     full_integrate = integrate_simpson(om, nn, mode, 1, npar-1)
+     !if (abs(nn).le.3) &
+     !     write(*,'(a,i3,a,i3,2es14.4,i3,i3,a)')&
+     !     'brute: s',sproc,' proc ',iproc,om,nn,mode,' full_int'
+     !full_integrate = integrate_simpson(om, nn, mode, 1, npar-1)
      
   elseif (found_res.and.relativistic(sproc)) then
        	 	if (aimag(om).GT.0.d0) then
@@ -940,12 +940,12 @@ double complex function full_integrate(om, nn, mode, found_res)
 	       	 	full_integrate = integrate_res_rel(om,nn,mode) + landau_integrate_rel(om, nn, mode)
         endif
      elseif ((found_res).and.(aimag(om).GT.0.d0)) then
-        !Brute force integrate
-        if (abs(nn).le.3) &
-             write(*,'(a,i3,a,i3,2es14.4,i3,i3,a)')&
-             'int_res: s',sproc,' proc ',iproc,om,nn,mode,' full_int'
-        !full_integrate = integrate_res(om,nn,mode)
-        full_integrate = integrate_res_alt(om,nn,mode)
+        !Resonant integral
+        !if (abs(nn).le.3) &
+        !     write(*,'(a,i3,a,i3,2es14.4,i3,i3,a)')&
+        !     'int_res: s',sproc,' proc ',iproc,om,nn,mode,' full_int'
+        full_integrate = integrate_res(om,nn,mode)
+        !full_integrate = integrate_res_alt(om,nn,mode)
      elseif ((found_res).and.(aimag(om).LT.0.d0)) then
         !Landau Integral
         full_integrate = integrate_res(om,nn,mode)+2.d0 * landau_integrate(om, nn, mode)
@@ -1274,7 +1274,7 @@ double complex function integrate_res_alt(om,nn,mode)
   enddo
 
   !Testing Output
-  if (abs(nn).le.3) then
+  if ((abs(nn).le.3).and.(.false.)) then
      if (found_res) then
         write(*,'(a,i3,a,i3,2es14.4,2es14.4,i4,i4,i4)')&
              'res: s',sproc,' proc ',iproc,om,p_res,ipar_res,mode,nn
@@ -1322,6 +1322,9 @@ double complex function integrate_res_alt(om,nn,mode)
   endif
   integrate_norm = integrate_norm + integrate(om, nn, mode, upperlimit, npar-1)
 
+  integrate_norm = integrate(om, nn, mode, 1, npar-1)
+  return
+  
   ! The following part includes the analytic switch described in Section 3.1 of the code paper
   ! We call the function that needs to be integrated WITHOUT the resonance part funct_g.
   ! We linearize this function. Now we can calculate the even part of the integration.
@@ -1571,7 +1574,8 @@ double complex function integrate_res_alt(om,nn,mode)
   ntiny=int((pp(sproc,2,upperlimit,2)-real(p_res)-capDelta)/smdelta)
   
   ! This integration performs Eq. (3.2) directly on the tiny rest interval.
-  if (ntiny.GT.0) then
+  !if (ntiny.GT.0) then
+  if (.false.) then
      
      ! Correct for the fact that smdelta is not exactly the step width in the tiny-rest integration:
      correction=((pp(sproc,2,upperlimit,2)-real(p_res)-capDelta)/(1.d0*ntiny))/smdelta
@@ -1728,12 +1732,14 @@ double complex function integrate_res(om,nn,mode)
      
      if ((pp(sproc,2,ipar+1,2).GT.real(p_res)).and.&
           (pp(sproc,2,ipar,2).LE.real(p_res))) then
+!     if ((pp(sproc,2,ipar+1,2).GE.real(p_res)).and.&
+!          (pp(sproc,2,ipar,2).LT.real(p_res))) then
         ipar_res=ipar
         found_res = .TRUE.
      endif
   enddo
   
-  if (abs(nn).le.3) then
+  if ((abs(nn).le.3).and.(.false.)) then
      if (found_res) then
         write(*,'(a,i3,a,i3,2es14.4,2es14.4,i4,i4,i4)')&
              'res: s',sproc,' proc ',iproc,om,p_res,ipar_res,mode,nn
@@ -1784,6 +1790,10 @@ double complex function integrate_res(om,nn,mode)
      upperlimit=ipar_res+positions_principal+2
   endif
   integrate_norm = integrate_norm + integrate(om, nn, mode, upperlimit, npar-1)
+  
+  !integrate_norm = integrate(om, nn, mode, 1, npar-1)
+  !integrate_res = integrate_norm
+  !return
 
   if (.true.) then
 
@@ -1798,12 +1808,21 @@ double complex function integrate_res(om,nn,mode)
 	denomR=real(p_res)
 	denomI=aimag(p_res)
 
-	capDelta=real(p_res)-pp(sproc,1,ipar_res-positions_principal,2)
+ !capDelta=real(p_res)-pp(sproc,1,ipar_res-positions_principal,2)
+ capDelta=real(p_res)-pp(sproc,1,ipar_res-positions_principal,2)
 	smdelta=capDelta/(1.d0*n_resonance_interval)
 
+ 
+ if ((sproc.eq.2)) then
+    !write(*,'(4es14.4,2i5,2es14.4,2i3)')&
+    !     om,p_res,lowerlimit,upperlimit,capDelta,smdelta,nn,mode
+    write(*,'(6es14.4,2es14.4,2i3)')&
+         om,p_res,pp(sproc,1,lowerlimit,2),pp(sproc,1,upperlimit,2),capDelta,smdelta,nn,mode
+ endif
 
-
-	if (abs(denomI).GT.Tlim) then ! regular integration according to Eq. (3.5) of the code paper:
+ 
+ if (abs(denomI).GT.Tlim) then ! regular integration according to Eq. (3.5) of the code paper:
+ !if (.true.) then ! regular integration according to Eq. (3.5) of the code paper:
 
 		! Integrate the boundaries:
 		ppar=real(p_res) ! left end of integration interval:
@@ -2067,7 +2086,8 @@ double complex function funct_g(ppar_real,iperp,om,nn,mode)
 	ipar_close=0
 	! determine the closest ipar (on the left) to this p_res_real:
 	do ipar=1,npar-1
-		if ((pp(sproc,iperp,ipar+1,2).GT.ppar_real).AND.(pp(sproc,iperp,ipar,2).LE.ppar_real)) then
+    if ((pp(sproc,iperp,ipar+1,2).GT.ppar_real).AND.(pp(sproc,iperp,ipar,2).LE.ppar_real)) then
+    !if ((pp(sproc,iperp,ipar+1,2).GE.ppar_real).AND.(pp(sproc,iperp,ipar,2).LT.ppar_real)) then
 			ipar_close=ipar
 		endif
 	enddo
