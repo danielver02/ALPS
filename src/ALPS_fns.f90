@@ -847,7 +847,7 @@ subroutine determine_resonances(om,nn,found_res_plus,found_res_minus)
    if ((real(p_res).GE.pp(sproc,2,npar-1,2)).AND.&
         (real(p_res).LT.(pp(sproc,2,npar-1,2)+(1.d0*positions_principal)*dppar))) found_res_plus=.TRUE.
 
-   if ((abs(nn).le.3).and.(.false.)) then
+   if ((abs(nn).le.2).and.(.true.)) then
       if (found_res_plus) then
          write(*,'(a,i3,a,i3,2es14.4,2es14.4,i4,a)')&
               'res+: s',sproc,' proc ',iproc,om,p_res,nn,' det_res'
@@ -875,7 +875,7 @@ subroutine determine_resonances(om,nn,found_res_plus,found_res_minus)
    if ((real(p_res).GE.pp(sproc,2,npar-1,2)).AND.&
         (real(p_res).LT.(pp(sproc,2,npar-1,2)+(1.d0*positions_principal)*dppar))) found_res_minus=.TRUE.
 
-   if ((abs(nn).le.3).and.(.false.)) then
+   if ((abs(nn).le.2).and.(.true.)) then
       if (found_res_minus) then
          write(*,'(a,i3,a,i3,2es14.4,2es14.4,i4,a)')&
               'res-: s',sproc,' proc ',iproc,om,p_res,nn,' det_res'
@@ -1784,10 +1784,15 @@ double complex function integrate_res(om,nn,mode)
 
 
   ! right:
-  if(abs(real(p_res)-pp(sproc,2,ipar_res,2)).LT.(0.5d0*dppar)) then
+  !if(abs(real(p_res)-pp(sproc,2,ipar_res,2)).LT.(0.5d0*dppar)) then
+  if (abs(real(p_res)-pp(sproc,2,ipar_res,2)).EQ.(0.d0)) then
+     upperlimit=ipar_res+positions_principal
+  elseif (abs(real(p_res)-pp(sproc,2,ipar_res,2)).LE.(0.5d0*dppar)) then
      upperlimit=ipar_res+positions_principal+1
+     !upperlimit=ipar_res+positions_principal+2
   else
      upperlimit=ipar_res+positions_principal+2
+     !upperlimit=ipar_res+positions_principal+3
   endif
   integrate_norm = integrate_norm + integrate(om, nn, mode, upperlimit, npar-1)
   
@@ -1906,33 +1911,39 @@ double complex function integrate_res(om,nn,mode)
     ! The following lines account for the first term in Eq. (3.6) in the code paper, which is evaluated via Eq. (3.7):
     ! We have to divide by smdelta, because the integral (at the end) is multiplied by smdelta as the integration measure.
     if (denomI.GT.0.d0) then
-      integrate_res = integrate_res + 2.d0 * 2.d0 * ii * pi * funct_g(denomR,1,om,nn,mode)/smdelta
-			integrate_res = integrate_res + 2.d0 * ii * pi * funct_g(denomR,nperp-1,om,nn,mode)/smdelta
+       integrate_res = integrate_res + 2.d0 * 2.d0 * ii * pi * funct_g(denomR,1,om,nn,mode)/smdelta
+       integrate_res = integrate_res + 2.d0 * ii * pi * funct_g(denomR,nperp-1,om,nn,mode)/smdelta
+       !integrate_res = integrate_res + 2.d0 * ii * pi * funct_g(denomR,1,om,nn,mode)/smdelta
+       !integrate_res = integrate_res + ii * pi * funct_g(denomR,nperp-1,om,nn,mode)/smdelta
     else if (denomI.LT.0.d0) then
-      integrate_res = integrate_res - 2.d0 * 2.d0 * ii * pi * funct_g(denomR,1,om,nn,mode)/smdelta
-      integrate_res = integrate_res - 2.d0 * ii * pi * funct_g(denomR,nperp-1,om,nn,mode)/smdelta
+       integrate_res = integrate_res - 2.d0 * 2.d0 * ii * pi * funct_g(denomR,1,om,nn,mode)/smdelta
+       integrate_res = integrate_res - 2.d0 * ii * pi * funct_g(denomR,nperp-1,om,nn,mode)/smdelta
+       !integrate_res = integrate_res - 2.d0 * ii * pi * funct_g(denomR,1,om,nn,mode)/smdelta
+       !integrate_res = integrate_res - ii * pi * funct_g(denomR,nperp-1,om,nn,mode)/smdelta
     else if (denomI.EQ.0.d0) then
       integrate_res = integrate_res+0.d0
     endif
 
 
-		do iperp = 2, nperp-2
-			do ipar = 1, n_resonance_interval-1
-				ppar=real(p_res)+smdelta*ipar
-
-				gprimetr = (funct_g(denomR+dppar,iperp,om,nn,mode)-&
-					funct_g(denomR-dppar,iperp,om,nn,mode))/(2.d0*dppar)
-
+    do iperp = 2, nperp-2
+       do ipar = 1, n_resonance_interval-1
+          ppar=real(p_res)+smdelta*ipar
+          
+          gprimetr = (funct_g(denomR+dppar,iperp,om,nn,mode)-&
+               funct_g(denomR-dppar,iperp,om,nn,mode))/(2.d0*dppar)
+          
         ! This is the second term in Eq. (3.6):
-				integrate_res = integrate_res + 4.d0 * 2.d0 * gprimetr * ((ppar-denomR)**2 / ((ppar-denomR)**2+denomI**2))
-			enddo
+          integrate_res = integrate_res + &
+               4.d0 * 2.d0 * gprimetr * ((ppar-denomR)**2 / ((ppar-denomR)**2+denomI**2))
+       enddo
 
-			ppar=real(p_res)
+       ppar=real(p_res)
       ! In this case, ppar is equal to denomR, so: no integration needed
 
-			ppar=real(p_res)+capDelta
-			gprimetr = (funct_g(denomR+dppar,iperp,om,nn,mode)-funct_g(denomR-dppar,iperp,om,nn,mode))/(2.d0*dppar)
-			integrate_res = integrate_res + 2.d0*2.d0*gprimetr*((ppar-denomR)**2 / ((ppar-denomR)**2+denomI**2))
+       ppar=real(p_res)+capDelta
+       gprimetr = (funct_g(denomR+dppar,iperp,om,nn,mode)-funct_g(denomR-dppar,iperp,om,nn,mode))/(2.d0*dppar)
+       integrate_res = integrate_res + &
+            2.d0*2.d0*gprimetr*((ppar-denomR)**2 / ((ppar-denomR)**2+denomI**2))
 
 
       ! The following lines account for the first term in Eq. (3.6) in the code paper, which is evaluated via Eq. (3.7):
@@ -1944,24 +1955,24 @@ double complex function integrate_res(om,nn,mode)
       else if (denomI.EQ.0.d0) then
         integrate_res = integrate_res+0.d0
       endif
-
-		enddo
-
-
-
-		do ipar = 1, n_resonance_interval-1
-			ppar=real(p_res)+smdelta*ipar
-
-			gprimetr = (funct_g(denomR+dppar,1,om,nn,mode)-funct_g(denomR-dppar,1,om,nn,mode))/(2.d0*dppar)
-			integrate_res = integrate_res + 4.d0*2.d0*gprimetr*((ppar-denomR)**2 / ((ppar-denomR)**2+denomI**2))
-
-			gprimetr = (funct_g(denomR+dppar,nperp-1,om,nn,mode)-funct_g(denomR-dppar,nperp-1,om,nn,mode))/(2.d0*dppar)
-			integrate_res = integrate_res + 2.d0*2.d0*gprimetr*((ppar-denomR)**2 / ((ppar-denomR)**2+denomI**2))
-
-		  enddo
+      
+   enddo
 
 
-	endif
+
+   do ipar = 1, n_resonance_interval-1
+      ppar=real(p_res)+smdelta*ipar
+
+      gprimetr = (funct_g(denomR+dppar,1,om,nn,mode)-funct_g(denomR-dppar,1,om,nn,mode))/(2.d0*dppar)
+      integrate_res = integrate_res + 4.d0*2.d0*gprimetr*((ppar-denomR)**2 / ((ppar-denomR)**2+denomI**2))
+
+      gprimetr = (funct_g(denomR+dppar,nperp-1,om,nn,mode)-funct_g(denomR-dppar,nperp-1,om,nn,mode))/(2.d0*dppar)
+      integrate_res = integrate_res + 2.d0*2.d0*gprimetr*((ppar-denomR)**2 / ((ppar-denomR)**2+denomI**2))
+
+   enddo
+
+
+endif
 
 
 
@@ -1969,9 +1980,18 @@ double complex function integrate_res(om,nn,mode)
 	! pp(sproc,2,upperlimit,2). We split this interval into steps of roughly size smdelta:
 	ntiny=int((pp(sproc,2,upperlimit,2)-real(p_res)-capDelta)/smdelta)
 
-! This integration performs Eq. (3.2) directly on the tiny rest interval.
-	if (ntiny.GT.0) then
+ !write(*,'(a,2i3,6es14.4,i3,es14.4)') &
+ !     'ntiny test: ',sproc,nn,om,p_res,capDelta,smdelta,ntiny,pp(sproc,2,upperlimit,2)
 
+
+ write(*,'(a,2i3,4es14.4,3i5,es14.4,i3)') &
+      'pres test: ',sproc,nn,om,p_res,lowerlimit,upperlimit,ipar_res,pp(sproc,2,ipar_res,2),ntiny
+
+ ! This integration performs Eq. (3.2) directly on the tiny rest interval.
+ !if (.false.) then
+ if (ntiny.GT.0) then
+    
+    
 		! Correct for the fact that smdelta is not exactly the step width in the tiny-rest integration:
 		correction=((pp(sproc,2,upperlimit,2)-real(p_res)-capDelta)/(1.d0*ntiny))/smdelta
 
@@ -2024,7 +2044,7 @@ double complex function integrate_res(om,nn,mode)
 
 			integrate_res=integrate_res + 2.d0*&
 			correction*(funct_g(ppar,nperp-1,om,nn,mode)/(ppar-denomR-ii*denomI))
-		enddo
+enddo
 
 endif
 
@@ -2033,7 +2053,7 @@ endif
 	integrate_res = integrate_res + integrate_norm
 
 endif
- 
+
 	return
 
 end function integrate_res
@@ -2085,13 +2105,14 @@ double complex function funct_g(ppar_real,iperp,om,nn,mode)
 
 	ipar_close=0
 	! determine the closest ipar (on the left) to this p_res_real:
-	do ipar=1,npar-1
-    if ((pp(sproc,iperp,ipar+1,2).GT.ppar_real).AND.(pp(sproc,iperp,ipar,2).LE.ppar_real)) then
-    !if ((pp(sproc,iperp,ipar+1,2).GE.ppar_real).AND.(pp(sproc,iperp,ipar,2).LT.ppar_real)) then
-			ipar_close=ipar
-		endif
-	enddo
-
+ do ipar=1,npar-1
+    if (abs(pp(sproc,iperp,ipar,2)-ppar_real).le.(0.5d0*dppar)) then
+       !if ((pp(sproc,iperp,ipar+1,2).GT.ppar_real).AND.(pp(sproc,iperp,ipar,2).LE.ppar_real)) then
+       !if ((pp(sproc,iperp,ipar+1,2).GE.ppar_real).AND.(pp(sproc,iperp,ipar,2).LT.ppar_real)) then
+       ipar_close=ipar
+    endif
+ enddo
+ 
 	if (ipar_close.GE.(npar-1)) ipar_close=npar-2
 	if (ipar_close.LE.1) ipar_close=2
 
