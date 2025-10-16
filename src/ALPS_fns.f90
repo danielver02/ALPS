@@ -250,10 +250,11 @@ end subroutine derivative_f0
 
 
  double complex function disp(om)
- !! This function returns the determinant of the dispersion tensor for a given frequency om.
+ !! This function returns the determinant of the dispersion tensor for a given frequency om
     use alps_var, only : nlim, proc0, nspec, ierror, sproc, relativistic
     use alps_var, only : wave, kperp, kpar, ns, qs, vA, chi0, chi0_low
     use alps_var, only : usebM, kperp_norm, ms
+    use alps_var, only : nperp, bessel_array
     use alps_nhds, only: calc_chi
     use alps_fns_rel, only : int_ee_rel
     use mpi
@@ -298,6 +299,9 @@ end subroutine derivative_f0
 
     integer :: nn
     !! Index for order of Bessel function.
+    
+    integer :: nnt
+    !! Temp. Index for order of Bessel function.
 
     double complex, dimension(1:nspec) :: norm
     !! Normalisation for dispersion tensors.
@@ -323,6 +327,27 @@ end subroutine derivative_f0
     integer :: n_select=0
     !integer :: n_select=1
     !select order of bessel function for susceptability calculation.
+
+    double precision, dimension(1:nspec,1:nperp-1) :: snJn2
+    double precision, dimension(1:nspec,1:nperp-1) :: sJnJnp
+    double precision, dimension(1:nspec,1:nperp-1) :: sJn2
+
+    double precision, dimension(1:nspec,1:nperp-1) :: nJn2
+    double precision, dimension(1:nspec,1:nperp-1) :: JnJnp
+    double precision, dimension(1:nspec,1:nperp-1) :: Jn2
+
+    integer :: iperp
+    !! Index to loop over perpendicular momentum.
+
+  double precision :: z
+  !!  Argument of the Bessel functions,
+  !!  multiplying with 1./(pperp*kperp) if kperp_norm=.false.
+  
+  double precision :: bessel
+  !! Bessel function.
+  
+  double precision :: besselP
+  !! First derivative of the Bessel function.
     
     
     chi=cmplx(0.d0,0.d0,kind(1.d0))
@@ -331,6 +356,16 @@ end subroutine derivative_f0
     schi=cmplx(0.d0,0.d0,kind(1.d0))
     schi_low=cmplx(0.d0,0.d0,kind(1.d0))
 
+    snJn2=0.d0
+    sJnJnp=0.d0
+    sJn2=0.d0
+
+    nJn2=0.d0
+    JnJnp=0.d0
+    Jn2=0.d0
+    
+
+    
     if (proc0)  then
 
        !Indices of refraction for the dispersion relation in NHDS normalisation (with an additional kperp**2):
@@ -345,6 +380,15 @@ end subroutine derivative_f0
        endif
 
     else
+
+       if (kperp_norm) then
+          write(*,*)'mao!',sproc,kperp,qs(sproc)
+          z= kperp/qs(sproc)
+       else
+          z= 1.d0/qs(sproc)
+       endif
+
+       
         ! Integrate:
         ! c.f. Stix Equation 10.48; pg 255
 
@@ -378,12 +422,14 @@ end subroutine derivative_f0
 
        do nn = nlim(1),nlim(2)
 
+          
 
           !if (n_select.eq.nn) then
           
           call determine_resonances(om,nn,found_res_plus,found_res_minus)
           ! CHIij(nn) function calls:
-
+          
+          
           if (nn == 0) then
 
              !xx term is zero
@@ -423,6 +469,30 @@ end subroutine derivative_f0
                 schi(sproc,2,3) =  0.d0
              endif
 
+             do iperp=1,nperp-1
+             
+             if (nn.LT.0) then
+                bessel=((-1.d0)**nn)*bessel_array(-nn,iperp)
+             else
+                bessel=bessel_array(nn,iperp)
+             endif
+             
+             
+             if (nn.GE.1) then
+                besselP = 0.5d0 * (bessel_array(nn-1,iperp)-bessel_array(nn+1,iperp))
+             else if (nn.LT.-1) then
+                besselP = 0.5d0 * ((((-1.d0)**(nn-1))*bessel_array(-(nn-1),iperp))&
+                     -(((-1.d0)**(nn+1))*bessel_array(-(nn+1),iperp)))
+             else if (nn.EQ.0) then
+                besselP = -bessel_array(1,iperp)
+             else if (nn.EQ.-1) then
+                besselP = 0.5d0 * (bessel_array(2,iperp)-bessel_array(0,iperp))
+             endif
+
+                snJn2(sproc,iperp)=snJn2(sproc,iperp)+nn*bessel*bessel
+                sJnJnp(sproc,iperp)=sJnJnp(sproc,iperp)+bessel*besselP
+                sJn2(sproc,iperp)=sJn2(sproc,iperp)+bessel*bessel
+             enddo
              
           elseif (nn==1) then
              !xx term:
@@ -508,6 +578,58 @@ end subroutine derivative_f0
                 schi_low(sproc,2,3,-1)= 0.d0
                 schi(sproc,2,3) =  0.d0
              endif
+
+             do iperp=1,nperp-1
+             if (nn.LT.0) then
+                bessel=((-1.d0)**nn)*bessel_array(-nn,iperp)
+             else
+                bessel=bessel_array(nn,iperp)
+             endif
+             
+             
+             if (nn.GE.1) then
+                besselP = 0.5d0 * (bessel_array(nn-1,iperp)-bessel_array(nn+1,iperp))
+             else if (nn.LT.-1) then
+                besselP = 0.5d0 * ((((-1.d0)**(nn-1))*bessel_array(-(nn-1),iperp))&
+                     -(((-1.d0)**(nn+1))*bessel_array(-(nn+1),iperp)))
+             else if (nn.EQ.0) then
+                besselP = -bessel_array(1,iperp)
+             else if (nn.EQ.-1) then
+                besselP = 0.5d0 * (bessel_array(2,iperp)-bessel_array(0,iperp))
+             endif
+
+
+                snJn2(sproc,iperp)=snJn2(sproc,iperp)+nn*bessel*bessel
+                sJnJnp(sproc,iperp)=sJnJnp(sproc,iperp)+bessel*besselP
+                sJn2(sproc,iperp)=sJn2(sproc,iperp)+bessel*bessel
+             enddo
+
+             nnt=-nn
+
+             do iperp=1,nperp-1
+             
+             if (nnt.LT.0) then
+                bessel=((-1.d0)**nnt)*bessel_array(-nnt,iperp)
+             else
+                bessel=bessel_array(nnt,iperp)
+             endif
+             
+             
+             if (nnt.GE.1) then
+                besselP = 0.5d0 * (bessel_array(nnt-1,iperp)-bessel_array(nnt+1,iperp))
+             else if (nnt.LT.-1) then
+                besselP = 0.5d0 * ((((-1.d0)**(nnt-1))*bessel_array(-(nnt-1),iperp))&
+                     -(((-1.d0)**(nnt+1))*bessel_array(-(nnt+1),iperp)))
+             else if (nnt.EQ.0) then
+                besselP = -bessel_array(1,iperp)
+             else if (nnt.EQ.-1) then
+                besselP = 0.5d0 * (bessel_array(2,iperp)-bessel_array(0,iperp))
+             endif
+
+                snJn2(sproc,iperp)=snJn2(sproc,iperp)+nnt*bessel*bessel
+                sJnJnp(sproc,iperp)=sJnJnp(sproc,iperp)+bessel*besselP
+                sJn2(sproc,iperp)=sJn2(sproc,iperp)+bessel*bessel
+             enddo
              
           else
 
@@ -564,6 +686,58 @@ end subroutine derivative_f0
              else
                 schi(sproc,2,3) = 0.d0
              endif
+
+             do iperp=1,nperp-1
+             
+                          if (nn.LT.0) then
+                bessel=((-1.d0)**nn)*bessel_array(-nn,iperp)
+             else
+                bessel=bessel_array(nn,iperp)
+             endif
+             
+             
+             if (nn.GE.1) then
+                besselP = 0.5d0 * (bessel_array(nn-1,iperp)-bessel_array(nn+1,iperp))
+             else if (nn.LT.-1) then
+                besselP = 0.5d0 * ((((-1.d0)**(nn-1))*bessel_array(-(nn-1),iperp))&
+                     -(((-1.d0)**(nn+1))*bessel_array(-(nn+1),iperp)))
+             else if (nn.EQ.0) then
+                besselP = -bessel_array(1,iperp)
+             else if (nn.EQ.-1) then
+                besselP = 0.5d0 * (bessel_array(2,iperp)-bessel_array(0,iperp))
+             endif
+
+                snJn2(sproc,iperp)=snJn2(sproc,iperp)+nn*bessel*bessel
+                sJnJnp(sproc,iperp)=sJnJnp(sproc,iperp)+bessel*besselP
+                sJn2(sproc,iperp)=sJn2(sproc,iperp)+bessel*bessel
+             enddo
+
+             nnt=-nn
+
+             do iperp=1,nperp-1
+             
+             if (nnt.LT.0) then
+                bessel=((-1.d0)**nnt)*bessel_array(-nnt,iperp)
+             else
+                bessel=bessel_array(nnt,iperp)
+             endif
+             
+             
+             if (nnt.GE.1) then
+                besselP = 0.5d0 * (bessel_array(nnt-1,iperp)-bessel_array(nnt+1,iperp))
+             else if (nnt.LT.-1) then
+                besselP = 0.5d0 * ((((-1.d0)**(nnt-1))*bessel_array(-(nnt-1),iperp))&
+                     -(((-1.d0)**(nnt+1))*bessel_array(-(nnt+1),iperp)))
+             else if (nnt.EQ.0) then
+                besselP = -bessel_array(1,iperp)
+             else if (nnt.EQ.-1) then
+                besselP = 0.5d0 * (bessel_array(2,iperp)-bessel_array(0,iperp))
+             endif
+
+                snJn2(sproc,iperp)=snJn2(sproc,iperp)+nnt*bessel*bessel
+                sJnJnp(sproc,iperp)=sJnJnp(sproc,iperp)+bessel*besselP
+                sJn2(sproc,iperp)=sJn2(sproc,iperp)+bessel*bessel
+             enddo
              
           endif
 
@@ -648,7 +822,27 @@ end subroutine derivative_f0
     call MPI_REDUCE (schi_low, chi_low, size(chi_low),&
         MPI_DOUBLE_COMPLEX, MPI_SUM, 0, MPI_COMM_WORLD, ierror)
 
+    call MPI_REDUCE (snJn2, nJn2, size(nJn2),&
+         MPI_DOUBLE_PRECISION, MPI_SUM, 0, MPI_COMM_WORLD, ierror)
 
+    call MPI_REDUCE (sJnJnp, JnJnp, size(JnJnp),&
+         MPI_DOUBLE_PRECISION, MPI_SUM, 0, MPI_COMM_WORLD, ierror)
+
+    call MPI_REDUCE (sJn2, Jn2, size(Jn2),&
+         MPI_DOUBLE_PRECISION, MPI_SUM, 0, MPI_COMM_WORLD, ierror)
+
+    call mpi_barrier(mpi_comm_world,ierror)
+
+    if (proc0) then
+       do iperp=1,nperp-1
+          write(*,'(a,i4,6es14.4)')&
+               'bessel-test: ',iperp,&
+               nJn2(1,iperp),nJn2(2,iperp),&
+               JnJnp(1,iperp),JnJnp(2,iperp),&
+               Jn2(1,iperp),Jn2(2,iperp)
+       enddo
+    endif
+    
     if (proc0) then
        !Calculate dielectric tensor epsilon:
 
@@ -924,6 +1118,7 @@ double complex function full_integrate(om, nn, mode, found_res)
 
      !Trapezoidal Integration
      full_integrate = integrate(om, nn, mode, 1, npar-1)
+     !full_integrate = bessel_test(om, nn, mode)
 
      !Switch to a Simpson's Rule for integration.
      !if (abs(nn).le.3) &
