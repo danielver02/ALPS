@@ -507,130 +507,176 @@ grid_fine=grid_fine-log(integral*2.d0*M_PI)
 end subroutine
 
 
+subroutine polyharmonic_spline(grid_coarse,pperp_coarse,ppar_coarse,n_coarse, &
+                               pperp,ppar,nperp,npar,smoothing,grid_fine)
+!! This subroutine interpolates the grid with a polyharmonic thin-plate spline.
+!! Needs BLAS/LAPACK (dgetrf, dgetrs, dgemv, ddot). We solve A*[w;a] = [y;0].
+!! Then we optionally estimate the effective DoF via Hutchinson:
+!!   edf ≈ q + trace( K (K + λ I)^(-1) ), with q=3 and λ = smoothing.
 
-subroutine polyharmonic_spline(grid_coarse,pperp_coarse,ppar_coarse,n_coarse,pperp,ppar,nperp,npar,smoothing,grid_fine)
-!! This soubroutine interpolates the grid with a polyharmonic thin-plate spline.
-!! This subroutine needs the LUPACK and BLAS libraries to evoke the dgesv subroutine.
-!! The method uses the Thin Plate Spline.
-!! We use these resources:
-!! [http://cseweb.ucsd.edu/~sjb/eccv_tps.pdf](http://cseweb.ucsd.edu/~sjb/eccv_tps.pdf)
-!! [http://www.univie.ac.at/nuhag-php/bibtex/open_files/po94_M%20J%20D%20Powell%2003%2093.pdf](http://www.univie.ac.at/nuhag-php/bibtex/open_files/po94_M%20J%20D%20Powell%2003%2093.pdf)
-!! [http://vision.ucsd.edu/sites/default/files/fulltext(4).pdf](http://vision.ucsd.edu/sites/default/files/fulltext(4).pdf)
-implicit none
+  implicit none
 
-double precision, intent(in) :: grid_coarse(n_coarse)
-!! Coarse input grid for interpolation.
+  ! ---- Inputs/outputs ----
+  integer, intent(in) :: n_coarse, nperp, npar
+  double precision, intent(in) :: grid_coarse(n_coarse)
+  double precision, intent(in) :: pperp_coarse(n_coarse), ppar_coarse(n_coarse)
+  double precision, intent(in) :: pperp(0:nperp,0:npar), ppar(0:nperp,0:npar)
+  double precision, intent(in) :: smoothing
+  double precision, intent(out) :: grid_fine(0:nperp,0:npar)
 
-double precision, intent(in) :: pperp_coarse(n_coarse)
-!! Coordinates of perpendicular momentum on coarse grid.
+  ! ---- Locals (existing) ----
+  integer :: i, j, k
+  integer :: permutation_index(n_coarse+3)
+  double precision :: fullmatrix(n_coarse+3,n_coarse+3)  ! A = [[K+λI, P],[P^T, 0]]
+  double precision :: grid_vector(n_coarse+3)
+  double precision :: weight_param(n_coarse+3)
+  double precision :: r
+  integer :: INFO   ! <-- LAPACK INFO should be INTEGER
 
-double precision, intent(in) :: ppar_coarse(n_coarse)
-!! Coordinates of parallel momentum on coarse grid.
+  ! ---- Build RHS y with 3 appended zeros ----
+  grid_vector = 0.d0
+  do i=1,n_coarse
+    grid_vector(i) = grid_coarse(i)
+  end do
+  ! grid_vector(n_coarse+1:n_coarse+3) remain 0
 
-integer, intent(in) :: n_coarse
-!! Number of entries in coarse grid.
+  ! ---- Assemble A = [[K+λI, P],[P^T, 0]] ----
+  fullmatrix = 0.d0
+  do i=1,n_coarse
+    do j=1,n_coarse
+      r = sqrt( (pperp_coarse(i)-pperp_coarse(j))**2 + (ppar_coarse(i)-ppar_coarse(j))**2 )
+      if (r .ge. 1.d0) then
+        fullmatrix(i,j) = r*r*log(r)
+      else
+        fullmatrix(i,j) = r*log(r**r)
+      end if
+    end do
 
-double precision, intent(in) :: pperp(0:nperp,0:npar)
-!! Coordinates of perpendicular momentum on fine grid.
+    ! add smoothing (λ) to K-diagonal
+    fullmatrix(i,i) = fullmatrix(i,i) + smoothing
 
-double precision, intent(in) :: ppar(0:nperp,0:npar)
-!! Coordinates of parallel momentum on fine grid.
+    ! P columns
+    fullmatrix(i,n_coarse+1) = 1.d0
+    fullmatrix(i,n_coarse+2) = pperp_coarse(i)
+    fullmatrix(i,n_coarse+3) = ppar_coarse(i)
 
-integer, intent(in) :: nperp
-!! Number of perpendicular steps on fine output grid.
+    ! P^T rows
+    fullmatrix(n_coarse+1,i) = 1.d0
+    fullmatrix(n_coarse+2,i) = pperp_coarse(i)
+    fullmatrix(n_coarse+3,i) = ppar_coarse(i)
+  end do
+  ! lower-right 3x3 block is already 0
 
-integer, intent(in) :: npar
-!! Number of parallel steps on fine output grid.
+  ! ---- Solve A * weight_param = [y; 0] ----
+  weight_param = grid_vector
+  call dgesv(n_coarse+3, 1, fullmatrix, n_coarse+3, permutation_index, &
+             weight_param, n_coarse+3, INFO)
 
-double precision, intent(in) :: smoothing
-!! Smoothing parameter for spline interpolation.
+  ! ---- (OPTIONAL) Estimate effective DoF: edf ≈ q + trace(K (K+λI)^(-1)) ----
+  ! This uses Hutchinson’s estimator with Rademacher probes. Cheap for N ~ few hundred.
 
-double precision, intent(out) :: grid_fine(0:nperp,0:npar)
-!! Fine output grid after interpolation.
+  block
+    integer :: N, mtrials
+    integer, allocatable :: ipivK(:)
+    double precision, allocatable :: K(:,:), Klam(:,:), z(:), x(:), t(:), urand(:)
+    double precision :: acc, edf_eff, dotval, lambda_local
+    external ddot
+    double precision ddot
 
-integer :: i
-!! Index to loop over n_coarse.
+    N = n_coarse
+    lambda_local = smoothing
+    mtrials = 20        ! increase to ~50 for tighter estimate if desired
 
-integer :: j
-!! Index to loop over n_coarse.
+    if (N >= 3) then
+      allocate(K(N,N), Klam(N,N), ipivK(N), z(N), x(N), t(N), urand(N))
 
-integer :: k
-!! Index to loop over n_coarse.
+      ! Build K with the SAME kernel as above
+      do i=1,N
+        do j=1,N
+          r = sqrt( (pperp_coarse(i)-pperp_coarse(j))**2 + (ppar_coarse(i)-ppar_coarse(j))**2 )
+          if (r .ge. 1.d0) then
+            K(i,j) = r*r*log(r)
+          else
+            K(i,j) = r*log(r**r)
+          end if
+        end do
+      end do
 
-integer :: permutation_index(n_coarse+3)
-!! Permutation index for [[dgesv]] from LUPACK/BLAS.
+      ! Klam = K + λ I
+      Klam = K
+      do i=1,N
+        Klam(i,i) = Klam(i,i) + lambda_local
+      end do
 
-double precision :: fullmatrix(n_coarse+3,n_coarse+3)
-!! K-matrix for spline interpolation.
+      ! LU factorization of (K + λ I)
+      call dgetrf(N, N, Klam, N, ipivK, INFO)
+      if (INFO .ne. 0) then
+        write(*,*) 'dgetrf failed for (K+lambda I), info=', INFO
+      else
+        acc = 0.d0
 
-double precision :: grid_vector(n_coarse+3)
-!! Vector of the coarse grid. Required for 3 additional entries compared to grid_coarse.
+        do j=1,mtrials
+          ! Rademacher z ∈ {±1}^N
+          call random_number(urand)
+          do i=1,N
+            if (urand(i) .lt. 0.5d0) then
+              z(i) = -1.d0
+            else
+              z(i) =  1.d0
+            end if
+          end do
 
-double precision :: weight_param(n_coarse+3)
-!! Weight parameter for spline interpolation.
+          ! Solve (K + λ I) x = z
+          x = z
+          call dgetrs('N', N, 1, Klam, N, ipivK, x, N, INFO)
+          if (INFO .ne. 0) then
+            write(*,*) 'dgetrs failed, info=', INFO
+            exit
+          end if
 
-double precision :: r
-!! Distance between coarse and fine grid points.
+          ! t = K * x
+          t      = matmul(K, x)
+          dotval = dot_product(z, t)
+          !call dgemv('N', N, N, 1.0d0, K, N, x, 1, 0.0d0, t, 1)
 
-double precision :: INFO
-!! Info flag for [[dgesv]] from LUPACK/BLAS.
+          ! accumulate z^T t
+          !dotval = ddot(N, z, 1, t, 1)
+          acc = acc + dotval
+        end do
 
+        if (mtrials > 0) then
+          acc = acc / dble(mtrials)
+          edf_eff = 3.d0 + acc    ! q = 3 (affine tail: 1, pperp, ppar)
+          write(*,'(a,1pe12.5)') 'Estimated effective DoF (edf) = ', edf_eff
 
-grid_vector=0.d0
-do i=1,n_coarse
-	grid_vector(i)=grid_coarse(i)
-enddo
-! grid_vector has three additional entries. The last three entries are all zero.
+          if (edf_eff .lt. 3.d0 .or. edf_eff .gt. dble(N) + 1.d-8) then
+            write(*,'(a,i0,a,1pe12.5)') 'Warning: edf outside [3,', N, ']: ', edf_eff
+          end if
+        end if
+      end if
 
-fullmatrix=0.d0
-do i=1,n_coarse
-	do j=1,n_coarse
+      deallocate(K, Klam, ipivK, z, x, t, urand)
+    end if
+  end block
 
-		! Do the K-matrix part first:
-		r=sqrt((pperp_coarse(i)-pperp_coarse(j))**2+(ppar_coarse(i)-ppar_coarse(j))**2)
-		if(r.GE.1.d0) then
-			fullmatrix(i,j)=r*r*log(r)
-		else
-			fullmatrix(i,j)=r*log(r**r)
-		endif
+  ! ---- Evaluate on fine grid as before ----
+  grid_fine = 0.d0
+  do i=0,nperp
+    do j=0,npar
+      do k=1,n_coarse
+        r = sqrt( (pperp(i,j)-pperp_coarse(k))**2 + (ppar(i,j)-ppar_coarse(k))**2 )
+        if (r .ge. 1.d0) then
+          grid_fine(i,j) = grid_fine(i,j) + weight_param(k) * r*r*log(r)
+        else
+          grid_fine(i,j) = grid_fine(i,j) + weight_param(k) * r*log(r**r)
+        end if
+      end do
 
-	enddo
-
-	fullmatrix(i,i)=fullmatrix(i,i)+smoothing
-
-	! Now the P-matrix parts:
-	fullmatrix(i,n_coarse+1)=1.d0
-	fullmatrix(i,n_coarse+2)=pperp_coarse(i)
-	fullmatrix(i,n_coarse+3)=ppar_coarse(i)
-
-	! and the transposed P-matrix:
-	fullmatrix(n_coarse+1,i)=1.d0
-	fullmatrix(n_coarse+2,i)=pperp_coarse(i)
-	fullmatrix(n_coarse+3,i)=ppar_coarse(i)
-enddo
-
-weight_param=grid_vector
-call dgesv(n_coarse+3,1,fullmatrix,n_coarse+3,permutation_index,weight_param,n_coarse+3,INFO)
-
-
-grid_fine=0.d0
-do i=0,nperp
-do j=0,npar
-
- do k=1,n_coarse
-	r=sqrt((pperp(i,j)-pperp_coarse(k))**2+(ppar(i,j)-ppar_coarse(k))**2)
-	if (r.GE.1.d0) then
-		grid_fine(i,j)=grid_fine(i,j)+weight_param(k)*r*r*log(r)
-	else
-		grid_fine(i,j)=grid_fine(i,j)+weight_param(k)*r*log(r**r)
-	endif
- enddo
-
-
- grid_fine(i,j)=grid_fine(i,j)+weight_param(n_coarse+1)+weight_param(n_coarse+2)*pperp(i,j)+&
- weight_param(n_coarse+3)*ppar(i,j)
-
-enddo
-enddo
+      grid_fine(i,j) = grid_fine(i,j) + weight_param(n_coarse+1) &
+                     + weight_param(n_coarse+2)*pperp(i,j) &
+                     + weight_param(n_coarse+3)*ppar(i,j)
+    end do
+  end do
 
 end subroutine
+
