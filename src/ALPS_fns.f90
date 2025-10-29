@@ -3949,9 +3949,6 @@ integer :: nn
 double precision :: bessel
 !! Bessel function.
 
-double precision :: besselprev
-!! Storage variable for Bessel function.
-
 double precision :: besselmax
 !! Check variable for largest Bessel function.
 
@@ -3966,9 +3963,6 @@ integer :: ipar
 
 integer :: max_procs
 !! Maximum number of processes.
-
-logical :: maximum
-!! Check whether a maximum has been found.
 
 logical :: modified_nmax
 !! Check whether additional n are available due to number of processes.
@@ -3989,26 +3983,18 @@ do is = 1, nspec
 
     do while (besselmax.GT.Bessel_zero)
        nn = nn + 1
-
-       iperp = 0
-       maximum = .FALSE.
-       bessel = 0.d0
+       
 
        if (nn.GT.1000) write (*,*) 'Bessel-function n is greater than 1000.'
 
-       do while ((iperp .LT. nperp).AND.(.NOT.maximum))
+       besselmax = 0.d0
+       do iperp=0,nperp
 
-          iperp=iperp+1
-          z = kperp * pp(is, iperp, ipar, 1) / abs(qs(is))
-
-          besselprev = bessel
-          bessel = BESSJ(nn,z)
-
-          if (bessel .LT. besselprev) maximum = .TRUE.
+          z = kperp * pp(is, iperp, ipar, 1) / qs(is)
+          bessel = abs(BESSJ(nn,z))
+          besselmax=max(besselmax,bessel)
 
        enddo
-
-       besselmax = bessel
 
     enddo
 
