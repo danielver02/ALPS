@@ -31,7 +31,7 @@ and
 
 [Klein, K. G. and Verscharen, D.: The Dielectric Response of Plasmas with Arbitrary Gyrotropic Velocity Distributions, Phys. Plasmas 32, 092104, 2025, doi: 10.1063/5.0286477](http://doi.org/10.1063/5.0286477)
 
-You don't need to go through all details, but it is certainly helpful to know what ALPS does and doesn't calculate. The 2018 paper also explains the numerical techniques used in the code, and the [ALPS Documentation](http://alps.space) often refers explicitly to equations and sections in the code paper. We also recommend checking the [Readme](README.md) file.
+You don't need to go through all details, but it is certainly helpful to know what ALPS does and doesn't calculate. The 2018 paper also explains the numerical techniques used in the code, and the [ALPS Documentation](http://alps.space) often refers explicitly to equations and sections in the code paper. We also recommend checking the [Readme](index.md) file.
 
 For a listing of recommendations when using ALPS, see the [ALPS Best Practices](practices.md) page.
 
