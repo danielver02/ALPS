@@ -45,7 +45,7 @@ jobs:
         cat input.md >> docs/input.md
         echo 'title: ALPS Output' > docs/output.md
         cat output.md >> docs/output.md
-	echo 'title: ALPS Best Practices' > docs/practices.md
+        echo 'title: ALPS Best Practices' > docs/practices.md
         cat practices.md >> docs/practices.md
         if [ "$ADS_API_TOKEN" != "" ]; then
             python .github/scripts/print_bib_markdown.py > docs/citingpapers.md
