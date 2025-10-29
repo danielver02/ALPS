@@ -1,0 +1,162 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="Documentation for ALPS">
+    <meta name="author" content="Kristopher Klein, Daniel Verscharen" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>ALPS Best Practices &ndash; ALPS</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">ALPS </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="index.html">Readme</a></li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/namelists.html">Namelists</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/programs.html">Programs</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>ALPS Best Practices</h1>
+    <div class="container p-2 mb-4 bg-light border rounded-3">
+      <div class="row align-items-center justify-content-between">
+        <div class="col">
+          <ul class="list-inline" style="margin-bottom:0px; display:inline">
+          </ul>
+        </div>
+        <div class="col">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='index.html'>Readme</a></li>
+              <li class="breadcrumb-item active" aria-current="page">ALPS Best Practices</li>
+            </ol>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+      <div class="col-3">
+        <div class="card card-body bg-light" id="sidebar-toc">
+          <ul class="nav flex-column align-items">
+            <li class="nav-item">
+              <a class="nav-link" href="index.html">Readme</a>
+            </li>
+          </ul>
+          <hr>
+          <nav class="nav nav-pills flex-column">
+              <a class="nav-link" href="INSTALL.html">Installing ALPS</a>
+              <a class="nav-link" href="citingpapers.html">Papers citing ALPS</a>
+              <a class="nav-link" href="input.html">ALPS Input</a>
+              <a class="nav-link" href="output.html">ALPS Output</a>
+              <a class="nav-link active disabled" href="practices.html">ALPS Best Practices</a>
+              <a class="nav-link" href="tutorial.html">ALPS Tutorial</a>
+          </nav>
+        </div>
+      </div>
+
+    <div class="col-9" id='text'>
+      <h1>ALPS Best Practices</h1>
+<h2>Momentum Space Resolution</h2>
+<p>If the input distribution is symmetric and resonances occur close to ppar=0, it is sometimes useful to work with an odd number of <code>npar</code> steps (e.g., <code>npar=401</code> instead of <code>npar=400</code>). This centres the distribution not right on one grid point, so that the code can evaluate the resonance integral more safely.</p>
+<h3>Convergence Tests</h3>
+<p>In general, there is no clear rule that prescribes the optimal resolution of the f0-table. Therefore, it is good practice to run convergence tests with different numbers of <code>nperp</code> and <code>npar</code>. When the ALPS results do not depend on a further increase in the numbers <code>nperp</code> and <code>npar</code> anymore, then a numerically suitable resolution has been found. This point is particularly important regarding <code>npar</code>.</p>
+<h2>Zero-Frequency Solutions</h2>
+<p>When <code>ALPS</code> calculates solutions with very small Re(omega) - including solutions for non-propagating modes such as mirror modes of oblique firehose solutions - the code sometimes struggles with the resonance handling of the n=0 resonance near ppar=0. The reason is that small changes in Re(omega) lead to fine structure in the integrand near the resonance.</p>
+<p>To overcome this issue for non-relativistic particle species, we recommend performing these calculations in a different reference frame, drifting with respect to the plasma frame along the background magnetic field. Due to Galilean invariance, the physics of the solutions does not depend on the reference frame. </p>
+<p>The easiest approach is to move into a reference frame that moves with 1 Alfvén speed of the reference species with respect to the plasma frame. This is achieved by shifting the ppar coordinates by the appropriate value. For the reference species (in most cases, protons), the drift momentum would be 1, and all other species would be shifted by a drift momentum corresponding to their mass ratio.</p>
+<p>The initial guess for the real frequency is then Doppler-shifted by <code>kpar</code> multiplied with the drift speed of the reference frame. If 1 Alfvén speed of the reference species is used, then the Doppler shift is simply <code>kpar</code>. The solutions can be easily transferred back into the plasma frame by subtracting <code>kpar</code> times the drift speed of the reference frame from the real part of the frequency of the solution.</p>
+<h2>Relativistic Caveats</h2>
+<p>For relativistic calculations with <code>AC_method=1</code>, it is generally <em>not</em> recommended to use <code>fit_type_in=3</code>. This fit type is only useful when Jüttner-like f0-tables are used, but without a relativistic treatment of the dispersion relation. For all other cases, it is recommended to use <code>fit_type_in=4</code> or <code>fit_type_in=5</code>, depending on whether the distribution depends on pparbar or not (i.e., when anisotropies are to be accounted for).</p>
+<p>When the error message <code>ERROR: Resonance integration covers entire subluminal cone.</code> appears, this means that a resonance occurs at a low gamma value, where not sufficient pparbar points are defined. This error can be resolved in multiple ways. For once, a reduction in <code>ngamma</code> lowers the resolution of the gamma-grid, leading to fewer gamma-steps with low pparbar. In addition, an increase in <code>npparbar</code> increases the number of points in pparbar-space and thus the number of steps over which the code can treat the resonances appropriately. A combination of both steps (lowering <code>ngamma</code>, increasing <code>npparbar</code>) often resolves this error. If not, it may help to reduce <code>positions_principal</code>.</p>
+<p>The autoscaling function in generate_distribution does not work very well for highly relativistic input distributions. When the f0-table is to be created with <code>generate_distribution</code>, it is recommended to turn <code>autoscaleS=F</code> and to choose manually the values for <code>maxPperpS</code> and <code>maxPparS</code>. When running <code>generate_distribution</code> on the input file, the integration should lead to a value close to unity. This result indicates that the momentum space is well resolved.</p>
+    </div>
+  </div>
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              ALPS
+ was developed by Kristopher Klein, Daniel Verscharen<br>              &copy; 2025 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+            </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>
