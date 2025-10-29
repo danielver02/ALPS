@@ -1285,7 +1285,7 @@ double complex function funct_g(ppar_real,iperp,om,nn,mode)
 	ipar_close=0
 	! determine the closest ipar (on the left) to this p_res_real:
 	do ipar=1,npar-1
-		if ((pp(sproc,iperp,ipar+1,2).GT.ppar_real).AND.(pp(sproc,iperp,ipar,2).LE.ppar_real)) then
+      if (abs(pp(sproc,iperp,ipar,2)-ppar_real) .LE. dppar) then
 			ipar_close=ipar
 		endif
 	enddo
