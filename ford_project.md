@@ -12,6 +12,7 @@ ordered_subpage: INSTALL.md
                  tutorial.md
                  input.md
                  output.md
+		 practices.md
                  citingpapers.md
 display: public
          protected
@@ -56,3 +57,5 @@ For first-time users, we recommend working through our [ALPS Tutorial](./page/tu
 The key input parameters for ALPS are described on the [ALPS Input](./page/input.md) page.
 
 The output format of ALPS is described on the [ALPS Output](./page/output.md) page.
+
+For a listing of recommendations when using ALPS, see the [ALPS Best Practices](./page/practices.md) page.
