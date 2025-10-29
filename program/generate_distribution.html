@@ -1,0 +1,1671 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="Documentation for ALPS">
+    <meta name="author" content="Kristopher Klein, Daniel Verscharen" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>generate_distribution &ndash; ALPS</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">ALPS </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="../page/index.html">Readme</a></li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/namelists.html">Namelists</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/programs.html">Programs</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>generate_distribution      <small>Program</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title="55.2% of total for programs.">393 statements</a>
+            </li>
+
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+            <li class="breadcrumb-item active" aria-current="page">generate_distribution</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#vars-0"
+         aria-expanded="false" aria-controls="vars-0">
+         <h4 class="card-header bg-primary text-white">Variables</h4>
+      </a>
+      <div id="vars-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-iperp">iperp</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-ipar">ipar</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-nperp~2">nperp</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-npar~2">npar</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-nspec~2">nspec</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-is">is</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-unit_out">unit_out</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-writename">writeName</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-outputname">outputName</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-dpperp">dpperp</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-dppar">dppar</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-ppar_max">ppar_max</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-pperp_max">pperp_max</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-iperpcorr">iperpcorr</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-ifit_1">ifit_1</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-ifit_2">ifit_2</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-ifit_3">ifit_3</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-ifit_4">ifit_4</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-ifit_5">ifit_5</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-ppar">ppar</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-pperp">pperp</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-f0~2">f0</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-ms~2">ms</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-tau">tau</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-alph">alph</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-p_drift">p_drift</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-kappa">kappa</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-maxpperp">maxPperp</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-maxppar">maxPpar</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-autoscale">autoscale</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-distribution">distribution</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-beta">beta</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-va~2">vA</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-maxp">maxP</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-pi~2">pi</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-integrate">integrate</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-norm">norm</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-a">a</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-bessk">BESSK</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-ppar_c">ppar_C</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-unit">unit</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-stdout_unit">stdout_unit</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-input_unit_no">input_unit_no</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-error_unit_no">error_unit_no</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#variable-runname~2">runname</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#funcs-0"
+         aria-expanded="false" aria-controls="funcs-0">
+         <h4 class="card-header bg-primary text-white">Functions</h4>
+      </a>
+      <div id="funcs-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../program/generate_distribution.html#proc-input_unit_exist">input_unit_exist</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#proc-input_unit">input_unit</a>
+        </div>
+      </div>
+    </div>
+
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#subs-0"
+         aria-expanded="false" aria-controls="subs-0">
+         <h4 class="card-header bg-primary text-white">Subroutines</h4>
+      </a>
+      <div id="subs-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../program/generate_distribution.html#proc-read_in_params">read_in_params</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#proc-spec_read">spec_read</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#proc-get_indexed_namelist_unit">get_indexed_namelist_unit</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#proc-get_unused_unit">get_unused_unit</a>
+            <a class="list-group-item" href="../program/generate_distribution.html#proc-get_runname">get_runname</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+        <div class="card mb-4">
+      <h3 class="card-header card-title bg-light">Uses</h3>
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <ul class="list-inline">
+                  <li class="list-inline-item"><a href='../module/alps_distribution_analyt.html'>alps_distribution_analyt</a></li>
+              </ul>
+            </li>
+            <li class="list-group-item">
+              <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: program~~generate_distribution~~UsesGraph Pages: 1 -->
+<svg id="programgenerate_distributionUsesGraph" width="309pt" height="32pt"
+ viewBox="0.00 0.00 309.00 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="program~~generate_distribution~~UsesGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<title>program~~generate_distribution~~UsesGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 305,-28 305,4 -4,4"/>
+<!-- program~generate_distribution -->
+<g id="program~~generate_distribution~~UsesGraph_node1" class="node">
+<title>program~generate_distribution</title>
+<polygon fill="none" stroke="black" points="301,-24 174,-24 174,0 301,0 301,-24"/>
+<text text-anchor="middle" x="237.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">generate_distribution</text>
+</g>
+<!-- module~alps_distribution_analyt -->
+<g id="program~~generate_distribution~~UsesGraph_node2" class="node">
+<title>module~alps_distribution_analyt</title>
+<g id="a_program~~generate_distribution~~UsesGraph_node2"><a xlink:href="../module/alps_distribution_analyt.html" xlink:title="alps_distribution_analyt">
+<polygon fill="#337ab7" stroke="#337ab7" points="138,-24 0,-24 0,0 138,0 138,-24"/>
+<text text-anchor="middle" x="69" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_distribution_analyt</text>
+</a>
+</g>
+</g>
+<!-- program~generate_distribution&#45;&gt;module~alps_distribution_analyt -->
+<g id="program~~generate_distribution~~UsesGraph_edge1" class="edge">
+<title>program~generate_distribution&#45;&gt;module~alps_distribution_analyt</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M173.55,-12C165.3,-12 156.77,-12 148.31,-12"/>
+<polygon fill="#000000" stroke="#000000" points="148.04,-8.5 138.04,-12 148.04,-15.5 148.04,-8.5"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#UsesGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="UsesGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="518pt" height="32pt"
+ viewBox="0.00 0.00 517.50 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 513.5,-28 513.5,4 -4,4"/>
+<!-- Module -->
+<g id="node1" class="node">
+<title>Module</title>
+<polygon fill="#337ab7" stroke="#337ab7" points="54,-24 0,-24 0,0 54,0 54,-24"/>
+<text text-anchor="middle" x="27" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Module</text>
+</g>
+<!-- Submodule -->
+<g id="node2" class="node">
+<title>Submodule</title>
+<polygon fill="#5bc0de" stroke="#5bc0de" points="145.5,-24 72.5,-24 72.5,0 145.5,0 145.5,-24"/>
+<text text-anchor="middle" x="109" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Submodule</text>
+</g>
+<!-- Subroutine -->
+<g id="node3" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="234,-24 164,-24 164,0 234,0 234,-24"/>
+<text text-anchor="middle" x="199" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node4" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="310,-24 252,-24 252,0 310,0 310,-24"/>
+<text text-anchor="middle" x="281" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Program -->
+<g id="node5" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="386,-24 328,-24 328,0 386,0 386,-24"/>
+<text text-anchor="middle" x="357" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node6" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="509.5,-24 404.5,-24 404.5,0 509.5,0 509.5,-24"/>
+<text text-anchor="middle" x="457" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a submodule to the (sub)module which it is
+descended from. Dashed arrows point from a module or program unit to 
+modules which it uses.
+</p>
+ </div>
+            </div>
+          </div>
+        </div>
+            </li>
+        </ul>
+      </div>
+    </div>
+
+    <p>This program generates distribution files for input into ALPS based on pre-defined functions.</p>
+    <br>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Calls</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: program~~generate_distribution~~CallsGraph Pages: 1 -->
+<svg id="programgenerate_distributionCallsGraph" width="608pt" height="186pt"
+ viewBox="0.00 0.00 608.00 186.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="program~~generate_distribution~~CallsGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 182)">
+<title>program~~generate_distribution~~CallsGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-182 604,-182 604,4 -4,4"/>
+<!-- program~generate_distribution -->
+<g id="program~~generate_distribution~~CallsGraph_node1" class="node">
+<title>program~generate_distribution</title>
+<polygon fill="none" stroke="black" points="127,-105 0,-105 0,-81 127,-81 127,-105"/>
+<text text-anchor="middle" x="63.5" y="-90.6" font-family="Helvetica,sans-Serif" font-size="10.50">generate_distribution</text>
+</g>
+<!-- proc~distribution_analyt -->
+<g id="program~~generate_distribution~~CallsGraph_node2" class="node">
+<title>proc~distribution_analyt</title>
+<g id="a_program~~generate_distribution~~CallsGraph_node2"><a xlink:href="../proc/distribution_analyt.html" xlink:title="distribution_analyt">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="274,-126 163,-126 163,-102 274,-102 274,-126"/>
+<text text-anchor="middle" x="218.5" y="-111.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">distribution_analyt</text>
+</a>
+</g>
+</g>
+<!-- program~generate_distribution&#45;&gt;proc~distribution_analyt -->
+<g id="program~~generate_distribution~~CallsGraph_edge1" class="edge">
+<title>program~generate_distribution&#45;&gt;proc~distribution_analyt</title>
+<path fill="none" stroke="#000000" d="M127.17,-101.6C135.5,-102.75 144.06,-103.92 152.43,-105.07"/>
+<polygon fill="#000000" stroke="#000000" points="152.14,-108.56 162.52,-106.45 153.09,-101.63 152.14,-108.56"/>
+</g>
+<!-- proc~read_in_params -->
+<g id="program~~generate_distribution~~CallsGraph_node3" class="node">
+<title>proc~read_in_params</title>
+<g id="a_program~~generate_distribution~~CallsGraph_node3"><a xlink:href="../proc/read_in_params.html" xlink:title="read_in_params">
+<polygon fill="#d9534f" stroke="#d9534f" points="267,-84 170,-84 170,-60 267,-60 267,-84"/>
+<text text-anchor="middle" x="218.5" y="-69.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">read_in_params</text>
+</a>
+</g>
+</g>
+<!-- program~generate_distribution&#45;&gt;proc~read_in_params -->
+<g id="program~~generate_distribution~~CallsGraph_edge2" class="edge">
+<title>program~generate_distribution&#45;&gt;proc~read_in_params</title>
+<path fill="none" stroke="#000000" d="M127.17,-84.4C137.93,-82.92 149.06,-81.39 159.69,-79.94"/>
+<polygon fill="#000000" stroke="#000000" points="160.25,-83.39 169.68,-78.56 159.3,-76.46 160.25,-83.39"/>
+</g>
+<!-- proc~get_indexed_namelist_unit -->
+<g id="program~~generate_distribution~~CallsGraph_node4" class="node">
+<title>proc~get_indexed_namelist_unit</title>
+<g id="a_program~~generate_distribution~~CallsGraph_node4"><a xlink:href="../proc/get_indexed_namelist_unit.html" xlink:title="get_indexed_namelist_unit">
+<polygon fill="#d9534f" stroke="#d9534f" points="464,-146 310,-146 310,-122 464,-122 464,-146"/>
+<text text-anchor="middle" x="387" y="-131.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">get_indexed_namelist_unit</text>
+</a>
+</g>
+</g>
+<!-- proc~read_in_params&#45;&gt;proc~get_indexed_namelist_unit -->
+<g id="program~~generate_distribution~~CallsGraph_edge3" class="edge">
+<title>proc~read_in_params&#45;&gt;proc~get_indexed_namelist_unit</title>
+<path fill="none" stroke="#000000" d="M252.95,-84.04C259.98,-86.81 267.29,-89.86 274,-93 290.58,-100.75 293.06,-106.07 310,-113 315.07,-115.07 320.41,-117.01 325.81,-118.81"/>
+<polygon fill="#000000" stroke="#000000" points="324.97,-122.21 335.56,-121.88 327.07,-115.53 324.97,-122.21"/>
+</g>
+<!-- proc~get_runname -->
+<g id="program~~generate_distribution~~CallsGraph_node5" class="node">
+<title>proc~get_runname</title>
+<g id="a_program~~generate_distribution~~CallsGraph_node5"><a xlink:href="../proc/get_runname.html" xlink:title="get_runname">
+<polygon fill="#d9534f" stroke="#d9534f" points="429,-104 345,-104 345,-80 429,-80 429,-104"/>
+<text text-anchor="middle" x="387" y="-89.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">get_runname</text>
+</a>
+</g>
+</g>
+<!-- proc~read_in_params&#45;&gt;proc~get_runname -->
+<g id="program~~generate_distribution~~CallsGraph_edge4" class="edge">
+<title>proc~read_in_params&#45;&gt;proc~get_runname</title>
+<path fill="none" stroke="#000000" d="M267.21,-77.73C288.37,-80.27 313.29,-83.27 334.83,-85.85"/>
+<polygon fill="#000000" stroke="#000000" points="334.43,-89.33 344.78,-87.05 335.27,-82.38 334.43,-89.33"/>
+</g>
+<!-- proc~get_unused_unit -->
+<g id="program~~generate_distribution~~CallsGraph_node6" class="node">
+<title>proc~get_unused_unit</title>
+<g id="a_program~~generate_distribution~~CallsGraph_node6"><a xlink:href="../proc/get_unused_unit.html" xlink:title="get_unused_unit">
+<polygon fill="#d9534f" stroke="#d9534f" points="600,-84 500,-84 500,-60 600,-60 600,-84"/>
+<text text-anchor="middle" x="550" y="-69.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">get_unused_unit</text>
+</a>
+</g>
+</g>
+<!-- proc~read_in_params&#45;&gt;proc~get_unused_unit -->
+<g id="program~~generate_distribution~~CallsGraph_edge5" class="edge">
+<title>proc~read_in_params&#45;&gt;proc~get_unused_unit</title>
+<path fill="none" stroke="#000000" d="M267.41,-71.37C281.16,-71.22 296.17,-71.08 310,-71 378.44,-70.62 395.56,-70.6 464,-71 472.18,-71.05 480.81,-71.12 489.3,-71.21"/>
+<polygon fill="#000000" stroke="#000000" points="489.52,-74.71 499.56,-71.32 489.6,-67.71 489.52,-74.71"/>
+</g>
+<!-- proc~spec_read -->
+<g id="program~~generate_distribution~~CallsGraph_node7" class="node">
+<title>proc~spec_read</title>
+<g id="a_program~~generate_distribution~~CallsGraph_node7"><a xlink:href="../proc/spec_read.html" xlink:title="spec_read">
+<polygon fill="#d9534f" stroke="#d9534f" points="420.5,-24 353.5,-24 353.5,0 420.5,0 420.5,-24"/>
+<text text-anchor="middle" x="387" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">spec_read</text>
+</a>
+</g>
+</g>
+<!-- proc~read_in_params&#45;&gt;proc~spec_read -->
+<g id="program~~generate_distribution~~CallsGraph_edge6" class="edge">
+<title>proc~read_in_params&#45;&gt;proc~spec_read</title>
+<path fill="none" stroke="#000000" d="M250.83,-59.97C268.21,-53.36 290.25,-45.09 310,-38 320.85,-34.11 332.62,-30.01 343.59,-26.26"/>
+<polygon fill="#000000" stroke="#000000" points="345.04,-29.46 353.38,-22.92 342.79,-22.84 345.04,-29.46"/>
+</g>
+<!-- proc~get_indexed_namelist_unit&#45;&gt;proc~get_unused_unit -->
+<g id="program~~generate_distribution~~CallsGraph_edge7" class="edge">
+<title>proc~get_indexed_namelist_unit&#45;&gt;proc~get_unused_unit</title>
+<path fill="none" stroke="#000000" d="M436.66,-121.96C445.84,-119.29 455.29,-116.27 464,-113 482.16,-106.17 501.71,-96.89 517.47,-88.88"/>
+<polygon fill="#000000" stroke="#000000" points="519.47,-91.79 526.76,-84.09 516.26,-85.57 519.47,-91.79"/>
+</g>
+<!-- proc~input_unit -->
+<g id="program~~generate_distribution~~CallsGraph_node8" class="node">
+<title>proc~input_unit</title>
+<g id="a_program~~generate_distribution~~CallsGraph_node8"><a xlink:href="../proc/input_unit.html" xlink:title="input_unit">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="582.5,-178 517.5,-178 517.5,-154 582.5,-154 582.5,-178"/>
+<text text-anchor="middle" x="550" y="-163.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">input_unit</text>
+</a>
+</g>
+</g>
+<!-- proc~get_indexed_namelist_unit&#45;&gt;proc~input_unit -->
+<g id="program~~generate_distribution~~CallsGraph_edge8" class="edge">
+<title>proc~get_indexed_namelist_unit&#45;&gt;proc~input_unit</title>
+<path fill="none" stroke="#000000" d="M448.41,-146.01C468.04,-149.91 489.38,-154.15 507.33,-157.72"/>
+<polygon fill="#000000" stroke="#000000" points="506.7,-161.16 517.19,-159.68 508.07,-154.3 506.7,-161.16"/>
+</g>
+<!-- proc~input_unit_exist -->
+<g id="program~~generate_distribution~~CallsGraph_node9" class="node">
+<title>proc~input_unit_exist</title>
+<g id="a_program~~generate_distribution~~CallsGraph_node9"><a xlink:href="../proc/input_unit_exist.html" xlink:title="input_unit_exist">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="597,-136 503,-136 503,-112 597,-112 597,-136"/>
+<text text-anchor="middle" x="550" y="-121.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">input_unit_exist</text>
+</a>
+</g>
+</g>
+<!-- proc~get_indexed_namelist_unit&#45;&gt;proc~input_unit_exist -->
+<g id="program~~generate_distribution~~CallsGraph_edge9" class="edge">
+<title>proc~get_indexed_namelist_unit&#45;&gt;proc~input_unit_exist</title>
+<path fill="none" stroke="#000000" d="M464.26,-129.26C473.82,-128.67 483.47,-128.07 492.65,-127.5"/>
+<polygon fill="#000000" stroke="#000000" points="493.03,-130.98 502.8,-126.87 492.6,-124 493.03,-130.98"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CallsGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CallsGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+<br>
+
+    <section>
+    <h2>Variables</h2>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+<th></th><th scope="col">Initial</th>        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-iperp"></span>
+              integer
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>iperp</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                <p>Index to loop over perpendicular momentum.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ipar"></span>
+              integer
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>ipar</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                <p>Index to loop over parallel momentum.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nperp~2"></span>
+              integer
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nperp</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                <p>Number of steps in perpendicular momentum.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-npar~2"></span>
+              integer
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>npar</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                <p>Number of steps in parallel momentum.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nspec~2"></span>
+              integer
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nspec</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                <p>Total number of plasma species.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-is"></span>
+              integer
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>is</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                <p>Index to loop over plasma species.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-unit_out"></span>
+              integer,
+            </td>
+            <td>
+              dimension(:), allocatable
+            </td>
+            <td>::</td>
+            <td><strong>unit_out</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                <p>Index for unit for output. (1:nspec)</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-writename"></span>
+              character(len=500)
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>writeName</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                <p>String for part of file name.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-outputname"></span>
+              character(len=500)
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>outputName</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                <p>String for part of file name.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dpperp"></span>
+              double precision
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>dpperp</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                <p>Inifinitesimal step in perpendicular momentum.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dppar"></span>
+              double precision
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>dppar</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                <p>Inifinitesimal step in parallel momentum.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ppar_max"></span>
+              double precision
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>ppar_max</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                <p>Maximum parallel momentum.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-pperp_max"></span>
+              double precision
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>pperp_max</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                <p>Maximum perpendicular momentum.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-iperpcorr"></span>
+              double precision
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>iperpcorr</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                <p>Perpendicular correction <script type="math/tex">y</script>.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ifit_1"></span>
+              double precision
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>ifit_1</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                <p>Ideal first fit parameter <script type="math/tex">u_1</script>.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ifit_2"></span>
+              double precision
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>ifit_2</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                <p>Ideal second fit parameter <script type="math/tex">u_2</script>.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ifit_3"></span>
+              double precision
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>ifit_3</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                <p>Ideal third fit parameter <script type="math/tex">u_3</script>.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ifit_4"></span>
+              double precision
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>ifit_4</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                <p>Ideal fourth fit parameter <script type="math/tex">u_4</script>.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ifit_5"></span>
+              double precision
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>ifit_5</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                <p>Ideal fifth fit parameter <script type="math/tex">u_5</script>.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ppar"></span>
+              double precision
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>ppar</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                <p>Parallel momentum.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-pperp"></span>
+              double precision
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>pperp</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                <p>Perpendicular momentum.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-f0~2"></span>
+              double precision
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>f0</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                <p>Distribution function.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ms~2"></span>
+              double precision,
+            </td>
+            <td>
+              dimension(:), allocatable
+            </td>
+            <td>::</td>
+            <td><strong>ms</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                <p>Mass of species. (1:nspec)</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-tau"></span>
+              double precision,
+            </td>
+            <td>
+              dimension(:), allocatable
+            </td>
+            <td>::</td>
+            <td><strong>tau</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                <p>Parallel temperature ratio of species. (1:nspec)</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-alph"></span>
+              double precision,
+            </td>
+            <td>
+              dimension(:), allocatable
+            </td>
+            <td>::</td>
+            <td><strong>alph</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                <p>Temperature anisotropy of species. (1:nspec)</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-p_drift"></span>
+              double precision,
+            </td>
+            <td>
+              dimension(:), allocatable
+            </td>
+            <td>::</td>
+            <td><strong>p_drift</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                <p>Drift momentum of species. (1:nspec)</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-kappa"></span>
+              double precision,
+            </td>
+            <td>
+              dimension(:), allocatable
+            </td>
+            <td>::</td>
+            <td><strong>kappa</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                <p>Kappa index of species. (1:nspec)</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-maxpperp"></span>
+              double precision,
+            </td>
+            <td>
+              dimension(:), allocatable
+            </td>
+            <td>::</td>
+            <td><strong>maxPperp</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                <p>Maximum perpendicular momentum of species. (1:nspec)</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-maxppar"></span>
+              double precision,
+            </td>
+            <td>
+              dimension(:), allocatable
+            </td>
+            <td>::</td>
+            <td><strong>maxPpar</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                <p>Maximum parallel momentum of species. (1:nspec)</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-autoscale"></span>
+              logical,
+            </td>
+            <td>
+              dimension (:), allocatable
+            </td>
+            <td>::</td>
+            <td><strong>autoscale</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                <p>Flag for autoscaling of grid for species. (1:nspec)</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-distribution"></span>
+              integer,
+            </td>
+            <td>
+              dimension(:), allocatable
+            </td>
+            <td>::</td>
+            <td><strong>distribution</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                <p>Type of distribution for species. (1:nspec)</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-beta"></span>
+              double precision
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>beta</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                <p>Plasma beta.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-va~2"></span>
+              double precision
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>vA</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                <p>Ratio of Alfven speed to c.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-maxp"></span>
+              double precision
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>maxP</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                <p>Maximum momentum.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-pi~2"></span>
+              double precision
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>pi</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                <p>Pi.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-integrate"></span>
+              double precision
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>integrate</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                <p>Integration variable.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-norm"></span>
+              double precision
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>norm</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                <p>Normalisation factor for f0.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-a"></span>
+              double precision
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>a</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                <p>Helper variable for parts of distributions.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-bessk"></span>
+              double precision
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>BESSK</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                <p>Modified Bessel function.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ppar_c"></span>
+              double complex
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>ppar_C</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                <p>Complex version of parallel momentum.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-unit"></span>
+              integer
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>unit</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                <p>Unit for file i/o.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-stdout_unit"></span>
+              integer,
+            </td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>stdout_unit</strong></td>
+<td> =</td>
+                <td>6</td>
+            <td>
+                <p>Flag for file i/o.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-input_unit_no"></span>
+              integer,
+            </td>
+            <td>
+              save
+            </td>
+            <td>::</td>
+            <td><strong>input_unit_no</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                <p>Saved input unit for use with multiple read in calls.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-error_unit_no"></span>
+              integer,
+            </td>
+            <td>
+              save
+            </td>
+            <td>::</td>
+            <td><strong>error_unit_no</strong></td>
+<td> =</td>
+                <td>stdout_unit</td>
+            <td>
+                <p>Error output unit.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-runname~2"></span>
+              character(len=500)
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>runname</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                <p>String parameter for input file.</p>
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    </section>
+    <br>
+    
+    
+    
+
+    
+ 
+    <section>
+    <h2>Functions</h2>
+      <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-input_unit_exist"></span> <h3> function <a href='../proc/input_unit_exist.html'>input_unit_exist</a>(nml, exist)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>Determine if a particular namelist already opened.</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nml~2"></span>
+              character(len=*),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nml</strong></td>
+            <td>
+<p>Namelist to be opened.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-exist~2"></span>
+              logical,
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>exist</strong></td>
+            <td>
+<p>Determination if namelist is open.</p>
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <h4>
+    Return Value
+    <small>integer</small>
+    </h4>
+    <p>I/O dummy index.</p>
+
+    </div>
+  </div>
+
+      <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-input_unit"></span> <h3> function <a href='../proc/input_unit.html'>input_unit</a>(nml)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>Assigns input unit for namelist opening.</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nml~3"></span>
+              character(len=*),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nml</strong></td>
+            <td>
+<p>Namelist string.</p>
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <h4>
+    Return Value
+    <small>integer</small>
+    </h4>
+    <p>I/O dummy index.</p>
+
+    </div>
+  </div>
+
+    </section>
+    <br>
+
+
+    <section>
+    <h2>Subroutines</h2>
+      <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-read_in_params"></span> <h3> subroutine <a href='../proc/read_in_params.html'>read_in_params</a>()  
+</h3></div>
+    <div class="card-body">
+          
+  <p>This subroutine reads in the parameters for the generation of distribution functions for ALPS.</p>
+
+  <h4>Arguments</h4>
+    <em>None</em>
+
+    </div>
+  </div>
+
+      <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-spec_read"></span> <h3> subroutine <a href='../proc/spec_read.html'>spec_read</a>(is)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>Subroutine for reading in species parameters.</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-is~2"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>is</strong></td>
+            <td>
+<p>Species index.</p>
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+    </div>
+  </div>
+
+      <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-get_indexed_namelist_unit"></span> <h3> subroutine <a href='../proc/get_indexed_namelist_unit.html'>get_indexed_namelist_unit</a>(unit, nml, index_in)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>Determines unused I/O unit.</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-unit~2"></span>
+              integer,
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>unit</strong></td>
+            <td>
+<p>Unit to be defined.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nml"></span>
+              character(len=*),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nml</strong></td>
+            <td>
+<p>Character string for namelist to be read in.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-index_in"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>index_in</strong></td>
+            <td>
+<p>Index of namelist to be read in.</p>
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+    </div>
+  </div>
+
+      <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-get_unused_unit"></span> <h3> subroutine <a href='../proc/get_unused_unit.html'>get_unused_unit</a>(unit)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>Determine unused number for I/O index.</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-unit~3"></span>
+              integer,
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>unit</strong></td>
+            <td>
+<p>Unit to be assigned.</p>
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+    </div>
+  </div>
+
+      <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-get_runname"></span> <h3> subroutine <a href='../proc/get_runname.html'>get_runname</a>(runname)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>Get runname for output files from input argument.</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-runname~3"></span>
+              character(len=500),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>runname</strong></td>
+            <td>
+<p>Basename for file I/O.</p>
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+    </div>
+  </div>
+
+    </section>    
+    
+
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              ALPS
+ was developed by Kristopher Klein, Daniel Verscharen<br>              &copy; 2025 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+            </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>

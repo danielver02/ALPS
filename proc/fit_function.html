@@ -1,0 +1,866 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="Documentation for ALPS">
+    <meta name="author" content="Kristopher Klein, Daniel Verscharen" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>fit_function &ndash; ALPS</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">ALPS </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="../page/index.html">Readme</a></li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/namelists.html">Namelists</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/programs.html">Programs</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>fit_function
+      <small>Function</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.8% of total for procedures.">44 statements</a>
+            </li>
+
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../module/alps_analyt.html'>alps_analyt</a></li>
+            <li class="breadcrumb-item active" aria-current="page">fit_function</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+    <h2>private  function fit_function(is, n_params, params, pperp_val, ppar_val)  
+</h2>
+        <div class="card mb-4">
+      <h3 class="card-header card-title bg-light">Uses</h3>
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <ul class="list-inline">
+                  <li class="list-inline-item"><a href='../module/alps_var.html'>alps_var</a></li>
+              </ul>
+            </li>
+            <li class="list-group-item">
+              <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~fit_function~~UsesGraph Pages: 1 -->
+<svg id="procfit_functionUsesGraph" width="263pt" height="32pt"
+ viewBox="0.00 0.00 263.00 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~fit_function~~UsesGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<title>proc~~fit_function~~UsesGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 259,-28 259,4 -4,4"/>
+<!-- proc~fit_function -->
+<g id="proc~~fit_function~~UsesGraph_node1" class="node">
+<title>proc~fit_function</title>
+<polygon fill="none" stroke="black" points="255,-24 183,-24 183,0 255,0 255,-24"/>
+<text text-anchor="middle" x="219" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">fit_function</text>
+</g>
+<!-- module~alps_var -->
+<g id="proc~~fit_function~~UsesGraph_node2" class="node">
+<title>module~alps_var</title>
+<g id="a_proc~~fit_function~~UsesGraph_node2"><a xlink:href="../module/alps_var.html" xlink:title="alps_var">
+<polygon fill="#337ab7" stroke="#337ab7" points="147,-24 90,-24 90,0 147,0 147,-24"/>
+<text text-anchor="middle" x="118.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps_var</text>
+</a>
+</g>
+</g>
+<!-- proc~fit_function&#45;&gt;module~alps_var -->
+<g id="proc~~fit_function~~UsesGraph_edge1" class="edge">
+<title>proc~fit_function&#45;&gt;module~alps_var</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M183,-12C174.66,-12 165.73,-12 157.28,-12"/>
+<polygon fill="#000000" stroke="#000000" points="157.28,-8.5 147.28,-12 157.28,-15.5 157.28,-8.5"/>
+</g>
+<!-- mpi -->
+<g id="proc~~fit_function~~UsesGraph_node3" class="node">
+<title>mpi</title>
+<g id="a_proc~~fit_function~~UsesGraph_node3"><a xlink:href="http://www.mpi-forum.org/docs/mpi-3.1/mpi31-report/node410.htm" xlink:title="mpi">
+<polygon fill="#337ab7" stroke="#337ab7" points="54,-24 0,-24 0,0 54,0 54,-24"/>
+<text text-anchor="middle" x="27" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">mpi</text>
+</a>
+</g>
+</g>
+<!-- module~alps_var&#45;&gt;mpi -->
+<g id="proc~~fit_function~~UsesGraph_edge2" class="edge">
+<title>module~alps_var&#45;&gt;mpi</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M89.67,-12C81.65,-12 72.77,-12 64.31,-12"/>
+<polygon fill="#000000" stroke="#000000" points="64.28,-8.5 54.28,-12 64.28,-15.5 64.28,-8.5"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#UsesGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="UsesGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="518pt" height="32pt"
+ viewBox="0.00 0.00 517.50 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 513.5,-28 513.5,4 -4,4"/>
+<!-- Module -->
+<g id="node1" class="node">
+<title>Module</title>
+<polygon fill="#337ab7" stroke="#337ab7" points="54,-24 0,-24 0,0 54,0 54,-24"/>
+<text text-anchor="middle" x="27" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Module</text>
+</g>
+<!-- Submodule -->
+<g id="node2" class="node">
+<title>Submodule</title>
+<polygon fill="#5bc0de" stroke="#5bc0de" points="145.5,-24 72.5,-24 72.5,0 145.5,0 145.5,-24"/>
+<text text-anchor="middle" x="109" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Submodule</text>
+</g>
+<!-- Subroutine -->
+<g id="node3" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="234,-24 164,-24 164,0 234,0 234,-24"/>
+<text text-anchor="middle" x="199" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node4" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="310,-24 252,-24 252,0 310,0 310,-24"/>
+<text text-anchor="middle" x="281" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Program -->
+<g id="node5" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="386,-24 328,-24 328,0 386,0 386,-24"/>
+<text text-anchor="middle" x="357" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node6" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="509.5,-24 404.5,-24 404.5,0 509.5,0 509.5,-24"/>
+<text text-anchor="middle" x="457" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a submodule to the (sub)module which it is
+descended from. Dashed arrows point from a module or program unit to 
+modules which it uses.
+</p>
+ </div>
+            </div>
+          </div>
+        </div>
+            </li>
+        </ul>
+      </div>
+    </div>
+
+
+    <p>This function evaluates the fit to f0 at real pperp_val and complex ppar_val,
+provided that the one-dimensional fit-parameter array params is fed into the
+function. This is only used during the fitting. For the evaluation in ALPS,
+use <a href="../proc/eval_fit.html">eval_fit</a>.</p>
+
+
+    <h3>Arguments</h3>
+        <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-is~21"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>is</strong></td>
+            <td>
+                <p>Index of species for which <a href="../proc/eval_fit.html">eval_fit</a> is executed.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-n_params~2"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>n_params</strong></td>
+            <td>
+                <p>Total number of fit parameters for a given species.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-params~2"></span>
+              double precision,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>params</strong>(n_params)</td>
+            <td>
+                <p>Array of fit parameters.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-pperp_val~2"></span>
+              double precision,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>pperp_val</strong></td>
+            <td>
+                <p>Perpendicular momentum.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ppar_val"></span>
+              double complex,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>ppar_val</strong></td>
+            <td>
+                <p>Complex parallel momentum.</p>
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+      <h3>Return Value
+        <small>
+          <span class="anchor" id="variable-fit_function"></span>
+          doublecomplex
+        </small>
+      </h3>
+      
+    <br>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Called by</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~fit_function~~CalledByGraph Pages: 1 -->
+<svg id="procfit_functionCalledByGraph" width="641pt" height="168pt"
+ viewBox="0.00 0.00 641.00 167.61" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~fit_function~~CalledByGraph" class="graph" transform="scale(0.6 0.6) rotate(0) translate(4 276.3)">
+<title>proc~~fit_function~~CalledByGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-276.3 1068,-276.3 1068,4 -4,4"/>
+<!-- proc~fit_function -->
+<g id="proc~~fit_function~~CalledByGraph_node1" class="node">
+<title>proc~fit_function</title>
+<polygon fill="none" stroke="black" points="1064,-231.3 992,-231.3 992,-207.3 1064,-207.3 1064,-231.3"/>
+<text text-anchor="middle" x="1028" y="-216.9" font-family="Helvetica,sans-Serif" font-size="10.50">fit_function</text>
+</g>
+<!-- proc~eval_fit -->
+<g id="proc~~fit_function~~CalledByGraph_node2" class="node">
+<title>proc~eval_fit</title>
+<g id="a_proc~~fit_function~~CalledByGraph_node2"><a xlink:href="../proc/eval_fit.html" xlink:title="eval_fit">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="933,-210.3 879,-210.3 879,-186.3 933,-186.3 933,-210.3"/>
+<text text-anchor="middle" x="906" y="-195.9" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">eval_fit</text>
+</a>
+</g>
+</g>
+<!-- proc~eval_fit&#45;&gt;proc~fit_function -->
+<g id="proc~~fit_function~~CalledByGraph_edge1" class="edge">
+<title>proc~eval_fit&#45;&gt;proc~fit_function</title>
+<path fill="none" stroke="#000000" d="M933.04,-202.86C947.31,-205.36 965.4,-208.52 981.89,-211.41"/>
+<polygon fill="#000000" stroke="#000000" points="981.45,-214.88 991.91,-213.16 982.66,-207.99 981.45,-214.88"/>
+</g>
+<!-- proc~lm_nonlinear_fit -->
+<g id="proc~~fit_function~~CalledByGraph_node3" class="node">
+<title>proc~lm_nonlinear_fit</title>
+<g id="a_proc~~fit_function~~CalledByGraph_node3"><a xlink:href="../proc/lm_nonlinear_fit.html" xlink:title="LM_nonlinear_fit">
+<polygon fill="#d9534f" stroke="#d9534f" points="956,-262.3 856,-262.3 856,-238.3 956,-238.3 956,-262.3"/>
+<text text-anchor="middle" x="906" y="-247.9" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">LM_nonlinear_fit</text>
+</a>
+</g>
+</g>
+<!-- proc~lm_nonlinear_fit&#45;&gt;proc~fit_function -->
+<g id="proc~~fit_function~~CalledByGraph_edge2" class="edge">
+<title>proc~lm_nonlinear_fit&#45;&gt;proc~fit_function</title>
+<path fill="none" stroke="#000000" d="M953.74,-238.23C963.02,-235.83 972.74,-233.32 981.96,-230.94"/>
+<polygon fill="#000000" stroke="#000000" points="982.92,-234.3 991.73,-228.41 981.17,-227.53 982.92,-234.3"/>
+</g>
+<!-- proc~determine_param_fit -->
+<g id="proc~~fit_function~~CalledByGraph_node4" class="node">
+<title>proc~determine_param_fit</title>
+<g id="a_proc~~fit_function~~CalledByGraph_node4"><a xlink:href="../proc/determine_param_fit.html" xlink:title="determine_param_fit">
+<polygon fill="#d9534f" stroke="#d9534f" points="662,-272.3 538,-272.3 538,-248.3 662,-248.3 662,-272.3"/>
+<text text-anchor="middle" x="600" y="-257.9" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">determine_param_fit</text>
+</a>
+</g>
+</g>
+<!-- proc~determine_param_fit&#45;&gt;proc~lm_nonlinear_fit -->
+<g id="proc~~fit_function~~CalledByGraph_edge6" class="edge">
+<title>proc~determine_param_fit&#45;&gt;proc~lm_nonlinear_fit</title>
+<path fill="none" stroke="#000000" d="M662.15,-258.29C715.63,-256.53 792.81,-253.99 845.72,-252.25"/>
+<polygon fill="#000000" stroke="#000000" points="846.09,-255.74 855.97,-251.92 845.86,-248.75 846.09,-255.74"/>
+</g>
+<!-- proc~output_fit -->
+<g id="proc~~fit_function~~CalledByGraph_node7" class="node">
+<title>proc~output_fit</title>
+<g id="a_proc~~fit_function~~CalledByGraph_node7"><a xlink:href="../proc/output_fit.html" xlink:title="output_fit">
+<polygon fill="#d9534f" stroke="#d9534f" points="790.5,-232.3 727.5,-232.3 727.5,-208.3 790.5,-208.3 790.5,-232.3"/>
+<text text-anchor="middle" x="759" y="-217.9" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">output_fit</text>
+</a>
+</g>
+</g>
+<!-- proc~determine_param_fit&#45;&gt;proc~output_fit -->
+<g id="proc~~fit_function~~CalledByGraph_edge10" class="edge">
+<title>proc~determine_param_fit&#45;&gt;proc~output_fit</title>
+<path fill="none" stroke="#000000" d="M648.11,-248.3C670.15,-242.68 696.15,-236.06 717.32,-230.67"/>
+<polygon fill="#000000" stroke="#000000" points="718.47,-233.99 727.29,-228.13 716.74,-227.2 718.47,-233.99"/>
+</g>
+<!-- proc~landau_integrate -->
+<g id="proc~~fit_function~~CalledByGraph_node5" class="node">
+<title>proc~landau_integrate</title>
+<g id="a_proc~~fit_function~~CalledByGraph_node5"><a xlink:href="../proc/landau_integrate.html" xlink:title="landau_integrate">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="810.5,-148.3 707.5,-148.3 707.5,-124.3 810.5,-124.3 810.5,-148.3"/>
+<text text-anchor="middle" x="759" y="-133.9" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">landau_integrate</text>
+</a>
+</g>
+</g>
+<!-- proc~landau_integrate&#45;&gt;proc~eval_fit -->
+<g id="proc~~fit_function~~CalledByGraph_edge3" class="edge">
+<title>proc~landau_integrate&#45;&gt;proc~eval_fit</title>
+<path fill="none" stroke="#000000" d="M796.42,-148.31C804.26,-151.1 812.46,-154.17 820,-157.3 837.67,-164.63 856.91,-173.8 872.6,-181.61"/>
+<polygon fill="#000000" stroke="#000000" points="871.36,-184.91 881.87,-186.27 874.51,-178.65 871.36,-184.91"/>
+</g>
+<!-- proc~landau_integrate_rel -->
+<g id="proc~~fit_function~~CalledByGraph_node6" class="node">
+<title>proc~landau_integrate_rel</title>
+<g id="a_proc~~fit_function~~CalledByGraph_node6"><a xlink:href="../proc/landau_integrate_rel.html" xlink:title="landau_integrate_rel">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="820,-190.3 698,-190.3 698,-166.3 820,-166.3 820,-190.3"/>
+<text text-anchor="middle" x="759" y="-175.9" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">landau_integrate_rel</text>
+</a>
+</g>
+</g>
+<!-- proc~landau_integrate_rel&#45;&gt;proc~eval_fit -->
+<g id="proc~~fit_function~~CalledByGraph_edge4" class="edge">
+<title>proc~landau_integrate_rel&#45;&gt;proc~eval_fit</title>
+<path fill="none" stroke="#000000" d="M820.23,-186.61C836.64,-188.87 853.91,-191.25 868.54,-193.27"/>
+<polygon fill="#000000" stroke="#000000" points="868.3,-196.77 878.69,-194.67 869.26,-189.84 868.3,-196.77"/>
+</g>
+<!-- proc~output_fit&#45;&gt;proc~eval_fit -->
+<g id="proc~~fit_function~~CalledByGraph_edge5" class="edge">
+<title>proc~output_fit&#45;&gt;proc~eval_fit</title>
+<path fill="none" stroke="#000000" d="M790.75,-215.64C813.49,-212.19 844.54,-207.48 868.53,-203.84"/>
+<polygon fill="#000000" stroke="#000000" points="869.31,-207.26 878.67,-202.3 868.26,-200.34 869.31,-207.26"/>
+</g>
+<!-- proc~full_integrate -->
+<g id="proc~~fit_function~~CalledByGraph_node8" class="node">
+<title>proc~full_integrate</title>
+<g id="a_proc~~fit_function~~CalledByGraph_node8"><a xlink:href="../proc/full_integrate.html" xlink:title="full_integrate">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="641.5,-148.3 558.5,-148.3 558.5,-124.3 641.5,-124.3 641.5,-148.3"/>
+<text text-anchor="middle" x="600" y="-133.9" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">full_integrate</text>
+</a>
+</g>
+</g>
+<!-- proc~full_integrate&#45;&gt;proc~landau_integrate -->
+<g id="proc~~fit_function~~CalledByGraph_edge8" class="edge">
+<title>proc~full_integrate&#45;&gt;proc~landau_integrate</title>
+<path fill="none" stroke="#000000" d="M641.84,-136.3C658.71,-136.3 678.61,-136.3 697.13,-136.3"/>
+<polygon fill="#000000" stroke="#000000" points="697.25,-139.8 707.25,-136.3 697.25,-132.8 697.25,-139.8"/>
+</g>
+<!-- proc~full_integrate&#45;&gt;proc~landau_integrate_rel -->
+<g id="proc~~fit_function~~CalledByGraph_edge9" class="edge">
+<title>proc~full_integrate&#45;&gt;proc~landau_integrate_rel</title>
+<path fill="none" stroke="#000000" d="M641.84,-147.23C660.58,-152.24 683.07,-158.26 703.25,-163.66"/>
+<polygon fill="#000000" stroke="#000000" points="702.38,-167.05 712.94,-166.25 704.19,-160.28 702.38,-167.05"/>
+</g>
+<!-- program~alps -->
+<g id="proc~~fit_function~~CalledByGraph_node9" class="node">
+<title>program~alps</title>
+<g id="a_proc~~fit_function~~CalledByGraph_node9"><a xlink:href="../program/alps.html" xlink:title="alps">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="54,-162.3 0,-162.3 0,-138.3 54,-138.3 54,-162.3"/>
+<text text-anchor="middle" x="27" y="-147.9" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps</text>
+</a>
+</g>
+</g>
+<!-- program~alps&#45;&gt;proc~determine_param_fit -->
+<g id="proc~~fit_function~~CalledByGraph_edge7" class="edge">
+<title>program~alps&#45;&gt;proc~determine_param_fit</title>
+<path fill="none" stroke="#000000" d="M37.71,-162.71C48.97,-176.34 68.72,-198.05 90,-211.3 155.15,-251.86 176.25,-268.3 253,-268.3 253,-268.3 253,-268.3 377.5,-268.3 427.73,-268.3 484.33,-266.22 527.73,-264.18"/>
+<polygon fill="#000000" stroke="#000000" points="528.09,-267.67 537.91,-263.69 527.75,-260.68 528.09,-267.67"/>
+</g>
+<!-- proc~map_search -->
+<g id="proc~~fit_function~~CalledByGraph_node12" class="node">
+<title>proc~map_search</title>
+<g id="a_proc~~fit_function~~CalledByGraph_node12"><a xlink:href="../proc/map_search.html" xlink:title="map_search">
+<polygon fill="#d9534f" stroke="#d9534f" points="167,-202.3 90,-202.3 90,-178.3 167,-178.3 167,-202.3"/>
+<text text-anchor="middle" x="128.5" y="-187.9" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">map_search</text>
+</a>
+</g>
+</g>
+<!-- program~alps&#45;&gt;proc~map_search -->
+<g id="proc~~fit_function~~CalledByGraph_edge21" class="edge">
+<title>program~alps&#45;&gt;proc~map_search</title>
+<path fill="none" stroke="#000000" d="M54.14,-160.81C64.49,-164.97 76.61,-169.84 87.98,-174.42"/>
+<polygon fill="#000000" stroke="#000000" points="86.72,-177.68 97.3,-178.16 89.33,-171.19 86.72,-177.68"/>
+</g>
+<!-- proc~om_double_scan -->
+<g id="proc~~fit_function~~CalledByGraph_node13" class="node">
+<title>proc~om_double_scan</title>
+<g id="a_proc~~fit_function~~CalledByGraph_node13"><a xlink:href="../proc/om_double_scan.html" xlink:title="om_double_scan">
+<polygon fill="#d9534f" stroke="#d9534f" points="305,-80.3 203,-80.3 203,-56.3 305,-56.3 305,-80.3"/>
+<text text-anchor="middle" x="254" y="-65.9" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">om_double_scan</text>
+</a>
+</g>
+</g>
+<!-- program~alps&#45;&gt;proc~om_double_scan -->
+<g id="proc~~fit_function~~CalledByGraph_edge22" class="edge">
+<title>program~alps&#45;&gt;proc~om_double_scan</title>
+<path fill="none" stroke="#000000" d="M53.09,-138.26C64.27,-133.07 77.68,-127.11 90,-122.3 127.37,-107.72 170.5,-93.54 203,-83.38"/>
+<polygon fill="#000000" stroke="#000000" points="204.22,-86.67 212.73,-80.36 202.14,-79.98 204.22,-86.67"/>
+</g>
+<!-- proc~om_scan -->
+<g id="proc~~fit_function~~CalledByGraph_node14" class="node">
+<title>proc~om_scan</title>
+<g id="a_proc~~fit_function~~CalledByGraph_node14"><a xlink:href="../proc/om_scan.html" xlink:title="om_scan">
+<polygon fill="#d9534f" stroke="#d9534f" points="284,-122.3 224,-122.3 224,-98.3 284,-98.3 284,-122.3"/>
+<text text-anchor="middle" x="254" y="-107.9" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">om_scan</text>
+</a>
+</g>
+</g>
+<!-- program~alps&#45;&gt;proc~om_scan -->
+<g id="proc~~fit_function~~CalledByGraph_edge23" class="edge">
+<title>program~alps&#45;&gt;proc~om_scan</title>
+<path fill="none" stroke="#000000" d="M54.25,-145.64C93.59,-138.64 168.08,-125.4 213.86,-117.26"/>
+<polygon fill="#000000" stroke="#000000" points="214.49,-120.7 223.72,-115.51 213.26,-113.81 214.49,-120.7"/>
+</g>
+<!-- proc~refine_guess -->
+<g id="proc~~fit_function~~CalledByGraph_node15" class="node">
+<title>proc~refine_guess</title>
+<g id="a_proc~~fit_function~~CalledByGraph_node15"><a xlink:href="../proc/refine_guess.html" xlink:title="refine_guess">
+<polygon fill="#d9534f" stroke="#d9534f" points="293.5,-164.3 214.5,-164.3 214.5,-140.3 293.5,-140.3 293.5,-164.3"/>
+<text text-anchor="middle" x="254" y="-149.9" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">refine_guess</text>
+</a>
+</g>
+</g>
+<!-- program~alps&#45;&gt;proc~refine_guess -->
+<g id="proc~~fit_function~~CalledByGraph_edge25" class="edge">
+<title>program~alps&#45;&gt;proc~refine_guess</title>
+<path fill="none" stroke="#000000" d="M54.25,-150.54C90.89,-150.86 158.04,-151.46 204.07,-151.87"/>
+<polygon fill="#000000" stroke="#000000" points="204.09,-155.37 214.12,-151.96 204.16,-148.37 204.09,-155.37"/>
+</g>
+<!-- proc~disp -->
+<g id="proc~~fit_function~~CalledByGraph_node10" class="node">
+<title>proc~disp</title>
+<g id="a_proc~~fit_function~~CalledByGraph_node10"><a xlink:href="../proc/disp.html" xlink:title="disp">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="502,-139.3 448,-139.3 448,-115.3 502,-115.3 502,-139.3"/>
+<text text-anchor="middle" x="475" y="-124.9" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">disp</text>
+</a>
+</g>
+</g>
+<!-- proc~disp&#45;&gt;proc~full_integrate -->
+<g id="proc~~fit_function~~CalledByGraph_edge11" class="edge">
+<title>proc~disp&#45;&gt;proc~full_integrate</title>
+<path fill="none" stroke="#000000" d="M502.09,-129.21C515.51,-130.19 532.34,-131.42 548.19,-132.58"/>
+<polygon fill="#000000" stroke="#000000" points="548.2,-136.09 558.43,-133.33 548.71,-129.11 548.2,-136.09"/>
+</g>
+<!-- proc~calc_eigen -->
+<g id="proc~~fit_function~~CalledByGraph_node11" class="node">
+<title>proc~calc_eigen</title>
+<g id="a_proc~~fit_function~~CalledByGraph_node11"><a xlink:href="../proc/calc_eigen.html" xlink:title="calc_eigen">
+<polygon fill="#d9534f" stroke="#d9534f" points="411.5,-42.3 341.5,-42.3 341.5,-18.3 411.5,-18.3 411.5,-42.3"/>
+<text text-anchor="middle" x="376.5" y="-27.9" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">calc_eigen</text>
+</a>
+</g>
+</g>
+<!-- proc~calc_eigen&#45;&gt;proc~disp -->
+<g id="proc~~fit_function~~CalledByGraph_edge12" class="edge">
+<title>proc~calc_eigen&#45;&gt;proc~disp</title>
+<path fill="none" stroke="#000000" d="M394.91,-42.33C400.56,-46.52 406.73,-51.4 412,-56.3 429.03,-72.14 446.25,-92.28 458.21,-107.05"/>
+<polygon fill="#000000" stroke="#000000" points="455.63,-109.43 464.61,-115.06 461.1,-105.06 455.63,-109.43"/>
+</g>
+<!-- proc~map_search&#45;&gt;proc~disp -->
+<g id="proc~~fit_function~~CalledByGraph_edge13" class="edge">
+<title>proc~map_search&#45;&gt;proc~disp</title>
+<path fill="none" stroke="#000000" d="M167.42,-199.23C223.4,-210.48 330.35,-224.51 412,-190.3 432.59,-181.68 449.8,-162.52 460.82,-147.57"/>
+<polygon fill="#000000" stroke="#000000" points="463.69,-149.57 466.57,-139.38 457.96,-145.55 463.69,-149.57"/>
+</g>
+<!-- proc~map_search&#45;&gt;proc~refine_guess -->
+<g id="proc~~fit_function~~CalledByGraph_edge24" class="edge">
+<title>proc~map_search&#45;&gt;proc~refine_guess</title>
+<path fill="none" stroke="#000000" d="M167.23,-178.69C178.98,-175.08 192.11,-171.04 204.49,-167.23"/>
+<polygon fill="#000000" stroke="#000000" points="205.7,-170.52 214.23,-164.23 203.64,-163.83 205.7,-170.52"/>
+</g>
+<!-- proc~om_double_scan&#45;&gt;proc~disp -->
+<g id="proc~~fit_function~~CalledByGraph_edge14" class="edge">
+<title>proc~om_double_scan&#45;&gt;proc~disp</title>
+<path fill="none" stroke="#000000" d="M267.93,-56C295.72,-31.09 362.65,20.51 412,-9.3 446.45,-30.12 462.71,-77.11 469.59,-105.11"/>
+<polygon fill="#000000" stroke="#000000" points="466.24,-106.16 471.86,-115.15 473.07,-104.62 466.24,-106.16"/>
+</g>
+<!-- proc~om_double_scan&#45;&gt;proc~calc_eigen -->
+<g id="proc~~fit_function~~CalledByGraph_edge19" class="edge">
+<title>proc~om_double_scan&#45;&gt;proc~calc_eigen</title>
+<path fill="none" stroke="#000000" d="M293.13,-56.28C305.31,-52.44 318.9,-48.15 331.47,-44.19"/>
+<polygon fill="#000000" stroke="#000000" points="332.81,-47.44 341.29,-41.09 330.7,-40.76 332.81,-47.44"/>
+</g>
+<!-- proc~secant -->
+<g id="proc~~fit_function~~CalledByGraph_node16" class="node">
+<title>proc~secant</title>
+<g id="a_proc~~fit_function~~CalledByGraph_node16"><a xlink:href="../proc/secant.html" xlink:title="secant">
+<polygon fill="#d9534f" stroke="#d9534f" points="403.5,-122.3 349.5,-122.3 349.5,-98.3 403.5,-98.3 403.5,-122.3"/>
+<text text-anchor="middle" x="376.5" y="-107.9" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">secant</text>
+</a>
+</g>
+</g>
+<!-- proc~om_double_scan&#45;&gt;proc~secant -->
+<g id="proc~~fit_function~~CalledByGraph_edge26" class="edge">
+<title>proc~om_double_scan&#45;&gt;proc~secant</title>
+<path fill="none" stroke="#000000" d="M289.53,-80.34C305.31,-85.84 323.99,-92.35 339.9,-97.89"/>
+<polygon fill="#000000" stroke="#000000" points="338.8,-101.22 349.39,-101.2 341.1,-94.61 338.8,-101.22"/>
+</g>
+<!-- proc~secant_osc -->
+<g id="proc~~fit_function~~CalledByGraph_node17" class="node">
+<title>proc~secant_osc</title>
+<g id="a_proc~~fit_function~~CalledByGraph_node17"><a xlink:href="../proc/secant_osc.html" xlink:title="secant_osc">
+<polygon fill="#d9534f" stroke="#d9534f" points="412,-164.3 341,-164.3 341,-140.3 412,-140.3 412,-164.3"/>
+<text text-anchor="middle" x="376.5" y="-149.9" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">secant_osc</text>
+</a>
+</g>
+</g>
+<!-- proc~om_double_scan&#45;&gt;proc~secant_osc -->
+<g id="proc~~fit_function~~CalledByGraph_edge29" class="edge">
+<title>proc~om_double_scan&#45;&gt;proc~secant_osc</title>
+<path fill="none" stroke="#000000" d="M289.76,-80.4C295.09,-82.96 300.36,-85.92 305,-89.3 324.87,-103.78 322.27,-115.38 341,-131.3 342.17,-132.3 343.39,-133.27 344.65,-134.23"/>
+<polygon fill="#000000" stroke="#000000" points="343.04,-137.37 353.25,-140.19 347.02,-131.62 343.04,-137.37"/>
+</g>
+<!-- proc~om_scan&#45;&gt;proc~disp -->
+<g id="proc~~fit_function~~CalledByGraph_edge15" class="edge">
+<title>proc~om_scan&#45;&gt;proc~disp</title>
+<path fill="none" stroke="#000000" d="M284.15,-99.47C316.05,-89.19 368.46,-77.02 412,-89.3 426,-93.25 439.95,-101.34 451.07,-109.05"/>
+<polygon fill="#000000" stroke="#000000" points="449.18,-112 459.32,-115.06 453.3,-106.34 449.18,-112"/>
+</g>
+<!-- proc~om_scan&#45;&gt;proc~calc_eigen -->
+<g id="proc~~fit_function~~CalledByGraph_edge20" class="edge">
+<title>proc~om_scan&#45;&gt;proc~calc_eigen</title>
+<path fill="none" stroke="#000000" d="M284.15,-100.05C291.22,-97.03 298.58,-93.42 305,-89.3 323.28,-77.59 324.31,-70.18 341,-56.3 344.09,-53.73 347.4,-51.1 350.7,-48.54"/>
+<polygon fill="#000000" stroke="#000000" points="352.91,-51.25 358.75,-42.42 348.67,-45.68 352.91,-51.25"/>
+</g>
+<!-- proc~om_scan&#45;&gt;proc~secant -->
+<g id="proc~~fit_function~~CalledByGraph_edge27" class="edge">
+<title>proc~om_scan&#45;&gt;proc~secant</title>
+<path fill="none" stroke="#000000" d="M284.17,-110.3C300.67,-110.3 321.44,-110.3 339.01,-110.3"/>
+<polygon fill="#000000" stroke="#000000" points="339.47,-113.8 349.47,-110.3 339.47,-106.8 339.47,-113.8"/>
+</g>
+<!-- proc~om_scan&#45;&gt;proc~secant_osc -->
+<g id="proc~~fit_function~~CalledByGraph_edge30" class="edge">
+<title>proc~om_scan&#45;&gt;proc~secant_osc</title>
+<path fill="none" stroke="#000000" d="M284.17,-120.47C298.36,-125.42 315.72,-131.46 331.47,-136.96"/>
+<polygon fill="#000000" stroke="#000000" points="330.44,-140.3 341.04,-140.29 332.74,-133.69 330.44,-140.3"/>
+</g>
+<!-- proc~refine_guess&#45;&gt;proc~disp -->
+<g id="proc~~fit_function~~CalledByGraph_edge16" class="edge">
+<title>proc~refine_guess&#45;&gt;proc~disp</title>
+<path fill="none" stroke="#000000" d="M285.85,-164.37C318.07,-175.16 369.7,-187.28 412,-173.3 428.18,-167.96 443.58,-156.57 454.99,-146.47"/>
+<polygon fill="#000000" stroke="#000000" points="457.6,-148.82 462.54,-139.44 452.83,-143.69 457.6,-148.82"/>
+</g>
+<!-- proc~refine_guess&#45;&gt;proc~secant -->
+<g id="proc~~fit_function~~CalledByGraph_edge28" class="edge">
+<title>proc~refine_guess&#45;&gt;proc~secant</title>
+<path fill="none" stroke="#000000" d="M289.53,-140.27C305.31,-134.77 323.99,-128.26 339.9,-122.71"/>
+<polygon fill="#000000" stroke="#000000" points="341.1,-126 349.39,-119.4 338.8,-119.39 341.1,-126"/>
+</g>
+<!-- proc~refine_guess&#45;&gt;proc~secant_osc -->
+<g id="proc~~fit_function~~CalledByGraph_edge31" class="edge">
+<title>proc~refine_guess&#45;&gt;proc~secant_osc</title>
+<path fill="none" stroke="#000000" d="M293.79,-152.3C305.5,-152.3 318.45,-152.3 330.52,-152.3"/>
+<polygon fill="#000000" stroke="#000000" points="330.85,-155.8 340.85,-152.3 330.85,-148.8 330.85,-155.8"/>
+</g>
+<!-- proc~secant&#45;&gt;proc~disp -->
+<g id="proc~~fit_function~~CalledByGraph_edge17" class="edge">
+<title>proc~secant&#45;&gt;proc~disp</title>
+<path fill="none" stroke="#000000" d="M403.61,-114.9C414.13,-116.75 426.43,-118.92 437.78,-120.92"/>
+<polygon fill="#000000" stroke="#000000" points="437.41,-124.41 447.86,-122.7 438.62,-117.52 437.41,-124.41"/>
+</g>
+<!-- proc~secant_osc&#45;&gt;proc~disp -->
+<g id="proc~~fit_function~~CalledByGraph_edge18" class="edge">
+<title>proc~secant_osc&#45;&gt;proc~disp</title>
+<path fill="none" stroke="#000000" d="M412.07,-143.35C420.54,-141.15 429.63,-138.8 438.16,-136.59"/>
+<polygon fill="#000000" stroke="#000000" points="439.05,-139.97 447.85,-134.08 437.29,-133.2 439.05,-139.97"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var panprocfit_functionCalledByGraph = svgPanZoom('#procfit_functionCalledByGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CalledByGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CalledByGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+
+
+    
+    
+
+    
+    
+
+
+
+    
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              ALPS
+ was developed by Kristopher Klein, Daniel Verscharen<br>              &copy; 2025 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+            </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>

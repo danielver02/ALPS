@@ -53,9 +53,6 @@
           <div id="navbar" class="navbar-collapse collapse">
             <ul class="navbar-nav">
                 <li class="nav-item"><a class="nav-link" href="../page/index.html">Readme</a></li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="../lists/files.html">Source Files</a>
-                  </li>
                 <li class="nav-item">
                   <a class="nav-link" href="../lists/modules.html">Modules</a>
                 </li>
@@ -69,7 +66,7 @@
                   <a class="nav-link" href="../lists/namelists.html">Namelists</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="../program/alps.html">Program</a>
+                  <a class="nav-link" href="../lists/programs.html">Programs</a>
                 </li>
             </ul>
               <div class="d-flex align-items-end flex-grow-1">
@@ -98,16 +95,11 @@
                  title="11.4% of total for modules and submodules.">629 statements</a>
             </li>
 
-            <li class="list-inline-item" id="source-file">
-              <i class="fa fa-code"></i>
-              <a href="../src/ALPS_io.f90"> Source File</a>
-            </li>
         </ul>
       </div>
       <div class="col">
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb justify-content-end mb-0">
-                <li class="breadcrumb-item"><a href='../sourcefile/alps_io.f90.html'>ALPS_io.f90</a></li>
             <li class="breadcrumb-item active" aria-current="page">alps_io</li>
           </ol>
         </nav>
@@ -136,10 +128,10 @@
       </a>
       <div id="vars-0" class="collapse">
         <div class="list-group list-group-flush">
-            <a class="list-group-item" href="../module/alps_io.html#variable-unit">unit</a>
-            <a class="list-group-item" href="../module/alps_io.html#variable-stdout_unit">stdout_unit</a>
-            <a class="list-group-item" href="../module/alps_io.html#variable-input_unit_no">input_unit_no</a>
-            <a class="list-group-item" href="../module/alps_io.html#variable-error_unit_no">error_unit_no</a>
+            <a class="list-group-item" href="../module/alps_io.html#variable-unit~4">unit</a>
+            <a class="list-group-item" href="../module/alps_io.html#variable-stdout_unit~2">stdout_unit</a>
+            <a class="list-group-item" href="../module/alps_io.html#variable-input_unit_no~2">input_unit_no</a>
+            <a class="list-group-item" href="../module/alps_io.html#variable-error_unit_no~2">error_unit_no</a>
         </div>
       </div>
     </div>
@@ -160,6 +152,8 @@
       </a>
       <div id="funcs-0" class="collapse">
         <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../module/alps_io.html#proc-input_unit_exist~2">input_unit_exist</a>
+            <a class="list-group-item" href="../module/alps_io.html#proc-input_unit~2">input_unit</a>
             <a class="list-group-item" href="../module/alps_io.html#proc-isnancheck">isnancheck</a>
         </div>
       </div>
@@ -173,10 +167,18 @@
       <div id="subs-0" class="collapse">
         <div class="list-group list-group-flush">
             <a class="list-group-item" href="../module/alps_io.html#proc-init_param">init_param</a>
+            <a class="list-group-item" href="../module/alps_io.html#proc-map_read">map_read</a>
+            <a class="list-group-item" href="../module/alps_io.html#proc-solution_read">solution_read</a>
+            <a class="list-group-item" href="../module/alps_io.html#proc-spec_read~2">spec_read</a>
+            <a class="list-group-item" href="../module/alps_io.html#proc-poly_read">poly_read</a>
+            <a class="list-group-item" href="../module/alps_io.html#proc-bm_read">bM_read</a>
+            <a class="list-group-item" href="../module/alps_io.html#proc-scan_read">scan_read</a>
             <a class="list-group-item" href="../module/alps_io.html#proc-fit_read">fit_read</a>
+            <a class="list-group-item" href="../module/alps_io.html#proc-get_runname~2">get_runname</a>
             <a class="list-group-item" href="../module/alps_io.html#proc-read_f0">read_f0</a>
+            <a class="list-group-item" href="../module/alps_io.html#proc-get_indexed_namelist_unit~2">get_indexed_namelist_unit</a>
             <a class="list-group-item" href="../module/alps_io.html#proc-get_indexed_double_namelist_unit">get_indexed_double_namelist_unit</a>
-            <a class="list-group-item" href="../module/alps_io.html#proc-get_unused_unit">get_unused_unit</a>
+            <a class="list-group-item" href="../module/alps_io.html#proc-get_unused_unit~2">get_unused_unit</a>
             <a class="list-group-item" href="../module/alps_io.html#proc-alps_error_init">alps_error_init</a>
             <a class="list-group-item" href="../module/alps_io.html#proc-alps_error">alps_error</a>
             <a class="list-group-item" href="../module/alps_io.html#proc-output_time">output_time</a>
@@ -200,8 +202,301 @@
 
     <div class="col-md-9" id='text'>
       <p>Controls input and output functions to and from main program.</p>
-      
-      
+<br>      
+          <div class="card">
+      <h3 class="card-header card-title bg-light">Used by</h3>
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: module~~alps_io~~UsedByGraph Pages: 1 -->
+<svg id="modulealps_ioUsedByGraph" width="239pt" height="536pt"
+ viewBox="0.00 0.00 239.00 536.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="module~~alps_io~~UsedByGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 532)">
+<title>module~~alps_io~~UsedByGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-532 235,-532 235,4 -4,4"/>
+<!-- module~alps_io -->
+<g id="module~~alps_io~~UsedByGraph_node1" class="node">
+<title>module~alps_io</title>
+<polygon fill="none" stroke="black" points="54,-276 0,-276 0,-252 54,-252 54,-276"/>
+<text text-anchor="middle" x="27" y="-261.6" font-family="Helvetica,sans-Serif" font-size="10.50">alps_io</text>
+</g>
+<!-- proc~derivative_f0 -->
+<g id="module~~alps_io~~UsedByGraph_node2" class="node">
+<title>proc~derivative_f0</title>
+<g id="a_module~~alps_io~~UsedByGraph_node2"><a xlink:href="../proc/derivative_f0.html" xlink:title="derivative_f0">
+<polygon fill="#d9534f" stroke="#d9534f" points="201.5,-528 119.5,-528 119.5,-504 201.5,-504 201.5,-528"/>
+<text text-anchor="middle" x="160.5" y="-513.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">derivative_f0</text>
+</a>
+</g>
+</g>
+<!-- proc~derivative_f0&#45;&gt;module~alps_io -->
+<g id="module~~alps_io~~UsedByGraph_edge1" class="edge">
+<title>proc~derivative_f0&#45;&gt;module~alps_io</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M119.33,-511.13C108.59,-508.05 97.81,-503.06 90,-495 33.27,-436.47 27.09,-331.86 27.29,-286.27"/>
+<polygon fill="#000000" stroke="#000000" points="30.79,-286.31 27.44,-276.25 23.79,-286.2 30.79,-286.31"/>
+</g>
+<!-- proc~derivative_f0_rel -->
+<g id="module~~alps_io~~UsedByGraph_node3" class="node">
+<title>proc~derivative_f0_rel</title>
+<g id="a_module~~alps_io~~UsedByGraph_node3"><a xlink:href="../proc/derivative_f0_rel.html" xlink:title="derivative_f0_rel">
+<polygon fill="#d9534f" stroke="#d9534f" points="210.5,-486 110.5,-486 110.5,-462 210.5,-462 210.5,-486"/>
+<text text-anchor="middle" x="160.5" y="-471.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">derivative_f0_rel</text>
+</a>
+</g>
+</g>
+<!-- proc~derivative_f0_rel&#45;&gt;module~alps_io -->
+<g id="module~~alps_io~~UsedByGraph_edge2" class="edge">
+<title>proc~derivative_f0_rel&#45;&gt;module~alps_io</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M110.24,-465.65C102.77,-462.64 95.68,-458.55 90,-453 43.13,-407.22 31.68,-325.49 28.89,-286.24"/>
+<polygon fill="#000000" stroke="#000000" points="32.38,-285.93 28.3,-276.15 25.39,-286.34 32.38,-285.93"/>
+</g>
+<!-- proc~determine_bessel_array -->
+<g id="module~~alps_io~~UsedByGraph_node4" class="node">
+<title>proc~determine_bessel_array</title>
+<g id="a_module~~alps_io~~UsedByGraph_node4"><a xlink:href="../proc/determine_bessel_array.html" xlink:title="determine_bessel_array">
+<polygon fill="#d9534f" stroke="#d9534f" points="231,-444 90,-444 90,-420 231,-420 231,-444"/>
+<text text-anchor="middle" x="160.5" y="-429.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">determine_bessel_array</text>
+</a>
+</g>
+</g>
+<!-- proc~determine_bessel_array&#45;&gt;module~alps_io -->
+<g id="module~~alps_io~~UsedByGraph_edge3" class="edge">
+<title>proc~determine_bessel_array&#45;&gt;module~alps_io</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M103.25,-419.93C98.45,-417.48 93.94,-414.54 90,-411 52.97,-377.69 37.37,-318.66 31.37,-286.47"/>
+<polygon fill="#000000" stroke="#000000" points="34.76,-285.55 29.62,-276.28 27.86,-286.73 34.76,-285.55"/>
+</g>
+<!-- proc~determine_resonances -->
+<g id="module~~alps_io~~UsedByGraph_node5" class="node">
+<title>proc~determine_resonances</title>
+<g id="a_module~~alps_io~~UsedByGraph_node5"><a xlink:href="../proc/determine_resonances.html" xlink:title="determine_resonances">
+<polygon fill="#d9534f" stroke="#d9534f" points="227.5,-402 93.5,-402 93.5,-378 227.5,-378 227.5,-402"/>
+<text text-anchor="middle" x="160.5" y="-387.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">determine_resonances</text>
+</a>
+</g>
+</g>
+<!-- proc~determine_resonances&#45;&gt;module~alps_io -->
+<g id="module~~alps_io~~UsedByGraph_edge4" class="edge">
+<title>proc~determine_resonances&#45;&gt;module~alps_io</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M104.78,-377.86C99.5,-375.42 94.46,-372.5 90,-369 62.29,-347.25 44.41,-309.42 35.29,-285.6"/>
+<polygon fill="#000000" stroke="#000000" points="38.52,-284.24 31.81,-276.04 31.94,-286.64 38.52,-284.24"/>
+</g>
+<!-- proc~integrate_resu_rel -->
+<g id="module~~alps_io~~UsedByGraph_node6" class="node">
+<title>proc~integrate_resu_rel</title>
+<g id="a_module~~alps_io~~UsedByGraph_node6"><a xlink:href="../proc/integrate_resu_rel.html" xlink:title="integrate_resU_rel">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="215,-360 106,-360 106,-336 215,-336 215,-360"/>
+<text text-anchor="middle" x="160.5" y="-345.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">integrate_resU_rel</text>
+</a>
+</g>
+</g>
+<!-- proc~integrate_resu_rel&#45;&gt;module~alps_io -->
+<g id="module~~alps_io~~UsedByGraph_edge5" class="edge">
+<title>proc~integrate_resu_rel&#45;&gt;module~alps_io</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M108.85,-335.98C102.29,-333.49 95.83,-330.52 90,-327 71.73,-315.96 55,-298.31 43.54,-284.5"/>
+<polygon fill="#000000" stroke="#000000" points="46.11,-282.1 37.12,-276.49 40.64,-286.48 46.11,-282.1"/>
+</g>
+<!-- proc~lm_nonlinear_fit -->
+<g id="module~~alps_io~~UsedByGraph_node7" class="node">
+<title>proc~lm_nonlinear_fit</title>
+<g id="a_module~~alps_io~~UsedByGraph_node7"><a xlink:href="../proc/lm_nonlinear_fit.html" xlink:title="LM_nonlinear_fit">
+<polygon fill="#d9534f" stroke="#d9534f" points="210.5,-318 110.5,-318 110.5,-294 210.5,-294 210.5,-318"/>
+<text text-anchor="middle" x="160.5" y="-303.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">LM_nonlinear_fit</text>
+</a>
+</g>
+</g>
+<!-- proc~lm_nonlinear_fit&#45;&gt;module~alps_io -->
+<g id="module~~alps_io~~UsedByGraph_edge6" class="edge">
+<title>proc~lm_nonlinear_fit&#45;&gt;module~alps_io</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M118.64,-293.9C109.21,-291.04 99.24,-287.96 90,-285 81.52,-282.28 72.43,-279.26 63.88,-276.38"/>
+<polygon fill="#000000" stroke="#000000" points="64.78,-272.99 54.18,-273.08 62.52,-279.61 64.78,-272.99"/>
+</g>
+<!-- proc~map_search -->
+<g id="module~~alps_io~~UsedByGraph_node8" class="node">
+<title>proc~map_search</title>
+<g id="a_module~~alps_io~~UsedByGraph_node8"><a xlink:href="../proc/map_search.html" xlink:title="map_search">
+<polygon fill="#d9534f" stroke="#d9534f" points="199,-276 122,-276 122,-252 199,-252 199,-276"/>
+<text text-anchor="middle" x="160.5" y="-261.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">map_search</text>
+</a>
+</g>
+</g>
+<!-- proc~map_search&#45;&gt;module~alps_io -->
+<g id="module~~alps_io~~UsedByGraph_edge7" class="edge">
+<title>proc~map_search&#45;&gt;module~alps_io</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M121.82,-264C103.67,-264 82.02,-264 64.09,-264"/>
+<polygon fill="#000000" stroke="#000000" points="64.01,-260.5 54.01,-264 64.01,-267.5 64.01,-260.5"/>
+</g>
+<!-- proc~om_double_scan -->
+<g id="module~~alps_io~~UsedByGraph_node9" class="node">
+<title>proc~om_double_scan</title>
+<g id="a_module~~alps_io~~UsedByGraph_node9"><a xlink:href="../proc/om_double_scan.html" xlink:title="om_double_scan">
+<polygon fill="#d9534f" stroke="#d9534f" points="211.5,-234 109.5,-234 109.5,-210 211.5,-210 211.5,-234"/>
+<text text-anchor="middle" x="160.5" y="-219.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">om_double_scan</text>
+</a>
+</g>
+</g>
+<!-- proc~om_double_scan&#45;&gt;module~alps_io -->
+<g id="module~~alps_io~~UsedByGraph_edge8" class="edge">
+<title>proc~om_double_scan&#45;&gt;module~alps_io</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M118.64,-234.1C109.21,-236.96 99.24,-240.04 90,-243 81.52,-245.72 72.43,-248.74 63.88,-251.62"/>
+<polygon fill="#000000" stroke="#000000" points="62.52,-248.39 54.18,-254.92 64.78,-255.01 62.52,-248.39"/>
+</g>
+<!-- proc~om_scan -->
+<g id="module~~alps_io~~UsedByGraph_node10" class="node">
+<title>proc~om_scan</title>
+<g id="a_module~~alps_io~~UsedByGraph_node10"><a xlink:href="../proc/om_scan.html" xlink:title="om_scan">
+<polygon fill="#d9534f" stroke="#d9534f" points="190.5,-192 130.5,-192 130.5,-168 190.5,-168 190.5,-192"/>
+<text text-anchor="middle" x="160.5" y="-177.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">om_scan</text>
+</a>
+</g>
+</g>
+<!-- proc~om_scan&#45;&gt;module~alps_io -->
+<g id="module~~alps_io~~UsedByGraph_edge9" class="edge">
+<title>proc~om_scan&#45;&gt;module~alps_io</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M130.42,-185.36C117.43,-188.59 102.3,-193.57 90,-201 71.73,-212.04 55,-229.69 43.54,-243.5"/>
+<polygon fill="#000000" stroke="#000000" points="40.64,-241.52 37.12,-251.51 46.11,-245.9 40.64,-241.52"/>
+</g>
+<!-- proc~output_fit -->
+<g id="module~~alps_io~~UsedByGraph_node11" class="node">
+<title>proc~output_fit</title>
+<g id="a_module~~alps_io~~UsedByGraph_node11"><a xlink:href="../proc/output_fit.html" xlink:title="output_fit">
+<polygon fill="#d9534f" stroke="#d9534f" points="192,-150 129,-150 129,-126 192,-126 192,-150"/>
+<text text-anchor="middle" x="160.5" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">output_fit</text>
+</a>
+</g>
+</g>
+<!-- proc~output_fit&#45;&gt;module~alps_io -->
+<g id="module~~alps_io~~UsedByGraph_edge10" class="edge">
+<title>proc~output_fit&#45;&gt;module~alps_io</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M128.81,-142.19C115.8,-145.18 101.11,-150.28 90,-159 62.29,-180.75 44.41,-218.58 35.29,-242.4"/>
+<polygon fill="#000000" stroke="#000000" points="31.94,-241.36 31.81,-251.96 38.52,-243.76 31.94,-241.36"/>
+</g>
+<!-- proc~refine_guess -->
+<g id="module~~alps_io~~UsedByGraph_node12" class="node">
+<title>proc~refine_guess</title>
+<g id="a_module~~alps_io~~UsedByGraph_node12"><a xlink:href="../proc/refine_guess.html" xlink:title="refine_guess">
+<polygon fill="#d9534f" stroke="#d9534f" points="200,-108 121,-108 121,-84 200,-84 200,-108"/>
+<text text-anchor="middle" x="160.5" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">refine_guess</text>
+</a>
+</g>
+</g>
+<!-- proc~refine_guess&#45;&gt;module~alps_io -->
+<g id="module~~alps_io~~UsedByGraph_edge11" class="edge">
+<title>proc~refine_guess&#45;&gt;module~alps_io</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M120.73,-101.37C109.77,-104.46 98.53,-109.33 90,-117 52.97,-150.31 37.37,-209.34 31.37,-241.53"/>
+<polygon fill="#000000" stroke="#000000" points="27.86,-241.27 29.62,-251.72 34.76,-242.45 27.86,-241.27"/>
+</g>
+<!-- proc~set_polynomial_basis -->
+<g id="module~~alps_io~~UsedByGraph_node13" class="node">
+<title>proc~set_polynomial_basis</title>
+<g id="a_module~~alps_io~~UsedByGraph_node13"><a xlink:href="../proc/set_polynomial_basis.html" xlink:title="set_polynomial_basis">
+<polygon fill="#d9534f" stroke="#d9534f" points="223,-66 98,-66 98,-42 223,-42 223,-66"/>
+<text text-anchor="middle" x="160.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">set_polynomial_basis</text>
+</a>
+</g>
+</g>
+<!-- proc~set_polynomial_basis&#45;&gt;module~alps_io -->
+<g id="module~~alps_io~~UsedByGraph_edge12" class="edge">
+<title>proc~set_polynomial_basis&#45;&gt;module~alps_io</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M102.26,-66.1C97.78,-68.54 93.61,-71.48 90,-75 43.13,-120.78 31.68,-202.51 28.89,-241.76"/>
+<polygon fill="#000000" stroke="#000000" points="25.39,-241.66 28.3,-251.85 32.38,-242.07 25.39,-241.66"/>
+</g>
+<!-- program~alps -->
+<g id="module~~alps_io~~UsedByGraph_node14" class="node">
+<title>program~alps</title>
+<g id="a_module~~alps_io~~UsedByGraph_node14"><a xlink:href="../program/alps.html" xlink:title="alps">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="187.5,-24 133.5,-24 133.5,0 187.5,0 187.5,-24"/>
+<text text-anchor="middle" x="160.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps</text>
+</a>
+</g>
+</g>
+<!-- program~alps&#45;&gt;module~alps_io -->
+<g id="module~~alps_io~~UsedByGraph_edge13" class="edge">
+<title>program~alps&#45;&gt;module~alps_io</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M133.17,-13.81C118.6,-16.16 101.23,-21.41 90,-33 33.27,-91.53 27.09,-196.14 27.29,-241.73"/>
+<polygon fill="#000000" stroke="#000000" points="23.79,-241.8 27.44,-251.75 30.79,-241.69 23.79,-241.8"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#UsedByGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="UsedByGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="518pt" height="32pt"
+ viewBox="0.00 0.00 517.50 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 513.5,-28 513.5,4 -4,4"/>
+<!-- Module -->
+<g id="node1" class="node">
+<title>Module</title>
+<polygon fill="#337ab7" stroke="#337ab7" points="54,-24 0,-24 0,0 54,0 54,-24"/>
+<text text-anchor="middle" x="27" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Module</text>
+</g>
+<!-- Submodule -->
+<g id="node2" class="node">
+<title>Submodule</title>
+<polygon fill="#5bc0de" stroke="#5bc0de" points="145.5,-24 72.5,-24 72.5,0 145.5,0 145.5,-24"/>
+<text text-anchor="middle" x="109" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Submodule</text>
+</g>
+<!-- Subroutine -->
+<g id="node3" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="234,-24 164,-24 164,0 234,0 234,-24"/>
+<text text-anchor="middle" x="199" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node4" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="310,-24 252,-24 252,0 310,0 310,-24"/>
+<text text-anchor="middle" x="281" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Program -->
+<g id="node5" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="386,-24 328,-24 328,0 386,0 386,-24"/>
+<text text-anchor="middle" x="357" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node6" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="509.5,-24 404.5,-24 404.5,0 509.5,0 509.5,-24"/>
+<text text-anchor="middle" x="457" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a submodule to the (sub)module which it is
+descended from. Dashed arrows point from a module or program unit to 
+modules which it uses.
+</p>
+ </div>
+            </div>
+          </div>
+        </div>
+            </li>
+        </ul>
+      </div>
+    </div>
+
       <br>
 
 
@@ -219,7 +514,7 @@
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-unit"></span>
+              <span class="anchor" id="variable-unit~4"></span>
               integer,
             </td>
               <td>public</td>
@@ -236,7 +531,7 @@
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-stdout_unit"></span>
+              <span class="anchor" id="variable-stdout_unit~2"></span>
               integer,
             </td>
               <td>public,</td>
@@ -253,7 +548,7 @@ parameter
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-input_unit_no"></span>
+              <span class="anchor" id="variable-input_unit_no~2"></span>
               integer,
             </td>
               <td>public,</td>
@@ -270,7 +565,7 @@ parameter
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-error_unit_no"></span>
+              <span class="anchor" id="variable-error_unit_no~2"></span>
               integer,
             </td>
               <td>public,</td>
@@ -297,6 +592,111 @@ parameter
 
         <section>
           <h2>Functions</h2>
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-input_unit_exist~2"></span> <h3>private  function <a href='../proc/input_unit_exist~2.html'>input_unit_exist</a>(nml, exist)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>Determine if a particular namelist already opened.</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nml~6"></span>
+              character(len=*),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nml</strong></td>
+            <td>
+<p>Namelist to be opened.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-exist~5"></span>
+              logical,
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>exist</strong></td>
+            <td>
+<p>Determination if namelist is open.</p>
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <h4>
+    Return Value
+    <small>integer</small>
+    </h4>
+    <p>I/O dummy indices.</p>
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-input_unit~2"></span> <h3>private  function <a href='../proc/input_unit~2.html'>input_unit</a>(nml)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>Assigns input unit for namelist opening.</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nml~7"></span>
+              character(len=*),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nml</strong></td>
+            <td>
+<p>Namelist string.</p>
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <h4>
+    Return Value
+    <small>integer</small>
+    </h4>
+    <p>I/O dummy indices.</p>
+
+    </div>
+  </div>
+
               <div class="card">
     <div class="card-header codesum"><span class="anchor" id="proc-isnancheck"></span> <h3>public  function <a href='../proc/isnancheck.html'>isnancheck</a>(input)  
 </h3></div>
@@ -362,6 +762,222 @@ Only processor 0 calls this routine:</p>
   </div>
 
               <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-map_read"></span> <h3>private  subroutine <a href='../proc/map_read.html'>map_read</a>()  
+</h3></div>
+    <div class="card-body">
+          
+  <p>Reads in complex frequency map parameters.</p>
+
+  <h4>Arguments</h4>
+    <em>None</em>
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-solution_read"></span> <h3>private  subroutine <a href='../proc/solution_read.html'>solution_read</a>(ik)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>Reads in initial guesses for dispersion solutions.</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ik~4"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>ik</strong></td>
+            <td>
+<p>Solution index.</p>
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-spec_read~2"></span> <h3>private  subroutine <a href='../proc/spec_read~2.html'>spec_read</a>(is)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>Subroutine for reading in species parameters</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-is~12"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>is</strong></td>
+            <td>
+<p>Species index.</p>
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-poly_read"></span> <h3>private  subroutine <a href='../proc/poly_read.html'>poly_read</a>(is)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>Reads in Polynomial Basis Function Parameters</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-is~13"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>is</strong></td>
+            <td>
+<p>Species index.</p>
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-bm_read"></span> <h3>private  subroutine <a href='../proc/bm_read.html'>bM_read</a>(is)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>Reads in bi-Maxwellian/cold-plasma parameters.</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-is~14"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>is</strong></td>
+            <td>
+<p>Species index.</p>
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-scan_read"></span> <h3>private  subroutine <a href='../proc/scan_read.html'>scan_read</a>(is)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>The most important subroutine.
+Reads in wavevector scan parameters.
+Defines <a href="../type/scanner.html">scanner</a>, which controls the
+behavior of the wavevector scan.</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-is~15"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>is</strong></td>
+            <td>
+<p>Scan index.</p>
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+    </div>
+  </div>
+
+              <div class="card">
     <div class="card-header codesum"><span class="anchor" id="proc-fit_read"></span> <h3>public  subroutine <a href='../proc/fit_read.html'>fit_read</a>(is, ifit)  
 </h3></div>
     <div class="card-body">
@@ -381,7 +997,7 @@ Only processor 0 calls this routine:</p>
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-is~15"></span>
+              <span class="anchor" id="variable-is~16"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -417,6 +1033,61 @@ Only processor 0 calls this routine:</p>
   </div>
 
               <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-get_runname~2"></span> <h3>private  subroutine <a href='../proc/get_runname~2.html'>get_runname</a>(runname, foldername)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>Get runname for output files from input argument.</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-runname~4"></span>
+              character(len=500),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>runname</strong></td>
+            <td>
+<p>Basename for file I/O.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-foldername~2"></span>
+              character(len=500),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>foldername</strong></td>
+            <td>
+<p>Directory in which input file is stored.</p>
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+    </div>
+  </div>
+
+              <div class="card">
     <div class="card-header codesum"><span class="anchor" id="proc-read_f0"></span> <h3>public  subroutine <a href='../proc/read_f0.html'>read_f0</a>()  
 </h3></div>
     <div class="card-body">
@@ -430,11 +1101,81 @@ Only processor 0 calls this routine:</p>
   </div>
 
               <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-get_indexed_namelist_unit~2"></span> <h3>private  subroutine <a href='../proc/get_indexed_namelist_unit~2.html'>get_indexed_namelist_unit</a>(unit, nml, index_in)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>Determines unused I/O unit.</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-unit~5"></span>
+              integer,
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>unit</strong></td>
+            <td>
+<p>Unit to be defined.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nml~4"></span>
+              character(len=*),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nml</strong></td>
+            <td>
+<p>Character string for namelist to be read in.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-index_in~2"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>index_in</strong></td>
+            <td>
+<p>Index of namelist to be read in.</p>
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+    </div>
+  </div>
+
+              <div class="card">
     <div class="card-header codesum"><span class="anchor" id="proc-get_indexed_double_namelist_unit"></span> <h3>public  subroutine <a href='../proc/get_indexed_double_namelist_unit.html'>get_indexed_double_namelist_unit</a>(unit, nml, spec_in, index_in)  
 </h3></div>
     <div class="card-body">
           
-  <p>A version of <a>get_indexed_namelist_unit</a>, extended
+  <p>A version of <a href="../proc/get_indexed_namelist_unit~2.html">get_indexed_namelist_unit</a>, extended
 to allow for double indexing in order to read in multiple fits
 for a single species.</p>
 
@@ -451,7 +1192,7 @@ for a single species.</p>
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-unit~3"></span>
+              <span class="anchor" id="variable-unit~6"></span>
               integer,
             </td>
 <td>intent(out)</td>
@@ -466,7 +1207,7 @@ for a single species.</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-nml~2"></span>
+              <span class="anchor" id="variable-nml~5"></span>
               character(len=*),
             </td>
 <td>intent(in)</td>
@@ -496,7 +1237,7 @@ for a single species.</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-index_in~2"></span>
+              <span class="anchor" id="variable-index_in~3"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -517,7 +1258,7 @@ for a single species.</p>
   </div>
 
               <div class="card">
-    <div class="card-header codesum"><span class="anchor" id="proc-get_unused_unit"></span> <h3>public  subroutine <a href='../proc/get_unused_unit.html'>get_unused_unit</a>(unit)  
+    <div class="card-header codesum"><span class="anchor" id="proc-get_unused_unit~2"></span> <h3>public  subroutine <a href='../proc/get_unused_unit~2.html'>get_unused_unit</a>(unit)  
 </h3></div>
     <div class="card-body">
           
@@ -536,7 +1277,7 @@ for a single species.</p>
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-unit~4"></span>
+              <span class="anchor" id="variable-unit~7"></span>
               integer,
             </td>
 <td>intent(out)</td>
