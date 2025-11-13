@@ -37,6 +37,7 @@ double complex function eval_fit(is,iperp,ppar_valC)
         use alps_var, only : fit_type, pp, param_fit, n_fits, gamma_rel,nspec,relativistic
         use alps_var, only : ACmethod, poly_fit_coeffs, poly_order
 	use alps_distribution_analyt, only : distribution_analyt
+        use alps_var, only : iproc
 	implicit none
 
 
@@ -172,7 +173,7 @@ double complex function eval_fit(is,iperp,ppar_valC)
 case (2)
    ! use the orthogonal polynomials of kind described in &poly_is
    
-   !write(*,*)iproc,is,iperp,ppar_valC
+   !write(*,*)iproc,is,iperp,ppar_valC,poly_order(is)
    eval_fit=fit_function_poly(is,iperp,ppar_valC,poly_order(is),&
         poly_fit_coeffs(is,iperp,0:poly_order(is)))
    !write(*,*)iproc,is,iperp,ppar_valC,eval_fit
@@ -578,7 +579,7 @@ subroutine determine_param_fit
 
 			nJT=nJT+n_params
 
-
+   write(*,'(a,i0)')'nJT: ',nJT
 			! Fit and return everything in one array "params":
 			if (relativistic(is)) then
 				 ! Determine your sproc_rel:
@@ -598,14 +599,18 @@ subroutine determine_param_fit
 				do ipparbar=1,npparbar-1
 					if((.NOT.found_lower).AND.(f0_rel(sproc_rel,iperp,ipparbar-1).LE.-1.d0).AND.(f0_rel(sproc_rel,iperp,ipparbar).GT.-1.d0)) then
 						ipparbar_lower = ipparbar
-						found_lower=.TRUE.
+      found_lower=.TRUE.
+                                      !write(*,'(a,i0)')'Found lower: ',ipparbar_lower
 					endif
 					if((.NOT.found_upper).AND.(f0_rel(sproc_rel,iperp,ipparbar).GT.-1.d0).AND.(f0_rel(sproc_rel,iperp,ipparbar+1).LE.-1.d0)) then
 						ipparbar_upper = ipparbar
-						found_upper=.TRUE.
+      found_upper=.TRUE.
+                                            !write(*,'(a,i0)')'Found upper: ',ipparbar_upper
 					endif
 				enddo
 
+
+    
 				if ((ipparbar_upper-ipparbar_lower).GT.2) then
 
 					allocate(g(0:ipparbar_upper-ipparbar_lower))
@@ -617,10 +622,12 @@ subroutine determine_param_fit
 						g=f0_rel(sproc_rel,iperp,ipparbar_lower:ipparbar_upper)
 					endif
 
-
+     write(*,'(a,2es14.4,i6)')'function to be fit: ',g(0),g(ipparbar_upper-ipparbar_lower),iperp
+     
 					call LM_nonlinear_fit(is,g,n_params,nJT,params,param_mask,iperp,&
 											(ipparbar_upper-ipparbar_lower),ipparbar_lower,quality)
-					deallocate(g)
+     deallocate(g)
+     write(*,'(a,2i4,es14.4)')'param for fit: ',1,iperp,params(1)
 
 				else
 
@@ -628,7 +635,9 @@ subroutine determine_param_fit
 					par_ind=0
 					do ifit=1,n_fits(is)
 						params(ifit+par_ind+0)=f0_rel(sproc_rel,iperp,(ipparbar_upper+ipparbar_lower)/2) /&
-							exp(-perp_correction(is,ifit)*gamma_rel(sproc_rel,iperp,1))
+           exp(-perp_correction(is,ifit)*gamma_rel(sproc_rel,iperp,1))
+      !write(*,'(a,2i4,2es14.4)')'param for fit: ',ifit,iperp,f0_rel(sproc_rel,iperp,(ipparbar_upper+ipparbar_lower)/2),&
+      !     exp(-perp_correction(is,ifit)*gamma_rel(sproc_rel,iperp,1))
 						if (fit_type(is,ifit).EQ.5) then
 							params(ifit+par_ind+1)=1.d-12
 							params(ifit+par_ind+2)=0.d0
@@ -1550,6 +1559,9 @@ subroutine LM_nonlinear_fit(is,g,n_params,nJT,params,param_mask,iperp,npar,ippar
 			residuals(ipar)=g(ipar)-real(fit_function(is,n_params,params,pperp_val,cmplx(ppar_val,0.d0,kind(1.d0))))
 		endif
 
+  
+  write(*,'(a,i4,es14.4,a,i0)')&
+  'transposed jacobian: ',ipar,JT(1,ipar),' step: ',counter
 		! Least squares:
 		LSQ=LSQ+residuals(ipar)*residuals(ipar)
 	enddo
