@@ -2176,7 +2176,10 @@ double complex function rtsec(func,xin,in,iflag)
         endif
      enddo
 
-     if (proc0.AND.writeOut) write(*,'(a,i4,a)') 'Maximum iteration ',j,' reached.'
+     if (proc0.AND.writeOut) then
+        write(*,'(a,i4,a)') 'Maximum iteration ',j,' reached.'
+        write(*, '(a,2es14.4e3,a,2es14.4e3)') ' D(', real(xl), aimag(xl), ')= ', f
+     endif
 
      return
 
@@ -2455,6 +2458,10 @@ subroutine om_scan(ik)
 
      endif
 
+     if (proc0) then
+        write(*,'(a,2es14.4)') '(kperp,kpar)d_ref=',kperp,kpar
+     endif
+     
      call mpi_barrier(mpi_comm_world,ierror)
 
 

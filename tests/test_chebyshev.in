@@ -115,7 +115,7 @@ use_bM=F !numerically integrate array (F) or use bi-Maxwellian/cold-plasma (T)
 &poly_spec_1
 kind=1         !Kind of Orthogonal Basis Function (see documentation)
 order=30       !Maximum Order of Basis Function
-log_max=18.d0  !Maximum/minimum threshold when log-fitting is uses
+log_max=18.d0  !Maximum/minimum threshold when log-fitting is used
 /
 
 !Initial Fit Values; species 1, function 1
@@ -155,7 +155,7 @@ use_bM=F       !numerically integrate array (F) or use bi-Maxwellian/cold-plasma
 &poly_spec_2
 kind=1         !Kind of Orthogonal Basis Function (see documentation)
 order=30       !Maximum Order of Basis Function
-log_max=18.d0  !Maximum/minimum threshold when log-fitting is uses
+log_max=18.d0  !Maximum/minimum threshold when log-fitting is used
 /
 
 !Initial Fit Values; for species 2, function 1

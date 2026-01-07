@@ -762,8 +762,8 @@ subroutine determine_GLLS(is)
            if (any(f0(is,iperp,:) > 0.d0)) then
               min_val = minval(f0(is,iperp,:), mask=(f0(is,iperp,:) > 0.d0))
            else
-              ! Fallback value if all entries are zero; adjust as needed.
-              min_val = 1.0d-6
+              ! Fallback value if alrel entries are zero; adjust as needed.
+              min_val = 1.0d-40
            endif
            
            ! Copy the slice and replace zeros with 0.01*min_val:
@@ -1149,7 +1149,7 @@ case (2)
    write(*,'(a, 2es14.4)') &
         ' Integration of polynomial representation:              ', integrate
    write(*,'(a, i0, es14.4)') &
-        ' Relative Percent Difference in density for Order:', poly_order(is), &
+        ' Relative difference in density for Order:', poly_order(is), &
         2.d0*(abs(density_int(is))-abs(integrate))/(abs(density_int(is))+abs(integrate))
    write(*,'(a, 2es14.4)') &
         ' Charge density of polynomial representation:           ', charge(is)
@@ -1159,7 +1159,7 @@ case (2)
       write(*,'(a, es14.4)') &
            ' Parallel current density of polynomial representation: ', current(is)
       write(*,'(a, i0, es14.4)') &
-           ' Relative Percent Difference in current density for Order:', poly_order(is), &
+           ' Relative difference in current density for Order:', poly_order(is), &
            2.d0*(abs(current(is))-abs(current_int(is)))/(abs(current_int(is))+abs(current(is)))
    endif
 
