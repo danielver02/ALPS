@@ -1910,7 +1910,7 @@ end subroutine secant
 
 subroutine secant_osc(om, in)
   !! Secant method with adaptive damping and Newton search fallback.
-  use ALPS_var, only : numiter, D_threshold, ierror, proc0, writeOut, D_prec, iproc
+  use ALPS_var, only : numiter, D_threshold, ierror, proc0, writeOut, D_prec
   use mpi
   implicit none
 
