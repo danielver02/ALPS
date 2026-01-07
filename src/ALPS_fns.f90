@@ -1897,17 +1897,20 @@ subroutine secant(om,in)
 		endif
 	enddo
 
-	if (proc0.AND.writeOut.AND.(iter.GE.numiter)) then
-		write(*,'(a,i4,a)') ' Maximum iteration ',iter,' reached.'
-		om=minom
-		write(*,'(a,2es14.4e3,a,2es14.4e3)') ' D(',real(om),aimag(om),')= ',D
-	endif
 
+ if (iter .GE. numiter) then
+    om = minom    
+    if (proc0.and.writeout) then
+       write(*, '(a,i4,a)') ' Maximum iteration ', iter, ' reached.'
+       write(*, '(a,2es14.4e3,a,2es14.4e3)') ' D(', real(om), aimag(om), ')= ', minD
+    endif
+ endif
+ 
 end subroutine secant
 
 subroutine secant_osc(om, in)
   !! Secant method with adaptive damping and Newton search fallback.
-  use ALPS_var, only : numiter, D_threshold, ierror, proc0, writeOut, D_prec
+  use ALPS_var, only : numiter, D_threshold, ierror, proc0, writeOut, D_prec, iproc
   use mpi
   implicit none
 
@@ -2000,6 +2003,8 @@ subroutine secant_osc(om, in)
   do while ((iter .LE. (numiter - 1)) .AND. go_for_secant)
     iter = iter + 1
     D = disp(om)
+
+    !write(*,'(a,2i3)') 'start',iter, iproc
     
     !! Ensure we don’t divide by a tiny value
     if ((abs(D - prevD) .LT. 1.d-80)) then
@@ -2034,12 +2039,12 @@ subroutine secant_osc(om, in)
 
       !! If oscillation persists, use finite-difference Newton step
       if (oscillation_count .gt. 1) then
-         Dprime = (disp(om*(1 + delta)) - disp(om*(1 - delta))) / (2.d0 * om*delta)
+         Dprime = (disp(om*(1.d0 + delta)) - disp(om*(1.d0 - delta))) / (2.d0 * om*delta)
          jump = D / (Dprime + lambda * D)  !! Regularized Newton step
       else
          jump = damping_factor * D * (om - prevom) / (D - prevD)
       endif
-
+      
       !! Apply jump limits to prevent large jumps
       if (abs(jump) > 0.1 * abs(om)) then
           jump = (0.1 * abs(om)) * (jump / abs(jump))  !! Cap jump at 10% of om
@@ -2051,7 +2056,7 @@ subroutine secant_osc(om, in)
       endif
 
       !if (proc0 .AND. writeOut) then
-      !   write(*,'(i3,12es14.4)') iter, om, prevom, D, abs(D), prevD, abs(prevD), jump
+      !write(*,'(i3,12es14.4)') iter, om, prevom, D, abs(D), prevD, abs(prevD), jump
       !endif
 
       !! Update previous values
@@ -2069,15 +2074,20 @@ subroutine secant_osc(om, in)
          minD=D
       endif
 
+      !if (proc0 .AND. writeOut) then
+      
+      
       !! Apply update
       om = om - jump
    endif
-  enddo
+enddo
 
-  if (proc0 .AND. writeOut .AND. (iter .GE. numiter)) then
-    write(*, '(a,i4,a)') ' Maximum iteration ', iter, ' reached.'
-    om = minom
-    write(*, '(a,2es14.4e3,a,2es14.4e3)') ' D(', real(om), aimag(om), ')= ', minD
+if (iter .GE. numiter) then
+   om = minom    
+   if (proc0.and.writeout) then
+      write(*, '(a,i4,a)') ' Maximum iteration ', iter, ' reached.'
+      write(*, '(a,2es14.4e3,a,2es14.4e3)') ' D(', real(om), aimag(om), ')= ', minD
+   endif
   endif
 
 end subroutine secant_osc
