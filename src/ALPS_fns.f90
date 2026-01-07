@@ -1855,9 +1855,17 @@ subroutine secant(om,in)
 
 	prevom=om*(1.d0-D_prec)
 	Dprev = disp(prevom)
-	minD=Dprev
-	minom=prevom
 
+ !minD=Dprev
+ !minom=prevom
+ minD=disp(om)
+ minom=om
+
+  if (abs(dprev).LT.abs(minD)) then
+     minom=prevom
+     minD=dprev
+  endif
+ 
 	call mpi_barrier(mpi_comm_world,ierror)
 
 	iter = 0
@@ -1884,9 +1892,9 @@ subroutine secant(om,in)
 			jump = D*(om-prevom)/(D-Dprev)
                 endif
 
-      !if (proc0 .AND. writeOut) then
-      !   write(*,'(i3,12es14.4)') iter, om, prevom, D, abs(D), Dprev, abs(Dprev), jump
-      !endif
+                !if (proc0 .AND. writeOut) then
+                !   write(*,'(i3,12es14.4)') iter, om, prevom, D, abs(D), Dprev, abs(Dprev), jump
+                !endif
 
 		prevom = om
 		om = om - jump
@@ -1971,12 +1979,12 @@ subroutine secant_osc(om, in)
   osc_threshold = 1.E-3
 
   !On some coarse maps, the current location is the best minima
-  minD=1.E13
+!  minD=1.E13
   D = disp(om)
-  if (abs(D).LT.abs(minD)) then
+!  if (abs(D).LT.abs(minD)) then
      minom=om
      minD=D
-  endif
+ ! endif
 
   prevom = om * (1.d0 - D_prec)
   prev2om = om
@@ -2136,7 +2144,8 @@ double complex function rtsec(func,xin,in,iflag)
      integer ::j
      !! Step index.
 
-     x1=xin*(1.d0-D_prec)
+     !x1=xin*(1.d0-D_prec)
+     x1=xin*(1.d0)
      x2=xin*(1.d0+D_prec)
 
      fl=func(x1)
