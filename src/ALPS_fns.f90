@@ -2336,7 +2336,7 @@ subroutine om_scan(ik)
         allocate(eigenName(nroots))
      endif
      if (scan(ik)%heat_s) then
-        write(fmt_heat,'(a,i0,a)') '(4es14.4e3,',nspec,'es14.4e3,es4e3)'
+        write(fmt_heat,'(a,i0,a)') '(4es14.4e3,',nspec,'es14.4e3,es14.4e3)'
         write(fmt_heat_mech,'(a,i0,a)') '(4es14.4e3,',4*nspec,'es14.4e3)'
         allocate(heat_unit(nroots))
         allocate(heat_mech_unit(nroots))
