@@ -2602,7 +2602,7 @@ end subroutine om_scan
 
 
 
-subroutine calc_eigen(omega,electric,magnetic,vmean,ds,Ps,Ps_split,W_EM,eigen_L,heat_L)
+subroutine calc_eigen(omega,electric,magnetic,vmean,ds,Ps,Ps_split,ewave,eigen_L,heat_L)
   !! This subroutine calculates the relative electric and magnetic field amplitudes,
   !! the relative fluctuations in the density and velocity of all species, and the heating rates of the given solution.
   !! It is based on the calc_eigen routine by Greg Howes and Kris Klein, found in PLUME.
@@ -2636,8 +2636,8 @@ subroutine calc_eigen(omega,electric,magnetic,vmean,ds,Ps,Ps_split,W_EM,eigen_L,
   double precision, dimension(1:4,1:nspec) :: Ps_split
   !! Relative heating rate of a given species split by component
 
-  double precision :: W_EM
-  !! Electromagnetic Wave Energy,
+  double precision :: ewave
+  !! Normalised wave energy.
   !! Calculated as Eqn B12, Klein & Verscharen 2025
   
   logical, intent(in) :: eigen_L
@@ -2675,9 +2675,6 @@ subroutine calc_eigen(omega,electric,magnetic,vmean,ds,Ps,Ps_split,W_EM,eigen_L,
 
   double complex, dimension(3) :: term1
   !! Tensor product in heating-rate calculation.
-
-  double precision :: ewave
-  !! Normalised wave energy.
 
   double precision, dimension(1:nspec) :: parallel_flow
   !! U_s/v_A,ref = `current_int`/(n_s q_s)
