@@ -201,6 +201,7 @@ in the <em>&amp;scan_input_l</em> namelist.</p>
 3. $\omega_{\textrm{r}}/\Omega_{ref}$ <br>
 4. $\gamma/\Omega_{ref}$ <br>
 5. [+(is-1)] $\gamma_{is}/\omega_{\textrm{r}}$</p>
+<p>The final column is $W_{EM}$, evaluated as Eqn. B12 from Klein &amp; Verscharen et al 2025 PoP.</p>
 <p>This same data structure is preserved for the output from <code>om_double_scan</code>.</p>
 <h2><em>filename</em>.heat_mech<em>scan_type_l</em>.root_m</h2>
 <p>The heating rates associated with Landau damping, Transit Time damping, and the $n=\pm 1$ cyclotron resonance are computed following <a href="https://www.cambridge.org/core/journals/journal-of-plasma-physics/article/velocityspace-signature-of-transittime-damping/60F34E118AFFC3701071477C52A81174">Huang et al 2024 JPP</a> and expressed in Appendix C of <a href="https://doi.org/10.1063/5.0286477">Klein &amp; Verscharen 2025 PoP</a>. The values associated with solution <em>m</em> are calculated in the routine <code>om_scan</code> when <code>heating</code> is set to .true. in the <em>&amp;scan_input_l</em> namelist.</p>
