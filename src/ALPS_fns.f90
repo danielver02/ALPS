@@ -2293,6 +2293,10 @@ subroutine om_scan(ik)
   double precision, dimension(1:4,1:nspec) :: Ps_split
   !! Relative heating rate of a given species by component
 
+  double precision :: W_EM
+  !! Electromagnetic Wave Energy,
+  !! Calculated as Eqn B12, Klein & Verscharen 2025
+
   character (50) :: fmt_eigen
   !! Format string for eigenfunction output.
 
@@ -2332,7 +2336,7 @@ subroutine om_scan(ik)
         allocate(eigenName(nroots))
      endif
      if (scan(ik)%heat_s) then
-        write(fmt_heat,'(a,i0,a)') '(4es14.4e3,',nspec,'es14.4e3)'
+        write(fmt_heat,'(a,i0,a)') '(4es14.4e3,',nspec,'es14.4e3,es14.4e3)'
         write(fmt_heat_mech,'(a,i0,a)') '(4es14.4e3,',4*nspec,'es14.4e3)'
         allocate(heat_unit(nroots))
         allocate(heat_mech_unit(nroots))
@@ -2358,7 +2362,7 @@ subroutine om_scan(ik)
         omega=wroots(in)
         tmp = disp(omega)
         
-        call calc_eigen(omega,ef,bf,Us,ds,Ps,Ps_split,scan(ik)%eigen_s,scan(ik)%heat_s)
+        call calc_eigen(omega,ef,bf,Us,ds,Ps,Ps_split,W_EM,scan(ik)%eigen_s,scan(ik)%heat_s)
 
         !reassign omega:
         omega=wroots(in)
@@ -2384,7 +2388,7 @@ subroutine om_scan(ik)
               call get_unused_unit(heat_unit(in))
               open(unit=heat_unit(in),file=trim(heatName(in)),status='replace')
               write(heat_unit(in),trim(fmt_heat)) &
-                   kperp,kpar,wroots(in),Ps
+                   kperp,kpar,wroots(in),Ps,W_EM
               close(heat_unit(in))
 
               write(heatMechName(in),'(4a,i0,a,i0)')&
@@ -2527,7 +2531,7 @@ subroutine om_scan(ik)
 
               if ((scan(ik)%eigen_s).or.((scan(ik)%heat_s))) then
 
-                 call calc_eigen(omega,ef,bf,Us,ds,Ps,Ps_split,scan(ik)%eigen_s,scan(ik)%heat_s)
+                 call calc_eigen(omega,ef,bf,Us,ds,Ps,Ps_split,W_EM,scan(ik)%eigen_s,scan(ik)%heat_s)
 
                  !reassign omega:
                  omega=wroots(in)
@@ -2569,7 +2573,7 @@ subroutine om_scan(ik)
                  if (scan(ik)%heat_s) then
                     open(unit=heat_unit(in),file=trim(heatName(in)),status='old',position='append')
                     write(heat_unit(in),trim(fmt_heat)) &
-                         kperp,kpar,wroots(in),Ps
+                         kperp,kpar,wroots(in),Ps,W_EM
                     close(heat_unit(in))
 
                     open(unit=heat_mech_unit(in),file=trim(heatMechName(in)),status='old',position='append')
@@ -2598,8 +2602,9 @@ end subroutine om_scan
 
 
 
-subroutine calc_eigen(omega,electric,magnetic,vmean,ds,Ps,Ps_split,eigen_L,heat_L)
-  !! This subroutine calculates the relative electric and magnetic field amplitudes, the relative fluctuations in the density and velocity of all species, and the heating rates of the given solution.
+subroutine calc_eigen(omega,electric,magnetic,vmean,ds,Ps,Ps_split,ewave,eigen_L,heat_L)
+  !! This subroutine calculates the relative electric and magnetic field amplitudes,
+  !! the relative fluctuations in the density and velocity of all species, and the heating rates of the given solution.
   !! It is based on the calc_eigen routine by Greg Howes and Kris Klein, found in PLUME.
   !! The splitting by mechanisms is described in Huang, Howes, and Brown, JPP 2024, 
   !! but has been reformated to isolate TTD, LD, and the n=+1 and -1 CD terms separately.
@@ -2631,6 +2636,10 @@ subroutine calc_eigen(omega,electric,magnetic,vmean,ds,Ps,Ps_split,eigen_L,heat_
   double precision, dimension(1:4,1:nspec) :: Ps_split
   !! Relative heating rate of a given species split by component
 
+  double precision :: ewave
+  !! Normalised wave energy.
+  !! Calculated as Eqn B12, Klein & Verscharen 2025
+  
   logical, intent(in) :: eigen_L
   !! Check whether eigenfunction calculation is requested.
 
@@ -2666,9 +2675,6 @@ subroutine calc_eigen(omega,electric,magnetic,vmean,ds,Ps,Ps_split,eigen_L,heat_
 
   double complex, dimension(3) :: term1
   !! Tensor product in heating-rate calculation.
-
-  double precision :: ewave
-  !! Normalised wave energy.
 
   double precision, dimension(1:nspec) :: parallel_flow
   !! U_s/v_A,ref = `current_int`/(n_s q_s)
@@ -3018,6 +3024,10 @@ subroutine om_double_scan
   double precision, dimension(1:4,1:nspec) :: Ps_split
   !! Relative heating rate of a given species, split by component.
 
+  double precision :: W_EM
+  !! Electromagnetic Wave Energy,
+  !! Calculated as Eqn B12, Klein & Verscharen 2025
+  
   character (50) :: fmt_eigen
   !! Format string for eigenfunction output.
 
@@ -3089,7 +3099,7 @@ subroutine om_double_scan
      endif
      if (scan(1)%heat_s) then
         !Heating output.
-        write(fmt_heat,'(a,i0,a)') '(4es14.4e3,',nspec,'es14.4e3)'
+        write(fmt_heat,'(a,i0,a)') '(4es14.4e3,',nspec,'es14.4e3,es14.4e3)'
         allocate(heat_unit(nroots))
         allocate(heatName(nroots))
 
@@ -3117,7 +3127,7 @@ subroutine om_double_scan
         omega=wroots(in)
         tmp = disp(omega)
 
-        call calc_eigen(omega,ef,bf,Us,ds,Ps,Ps_split,scan(1)%eigen_s,scan(1)%heat_s)
+        call calc_eigen(omega,ef,bf,Us,ds,Ps,Ps_split,W_EM,scan(1)%eigen_s,scan(1)%heat_s)
 
         !reassign omega:
         omega=wroots(in)
@@ -3413,7 +3423,7 @@ subroutine om_double_scan
 
               if ((scan(1)%eigen_s).or.((scan(1)%heat_s))) then
 
-                 call calc_eigen(omega,ef,bf,Us,ds,Ps,Ps_split,scan(1)%eigen_s,scan(1)%heat_s)
+                 call calc_eigen(omega,ef,bf,Us,ds,Ps,Ps_split,W_EM,scan(1)%eigen_s,scan(1)%heat_s)
 
                  !reassign omega:
                  omega=wroots(in)
@@ -3461,7 +3471,7 @@ subroutine om_double_scan
                  if (scan(1)%heat_s) then
                     open(unit=heat_unit(in),file=trim(heatName(in)),status='old',position='append')
                     write(heat_unit(in),trim(fmt_heat)) &
-                         kperp,kpar,wroots(in),Ps
+                         kperp,kpar,wroots(in),Ps,W_EM
                     close(heat_unit(in))
 
                     open(unit=heat_mech_unit(in),file=trim(heatMechName(in)),status='old',position='append')

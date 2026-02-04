@@ -99,6 +99,8 @@ The data is ordered as
 4. $\gamma/\Omega_{ref}$   
 5. [+(is-1)] $\gamma_{is}/\omega_{\textrm{r}}$
 
+The final column is $W_{EM}$, evaluated as Eqn. B12 from Klein & Verscharen et al 2025 PoP.
+
 This same data structure is preserved for the output from `om_double_scan`.
 
 ## *filename*.heat_mech*scan_type_l*.root_m
