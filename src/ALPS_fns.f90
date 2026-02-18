@@ -3656,19 +3656,19 @@ subroutine map_search
   if (writeOut .and. proc0.and. .true.) then
      write(*,'(a)')'-=-=-=-=-=-=-=-=-=-'
      write(*,'(a)')      'Global Plasma Parameters:'
-     write(*,'(a,es14.3e3)')' k_perp d_p   = ',kperp
-     write(*,'(a,es14.3e3)')' k_par  d_p   = ',kpar
+     write(*,'(a,es14.3e3)')' k_perp d_ref   = ',kperp
+     write(*,'(a,es14.3e3)')' k_par  d_ref   = ',kpar
      do is = 1, nspec
         write(*,'(a)')'-=-=-=-=-=-=-=-=-=-'
         write(*,'(a,i3)')      'Parameters for species',is
-        write(*,'(a,es14.3e3)')' m_s/m_m =        ',ms(is)
-        write(*,'(a,es14.3e3)')' q_s/q_p =        ',qs(is)
-        write(*,'(a,es14.3e3)')' n_s/n_p =        ',ns(is)
+        write(*,'(a,es14.3e3)')' m_s/m_ref =        ',ms(is)
+        write(*,'(a,es14.3e3)')' q_s/q_ref =        ',qs(is)
+        write(*,'(a,es14.3e3)')' n_s/n_ref =        ',ns(is)
      enddo
      write(*,'(a)')'-=-=-=-=-=-=-=-=-=-'
      write(*,'(a)')'Searching over:'
-     write(*,'(a,es14.3e3,a,es14.3e3,a)')' om  in [',omi,',',omf,']'
-     write(*,'(a,es14.3e3,a,es14.3e3,a)')' gam in [',gami,',',gamf,']'
+     write(*,'(a,es14.3e3,a,es14.3e3,a)')' omega_r/Omega_ref in [',omi,',',omf,']'
+     write(*,'(a,es14.3e3,a,es14.3e3,a)')' gamma/Omega_ref   in [',gami,',',gamf,']'
      write(*,'(a)')'-=-=-=-=-=-=-=-=-=-'
   endif
 
@@ -3702,7 +3702,7 @@ subroutine map_search
         wr=omi+dr*(1.d0*(ir-1))
      endif
      if (proc0.and.writeOut)&
-          write(*,'(a,es14.4e3)')' omega_real = ',wr
+          write(*,'(a,es14.4e3)')' omega_r/Omega_ref = ',wr
      do ii=1,ni
         if (loggridg) then
 		   wi=gami
