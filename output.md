@@ -51,6 +51,8 @@ The data is ordered as
 3. $\omega_{\textrm{r}}/\Omega_{ref}$   
 4. $\gamma/\Omega_{ref}$   
 
+Example python quick plotting routines are found in the plotter/example/ subdirectory.
+
 See the *&scan_input* namelist description in the Quick Guide for details on determining the kind of wavevector scan.  
 This same data structure is preserved for the output from `om_double_scan`.
 
