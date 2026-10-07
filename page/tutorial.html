@@ -253,7 +253,7 @@ Also ensure that the perpendicular momentum grid begins at a momentum of zero.</
 </blockquote>
 <p>In the example file, we see that <code>nperp=120</code> and <code>npar=240</code>, which are the correct entries for our example.</p>
 <p>Further down, you find the line</p>
-<div class="codehilite"><pre><span></span><code>arrayName=&#39;test_ICW&#39;
+<div class="codehilite"><pre><span></span><code>arrayName='test_ICW'
 </code></pre></div>
 
 <p>This line defines the name of the f0-tables that ALPS will use. Since we tell ALPS to work with two species (from the line <code>nspec=2</code>), the code will look for two files</p>
@@ -488,7 +488,7 @@ test_analytical.2.array
 </blockquote>
 <p>These files include the f0-tables according to the analytical function.</p>
 <p>Now it's important to tell ALPS to use the defined distribution functions. This happens in the ALPS input file. In the folder <code>./tests</code>, there is an example file called <code>test_analytical.in</code>, which we will use in this example. As expected, it commands ALPS to use the f0-tables that we have just created:</p>
-<div class="codehilite"><pre><span></span><code>arrayName=&#39;test_analytical&#39;
+<div class="codehilite"><pre><span></span><code>arrayName='test_analytical'
 </code></pre></div>
 
 <p>It also makes sense to use the pre-defined background distribution function from <code>distribution_analyt.f90</code> also for the analytical continuation. You can achieve this by setting</p>
