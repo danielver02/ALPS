@@ -1,7 +1,9 @@
 AUTOMAKE_OPTIONS = subdir-objects
 
 # Fortran Compiler and Flags
-AM_FCFLAGS = -O4 -fbounds-check -ffpe-trap=zero,overflow -Wunused -funroll-loops -g -fbacktrace 
+#AM_FCFLAGS = -O4 -fbounds-check -ffpe-trap=zero,overflow -Wunused -funroll-loops -g -fbacktrace
+#With newer MPIs, ALPS crashes during MPI initialization with -ffpe-trap=zero. 
+AM_FCFLAGS = -O4 -fbounds-check -ffpe-trap=overflow -Wunused -funroll-loops -g -fbacktrace 
 
 # Linker Libraries
 ALPS_LDADD = -lm $(LAPACK_LIBS) $(BLAS_LIBS)
