@@ -335,29 +335,35 @@ end subroutine derivative_f0
         ! Split into NHDS or ALPS routines:
         ! Only run the NHDS routine if useBM is on for the species
         !   and if process is handling n=0 according to split_processes:
-        if (usebM(sproc).and.(nlim(2).GE.0).and.(nlim(1).EQ.0)) then
+        if (usebM(sproc)) then
+            if ((nlim(1).EQ.0).and.(nlim(2).GE.0)) then
 
-          ! This is the case to use NHDS for the calculation of chi:
-          call calc_chi(chi_NHDS,chi_NHDS_low,sproc,kpar,kperp,om)
+             ! This is the case to use NHDS for the calculation of chi:
+             call calc_chi(chi_NHDS,chi_NHDS_low,sproc,kpar,kperp,om)
 
-          ! Account for norm below, which is already included in NHDS:
-          schi(sproc,1,1)=chi_NHDS(1,1)/(ns(sproc) * qs(sproc))
-          schi(sproc,2,2)=chi_NHDS(2,2)/(ns(sproc) * qs(sproc))
-          schi(sproc,3,3)=chi_NHDS(3,3)/(ns(sproc) * qs(sproc))
-          schi(sproc,1,2)=chi_NHDS(1,2)/(ns(sproc) * qs(sproc))
-          schi(sproc,1,3)=chi_NHDS(1,3)/(ns(sproc) * qs(sproc))
-          schi(sproc,2,3)=chi_NHDS(2,3)/(ns(sproc) * qs(sproc))
+            ! Account for norm below, which is already included in NHDS:
+            schi(sproc,1,1)=chi_NHDS(1,1)/(ns(sproc) * qs(sproc))
+            schi(sproc,2,2)=chi_NHDS(2,2)/(ns(sproc) * qs(sproc))
+            schi(sproc,3,3)=chi_NHDS(3,3)/(ns(sproc) * qs(sproc))
+            schi(sproc,1,2)=chi_NHDS(1,2)/(ns(sproc) * qs(sproc))
+            schi(sproc,1,3)=chi_NHDS(1,3)/(ns(sproc) * qs(sproc))
+            schi(sproc,2,3)=chi_NHDS(2,3)/(ns(sproc) * qs(sproc))
 
-          !WE DETERMINE CHI0_LOW [which only has contributions from n=0, \pm 1]
-          !FROM THE BIMAX CALCULATION.
+            !WE DETERMINE CHI0_LOW [which only has contributions from n=0, \pm 1]
+            !FROM THE BIMAX CALCULATION.
 
-          schi_low(sproc,1,1,:)=chi_NHDS_low(1,1,:)/(ns(sproc) * qs(sproc))
-          schi_low(sproc,2,2,:)=chi_NHDS_low(2,2,:)/(ns(sproc) * qs(sproc))
-          schi_low(sproc,3,3,:)=chi_NHDS_low(3,3,:)/(ns(sproc) * qs(sproc))
-          schi_low(sproc,1,2,:)=chi_NHDS_low(1,2,:)/(ns(sproc) * qs(sproc))
-          schi_low(sproc,1,3,:)=chi_NHDS_low(1,3,:)/(ns(sproc) * qs(sproc))
-          schi_low(sproc,2,3,:)=chi_NHDS_low(2,3,:)/(ns(sproc) * qs(sproc))
-          
+            schi_low(sproc,1,1,:)=chi_NHDS_low(1,1,:)/(ns(sproc) * qs(sproc))
+            schi_low(sproc,2,2,:)=chi_NHDS_low(2,2,:)/(ns(sproc) * qs(sproc))
+            schi_low(sproc,3,3,:)=chi_NHDS_low(3,3,:)/(ns(sproc) * qs(sproc))
+            schi_low(sproc,1,2,:)=chi_NHDS_low(1,2,:)/(ns(sproc) * qs(sproc))
+            schi_low(sproc,1,3,:)=chi_NHDS_low(1,3,:)/(ns(sproc) * qs(sproc))
+            schi_low(sproc,2,3,:)=chi_NHDS_low(2,3,:)/(ns(sproc) * qs(sproc))
+          else
+            schi(sproc,:,:)=0.d0
+            schi_low(sproc,:,:,:)=0.d0
+         endif
+
+         
        else
 
        do nn = nlim(1),nlim(2)
