@@ -26,3 +26,5 @@ docs_out
 __pycache__
 # Python virtual environments
 .venv
+# Batch Submission Scripts
+.slurm
