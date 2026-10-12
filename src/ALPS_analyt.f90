@@ -340,12 +340,13 @@ double complex function fit_function_poly(is,iperp,ppar_val,n_poly,fit_coeffs)
          !if ((real(fit_function_poly).lt.-poly_log_max(is)).or.& !??
               !(aimag(fit_function_poly).lt.-poly_log_max(is))) then
 
-       if ((real(fit_function_poly).lt.-poly_log_max(is)).or.& !??
-            (aimag(fit_function_poly).lt.-poly_log_max(is)).or.&
-            (real(fit_function_poly).gt. poly_log_max(is)).or.& !??
-            (aimag(fit_function_poly).gt.poly_log_max(is))) then 
+       !if ((real(fit_function_poly).lt.-poly_log_max(is)).or.& !??
+       !     (aimag(fit_function_poly).lt.-poly_log_max(is)).or.&
+       !     (real(fit_function_poly).gt. poly_log_max(is)).or.& !??
+       !     (aimag(fit_function_poly).gt.poly_log_max(is))) then
 
-
+       !KGK: 2026-10-12
+       if ((real(fit_function_poly).gt. poly_log_max(is))) then
        !if ((abs(fit_function_poly).lt.-100.d0).or.(abs(fit_function_poly).gt.100.d0)) then
        !if ((abs(fit_function_poly).lt.-50.d0).or.(abs(fit_function_poly).gt.50.d0)) then
        !if (abs(fit_function_poly).gt.poly_log_max(is)) then
