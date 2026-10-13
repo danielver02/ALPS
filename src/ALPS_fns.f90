@@ -1333,6 +1333,7 @@ end function funct_g
 double complex function landau_integrate(om, nn, mode)
   !! This function evaluates the Landau contour according to Eqs. (3.8) and (3.9) of the code paper.
 	use alps_var, only : nperp, pp, pi, ms, qs, kpar, sproc
+   use alps_var, only : poly_derivative_type
 	use alps_analyt, only: eval_fit
 	implicit none
 
@@ -1359,6 +1360,9 @@ double complex function landau_integrate(om, nn, mode)
 
   double complex :: p_res
   !! Resonance momentum.
+
+  double complex :: f_C
+  !! Distribution evaluated at the complex resonance.
 
   double complex :: dfperp_C
   !! Derivative of f0 evaluated at resonance.
@@ -1393,6 +1397,7 @@ double complex function landau_integrate(om, nn, mode)
   ! Landau contour integral:
   ! At iperp=1, we are already missing the part from iperp=0, where we should actually start. Therefore, we use 4 instead of 2 in the trapezoid integration:
 	do iperp = 1, nperp-1 !KGK: This line and the following seem to conflict...
+      !KGK: Oct 13, 2026:Check these weights...
 		if ((iperp .EQ. 0).or.(iperp .EQ. (nperp -1))) then
 		   h = 0.5d0
 		else
@@ -1415,8 +1420,13 @@ double complex function landau_integrate(om, nn, mode)
 
 
   ! Calculate the derivatives of f0 at the complex p_res:
-  dfperp_C=(fperp_i-fperp_f)/(2.d0*dpperp)
-  dfpar_C=(fpar_i-fpar_f)/(2.d0*dppar)
+  dfperp_C = (fperp_i-fperp_f)/(2.d0*dpperp)
+
+  if (poly_derivative_type(sproc) == 1) then
+    f_C = eval_fit(sproc,iperp,p_res,dfpar=dfpar_C)
+  else
+    dfpar_C = (fpar_i-fpar_f)/(2.d0*dppar)
+  endif
 
   landau_integrate = landau_integrate - h * int_T_res(nn, iperp, p_res, mode)*&
         (qs(sproc) /abs(kpar)) *( (pp(sproc, iperp, 1, 1) * dfpar_C - &
@@ -1430,8 +1440,15 @@ h = 0.5d0
   p_res = (ms(sproc) * (om) - 1.d0*nn * qs(sproc))/kpar
 
   ! Calculate the derivatives of f0 at the complex p_res:
-  dfperp_C=(eval_fit(sproc,iperp+1,p_res)-eval_fit(sproc,iperp,p_res))/(dpperp)
-  dfpar_C=(eval_fit(sproc,iperp,p_res+dppar)-eval_fit(sproc,iperp,p_res-dppar))/(2.d0*dppar)
+   dfperp_C = (eval_fit(sproc,iperp+1,p_res) - &
+            eval_fit(sproc,iperp,p_res))/dpperp
+
+   if (poly_derivative_type(sproc) == 1) then
+      f_C = eval_fit(sproc,iperp,p_res,dfpar=dfpar_C)
+   else
+      dfpar_C = (eval_fit(sproc,iperp,p_res+dppar) - &
+              eval_fit(sproc,iperp,p_res-dppar))/(2.d0*dppar)
+   endif
 
   landau_integrate = landau_integrate - h * int_T_res(nn, iperp, p_res, mode)*&
         (qs(sproc) /abs(kpar)) *( (pp(sproc, iperp, 1, 1) * dfpar_C - &
@@ -1442,8 +1459,15 @@ h = 0.5d0
   p_res = (ms(sproc) * (om) - 1.d0*nn * qs(sproc))/kpar
 
   ! Calculate the derivatives of f0 at the complex p_res:
-  dfperp_C=(eval_fit(sproc,iperp,p_res)-eval_fit(sproc,iperp-1,p_res))/(dpperp)
-  dfpar_C=(eval_fit(sproc,iperp,p_res+dppar)-eval_fit(sproc,iperp,p_res-dppar))/(2.d0*dppar)
+   dfperp_C = (eval_fit(sproc,iperp,p_res) - &
+            eval_fit(sproc,iperp-1,p_res))/dpperp
+
+   if (poly_derivative_type(sproc) == 1) then
+      f_C = eval_fit(sproc,iperp,p_res,dfpar=dfpar_C)
+   else
+      dfpar_C = (eval_fit(sproc,iperp,p_res+dppar) - &
+              eval_fit(sproc,iperp,p_res-dppar))/(2.d0*dppar)
+   endif
 
   landau_integrate = landau_integrate - h * int_T_res(nn, iperp, p_res, mode)*&
         (qs(sproc) /abs(kpar)) *( (pp(sproc, iperp, 1, 1) * dfpar_C - &

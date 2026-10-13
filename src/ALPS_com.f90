@@ -38,7 +38,7 @@ contains
     use alps_var, only : n_scan, scan, scan_option, relativistic, logfit, usebM
     use alps_var, only : bMnmaxs, bMBessel_zeros, bMbetas, bMalphas, bMpdrifts
     use alps_var, only : ACmethod, poly_kind, poly_order, poly_fit_coeffs
-    use alps_var, only : poly_log_max
+    use alps_var, only : poly_log_max, poly_derivative_type
     use mpi
     implicit none
 
@@ -119,7 +119,7 @@ contains
        allocate(poly_order(1:nspec)); poly_order=0
        allocate(poly_kind(1:nspec)); poly_kind=0
        allocate(poly_log_max(1:nspec)); poly_log_max=0
-              
+       allocate(poly_derivative_type(1:nspec)); poly_derivative_type=0      
 
        allocate(wroots(1:numroots));wroots=cmplx(0.d0,0.d0,kind(1.d0))
 
@@ -162,6 +162,8 @@ contains
          MPI_INTEGER, 0, MPI_COMM_WORLD, ierror)
     call mpi_bcast(poly_log_max(:), size(poly_log_max(:)),&
          MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierror)
+    call mpi_bcast(poly_derivative_type(:), size(poly_order(:)),&
+         MPI_INTEGER, 0, MPI_COMM_WORLD, ierror)
     
     if (n_scan.gt.0) then
        do is=1,n_scan

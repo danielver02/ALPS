@@ -57,7 +57,7 @@ contains
     use alps_var, only : maxsteps_fit, n_fits, lambda_initial_fit, lambdafac_fit, epsilon_fit
     use alps_var, only : bMnmaxs, bMBessel_zeros, bMbetas, bMalphas, bMpdrifts
     use alps_var, only : ACmethod, poly_kind, poly_order, polynomials, poly_fit_coeffs
-    use alps_var, only : poly_log_max, secant_method
+    use alps_var, only : poly_log_max, secant_method, poly_derivative_type
     implicit none
 
     integer :: ik
@@ -154,6 +154,7 @@ contains
     allocate(poly_kind(1:nspec)); poly_kind = 0
     allocate(poly_order(1:nspec)); poly_order = 0
     allocate(poly_log_max(1:nspec)); poly_log_max = 0
+    allocate(poly_derivative_type(1:nspec)); poly_derivative_type = 0
 
     !READ IN SPECIES PARAMETERS:
     do is = 1, nspec
@@ -359,7 +360,8 @@ contains
 
   subroutine poly_read(is)
     !!Reads in Polynomial Basis Function Parameters
-    use alps_var, only : poly_kind, poly_order, poly_log_max
+    use alps_var, only : poly_kind, poly_order
+    use alps_var, only : poly_log_max, poly_derivative_type
     implicit none
 
     integer,intent(in) :: is
@@ -375,13 +377,17 @@ contains
     double precision :: log_max
     !! Maximum Value of Polynomial Evaluation
 
+    integer :: derivative_type
+    !! Kind of derivative for analytic continuation evaluation
+
     nameList /poly_spec/ &
-         kind, order, log_max
+         kind, order, log_max, derivative_type
 
     read(unit=unit,nml=poly_spec)
     poly_kind(is)=kind
     poly_order(is)=order
     poly_log_max(is)=log_max
+    poly_derivative_type(is)=derivative_type
 
   end subroutine poly_read
 
@@ -996,6 +1002,11 @@ function input_unit_exist (nml,exist)
        case(10) !seen by proc0
           write (*,'(a)') "ERROR: Unspecified Orthogonal Representation."
           write(unit_error,'(a)') "ERROR: Unspecified Orthogonal Representation."
+      case(11) !seen by proc0
+          write (*,'(a)') &
+            "ERROR: Polynomial Analytic derivative unavailable for this AC method "
+          write(unit_error,'(a)') &
+            "ERROR: Polynomial Analytic derivative unavailable for this AC method"
        case default
           write(*,'(a)')'ERROR: Unspecified...'
           write(unit_error,'(a)')'ERROR: Unspecified...'
