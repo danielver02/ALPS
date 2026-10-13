@@ -1408,7 +1408,7 @@ double complex function landau_integrate(om, nn, mode)
   fperp_f=eval_fit(sproc,iperp-1,p_res)
 
   if ((abs(fpar_i).eq.0.d0).or.(abs(fpar_f).eq.0.d0)&
-       .or.(abs(fperp_i).eq.0.d0).or.(abs(fpar_f).eq.0.d0)) then
+       .or.(abs(fperp_i).eq.0.d0).or.(abs(fperp_f).eq.0.d0)) then
      landau_integrate =cmplx(0.d0,0.d0,kind(1.d0))
      return
   endif
