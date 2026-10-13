@@ -1124,21 +1124,25 @@ double complex function integrate_res(om,nn,mode)
 
 
 		do iperp = 2, nperp-2
+
+         ! The derivative is independent of ipar.
+         gprimetr = (funct_g(denomR+dppar,iperp,om,nn,mode)-&
+					funct_g(denomR-dppar,iperp,om,nn,mode))/(2.d0*dppar)
+
 			do ipar = 1, n_resonance_interval-1
 				ppar=real(p_res)+smdelta*ipar
 
-				gprimetr = (funct_g(denomR+dppar,iperp,om,nn,mode)-&
-					funct_g(denomR-dppar,iperp,om,nn,mode))/(2.d0*dppar)
-
         ! This is the second term in Eq. (3.6):
-				integrate_res = integrate_res + 4.d0 * 2.d0 * gprimetr * ((ppar-denomR)**2 / ((ppar-denomR)**2+denomI**2))
+				integrate_res = integrate_res + &
+               4.d0 * 2.d0 * gprimetr * ((ppar-denomR)**2 / ((ppar-denomR)**2+denomI**2))
 			enddo
 
 			ppar=real(p_res)
       ! In this case, ppar is equal to denomR, so: no integration needed
 
 			ppar=real(p_res)+capDelta
-			gprimetr = (funct_g(denomR+dppar,iperp,om,nn,mode)-funct_g(denomR-dppar,iperp,om,nn,mode))/(2.d0*dppar)
+         !moved gprimeter outside ipar loop
+			!gprimetr = (funct_g(denomR+dppar,iperp,om,nn,mode)-funct_g(denomR-dppar,iperp,om,nn,mode))/(2.d0*dppar)
 			integrate_res = integrate_res + 2.d0*2.d0*gprimetr*((ppar-denomR)**2 / ((ppar-denomR)**2+denomI**2))
 
 
