@@ -17,6 +17,7 @@
 !===============================================================================
 
 module alps_com
+  use alps_diagnostics, only: diag_configure
   implicit none
 
   public :: pass_instructions
@@ -86,6 +87,8 @@ contains
 
        call mpi_bcast(determine_minima, 1, MPI_LOGICAL, 0, MPI_COMM_WORLD, ierror)
     endif
+
+    call diag_configure
 
     pi = 4.d0*atan(1.d0)
 

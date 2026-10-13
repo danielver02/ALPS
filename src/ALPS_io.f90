@@ -17,6 +17,10 @@
 !===============================================================================
 
 module alps_io
+  use alps_diagnostics, only: diagnose_analytic_continuation, diagnostic_prefix, diagnostic_species, &
+       diagnostic_all_harmonics, diagnostic_harmonic, diagnostic_verbosity, &
+       diagnostic_iperp_first, diagnostic_iperp_last, diagnostic_iperp_stride, &
+       diagnostic_eval_first, diagnostic_eval_last, diagnostic_eval_stride, diagnostic_mode
   !!Controls input and output functions to and from main program.
   implicit none
 
@@ -82,7 +86,11 @@ contains
          secant_method, numiter, kperp_norm, D_threshold, &
          D_prec, D_gap, D_tol, positions_principal, Tlim, &
          maxsteps_fit, lambda_initial_fit, lambdafac_fit, epsilon_fit, fit_check, &
-         determine_minima, n_resonance_interval, scan_option, n_scan
+         determine_minima, n_resonance_interval, scan_option, n_scan, &
+         diagnose_analytic_continuation, diagnostic_prefix, diagnostic_species, &
+         diagnostic_all_harmonics, diagnostic_harmonic, diagnostic_verbosity, &
+         diagnostic_iperp_first, diagnostic_iperp_last, diagnostic_iperp_stride, &
+         diagnostic_eval_first, diagnostic_eval_last, diagnostic_eval_stride, diagnostic_mode
 
     !Get a unassigned unit number for input/output:
     call get_unused_unit (input_unit_no)

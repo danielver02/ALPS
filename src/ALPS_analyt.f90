@@ -17,6 +17,7 @@
 !===============================================================================
 
 module alps_analyt
+  use alps_diagnostics, only: diag_active, diag_polynomial
 	!! This module contains functions and subroutines for the hybrid analytical continuation.
 	implicit none
 
@@ -296,6 +297,7 @@ double complex function fit_function_poly(is,iperp,ppar_val,n_poly,fit_coeffs)
  double complex :: ppar_val
  !! Complex parallel momentum.
 
+ double complex :: diagnostic_P
  double complex :: ppar_val_tmp
  !! Complex parallel momentum.
 
@@ -324,6 +326,7 @@ double complex function fit_function_poly(is,iperp,ppar_val,n_poly,fit_coeffs)
        poly_basis(n) = cmplx(2.d0,0.d0,kind(1.d0)) * ppar_val_tmp * poly_basis(n-1) - poly_basis(n-2)
        fit_function_poly=fit_function_poly+fit_coeffs(n)*poly_basis(n)
     enddo
+    if (diag_active) diagnostic_P=fit_function_poly
     if (logfit(is)) then
 
        !if (abs(fit_function_poly).gt.20.) then
@@ -357,6 +360,11 @@ double complex function fit_function_poly(is,iperp,ppar_val,n_poly,fit_coeffs)
           !write(*,*)iproc,is,iperp,ppar_val,ppar_val_tmp,fit_function_poly
        endif
     endif
+ endif
+ if (diag_active) then
+    if (abs(ppar_val_tmp)>1.d0) diagnostic_P=cmplx(0.d0,0.d0,kind(1.d0))
+    call diag_polynomial(is,iperp,ppar_val,ppar_val_tmp,diagnostic_P,fit_coeffs, &
+         norm_2,fit_function_poly,abs(ppar_val_tmp)>1.d0)
  endif
 end select
  

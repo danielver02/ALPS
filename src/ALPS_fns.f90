@@ -17,6 +17,7 @@
 !===============================================================================
 
 module alps_fns
+  use alps_diagnostics
 !! This module contains the key numerical functions of ALPS.
   implicit none
 
@@ -631,6 +632,8 @@ end subroutine derivative_f0
 
     endif
 
+    if (proc0.and.diag_active) call diag_capture_matrix(chi,wave)
+
     call mpi_bcast(disp, 1, MPI_DOUBLE_COMPLEX, 0, MPI_COMM_WORLD, ierror)
 
     !Make sure all processors have completed calculation to avoid
@@ -772,6 +775,8 @@ double complex function full_integrate(om, nn, mode, found_res)
   !! Check whether a resonance is found.
 
 
+  if (diag_active) call diag_context(sproc,nn,mode)
+
   full_integrate = cmplx(0.d0,0.d0,kind(1.d0))
 
   if (.not. found_res) then
@@ -794,6 +799,7 @@ double complex function full_integrate(om, nn, mode, found_res)
      elseif ((found_res).and.(aimag(om).EQ.0.d0)) then
         full_integrate = integrate_res(om,nn,mode)+landau_integrate(om, nn, mode)
   endif
+  if (diag_active) call diag_full(full_integrate,found_res)
   return
 end function full_integrate
 
@@ -864,6 +870,8 @@ double complex function integrate(om, nn, mode, iparmin, iparmax)
      enddo
 
      integrate = 2.d0 * pi * integrate * dpperp * dppar * 0.25d0
+
+  if (diag_active) call diag_integral(integrate)
 
   return
 
@@ -988,12 +996,14 @@ double complex function integrate_res(om,nn,mode)
 	! If the resonance is close to the edge, do the normal integration:
 	if ((ipar_res-positions_principal).LE.2) then
 		integrate_res=integrate(om, nn, mode, ipar_res+positions_principal,npar-1)
+		if (diag_active) call diag_integral(integrate_res)
 		return
 	endif
 
 
 	if ((ipar_res+positions_principal).GE.(npar-2)) then
 		integrate_res=integrate(om, nn, mode, 1, ipar_res-positions_principal)
+		if (diag_active) call diag_integral(integrate_res)
 		return
 	endif
 
@@ -1239,6 +1249,8 @@ double complex function integrate_res(om,nn,mode)
 	integrate_res = 2.d0 * pi * integrate_res * smdelta * dpperp * 0.25d0
 	integrate_res = integrate_res + integrate_norm
 
+	if (diag_active) call diag_integral(integrate_res)
+
 	return
 
 end function integrate_res
@@ -1366,6 +1378,8 @@ double complex function landau_integrate(om, nn, mode)
   double complex :: dfpar_C
   !! Derivative of f0 evaluated at resonance.
 
+  double complex :: diagnostic_term
+
   double complex :: fpar_i
   !! value of distribution at (iperp,p_res+dppar)
 
@@ -1401,6 +1415,8 @@ double complex function landau_integrate(om, nn, mode)
 
   p_res = (ms(sproc) * (om) - 1.d0*nn * qs(sproc))/kpar
 
+  if (diag_active) call diag_point(iperp,p_res)
+
   fpar_i=eval_fit(sproc,iperp,p_res+dppar)
   fpar_f=eval_fit(sproc,iperp,p_res-dppar)
 
@@ -1409,7 +1425,9 @@ double complex function landau_integrate(om, nn, mode)
 
   if ((abs(fpar_i).eq.0.d0).or.(abs(fpar_f).eq.0.d0)&
        .or.(abs(fperp_i).eq.0.d0).or.(abs(fpar_f).eq.0.d0)) then
+     if (diag_active) call diag_compare_residue(landau_integrate,.true.,int_T_res)
      landau_integrate =cmplx(0.d0,0.d0,kind(1.d0))
+     if (diag_active) call diag_landau(landau_integrate,.true.)
      return
   endif
 
@@ -1418,9 +1436,11 @@ double complex function landau_integrate(om, nn, mode)
   dfperp_C=(fperp_i-fperp_f)/(2.d0*dpperp)
   dfpar_C=(fpar_i-fpar_f)/(2.d0*dppar)
 
-  landau_integrate = landau_integrate - h * int_T_res(nn, iperp, p_res, mode)*&
+  diagnostic_term = h * int_T_res(nn, iperp, p_res, mode)*&
         (qs(sproc) /abs(kpar)) *( (pp(sproc, iperp, 1, 1) * dfpar_C - &
         p_res * dfperp_C) * kpar  /  ( ms(sproc)) + om*dfperp_C )
+  landau_integrate = landau_integrate - diagnostic_term
+  if (diag_active) call diag_summand(iperp,h,-diagnostic_term,dfpar_C,dfperp_C,p_res)
 
 enddo
 
@@ -1429,30 +1449,40 @@ iperp=0
 h = 0.5d0
   p_res = (ms(sproc) * (om) - 1.d0*nn * qs(sproc))/kpar
 
+  if (diag_active) call diag_point(iperp,p_res)
+
   ! Calculate the derivatives of f0 at the complex p_res:
   dfperp_C=(eval_fit(sproc,iperp+1,p_res)-eval_fit(sproc,iperp,p_res))/(dpperp)
   dfpar_C=(eval_fit(sproc,iperp,p_res+dppar)-eval_fit(sproc,iperp,p_res-dppar))/(2.d0*dppar)
 
-  landau_integrate = landau_integrate - h * int_T_res(nn, iperp, p_res, mode)*&
+  diagnostic_term = h * int_T_res(nn, iperp, p_res, mode)*&
         (qs(sproc) /abs(kpar)) *( (pp(sproc, iperp, 1, 1) * dfpar_C - &
         p_res * dfperp_C) * kpar  /  ( ms(sproc)) + om*dfperp_C )
+  landau_integrate = landau_integrate - diagnostic_term
+  if (diag_active) call diag_summand(iperp,h,-diagnostic_term,dfpar_C,dfperp_C,p_res)
 
   iperp=nperp
 h = 0.5d0
   p_res = (ms(sproc) * (om) - 1.d0*nn * qs(sproc))/kpar
 
+  if (diag_active) call diag_point(iperp,p_res)
+
   ! Calculate the derivatives of f0 at the complex p_res:
   dfperp_C=(eval_fit(sproc,iperp,p_res)-eval_fit(sproc,iperp-1,p_res))/(dpperp)
   dfpar_C=(eval_fit(sproc,iperp,p_res+dppar)-eval_fit(sproc,iperp,p_res-dppar))/(2.d0*dppar)
 
-  landau_integrate = landau_integrate - h * int_T_res(nn, iperp, p_res, mode)*&
+  diagnostic_term = h * int_T_res(nn, iperp, p_res, mode)*&
         (qs(sproc) /abs(kpar)) *( (pp(sproc, iperp, 1, 1) * dfpar_C - &
         p_res * dfperp_C) * kpar  /  ( ms(sproc)) + om*dfperp_C )
+  landau_integrate = landau_integrate - diagnostic_term
+  if (diag_active) call diag_summand(iperp,h,-diagnostic_term,dfpar_C,dfperp_C,p_res)
 
+  if (diag_active) call diag_compare_residue(landau_integrate,.false.,int_T_res)
 	landau_integrate = landau_integrate * ii * dpperp * pi * 2.d0 * pi
 
 ! write(*,*)p_res, nn, mode, landau_integrate
 
+	if (diag_active) call diag_landau(landau_integrate)
 	return
 
 end function landau_integrate
@@ -1556,6 +1586,7 @@ double complex function int_ee(om)
 	int_ee = int_ee * 2.d0 * pi * qs(sproc) / ms(sproc)
 	int_ee = int_ee * dpperp * dppar * 0.25d0
 
+	if (diag_active) call diag_ee(sproc,int_ee)
 	return
 
 end function int_ee
@@ -3722,7 +3753,9 @@ subroutine map_search
 
         omega=cmplx(wr,wi,kind(1.d0))
         om(ir,ii)=omega
+        call diag_begin(omega,ir,ii)
         cal(ir,ii)=disp(omega)
+        call diag_finish(cal(ir,ii))
         !!check
         !if (proc0.and.writeOut)&
         !     write(*,'(4es13.6)')omega,cal(ir,ii)
@@ -3761,6 +3794,8 @@ subroutine map_search
         close(unit_map)
      endif
   enddo
+
+  call diag_close
 
   if(determine_minima) then
     !Search for Local Minima in Dispersion Surface:
