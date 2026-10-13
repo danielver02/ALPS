@@ -942,7 +942,7 @@ double complex function integrate_res(om,nn,mode)
   double complex :: gprimetr
   !! Function \(g^{\prime}\) in Eq. (3.6).
 
-	logical :: found_res
+	!logical :: found_res
   !! Check whether a resonance is found.
 
 	dpperp = pp(sproc, 2, 2, 1) - pp(sproc, 1, 2, 1)
@@ -954,22 +954,48 @@ double complex function integrate_res(om,nn,mode)
 	ii=cmplx(0.d0,1.d0,kind(1.d0))
 
 	! determine the position of the resonance (i.e., the step LEFT of it):
-	ipar = 0
-	ipar_res=0
-	found_res = .FALSE.
+	!ipar = 0
+	!ipar_res=0
+	!found_res = .FALSE.
 
-	p_res = (ms(sproc) * om - 1.d0*nn * qs(sproc))/kpar
+	!p_res = (ms(sproc) * om - 1.d0*nn * qs(sproc))/kpar
 
-	do while ((ipar.LT.(npar-2)).AND.(.NOT.found_res))
-		ipar = ipar + 1
+	!do while ((ipar.LT.(npar-2)).AND.(.NOT.found_res))
+	!	ipar = ipar + 1
 
-		if ((pp(sproc,2,ipar+1,2).GT.real(p_res)).and.&
-			  (pp(sproc,2,ipar,2).LE.real(p_res))) then
-				ipar_res=ipar
-				found_res = .TRUE.
-		endif
-	enddo
+	!	if ((pp(sproc,2,ipar+1,2).GT.real(p_res)).and.&
+	!		  (pp(sproc,2,ipar,2).LE.real(p_res))) then
+	!			ipar_res=ipar
+	!			found_res = .TRUE.
+	!	endif
+	!enddo
 
+   !ipar_res_old=ipar_res
+
+! Determine the position of the resonance (step LEFT of it).
+p_res = (ms(sproc)*om - 1.d0*nn*qs(sproc))/kpar
+
+dppar = pp(sproc,2,2,2) - pp(sproc,2,1,2)
+
+ipar_res = floor((real(p_res)-pp(sproc,2,0,2))/dppar)
+
+! Correct for floating-point rounding near grid boundaries.
+! Restrict comparisons to valid grid indices.
+if (ipar_res >= 1 .and. ipar_res <= npar-2) then
+   if (real(p_res) < pp(sproc,2,ipar_res,2)) then
+      ipar_res = ipar_res - 1
+   else if (real(p_res) >= pp(sproc,2,ipar_res+1,2)) then
+      ipar_res = ipar_res + 1
+   endif
+endif
+
+! Preserve original out-of-range behavior.
+if (ipar_res < 1 .or. ipar_res > npar-2) ipar_res = 0
+
+!if (ipar_res /= ipar_res_old) then
+!   write(*,*) 'Resonance index mismatch:', &
+!        real(p_res), ipar_res_old, ipar_res
+!endif
 
 	! Handle resonances that are right outside the integration domain:
 	p_res = (ms(sproc) * om - (1.d0*nn) * qs(sproc))/kpar
