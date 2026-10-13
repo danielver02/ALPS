@@ -383,6 +383,8 @@ contains
     nameList /poly_spec/ &
          kind, order, log_max, derivative_type
 
+   derivative_type=0
+   
     read(unit=unit,nml=poly_spec)
     poly_kind(is)=kind
     poly_order(is)=order

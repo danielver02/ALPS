@@ -1267,7 +1267,7 @@ double complex function funct_g(ppar_real,iperp,om,nn,mode)
   integer, intent(in) :: mode
   !! Index of the entries in the T-tensor of Eq. (2.10).
 
-	integer :: ipar
+	!integer :: ipar
   !! Index of the parallel momentum.
 
   integer :: ipar_close
@@ -1285,20 +1285,48 @@ double complex function funct_g(ppar_real,iperp,om,nn,mode)
 	double precision :: dppar
   !! Inifinitesimal step in parallel momentum.
 
+   integer :: idx
+   !!Index of the parallel momentum.
+
+   integer :: j
+   !! Index for for preferencing ipar to the left.
 
 	dppar  = abs(pp(sproc, 2, 2, 2) - pp(sproc, 2, 1, 2))
 
-	ipar_close=0
+   !KGK: 10-13-2026: This is an expensive search, and we call it frequently.
+	!ipar_close=0
 	! determine the closest ipar (on the left) to this p_res_real:
-	do ipar=1,npar-1
-      if (abs(pp(sproc,iperp,ipar,2)-ppar_real) .LE. (0.5d0*dppar)) then
-			ipar_close=ipar
-		endif
-	enddo
+   !do ipar=1,npar-1
+   !   if (abs(pp(sproc,iperp,ipar,2)-ppar_real) .LE. (0.5d0*dppar)) then
+	!		ipar_close=ipar
+   !	endif
+	!enddo
 
-	if (ipar_close.GE.(npar-1)) ipar_close=npar-2
-	if (ipar_close.LE.1) ipar_close=2
+	!if (ipar_close.GE.(npar-1)) ipar_close=npar-2
+	!if (ipar_close.LE.1) ipar_close=2
 
+   ! Initial prediction from the uniform grid.
+   idx = nint((ppar_real - pp(sproc,iperp,0,2))/dppar)
+
+   ! Match the original search domain: ipar = 1,...,npar-1.
+   idx = max(1,min(npar-1,idx))
+
+   ! Reproduce the original distance-based selection.
+   ipar_close = 0
+   do j = max(1,idx-2),min(npar-1,idx+2)
+      if (abs(pp(sproc,iperp,j,2)-ppar_real) <= 0.5d0*dppar) then
+         ipar_close = j
+      endif
+   enddo
+
+   ! Original boundary behavior.
+   if (ipar_close .GE.npar-1) ipar_close = npar-2
+   if (ipar_close .LE. 1) ipar_close = 2
+
+   !if (ipar_close /= ipar_close_old) then
+   !   write(*,*) 'Index mismatch:', &
+   !        ppar_real, ipar_close_old, ipar_close
+   !endif
 
 	! calculate the function on the grid (left and right of ppar_real):
 	integrandplus=-qs(sproc) * &
