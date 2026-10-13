@@ -93,7 +93,7 @@ $M_{P}$, used for integrating near poles (see section 3.1).
 **`Tlim`**  
 Threshold for analytical principal-value integration, $t_{\mathrm{lim}}$.
 
-**`maxsteps_fit=500`**  
+**`maxsteps_fit`**  
 Maximum number of fitting iterations.
 
 **`lambda_initial_fit`**  
@@ -277,6 +277,11 @@ Maximum order of the basis polynomial.
 **`log_max`**  
 When using logfit for the polynomial representation, set all output values to zero if the log(fit_function_poly) is greater than this variable.
 
+**`derivative_type`**  
+Controls how derivative in Landau integral is performed when using polynomial expansion for the analytic continuation of $f$.
+
+- 0: Finite Difference Derivative
+- 1: Analytic Derivative of Polynomial Basis Function
 
 ### *&scan_input_l*
 Inputs for scanning parameter space for $l$th scan.  
