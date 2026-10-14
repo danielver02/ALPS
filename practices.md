@@ -6,6 +6,18 @@ If the input distribution is symmetric and resonances occur close to ppar=0, it 
 ###Convergence Tests
 In general, there is no clear rule that prescribes the optimal resolution of the f0-table. Therefore, it is good practice to run convergence tests with different numbers of `nperp` and `npar`. When the ALPS results do not depend on a further increase in the numbers `nperp` and `npar` anymore, then a numerically suitable resolution has been found. This point is particularly important regarding `npar`.
 
+###Zero and Small VDF Amplitudes
+When inputing very small or zero values for $f(p_\perp,p_\parallel)$, users should implement a floor to ensure that the analytic continuation does not drop to very small values.
+We recommend bounding $f_0$ so that its minimum value is between $10^{-20}$ and $10^{-25}.
+
+###Electron Mode
+Setting the reference species to the electrons is useful when the important physics is driven by the electron VDF.
+In this case, electrons have a mass of 1 and a charge of 1, and the ions have a negative relative charge.
+This means that all frequencies are normalized to the electron gyrofrequency, which is conventionally negative. 
+The wavenumbers are normalized in units of $\Omega_e/v_{A,e}$, which is also negative.
+In this convention, modes with positive frequency and positive wavenumber propagate in the direction of the background magnetic field, like in 'proton mode'.
+The polarization, however, changes handedness because it is defined as the sense of rotation of the electric field vector in time at a fixed location.
+
 ##Zero-Frequency Solutions
 When `ALPS` calculates solutions with very small Re(omega) - including solutions for non-propagating modes such as mirror modes of oblique firehose solutions - the code sometimes struggles with the resonance handling of the n=0 resonance near ppar=0. The reason is that small changes in Re(omega) lead to fine structure in the integrand near the resonance.
 
