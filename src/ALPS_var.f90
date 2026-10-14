@@ -272,6 +272,11 @@ module alps_var
   integer, dimension(:), allocatable :: poly_order
   !! Selection of Maximum Order of Orthogonal Basis Function, (1:nspec)
   
+  integer, dimension(:), allocatable :: poly_derivative_type
+  !! Selection of derivative type for Orthogonal Basis Function, (1:nspec)
+  !! 0: Finite Difference
+  !! 1: Analytic Evaluation
+
   !Fit Parameters for Hybrid-Analytical Continuation Method:
   integer, dimension(:), allocatable :: n_fits
   !!Number of fitted functions, (1:nspec)
@@ -422,6 +427,6 @@ module alps_var
   public :: f0_rel,df0_rel,nspec_rel,gamma_rel,pparbar_rel,ngamma,npparbar
   public :: bMnmaxs,bMBessel_zeros,bMbetas,bMalphas,bMpdrifts
   public :: ACmethod, poly_kind, poly_order, polynomials, poly_fit_coeffs
-  public :: poly_log_max
+  public :: poly_log_max, poly_derivative_type
 
  end module alps_var

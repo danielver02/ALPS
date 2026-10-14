@@ -942,7 +942,7 @@ double complex function integrate_res(om,nn,mode)
   double complex :: gprimetr
   !! Function \(g^{\prime}\) in Eq. (3.6).
 
-	logical :: found_res
+	!logical :: found_res
   !! Check whether a resonance is found.
 
 	dpperp = pp(sproc, 2, 2, 1) - pp(sproc, 1, 2, 1)
@@ -954,22 +954,48 @@ double complex function integrate_res(om,nn,mode)
 	ii=cmplx(0.d0,1.d0,kind(1.d0))
 
 	! determine the position of the resonance (i.e., the step LEFT of it):
-	ipar = 0
-	ipar_res=0
-	found_res = .FALSE.
+	!ipar = 0
+	!ipar_res=0
+	!found_res = .FALSE.
 
-	p_res = (ms(sproc) * om - 1.d0*nn * qs(sproc))/kpar
+	!p_res = (ms(sproc) * om - 1.d0*nn * qs(sproc))/kpar
 
-	do while ((ipar.LT.(npar-2)).AND.(.NOT.found_res))
-		ipar = ipar + 1
+	!do while ((ipar.LT.(npar-2)).AND.(.NOT.found_res))
+	!	ipar = ipar + 1
 
-		if ((pp(sproc,2,ipar+1,2).GT.real(p_res)).and.&
-			  (pp(sproc,2,ipar,2).LE.real(p_res))) then
-				ipar_res=ipar
-				found_res = .TRUE.
-		endif
-	enddo
+	!	if ((pp(sproc,2,ipar+1,2).GT.real(p_res)).and.&
+	!		  (pp(sproc,2,ipar,2).LE.real(p_res))) then
+	!			ipar_res=ipar
+	!			found_res = .TRUE.
+	!	endif
+	!enddo
 
+   !ipar_res_old=ipar_res
+
+! Determine the position of the resonance (step LEFT of it).
+p_res = (ms(sproc)*om - 1.d0*nn*qs(sproc))/kpar
+
+dppar = pp(sproc,2,2,2) - pp(sproc,2,1,2)
+
+ipar_res = floor((real(p_res)-pp(sproc,2,0,2))/dppar)
+
+! Correct for floating-point rounding near grid boundaries.
+! Restrict comparisons to valid grid indices.
+if (ipar_res >= 1 .and. ipar_res <= npar-2) then
+   if (real(p_res) < pp(sproc,2,ipar_res,2)) then
+      ipar_res = ipar_res - 1
+   else if (real(p_res) >= pp(sproc,2,ipar_res+1,2)) then
+      ipar_res = ipar_res + 1
+   endif
+endif
+
+! Preserve original out-of-range behavior.
+if (ipar_res < 1 .or. ipar_res > npar-2) ipar_res = 0
+
+!if (ipar_res /= ipar_res_old) then
+!   write(*,*) 'Resonance index mismatch:', &
+!        real(p_res), ipar_res_old, ipar_res
+!endif
 
 	! Handle resonances that are right outside the integration domain:
 	p_res = (ms(sproc) * om - (1.d0*nn) * qs(sproc))/kpar
@@ -1124,21 +1150,25 @@ double complex function integrate_res(om,nn,mode)
 
 
 		do iperp = 2, nperp-2
+
+         ! The derivative is independent of ipar.
+         gprimetr = (funct_g(denomR+dppar,iperp,om,nn,mode)-&
+					funct_g(denomR-dppar,iperp,om,nn,mode))/(2.d0*dppar)
+
 			do ipar = 1, n_resonance_interval-1
 				ppar=real(p_res)+smdelta*ipar
 
-				gprimetr = (funct_g(denomR+dppar,iperp,om,nn,mode)-&
-					funct_g(denomR-dppar,iperp,om,nn,mode))/(2.d0*dppar)
-
         ! This is the second term in Eq. (3.6):
-				integrate_res = integrate_res + 4.d0 * 2.d0 * gprimetr * ((ppar-denomR)**2 / ((ppar-denomR)**2+denomI**2))
+				integrate_res = integrate_res + &
+               4.d0 * 2.d0 * gprimetr * ((ppar-denomR)**2 / ((ppar-denomR)**2+denomI**2))
 			enddo
 
 			ppar=real(p_res)
       ! In this case, ppar is equal to denomR, so: no integration needed
 
 			ppar=real(p_res)+capDelta
-			gprimetr = (funct_g(denomR+dppar,iperp,om,nn,mode)-funct_g(denomR-dppar,iperp,om,nn,mode))/(2.d0*dppar)
+         !moved gprimeter outside ipar loop
+			!gprimetr = (funct_g(denomR+dppar,iperp,om,nn,mode)-funct_g(denomR-dppar,iperp,om,nn,mode))/(2.d0*dppar)
 			integrate_res = integrate_res + 2.d0*2.d0*gprimetr*((ppar-denomR)**2 / ((ppar-denomR)**2+denomI**2))
 
 
@@ -1267,7 +1297,7 @@ double complex function funct_g(ppar_real,iperp,om,nn,mode)
   integer, intent(in) :: mode
   !! Index of the entries in the T-tensor of Eq. (2.10).
 
-	integer :: ipar
+	!integer :: ipar
   !! Index of the parallel momentum.
 
   integer :: ipar_close
@@ -1285,20 +1315,48 @@ double complex function funct_g(ppar_real,iperp,om,nn,mode)
 	double precision :: dppar
   !! Inifinitesimal step in parallel momentum.
 
+   integer :: idx
+   !!Index of the parallel momentum.
+
+   integer :: j
+   !! Index for for preferencing ipar to the left.
 
 	dppar  = abs(pp(sproc, 2, 2, 2) - pp(sproc, 2, 1, 2))
 
-	ipar_close=0
+   !KGK: 10-13-2026: This is an expensive search, and we call it frequently.
+	!ipar_close=0
 	! determine the closest ipar (on the left) to this p_res_real:
-	do ipar=1,npar-1
-      if (abs(pp(sproc,iperp,ipar,2)-ppar_real) .LE. (0.5d0*dppar)) then
-			ipar_close=ipar
-		endif
-	enddo
+   !do ipar=1,npar-1
+   !   if (abs(pp(sproc,iperp,ipar,2)-ppar_real) .LE. (0.5d0*dppar)) then
+	!		ipar_close=ipar
+   !	endif
+	!enddo
 
-	if (ipar_close.GE.(npar-1)) ipar_close=npar-2
-	if (ipar_close.LE.1) ipar_close=2
+	!if (ipar_close.GE.(npar-1)) ipar_close=npar-2
+	!if (ipar_close.LE.1) ipar_close=2
 
+   ! Initial prediction from the uniform grid.
+   idx = nint((ppar_real - pp(sproc,iperp,0,2))/dppar)
+
+   ! Match the original search domain: ipar = 1,...,npar-1.
+   idx = max(1,min(npar-1,idx))
+
+   ! Reproduce the original distance-based selection.
+   ipar_close = 0
+   do j = max(1,idx-2),min(npar-1,idx+2)
+      if (abs(pp(sproc,iperp,j,2)-ppar_real) <= 0.5d0*dppar) then
+         ipar_close = j
+      endif
+   enddo
+
+   ! Original boundary behavior.
+   if (ipar_close .GE.npar-1) ipar_close = npar-2
+   if (ipar_close .LE. 1) ipar_close = 2
+
+   !if (ipar_close /= ipar_close_old) then
+   !   write(*,*) 'Index mismatch:', &
+   !        ppar_real, ipar_close_old, ipar_close
+   !endif
 
 	! calculate the function on the grid (left and right of ppar_real):
 	integrandplus=-qs(sproc) * &
@@ -1333,6 +1391,7 @@ end function funct_g
 double complex function landau_integrate(om, nn, mode)
   !! This function evaluates the Landau contour according to Eqs. (3.8) and (3.9) of the code paper.
 	use alps_var, only : nperp, pp, pi, ms, qs, kpar, sproc
+   use alps_var, only : poly_derivative_type
 	use alps_analyt, only: eval_fit
 	implicit none
 
@@ -1359,6 +1418,9 @@ double complex function landau_integrate(om, nn, mode)
 
   double complex :: p_res
   !! Resonance momentum.
+
+  double complex :: f_C
+  !! Distribution evaluated at the complex resonance.
 
   double complex :: dfperp_C
   !! Derivative of f0 evaluated at resonance.
@@ -1393,6 +1455,7 @@ double complex function landau_integrate(om, nn, mode)
   ! Landau contour integral:
   ! At iperp=1, we are already missing the part from iperp=0, where we should actually start. Therefore, we use 4 instead of 2 in the trapezoid integration:
 	do iperp = 1, nperp-1 !KGK: This line and the following seem to conflict...
+      !KGK: Oct 13, 2026:Check these weights...
 		if ((iperp .EQ. 0).or.(iperp .EQ. (nperp -1))) then
 		   h = 0.5d0
 		else
@@ -1415,8 +1478,13 @@ double complex function landau_integrate(om, nn, mode)
 
 
   ! Calculate the derivatives of f0 at the complex p_res:
-  dfperp_C=(fperp_i-fperp_f)/(2.d0*dpperp)
-  dfpar_C=(fpar_i-fpar_f)/(2.d0*dppar)
+  dfperp_C = (fperp_i-fperp_f)/(2.d0*dpperp)
+
+  if (poly_derivative_type(sproc) == 1) then
+    f_C = eval_fit(sproc,iperp,p_res,dfpar=dfpar_C)
+  else
+    dfpar_C = (fpar_i-fpar_f)/(2.d0*dppar)
+  endif
 
   landau_integrate = landau_integrate - h * int_T_res(nn, iperp, p_res, mode)*&
         (qs(sproc) /abs(kpar)) *( (pp(sproc, iperp, 1, 1) * dfpar_C - &
@@ -1430,8 +1498,15 @@ h = 0.5d0
   p_res = (ms(sproc) * (om) - 1.d0*nn * qs(sproc))/kpar
 
   ! Calculate the derivatives of f0 at the complex p_res:
-  dfperp_C=(eval_fit(sproc,iperp+1,p_res)-eval_fit(sproc,iperp,p_res))/(dpperp)
-  dfpar_C=(eval_fit(sproc,iperp,p_res+dppar)-eval_fit(sproc,iperp,p_res-dppar))/(2.d0*dppar)
+   dfperp_C = (eval_fit(sproc,iperp+1,p_res) - &
+            eval_fit(sproc,iperp,p_res))/dpperp
+
+   if (poly_derivative_type(sproc) == 1) then
+      f_C = eval_fit(sproc,iperp,p_res,dfpar=dfpar_C)
+   else
+      dfpar_C = (eval_fit(sproc,iperp,p_res+dppar) - &
+              eval_fit(sproc,iperp,p_res-dppar))/(2.d0*dppar)
+   endif
 
   landau_integrate = landau_integrate - h * int_T_res(nn, iperp, p_res, mode)*&
         (qs(sproc) /abs(kpar)) *( (pp(sproc, iperp, 1, 1) * dfpar_C - &
@@ -1442,8 +1517,15 @@ h = 0.5d0
   p_res = (ms(sproc) * (om) - 1.d0*nn * qs(sproc))/kpar
 
   ! Calculate the derivatives of f0 at the complex p_res:
-  dfperp_C=(eval_fit(sproc,iperp,p_res)-eval_fit(sproc,iperp-1,p_res))/(dpperp)
-  dfpar_C=(eval_fit(sproc,iperp,p_res+dppar)-eval_fit(sproc,iperp,p_res-dppar))/(2.d0*dppar)
+   dfperp_C = (eval_fit(sproc,iperp,p_res) - &
+            eval_fit(sproc,iperp-1,p_res))/dpperp
+
+   if (poly_derivative_type(sproc) == 1) then
+      f_C = eval_fit(sproc,iperp,p_res,dfpar=dfpar_C)
+   else
+      dfpar_C = (eval_fit(sproc,iperp,p_res+dppar) - &
+              eval_fit(sproc,iperp,p_res-dppar))/(2.d0*dppar)
+   endif
 
   landau_integrate = landau_integrate - h * int_T_res(nn, iperp, p_res, mode)*&
         (qs(sproc) /abs(kpar)) *( (pp(sproc, iperp, 1, 1) * dfpar_C - &

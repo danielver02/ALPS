@@ -29,13 +29,14 @@ contains
 
 
 
-double complex function eval_fit(is,iperp,ppar_valC)
+double complex function eval_fit(is,iperp,ppar_valC,dfpar)
   !! This function evaluates the fit to f0 at and the complex parallel
   !! momentum ppar_valC. It requires the fit parameters that will be determined
   !! by the subroutine [[determine_param_fit(subroutine)]].
 
         use alps_var, only : fit_type, pp, param_fit, n_fits, gamma_rel,nspec,relativistic
         use alps_var, only : ACmethod, poly_fit_coeffs, poly_order
+		use alps_io, only : alps_error
 	use alps_distribution_analyt, only : distribution_analyt
 	implicit none
 
@@ -72,6 +73,15 @@ double complex function eval_fit(is,iperp,ppar_valC)
 
 	double precision,allocatable, dimension(:) :: params
 	!! Array of fit parameters.
+
+	double complex, intent(out), optional :: dfpar
+	!! Analytic derivative with respect to parallel momentum from polynomial representation. 
+
+if (present(dfpar)) then
+   if (ACmethod(is) /= 2) then
+	call alps_error(11)
+   endif
+endif
 
  select case (ACmethod(is))
  case (0)
@@ -172,10 +182,14 @@ double complex function eval_fit(is,iperp,ppar_valC)
 case (2)
    ! use the orthogonal polynomials of kind described in &poly_is
    
-   !write(*,*)iproc,is,iperp,ppar_valC
-   eval_fit=fit_function_poly(is,iperp,ppar_valC,poly_order(is),&
-        poly_fit_coeffs(is,iperp,0:poly_order(is)))
-   !write(*,*)iproc,is,iperp,ppar_valC,eval_fit
+   if (present(dfpar)) then
+	  dfpar = (0.d0,0.d0)      
+      eval_fit = fit_function_poly(is,iperp,ppar_valC,poly_order(is),&
+           poly_fit_coeffs(is,iperp,0:poly_order(is)),dfpar=dfpar)
+   else
+      eval_fit = fit_function_poly(is,iperp,ppar_valC,poly_order(is),&
+           poly_fit_coeffs(is,iperp,0:poly_order(is)))
+   endif
    
 end select
 end function eval_fit
@@ -265,7 +279,7 @@ double complex function fit_function(is,n_params,params,pperp_val,ppar_val)
 	return
 end function fit_function
 
-double complex function fit_function_poly(is,iperp,ppar_val,n_poly,fit_coeffs)
+double complex function fit_function_poly(is,iperp,ppar_val,n_poly,fit_coeffs,dfpar)
   !! This function evaluates the orthogonal polynomical fit to f0
   !! at real pperp_val and complex ppar_val,
   !! with the one-dimensional polynomical coefficient array fit_coeffs is fed into the
@@ -302,7 +316,18 @@ double complex function fit_function_poly(is,iperp,ppar_val,n_poly,fit_coeffs)
  double precision :: norm_1, norm_2
  !! Range of p_parallel for rescaling polynomials
 
+ double complex, intent(out), optional :: dfpar
+ !! Derivative of polynomial representations.
+
+ double complex :: poly_basis_deriv(0:n_poly)
+ !! Derivatives of the polynomial basis.
+ 
+ double complex :: poly_deriv
+ !! Total Derivative
+
  fit_function_poly=cmplx(0.d0,0.d0,kind(1.d0))
+ if (present(dfpar)) dfpar = (0.d0,0.d0)
+ poly_deriv = (0.d0,0.d0)
  
  select case (poly_kind(is))
  case (1)
@@ -314,15 +339,38 @@ double complex function fit_function_poly(is,iperp,ppar_val,n_poly,fit_coeffs)
     if (abs(ppar_val_tmp).gt.1.d0) then !!kgk: should this be .gt. or .ge. ?
        fit_function_poly=0.d0
     else
+	!Set n=0
     n=0
     poly_basis(n)=cmplx(1.d0,0.d0,kind(1.d0))
+	if (present(dfpar)) &
+		poly_basis_deriv(n) = (0.d0,0.d0)
     fit_function_poly=fit_function_poly+fit_coeffs(n)*poly_basis(n)
-    n=1
+    
+	!Set n=1
+	n=1
     poly_basis(n)=ppar_val_tmp
+	if (present(dfpar)) &
+		poly_basis_deriv(n) = (1.d0,0.d0)
     fit_function_poly=fit_function_poly+fit_coeffs(n)*poly_basis(n)
+
+	!Start Summing Derivatives
+	if (present(dfpar)) &
+		poly_deriv = fit_coeffs(n)
+
+	!Start recursion
     do n=2,n_poly
-       poly_basis(n) = cmplx(2.d0,0.d0,kind(1.d0)) * ppar_val_tmp * poly_basis(n-1) - poly_basis(n-2)
-       fit_function_poly=fit_function_poly+fit_coeffs(n)*poly_basis(n)
+       poly_basis(n) = cmplx(2.d0,0.d0,kind(1.d0)) * &
+			ppar_val_tmp * poly_basis(n-1) - poly_basis(n-2)
+
+       fit_function_poly=fit_function_poly+&
+	   		fit_coeffs(n)*poly_basis(n)
+		if (present(dfpar)) then
+			poly_basis_deriv(n) = cmplx(2.d0,0.d0,kind(1.d0))*poly_basis(n-1) &
+            + cmplx(2.d0,0.d0,kind(1.d0))*ppar_val_tmp*poly_basis_deriv(n-1) &
+            - poly_basis_deriv(n-2)
+	   		poly_deriv = poly_deriv &
+              + fit_coeffs(n)*poly_basis_deriv(n)
+		endif
     enddo
     if (logfit(is)) then
 
@@ -357,9 +405,17 @@ double complex function fit_function_poly(is,iperp,ppar_val,n_poly,fit_coeffs)
           !write(*,*)iproc,is,iperp,ppar_val,ppar_val_tmp,fit_function_poly
        endif
     endif
+	!Calculate the Actual Derivative
+	if (present(dfpar)) then
+   		if (logfit(is)) then
+      		dfpar = log(10.d0)*fit_function_poly*poly_deriv/norm_2
+   		else
+      		dfpar = poly_deriv/norm_2
+   		endif
+	endif
  endif
 end select
- 
+
  return
 end function fit_function_poly
 
