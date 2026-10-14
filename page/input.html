@@ -189,7 +189,7 @@ How many steps should be used to integrate around the resonance,
 $M_{P}$, used for integrating near poles (see section 3.1).</p>
 <p><strong><code>Tlim</code></strong><br>
 Threshold for analytical principal-value integration, $t_{\mathrm{lim}}$.</p>
-<p><strong><code>maxsteps_fit=500</code></strong><br>
+<p><strong><code>maxsteps_fit</code></strong><br>
 Maximum number of fitting iterations.</p>
 <p><strong><code>lambda_initial_fit</code></strong><br>
 Inital Levenberg-Marquardt damping parameter.</p>
@@ -339,6 +339,12 @@ Type of the basis polynomial:</p>
 Maximum order of the basis polynomial.</p>
 <p><strong><code>log_max</code></strong><br>
 When using logfit for the polynomial representation, set all output values to zero if the log(fit_function_poly) is greater than this variable.</p>
+<p><strong><code>derivative_type</code></strong><br>
+Controls how derivative in Landau integral is performed when using polynomial expansion for the analytic continuation of $f$.</p>
+<ul>
+<li>0: Finite Difference Derivative</li>
+<li>1: Analytic Derivative of Polynomial Basis Function</li>
+</ul>
 <h3><em>&amp;scan_input_l</em></h3>
 <p>Inputs for scanning parameter space for $l$th scan.  </p>
 <p><strong><code>scan_type</code></strong><br>

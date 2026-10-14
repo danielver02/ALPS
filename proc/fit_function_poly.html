@@ -92,7 +92,7 @@
 
             <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
               <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
-                 title=" 0.7% of total for procedures.">43 statements</a>
+                 title=" 1.1% of total for procedures.">62 statements</a>
             </li>
 
         </ul>
@@ -148,7 +148,7 @@
     </div>
     
     <div class="col-md-9" id='text'>
-    <h2>public  function fit_function_poly(is, iperp, ppar_val, n_poly, fit_coeffs)  
+    <h2>public  function fit_function_poly(is, iperp, ppar_val, n_poly, fit_coeffs, dfpar)  
 </h2>
         <div class="card mb-4">
       <h3 class="card-header card-title bg-light">Uses</h3>
@@ -306,7 +306,7 @@ kgk: should this be .gt. or .ge. ?</p>
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-is~15"></span>
+              <span class="anchor" id="variable-is~22"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -321,7 +321,7 @@ kgk: should this be .gt. or .ge. ?</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-iperp~4"></span>
+              <span class="anchor" id="variable-iperp~17"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -377,6 +377,21 @@ kgk: should this be .gt. or .ge. ?</p>
             <td><strong>fit_coeffs</strong>(0:n_poly)</td>
             <td>
                 <p>Array of polynomial coefficients</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dfpar~2"></span>
+              double complex,
+            </td>
+<td>intent(out),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>dfpar</strong></td>
+            <td>
+                <p>Derivative of polynomial representations.</p>
             </td>
         </tr>
     </tbody>

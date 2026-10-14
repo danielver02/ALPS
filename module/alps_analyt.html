@@ -92,7 +92,7 @@
 
             <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
               <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
-                 title="16.3% of total for modules and submodules.">908 statements</a>
+                 title="16.7% of total for modules and submodules.">939 statements</a>
             </li>
 
         </ul>
@@ -335,7 +335,7 @@ modules which it uses.
         <section>
           <h2>Functions</h2>
               <div class="card">
-    <div class="card-header codesum"><span class="anchor" id="proc-eval_fit"></span> <h3>public  function <a href='../proc/eval_fit.html'>eval_fit</a>(is, iperp, ppar_valC)  
+    <div class="card-header codesum"><span class="anchor" id="proc-eval_fit"></span> <h3>public  function <a href='../proc/eval_fit.html'>eval_fit</a>(is, iperp, ppar_valC, dfpar)  
 </h3></div>
     <div class="card-body">
           
@@ -356,7 +356,7 @@ by the subroutine <a href="../proc/determine_param_fit.html">determine_param_fit
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-is~13"></span>
+              <span class="anchor" id="variable-is~20"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -371,7 +371,7 @@ by the subroutine <a href="../proc/determine_param_fit.html">determine_param_fit
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-iperp~3"></span>
+              <span class="anchor" id="variable-iperp~16"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -397,6 +397,21 @@ by the subroutine <a href="../proc/determine_param_fit.html">determine_param_fit
             <td><strong>ppar_valC</strong></td>
             <td>
 <p>Complex parallel momentum at which <a href="../proc/eval_fit.html">eval_fit</a> is executed.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dfpar"></span>
+              double complex,
+            </td>
+<td>intent(out),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>dfpar</strong></td>
+            <td>
+<p>Analytic derivative with respect to parallel momentum from polynomial representation.</p>
             </td>
         </tr>
     </tbody>
@@ -434,7 +449,7 @@ use <a href="../proc/eval_fit.html">eval_fit</a>.</p>
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-is~14"></span>
+              <span class="anchor" id="variable-is~21"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -520,7 +535,7 @@ use <a href="../proc/eval_fit.html">eval_fit</a>.</p>
   </div>
 
               <div class="card">
-    <div class="card-header codesum"><span class="anchor" id="proc-fit_function_poly"></span> <h3>public  function <a href='../proc/fit_function_poly.html'>fit_function_poly</a>(is, iperp, ppar_val, n_poly, fit_coeffs)  
+    <div class="card-header codesum"><span class="anchor" id="proc-fit_function_poly"></span> <h3>public  function <a href='../proc/fit_function_poly.html'>fit_function_poly</a>(is, iperp, ppar_val, n_poly, fit_coeffs, dfpar)  
 </h3></div>
     <div class="card-body">
           
@@ -544,7 +559,7 @@ kgk: should this be .gt. or .ge. ?</p>
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-is~15"></span>
+              <span class="anchor" id="variable-is~22"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -559,7 +574,7 @@ kgk: should this be .gt. or .ge. ?</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-iperp~4"></span>
+              <span class="anchor" id="variable-iperp~17"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -615,6 +630,21 @@ kgk: should this be .gt. or .ge. ?</p>
             <td><strong>fit_coeffs</strong>(0:n_poly)</td>
             <td>
 <p>Array of polynomial coefficients</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dfpar~2"></span>
+              double complex,
+            </td>
+<td>intent(out),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>dfpar</strong></td>
+            <td>
+<p>Derivative of polynomial representations.</p>
             </td>
         </tr>
     </tbody>
@@ -715,7 +745,7 @@ polynomial basis functions.</p>
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-is~17"></span>
+              <span class="anchor" id="variable-is~24"></span>
               integer
             </td>
 <td></td>
@@ -842,7 +872,7 @@ polynomial basis functions.</p>
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-is~18"></span>
+              <span class="anchor" id="variable-is~25"></span>
               integer
             </td>
 <td></td>
@@ -923,7 +953,7 @@ fit parameter array.</p>
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-is~20"></span>
+              <span class="anchor" id="variable-is~27"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -998,7 +1028,7 @@ fit parameter array.</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-iperp~8"></span>
+              <span class="anchor" id="variable-iperp~21"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -1070,7 +1100,7 @@ The variable quality is the sum of the squares of all residuals.</p>
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-is~21"></span>
+              <span class="anchor" id="variable-is~28"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -1160,7 +1190,7 @@ The variable quality is the sum of the squares of all residuals.</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-iperp~9"></span>
+              <span class="anchor" id="variable-iperp~22"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -1175,7 +1205,7 @@ The variable quality is the sum of the squares of all residuals.</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-npar~5"></span>
+              <span class="anchor" id="variable-npar~6"></span>
               integer,
             </td>
 <td>intent(in)</td>
