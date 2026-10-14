@@ -42,13 +42,18 @@ functions supporting waves with any direction of propagation with respect to
 the background magnetic field.
 
 If you use the code for a science publication, please provide the code website
-[github.com/danielver02/ALPS](https://github.com/danielver02/ALPS) in the acknowledgements of your publication and cite the code paper:
+[github.com/danielver02/ALPS](https://github.com/danielver02/ALPS) in the acknowledgements of your publication and cite the code papers:
 
 [Verscharen, D., Klein, K. G., Chandran, B. D. G., Stevens, M. L., Salem, C. S.,
 and Bale, S. D.: ALPS: the Arbitrary Linear Plasma Solver, J. Plasma Phys. 84,
 905840403, 2018, doi: 10.1017/S0022377818000739](http://doi.org/10.1017/S0022377818000739)
 
-Publications using the ALPS code can be found in our [NASA ADS Library](https://ui.adsabs.harvard.edu/public-libraries/vPWlMyiDRq-YfZ2bGDWS7Q).
+[Klein, K. G. and Verscharen, D.,
+The dielectric response of plasmas with arbitrary gyrotropic velocity distributions, Phys. Plasma 32,
+092104, 2025, doi: 10.1063/5.0286477](https://doi.org/10.1063/5.0286477)
+
+Publications using the ALPS code can be found in our [SciExplorer Library](https://scixplorer.org/public-libraries/n626YEJGTlWksoa01fYzkA).
+Publications citing the ALPS papers can be found [here](https://scixplorer.org/public-libraries/vPWlMyiDRq-YfZ2bGDWS7Q).
 
 ---
 

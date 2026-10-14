@@ -164,18 +164,22 @@ contains
        write(*,'(a,i3,a)')'Species ',is,' : '
        write(*,'(a,es14.4e3,a,es14.4e3,a,es14.4e3)')&
             ' ns/nREF = ',ns(is),' | qs/qREF = ',qs(is),' | ms/mREF = ',ms(is)
-       select case (ACmethod(is))
-       case (0)
-          write(*,'(a)') ' Using function defined in distribution/distribution_analyt.f90'
-       case (1)
-          write(*,'(a,i4)')&
-               ' Number of fitted functions = ',n_fits(is)
-       case (2)
-          write(*,'(a)')&
-               ' Using a Polynomial Basis Representation'
-       end select
-       write(*,'(a,l1)')&
-            ' Relativistic effects = ',relativistic(is)
+       if (usebM(is)) then
+          write(*,'(a)') ' Using bi-Maxwellian/cold-plasma representation'
+       else
+          select case (ACmethod(is))
+          case (0)
+             write(*,'(a)') ' Using function defined in distribution/distribution_analyt.f90'
+          case (1)
+             write(*,'(a,i4)')&
+                  ' Number of fitted functions = ',n_fits(is)
+          case (2)
+             write(*,'(a)')&
+                  ' Using a polynomial basis representation'
+          end select
+          write(*,'(a,l1)')&
+               ' Relativistic effects = ',relativistic(is)
+       endif
        close(unit)
     enddo
 
@@ -250,7 +254,7 @@ contains
              select case (poly_kind(is))
              case (1)
                 write(*,'(a,i0,a,i0)')&
-                     'Chebyshev Representation of Order ',poly_order(is),' for species ',is
+                     'Chebyshev representation of order ',poly_order(is),' for species ',is
              case default
                 call alps_error(10)
              end select
