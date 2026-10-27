@@ -9,6 +9,26 @@ The following namelists and associated input parameters are read in by ALPS from
 ### *&system*  
 General system parameters.
 
+**`profile_startup`**
+Optional logical in `&system`, default `.false.`. 
+When enabled, rank 0 reports elapsed wall time in seconds using `MPI_Wtime`.
+This includes 
+
+- VDF input, 
+- original-grid processing, 
+- relativistic preparation (if applicable), 
+- spline matrix/solve/evaluation, 
+- postprocessing,
+- diagnostic output, 
+- analytic-continuation fitting, and total 
+- VDF startup before the first dispersion calculation. 
+
+Species timings are summed. 
+The total starts after parameter input and includes MPI distribution and harmonic/Bessel setup. 
+The existing normalization divisions remain interleaved with `f0_rel` output and are included in the output timing. 
+Fitting time includes its diagnostic output. 
+These are wall times, not CPU times, and detailed reporting is independent of `writeOut`.
+
 **`kperp`**  
 Initial perpendicular wavevector $k_{\perp} d_{ref}$.
 
@@ -41,26 +61,6 @@ The input file must have $N_{\parallel}+1$ values spanning parallel momentum spa
 **`ngamma`**  
 Relativistic momentum space resolution, $N_{\Gamma}$.
 Requires `ngamma >= 2` when a relativistic species is present.
-
-**`profile_startup`**
-Optional logical in `&system`, default `.false.`. 
-When enabled, rank 0 reports elapsed wall time in seconds using `MPI_Wtime`.
-This includes 
-
-- VDF input, 
-- original-grid processing, 
-- relativistic preparation (if applicable), 
-- spline matrix/solve/evaluation, 
-- postprocessing,
-- diagnostic output, 
-- analytic-continuation fitting, and total 
-- VDF startup before the first dispersion calculation. 
-
-Species timings are summed. 
-The total starts after parameter input and includes MPI distribution and harmonic/Bessel setup. 
-The existing normalization divisions remain interleaved with `f0_rel` output and are included in the output timing. 
-Fitting time includes its diagnostic output. 
-These are wall times, not CPU times, and detailed reporting is independent of `writeOut`.
 
 **`npparbar`**  
 Relativistic parallel momentum space resolution, $N_{\bar{p}_{\parallel}}$.

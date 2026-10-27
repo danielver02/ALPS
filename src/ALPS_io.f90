@@ -46,7 +46,7 @@ contains
   subroutine init_param
     !!Read in system parameters from *.in file.
     !!Only processor 0 calls this routine:
-    use alps_var, only : runname, foldername, kperp, kpar, nroots, D_prec, D_gap,
+    use alps_var, only : runname, foldername, kperp, kpar, nroots, D_prec, D_gap
     use alps_var, only : profile_startup
     use alps_var, only : kperp_last, kpar_last, kperp_0, kpar_0
     use alps_var, only : use_map, writeOut, wroots, nspec, numroots, kperp_norm
