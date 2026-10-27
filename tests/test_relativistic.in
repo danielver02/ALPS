@@ -29,9 +29,6 @@ writeOut=.true.
 !Momentum space resolution of f0
 nperp=30
 npar=60
-!Momentum space resolution for relativistic calculation
-ngamma=500
-npparbar=500
 !Reference Alfven velocity / c
 vA=1.d0
 !Name of input array-
@@ -193,4 +190,12 @@ ns=25           !# of scan steps
 nres=1          !# of scan substeps
 heating=.false. !Calculate heating rates
 eigen=.false.   !Calculate eigenfunctions
+/
+
+! Shared relativistic grid and cache controls.
+&relativistic_params
+ngamma=500
+npparbar=500
+rel_cache='auto'
+rel_cache_dir='distribution/'
 /

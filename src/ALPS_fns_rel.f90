@@ -24,7 +24,8 @@ module alps_fns_rel
   private :: funct_g_rel
   private :: determine_sproc_rel,fact
 
-  public :: derivative_f0_rel, polyharmonic_spline
+  public :: derivative_f0_rel, polyharmonic_spline, write_rel_diagnostics
+  private :: construct_f0_rel, write_completed_rel
   public :: integrate_res_rel, landau_integrate_rel, resU_rel
   public :: bessj0, bessj1, bessj
 
@@ -34,12 +35,158 @@ contains
 
 !-=-=-=-=-=-=
 subroutine derivative_f0_rel(is,is_rel)
+    !! Load or construct a completed species on rank 0, then write read-only diagnostics.
+    use alps_var, only : rel_cache,rel_cache_dir,proc0,writeOut,f0,pp,ms,vA,pi,ngamma,npparbar
+    use alps_var, only : gamma_rel,pparbar_rel,f0_rel,df0_rel,startup_tick,startup_tock
+    use alps_rel_cache, only : rel_cache_identity,cache_identity,cache_load,cache_save
+    implicit none
+    integer, intent(in) :: is
+    !! Index of the species in the original VDF and species-parameter arrays.
+    integer, intent(in) :: is_rel
+    !! Index of the species among the relativistic components only.
+    double precision :: integrate
+    !! Pre-normalization integral, calculated during construction or restored from a valid cache.
+    double precision :: phase_start
+    !! Local MPI_Wtime start timestamp for the current cache operation, in seconds.
+    double precision :: total_start
+    !! Local MPI_Wtime start timestamp for total relativistic setup, including diagnostics.
+    type(rel_cache_identity) :: id
+    !! Numerical-input and build identity used to identify and validate the cache entry.
+    logical :: enabled
+    !! True when caching is requested and this process is rank 0.
+    logical :: identified
+    !! True when a reliable input/build identity has been established.
+    logical :: hit
+    !! True after a completed cached representation has been validated and loaded.
+    logical :: saved
+    !! True when the newly constructed representation has been verified and published to disk.
+    character(256) :: reason
+    !! Status or failure explanation returned by the most recent cache operation.
+    call startup_tick(total_start)
+    enabled=proc0.and.rel_cache/='off'; identified=.false.; hit=.false.
+    if(enabled) then
+       call startup_tick(phase_start)
+       call cache_identity(pp(is,:,:,:),f0(is,:,:),ms(is),vA,pi,ngamma,npparbar,id,identified,reason)
+       call startup_tock(11,phase_start)
+       if(.not.identified) write(*,'(a)') 'WARNING: relativistic cache bypassed: '//trim(reason)
+    endif
+    if(identified.and.rel_cache=='auto') then
+       call startup_tick(phase_start)
+       call cache_load(trim(rel_cache_dir),id,gamma_rel(is_rel,:,:),pparbar_rel(is_rel,:,:), &
+            f0_rel(is_rel,:,:),df0_rel(is_rel,:,:,:),integrate,hit,reason)
+       call startup_tock(12,phase_start)
+       if(writeOut) write(*,'(a,i0,2a)') 'Relativistic cache species ',is,': ',trim(reason)
+       if(.not.hit.and.reason/='missing or unreadable entry') &
+            write(*,'(a)') 'WARNING: rejected relativistic cache: '//trim(reason)
+    elseif(identified.and.writeOut) then
+       write(*,'(a,i0,a)') 'Relativistic cache species ',is,': refresh'
+    endif
+    if(.not.hit) then
+       call construct_f0_rel(is,is_rel,integrate)
+       if(identified) then
+          call startup_tick(phase_start)
+          call cache_save(trim(rel_cache_dir),id,gamma_rel(is_rel,:,:),pparbar_rel(is_rel,:,:), &
+               f0_rel(is_rel,:,:),df0_rel(is_rel,:,:,:),integrate,saved,reason)
+          call startup_tock(13,phase_start)
+          if(.not.saved) write(*,'(a)') 'WARNING: relativistic cache not saved: '//trim(reason)
+       endif
+    endif
+    call write_rel_diagnostics(is,is_rel,integrate)
+    call startup_tock(14,total_start)
+end subroutine derivative_f0_rel
+
+subroutine write_rel_diagnostics(is,is_rel,integrate)
+    !! Write completed arrays without normalizing or otherwise modifying them.
+    use alps_var, only : gamma_rel,pparbar_rel,f0_rel,df0_rel
+    implicit none
+    integer, intent(in) :: is
+    !! Original species index used in diagnostic filenames and printed messages.
+    integer, intent(in) :: is_rel
+    !! Relativistic component index selecting the completed array slices to write.
+    double precision, intent(in) :: integrate
+    !! Pre-normalization integral for reporting only; the distribution is already normalized.
+    call write_completed_rel(is,gamma_rel(is_rel,:,:),pparbar_rel(is_rel,:,:), &
+         f0_rel(is_rel,:,:),df0_rel(is_rel,:,:,:),integrate)
+end subroutine
+
+subroutine write_completed_rel(is,gamma_grid,ppar_grid,distribution,derivatives,integrate)
+    !! Read-only output of an already normalized relativistic species.
+    use alps_var, only : ngamma,npparbar,arrayName,writeOut,profile_startup,startup_tick,startup_tock
+    use alps_io, only : get_unused_unit
+    implicit none
+    integer, intent(in) :: is
+    !! Original species index used in diagnostic filenames and printed messages.
+    double precision, intent(in) :: gamma_grid(0:,0:)
+    !! Completed Lorentz-factor coordinates; bounds are (0:ngamma,0:npparbar).
+    double precision, intent(in) :: ppar_grid(0:,0:)
+    !! Completed dimensionless parallel-momentum coordinates, with the same bounds as gamma_grid.
+    double precision, intent(in) :: distribution(0:,0:)
+    !! Already normalized f0_rel values; -1 marks points outside the physical cone.
+    double precision, intent(in) :: derivatives(0:,0:,:)
+    !! Completed derivatives: component 1 is with respect to Gamma, component 2 to pparbar.
+    !! Bounds are (0:ngamma,0:npparbar,1:2), including the defined zero outer edges.
+    double precision, intent(in) :: integrate
+    !! Pre-normalization integral for diagnostic reporting; no further division is performed.
+    integer :: igamma
+    !! Index traversing Lorentz-factor grid points, including both endpoints.
+    integer :: ipparbar
+    !! Index traversing dimensionless parallel-momentum grid points, including both endpoints.
+    integer :: unit_f
+    !! Available Fortran I/O unit used for the distribution and derivative diagnostic files.
+    character(50) :: fmt
+    !! Formatted-output specification for the current ASCII diagnostic file.
+    character(100) :: writename
+    !! Diagnostic output path formed from arrayName, the diagnostic suffix, and the species index.
+    double precision :: phase_start
+    !! Local MPI_Wtime start timestamp for diagnostic output timing, in seconds.
+    write(*,'(a,i3,a, 2es14.4e3)') 'Integration of species', is,':', integrate
+    ! Round-trip precision for baseline diagnostics; no additional integration.
+    if (profile_startup) write(*,'(a,i0,1x,es26.17e3)') 'Relativistic normalization integral ',is,integrate
+    call startup_tick(phase_start)
+
+         if(writeOut) write (*,'(a)') 'Writing relativistic grid to file...'
+        write(fmt,'(a)') '(2es14.4e3,1es14.4e3)'
+         write(writeName,'(3a,i0,a)') 'distribution/',trim(arrayName),'_f0_rel.',is,'.array'
+          call get_unused_unit(unit_f)
+          open(unit=unit_f,file=trim(writeName),status='replace')
+          do igamma = 0, ngamma
+              do ipparbar = 0, npparbar
+                 write(unit_f,fmt) gamma_grid(igamma,ipparbar),ppar_grid(igamma,ipparbar),&
+                    distribution(igamma,ipparbar)
+              enddo
+           write(unit_f,*)
+          enddo
+     close(unit_f)
+
+
+    if(writeOut) write (*,'(a)') 'Writing relativistic derivatives to file...'
+
+          write(fmt,'(a)') '(2es14.4e3,2es14.4e3)'
+
+         write(writeName,'(3a,i0,a)') 'distribution/',trim(arrayName),'_dfdv_rel.',is,'.array'
+        call get_unused_unit(unit_f)
+          open(unit=unit_f,file=trim(writeName),status='replace')
+          do igamma = 0, ngamma
+             do ipparbar = 0, npparbar
+               write(unit_f,fmt) gamma_grid(igamma,ipparbar),ppar_grid(igamma,ipparbar),&
+                    derivatives(igamma,ipparbar,1),derivatives(igamma,ipparbar,2)
+             enddo
+             write(unit_f,*)
+          enddo
+          close(unit_f)
+    call startup_tock(8,phase_start)
+
+    if (writeOut) write(*,'(a)') '-=-=-=-=-=-=-=-=-'
+
+end subroutine write_completed_rel
+
+subroutine construct_f0_rel(is,is_rel,integrate)
     !! This subroutine calculates the derivatives of the background velocity distribution function f0 for the relativistic calculation.
-    use alps_var, only : f0, pp, nperp, npar, vA, ms, writeOut, arrayName
+    use alps_var, only : f0, pp, nperp, npar, vA, ms, writeOut
     use alps_var, only : f0_rel, df0_rel,gamma_rel, pparbar_rel,nspec_rel,ngamma,npparbar
     use alps_var, only : writeOut, pi
-    use alps_io,  only : get_unused_unit, alps_error
-    use alps_var, only : startup_tick, startup_tock, profile_startup
+    use alps_io,  only : alps_error
+    use alps_var, only : startup_tick, startup_tock
     implicit none
 
 
@@ -100,13 +247,7 @@ subroutine derivative_f0_rel(is,is_rel)
     !! Coordinates of relativistic parallel momentum on coarse grid.
     !! (1:n_coarse)
 
-    character (50) :: fmt
-    !! Output format for file i/o.
-
-    character (100) :: writename
-    !! File name for file i/o.
-
-    double precision :: integrate
+    double precision, intent(out) :: integrate
     !! Integral of the distribution function.
 
     double precision :: gamma
@@ -115,8 +256,6 @@ subroutine derivative_f0_rel(is,is_rel)
     double precision ::  smoothing
     !! Smoothing parameter for spline interpolation.
 
-    integer :: unit_f
-    !! Unit for file i/o.
 
     double precision :: phase_start
     !! Variable for tracking timing of component subroutines.
@@ -218,29 +357,12 @@ subroutine derivative_f0_rel(is,is_rel)
         enddo
 
 
-    write(*,'(a,i3,a, 2es14.4e3)') 'Integration of species', is,':', integrate
-    ! Round-trip precision for baseline diagnostics; no additional integration.
-    if (profile_startup) write(*,'(a,i0,1x,es26.17e3)') 'Relativistic normalization integral ',is,integrate
-    call startup_tock(7,phase_start)
-    call startup_tick(phase_start)
-
-	 	if(writeOut) write (*,'(a)') 'Writing relativistic grid to file...'
-        write(fmt,'(a)') '(2es14.4e3,1es14.4e3)'
-	     write(writeName,'(3a,i0,a)') 'distribution/',trim(arrayName),'_f0_rel.',is,'.array'
-	      call get_unused_unit(unit_f)
-          open(unit=unit_f,file=trim(writeName),status='replace')
-		  do igamma = 0, ngamma
-		  	do ipparbar = 0, npparbar
-			   if (f0_rel(is_rel,igamma,ipparbar).NE.-1.d0) f0_rel(is_rel,igamma,ipparbar)=f0_rel(is_rel,igamma,ipparbar)/integrate
-		  	   write(unit_f,fmt) gamma_rel(is_rel,igamma,ipparbar),pparbar_rel(is_rel,igamma,ipparbar),&
-					f0_rel(is_rel,igamma,ipparbar)
-		  	enddo
-           write(unit_f,*)
-		  enddo
-	 close(unit_f)
-    call startup_tock(8,phase_start)
-    call startup_tick(phase_start)
-
+    do igamma=0,ngamma
+       do ipparbar=0,npparbar
+          if (f0_rel(is_rel,igamma,ipparbar).NE.-1.d0) &
+               f0_rel(is_rel,igamma,ipparbar)=f0_rel(is_rel,igamma,ipparbar)/integrate
+       enddo
+    enddo
 
    if(writeOut) write (*,'(a)') 'Determining relativistic derivatives...'
 
@@ -293,27 +415,8 @@ subroutine derivative_f0_rel(is,is_rel)
         enddo
 
     call startup_tock(7,phase_start)
-    call startup_tick(phase_start)
-	if(writeOut) write (*,'(a)') 'Writing relativistic derivatives to file...'
 
-	      write(fmt,'(a)') '(2es14.4e3,2es14.4e3)'
-
-	     write(writeName,'(3a,i0,a)') 'distribution/',trim(arrayName),'_dfdv_rel.',is,'.array'
-        call get_unused_unit(unit_f)
-          open(unit=unit_f,file=trim(writeName),status='replace')
-          do igamma = 0, ngamma
-             do ipparbar = 0, npparbar
-               write(unit_f,fmt) gamma_rel(is_rel,igamma,ipparbar),pparbar_rel(is_rel,igamma,ipparbar),&
-					df0_rel(is_rel,igamma,ipparbar,1),df0_rel(is_rel,igamma,ipparbar,2)
-             enddo
-             write(unit_f,*)
-          enddo
-          close(unit_f)
-    call startup_tock(8,phase_start)
-
-	if (writeOut) write(*,'(a)') '-=-=-=-=-=-=-=-=-'
-
-end subroutine derivative_f0_rel
+end subroutine construct_f0_rel
 
 
 

@@ -60,7 +60,15 @@ module alps_var
   !! rank 0; this flag is not broadcast. [[startup_report]] prints only on rank 0,
   !! independently of [[writeOut]].
 
-  double precision :: startup_seconds(10) = 0.d0
+  character(16) :: rel_cache = 'off'
+  !! Relativistic cache mode: off (default), auto, or refresh; used only on rank 0.
+  !! Set in the optional `&relativistic_params` group, read only for relativistic runs.
+  character(1024) :: rel_cache_dir = 'distribution/'
+  !! Existing directory for native content-addressed cache entries and temporary files.
+  !! Shared by relativistic species; configured only through `&relativistic_params`.
+  public :: rel_cache,rel_cache_dir
+
+  double precision :: startup_seconds(14) = 0.d0
   !! Accumulated local startup wall times in seconds, initially zero.
   !! Repeated [[startup_tock]] calls add to the selected phase, so the normal
   !! rank-0 report sums work across species. No MPI reduction is performed.
@@ -73,14 +81,19 @@ module alps_var
   !! 4 | Spline matrix construction and right-hand-side preparation.
   !! 5 | LAPACK `DGESV` solve.
   !! 6 | Spline evaluation on the transformed target grid.
-  !! 7 | Exponentiation, cone masking, normalization integral, and derivatives.
-  !! 8 | Relativistic diagnostic output, including interleaved normalization divisions.
+  !! 7 | Exponentiation, cone masking, normalization, and derivatives.
+  !! 8 | Read-only relativistic diagnostic output.
   !! 9 | Analytic-continuation fitting, including its diagnostic output.
   !! 10 | Total startup after parameter input and before dispersion calculations.
+  !! 11 | Cache input and strict build identity (build discovery once per execution).
+  !! 12 | Cache read, integrity, and numerical validation.
+  !! 13 | Cache write, verification, and atomic publication.
+  !! 14 | Total relativistic setup, including diagnostics and cache overhead, excluding fitting.
   !!
   !! Phase 10 includes MPI distribution and harmonic/Bessel setup, but excludes
   !! MPI initialization and namelist input. It overlaps phases 1--9 and must not
-  !! be added to them. [[startup_report]] does not reset these accumulators.
+  !! be added to them. Phase 14 overlaps phases 3--8 and 11--13; phase 10 also
+  !! includes cache work. [[startup_report]] does not reset these accumulators.
 
   
 
@@ -158,12 +171,14 @@ module alps_var
   !!Number of parallel momentum space grid points, \(N_\parallel\).
 
   integer :: ngamma=100
-  !!Number of grid points in relativitic \(\Gamma=\sqrt{1+\frac{p_\perp^2+p_\parallel^2}{m_j^2c^2}}\),
-  !!\(N_\Gamma\) (Eqn. 3.14).
+  !! Number of intervals in relativistic \(\Gamma=\sqrt{1+\frac{p_\perp^2+p_\parallel^2}{m_j^2c^2}}\),
+  !! \(N_\Gamma\) (Eqn. 3.14), giving array bounds `0:ngamma`.
+  !! Shared `&relativistic_params` setting; default 100, minimum 2 for relativistic runs.
 
   integer :: npparbar=200
-  !!Number of grid points in dimensionless paralell momentum
-  !!\(\bar{p}_\parallel = p_\parallel/m_j c\), \(N_{\bar{p}_\parallel}\).
+  !! Number of intervals in dimensionless parallel momentum
+  !! \(\bar{p}_\parallel = p_\parallel/m_j c\), \(N_{\bar{p}_\parallel}\), giving bounds `0:npparbar`.
+  !! Shared `&relativistic_params` setting; default 200, minimum 4 for relativistic runs.
 
   integer :: positions_principal=5
   !! Number of parallel momentum steps distant from the resonant momentum
@@ -483,7 +498,7 @@ contains
     !! profiling enabled throughout the interval. MPI must still be initialized.
     !! No barrier or reduction is performed; overlapping intervals remain separate.
     integer, intent(in) :: phase
-    !! Accumulator index in `1:10`; see [[startup_seconds]] for the phase mapping.
+    !! Accumulator index in `1:14`; see [[startup_seconds]] for the phase mapping.
     double precision, intent(in) :: start
     !! Local timestamp returned by [[startup_tick]] for this interval.
     if (profile_startup) startup_seconds(phase)=startup_seconds(phase)+MPI_Wtime()-start
@@ -497,18 +512,20 @@ contains
     !! Accumulators are neither reset nor reduced across ranks.
     integer :: phase
     !! Index of the timing phase being reported.
-    character(64), parameter :: labels(10) = [character(64) :: &
+    character(64), parameter :: labels(14) = [character(64) :: &
          'VDF input', 'Original-grid derivatives and density/current diagnostics', &
          'Relativistic coordinates and spline preparation', 'Spline matrix construction', &
          'LAPACK DGESV solve', 'Spline target-grid evaluation', &
-         'Exponentiation, mask, normalization integral and derivatives', &
-         'Relativistic file output (includes normalization divisions)', &
+         'Exponentiation, mask, normalization and derivatives', &
+         'Relativistic file output', &
          'Analytic-continuation fitting (includes fit diagnostics)', &
-         'Total startup before dispersion (includes MPI/setup)' ]
+         'Total startup before dispersion (includes MPI/setup)', &
+         'Cache identity (includes executable/library discovery)', 'Cache read and validation', &
+         'Cache write, verification and publication', 'Total relativistic setup (includes diagnostics/cache)' ]
     !! Display labels corresponding to the entries of [[startup_seconds]].
     if (.not.profile_startup.or..not.proc0) return
     write(*,'(/,a)') 'Startup elapsed wall times [seconds, rank 0; species phases summed]'
-    do phase=1,10
+    do phase=1,14
        write(*,'(a,1x,f14.6)') trim(labels(phase)),startup_seconds(phase)
     enddo
   end subroutine

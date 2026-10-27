@@ -35,7 +35,7 @@ module alps_io
   private :: get_runname, get_indexed_namelist_unit
   private :: input_unit_exist, input_unit
   private :: map_read, solution_read, spec_read, scan_read, bM_read
-  private :: poly_read
+  private :: poly_read, relativistic_params_read
   public  :: init_param, read_f0, get_unused_unit, alps_error
   public :: output_time, display_credits, isnancheck
 
@@ -47,13 +47,13 @@ contains
     !!Read in system parameters from *.in file.
     !!Only processor 0 calls this routine:
     use alps_var, only : runname, foldername, kperp, kpar, nroots, D_prec, D_gap
-    use alps_var, only : profile_startup
+    use alps_var, only : profile_startup,unit_error
     use alps_var, only : kperp_last, kpar_last, kperp_0, kpar_0
     use alps_var, only : use_map, writeOut, wroots, nspec, numroots, kperp_norm
     use alps_var, only : nperp, npar, arrayName, fit_check, param_fit, fit_type, perp_correction
     use alps_var, only : ns, qs, ms, vA, Bessel_zero, numiter
     use alps_var, only : D_threshold, D_tol, positions_principal
-    use alps_var, only : determine_minima, n_resonance_interval, ngamma, npparbar, Tlim
+    use alps_var, only : determine_minima, n_resonance_interval, ngamma, Tlim
     use alps_var, only : scan_option, n_scan, scan, relativistic, logfit, usebM
     use alps_var, only : maxsteps_fit, n_fits, lambda_initial_fit, lambdafac_fit, epsilon_fit
     use alps_var, only : bMnmaxs, bMBessel_zeros, bMbetas, bMalphas, bMpdrifts
@@ -63,6 +63,11 @@ contains
 
     integer :: ik
     !!Solution index for iterating [[(solution_read(subroutine)]].
+
+    integer :: read_status
+    !! I/O status for the checked system namelist read.
+    character(1024) :: read_message
+    !! Processor-provided diagnostic accompanying a failed system namelist read.
 
     integer :: is
     !!Species index for iterating [[spec_read(subroutine)]],
@@ -79,7 +84,7 @@ contains
     !Namelist read in from input file:
     nameList /system/ &
          kperp, kpar, nspec, nroots, use_map, writeOut, profile_startup,&
-         nperp, npar, ngamma, npparbar, vA, arrayName, Bessel_zero, &
+         nperp, npar, vA, arrayName, Bessel_zero, &
          secant_method, numiter, kperp_norm, D_threshold, &
          D_prec, D_gap, D_tol, positions_principal, Tlim, &
          maxsteps_fit, lambda_initial_fit, lambdafac_fit, epsilon_fit, fit_check, &
@@ -92,7 +97,12 @@ contains
     !runname called earlier in alps_error_init:
     unit=input_unit_no
     open (unit=unit,file=trim(foldername)//trim(runname)//".in",status='old',action='read')
-    read (unit=unit,nml=system)
+    read (unit=unit,nml=system,iostat=read_status,iomsg=read_message)
+    if(read_status/=0) then
+       write(*,'(a)') 'Cannot read &system: '//trim(read_message)
+       write(unit_error,'(a)') 'Cannot read &system: '//trim(read_message)
+       call alps_error(16)
+    endif
 
     if (writeOut) &
          write(*,'(2a)') &
@@ -183,6 +193,9 @@ contains
        endif
        close(unit)
     enddo
+
+    ! Species flags must be known, and ngamma finalized before sizing fits.
+    if(any(relativistic)) call relativistic_params_read
 
     allocate(param_fit(1:nspec,0:max(nperp,ngamma),5,maxval(n_fits)))
     allocate(fit_type(1:nspec,maxval(n_fits)))
@@ -282,6 +295,136 @@ contains
     close(unit)
   end subroutine init_param
 
+
+
+  subroutine relativistic_params_read
+    !! Read the optional shared relativistic group, only after any relativistic species is identified.
+    !! No group means module defaults. Missing and malformed groups are distinct; duplicates are errors.
+    !! A quote/comment-aware header scan permits arbitrary record length, placement, case and inline data.
+    use alps_var, only : runname,foldername,unit_error,ngamma,npparbar,rel_cache,rel_cache_dir
+    use iso_fortran_env, only : iostat_end,iostat_eor
+    implicit none
+    integer :: scan_unit
+    !! Private read-only input unit used for header scanning and the subsequent namelist read.
+    integer :: ios
+    !! I/O status for opening, scanning, rewinding, or reading; includes end-of-record and end-of-file.
+    integer :: close_status
+    !! I/O status returned when closing the private input unit.
+    integer :: groups
+    !! Number of matching relativistic_params headers outside comments and quoted strings.
+    !! Zero retains defaults; more than one is rejected as a duplicate active group.
+    integer :: token_length
+    !! Full length of the header name being scanned, including characters beyond the token buffer.
+    integer :: i
+    !! Character index used when normalizing whitespace and case in rel_cache.
+    integer :: code
+    !! ASCII character code used to recognize header-name characters and normalize the cache mode.
+    character :: ch
+    !! Current input character read without advancing to the next record.
+    character :: quote
+    !! Active single- or double-quote delimiter; a blank indicates scanning outside a quoted string.
+    character(32) :: token
+    !! Lowercase header-name buffer following an ampersand; token_length prevents truncated-name matches.
+    character(1024) :: message
+    !! Processor-provided explanation of an input opening, scanning, rewind, or namelist-read failure.
+    logical :: comment
+    !! True after an unquoted exclamation mark, until the end of the current record.
+    logical :: in_name
+    !! True while collecting a namelist header name after an unquoted, uncommented ampersand.
+    namelist /relativistic_params/ ngamma,npparbar,rel_cache,rel_cache_dir
+
+    open(newunit=scan_unit,file=trim(foldername)//trim(runname)//'.in', &
+         status='old',action='read',iostat=ios,iomsg=message)
+    if(ios/=0) then
+       write(*,'(a)') trim(message)
+       write(unit_error,'(a)') trim(message)
+       call alps_error(17)
+    endif
+    groups=0; quote=' '; comment=.false.; in_name=.false.; token=''; token_length=0
+    do
+       read(scan_unit,'(a)',advance='no',iostat=ios,iomsg=message) ch
+       if(ios==iostat_eor) then
+          call finish_name
+          comment=.false.
+          cycle
+       endif
+       if(ios/=0) exit
+       if(comment) cycle
+       if(quote/=' ') then
+          if(ch==quote) quote=' '
+          cycle
+       endif
+       if(in_name) then
+          code=iachar(ch)
+          if((code>=iachar('a').and.code<=iachar('z')).or. &
+               (code>=iachar('A').and.code<=iachar('Z')).or. &
+               (code>=iachar('0').and.code<=iachar('9')).or.ch=='_') then
+             token_length=token_length+1
+             if(code>=iachar('A').and.code<=iachar('Z')) ch=achar(code+32)
+             if(token_length<=len(token)) token(token_length:token_length)=ch
+             cycle
+          endif
+          call finish_name
+       endif
+       select case(ch)
+       case('!')
+          comment=.true.
+       case("'",'"')
+          quote=ch
+       case('&')
+          in_name=.true.; token=''; token_length=0
+       end select
+    enddo
+    call finish_name
+    if(ios/=iostat_end) then
+       write(*,'(a)') 'Cannot scan relativistic parameters: '//trim(message)
+       write(unit_error,'(a)') 'Cannot scan relativistic parameters: '//trim(message)
+       close(scan_unit,iostat=close_status)
+       call alps_error(17)
+    endif
+    if(groups>1) then
+       write(*,'(a)') 'Duplicate &relativistic_params blocks are not allowed.'
+       write(unit_error,'(a)') 'Duplicate &relativistic_params blocks are not allowed.'
+       close(scan_unit,iostat=close_status)
+       call alps_error(17)
+    endif
+    if(groups==1) then
+       rewind(scan_unit,iostat=ios,iomsg=message)
+       if(ios==0) read(scan_unit,nml=relativistic_params,iostat=ios,iomsg=message)
+       if(ios/=0) then
+          write(*,'(a)') 'Cannot read &relativistic_params: '//trim(message)
+          write(unit_error,'(a)') 'Cannot read &relativistic_params: '//trim(message)
+          close(scan_unit,iostat=close_status)
+          call alps_error(17)
+       endif
+    endif
+    close(scan_unit,iostat=close_status)
+    if(close_status/=0) call alps_error(17)
+
+    do i=1,len(rel_cache)
+       code=iachar(rel_cache(i:i))
+       if(code>=9.and.code<=13) rel_cache(i:i)=' '
+    enddo
+    rel_cache=adjustl(rel_cache)
+    do i=1,len_trim(rel_cache)
+       code=iachar(rel_cache(i:i))
+       if(code>=iachar('A').and.code<=iachar('Z')) rel_cache(i:i)=achar(code+32)
+    enddo
+    select case(trim(rel_cache))
+    case('off','auto','refresh')
+    case default
+       call alps_error(15)
+    end select
+    if(ngamma<2.or.npparbar<4) call alps_error(14)
+  contains
+    subroutine finish_name
+      !! Count a complete matching header name, then reset the host-associated token-scanning state.
+      if(in_name.and.token_length==len('relativistic_params')) then
+         if(token=='relativistic_params') groups=groups+1
+      endif
+      in_name=.false.; token=''; token_length=0
+    end subroutine
+  end subroutine relativistic_params_read
 
 
   subroutine map_read
@@ -1023,6 +1166,15 @@ function input_unit_exist (nml,exist)
        case(14)
           write(*,'(a)') 'ERROR: Relativistic derivative stencils require ngamma>=2 and npparbar>=4.'
           write(unit_error,'(a)') 'ERROR: Relativistic derivative stencils require ngamma>=2 and npparbar>=4.'
+       case(15)
+          write(*,'(a)') 'ERROR: rel_cache must be off, auto, or refresh.'
+          write(unit_error,'(a)') 'ERROR: rel_cache must be off, auto, or refresh.'
+       case(16)
+          write(*,'(a)') 'ERROR: Invalid &system. Move ngamma, npparbar, rel_cache and rel_cache_dir to &relativistic_params.'
+          write(unit_error,'(a)') 'Move ngamma, npparbar, rel_cache and rel_cache_dir to &relativistic_params.'
+       case(17)
+          write(*,'(a)') 'ERROR: Cannot read one valid optional &relativistic_params block.'
+          write(unit_error,'(a)') 'ERROR: Cannot read one valid optional &relativistic_params block.'
        case default
           write(*,'(a)')'ERROR: Unspecified...'
           write(unit_error,'(a)')'ERROR: Unspecified...'

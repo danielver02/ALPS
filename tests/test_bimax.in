@@ -29,9 +29,6 @@ writeOut=.true.
 !Momentum space resolution of f0
 nperp=150
 npar=300
-!Velocity Space Resolution for relativistic calculation
-ngamma=100
-npparbar=200
 !Reference Alfven velocity / c
 vA=1.d-4
 !Name of input array-
