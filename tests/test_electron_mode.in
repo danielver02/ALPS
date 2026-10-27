@@ -10,6 +10,8 @@
 !===============================================
 ! SYSTEM AND PLASMA PARAMETERS
 &system
+!Track timing of subroutines.
+profile_startup=.true.
 !Initial perpendicular and parallel wavenumbers
 !Normalized to reference inertial length
 kperp=1.d-2
