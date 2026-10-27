@@ -127,6 +127,25 @@
 <p>The following namelists and associated input parameters are read in by ALPS from the input file.</p>
 <h3><em>&amp;system</em></h3>
 <p>General system parameters.</p>
+<p><strong><code>profile_startup</code></strong>
+Optional logical in <code>&amp;system</code>, default <code>.false.</code>. 
+When enabled, rank 0 reports elapsed wall time in seconds using <code>MPI_Wtime</code>.
+This includes </p>
+<ul>
+<li>VDF input, </li>
+<li>original-grid processing, </li>
+<li>relativistic preparation (if applicable), </li>
+<li>spline matrix/solve/evaluation, </li>
+<li>postprocessing,</li>
+<li>diagnostic output, </li>
+<li>analytic-continuation fitting, and total </li>
+<li>VDF startup before the first dispersion calculation. </li>
+</ul>
+<p>Species timings are summed. 
+The total starts after parameter input and includes MPI distribution and harmonic/Bessel setup. 
+Normalization and derivatives are completed before diagnostic output; their time is included in postprocessing.
+Fitting time includes its diagnostic output. 
+These are wall times, not CPU times, and detailed reporting is independent of <code>writeOut</code>.</p>
 <p><strong><code>kperp</code></strong><br>
 Initial perpendicular wavevector $k_{\perp} d_{ref}$.</p>
 <p><strong><code>kpar</code></strong><br>
@@ -149,10 +168,6 @@ The input file must have $N_{\perp}+1$ values spanning parallel momentum space.<
 <p><strong><code>npar</code></strong><br>
 Parallel momentum space resolution, $N_{\parallel}$.
 The input file must have $N_{\parallel}+1$ values spanning parallel momentum space.</p>
-<p><strong><code>ngamma</code></strong><br>
-Relativistic momentum space resolution, $N_{\Gamma}$.</p>
-<p><strong><code>npparbar</code></strong><br>
-Relativistic parallel momentum space resolution, $N_{\bar{p}_{\parallel}}$.</p>
 <p><strong><code>vA</code></strong><br>
 Reference Alfven velocity, normalized to the speed of light, $v_{A,ref}/c$.</p>
 <p><strong><code>arrayName</code></strong><br>
@@ -212,6 +227,54 @@ Number of wavevector scans.<br>
 0 turns off wavevector scans.<br>
 Must be 1 or larger for <code>scan_option</code>=1.<br>
 Must be set to 2 for <code>scan_option</code>=2.  </p>
+<h3><em>&amp;relativistic_params</em></h3>
+<p>Optional settings shared by all relativistic species. ALPS reads this group only
+when any <code>&amp;spec_*</code> block sets <code>relat=T</code>, after reading all species and before sizing
+fit arrays. The group may appear anywhere in the file; its header is case-insensitive,
+may be indented, and may have assignments on the same line. Only one active block
+is allowed. A present malformed or truncated block is an error, not a request to use defaults.</p>
+<div class="codehilite"><pre><span></span><code><span class="p">&amp;</span><span class="n">relativistic_params</span>
+<span class="w">  </span><span class="n">ngamma</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">500</span>
+<span class="w">  </span><span class="n">npparbar</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">500</span>
+<span class="w">  </span><span class="n">rel_cache</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'auto'</span>
+<span class="w">  </span><span class="n">rel_cache_dir</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'distribution/'</span>
+<span class="o">/</span>
+</code></pre></div>
+
+<p>The cache is a reusable snapshot of the completed relativistic interpolation. 
+ALPS still reads the original ASCII VDF, but with rel_cache='auto' it first checks whether it has already calculated the transformed grids, normalized distribution, and derivatives for those inputs. 
+These arrays are saved in a binary file, which preserves every floating-point bit without rounding values into ASCII text. 
+The long filename is an automatically generated fingerprint of the VDF contents, interpolation settings, and computational build. 
+Matching inputs can reuse the same file across runs or species; changing relevant inputs produces a different fingerprint. 
+Before loading, ALPS checks compatibility and a checksum to detect damage. 
+If the cache is missing or invalid, ALPS simply calculates the interpolation again and saves a fresh copy. 
+Your original VDF files remain the authoritative inputs, and fitting and dispersion calculations continue normally.</p>
+<p>An absent or empty group uses <code>ngamma=100</code>, <code>npparbar=200</code>, <code>rel_cache='off'</code>, and
+<code>rel_cache_dir='distribution/'</code>. 
+Partial groups retain defaults for omitted fields.
+When no species is relativistic, the entire group is ignored, including validation.</p>
+<p><strong><code>ngamma</code></strong>
+Relativistic momentum space resolution, $N_{\Gamma}$.
+Requires <code>ngamma &gt;= 2</code> when a relativistic species is present.</p>
+<p><strong><code>npparbar</code></strong>
+Relativistic parallel momentum space resolution, $N_{\bar{p}_{\parallel}}$.
+Requires <code>npparbar &gt;= 4</code> to keep the existing three-point resonance stencil in the interior.</p>
+<p><strong><code>rel_cache</code></strong>
+Optional <code>&amp;relativistic_params</code> character parameter, default <code>'off'</code>. Modes are case-insensitive:</p>
+<ul>
+<li><code>'off'</code>: construct the relativistic representation normally, without cache identity or file access.</li>
+<li><code>'auto'</code>: load a fully validated entry, or construct and save one on a miss.</li>
+<li><code>'refresh'</code>: construct every relativistic species and atomically replace its entry.</li>
+</ul>
+<p><strong><code>rel_cache_dir</code></strong>
+Optional <code>&amp;relativistic_params</code> character parameter, default <code>'distribution/'</code>.
+The directory must already exist.
+Only rank 0 accesses entries.
+Missing/unwritable storage, incompatible entries, and integrity failures fall back to normal calculation. Invalid modes are input errors.
+Existing relativistic diagnostic files are still written, including on cache hits and when <code>writeOut=.false.</code>.
+Analytic-continuation fitting is always performed normally.</p>
+<p>Entries are identified by numerical VDF contents, coordinates, construction settings, and strict executable/library compatibility, independently of filenames and species
+indices.</p>
 <h3><em>&amp;guess_m</em></h3>
 <p>Initial guess of complex frequency for $m$th solution.<br>
 Only used when <code>use_map</code>=.false.<br>
