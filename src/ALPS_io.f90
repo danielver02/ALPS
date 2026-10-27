@@ -46,7 +46,8 @@ contains
   subroutine init_param
     !!Read in system parameters from *.in file.
     !!Only processor 0 calls this routine:
-    use alps_var, only : runname, foldername, kperp, kpar, nroots, D_prec, D_gap
+    use alps_var, only : runname, foldername, kperp, kpar, nroots, D_prec, D_gap,
+    use alps_var, only : profile_startup
     use alps_var, only : kperp_last, kpar_last, kperp_0, kpar_0
     use alps_var, only : use_map, writeOut, wroots, nspec, numroots, kperp_norm
     use alps_var, only : nperp, npar, arrayName, fit_check, param_fit, fit_type, perp_correction
@@ -77,7 +78,7 @@ contains
 
     !Namelist read in from input file:
     nameList /system/ &
-         kperp, kpar, nspec, nroots, use_map, writeOut,&
+         kperp, kpar, nspec, nroots, use_map, writeOut, profile_startup,&
          nperp, npar, ngamma, npparbar, vA, arrayName, Bessel_zero, &
          secant_method, numiter, kperp_norm, D_threshold, &
          D_prec, D_gap, D_tol, positions_principal, Tlim, &
@@ -1013,6 +1014,15 @@ function input_unit_exist (nml,exist)
             "ERROR: Polynomial Analytic derivative unavailable for this AC method "
           write(unit_error,'(a)') &
             "ERROR: Polynomial Analytic derivative unavailable for this AC method"
+       case(12)
+          write(*,'(a)') 'ERROR: Relativistic spline DGESV received an invalid argument.'
+          write(unit_error,'(a)') 'ERROR: Relativistic spline DGESV received an invalid argument.'
+       case(13)
+          write(*,'(a)') 'ERROR: Relativistic spline matrix is singular; interpolation stopped.'
+          write(unit_error,'(a)') 'ERROR: Relativistic spline matrix is singular; interpolation stopped.'
+       case(14)
+          write(*,'(a)') 'ERROR: Relativistic derivative stencils require ngamma>=2 and npparbar>=4.'
+          write(unit_error,'(a)') 'ERROR: Relativistic derivative stencils require ngamma>=2 and npparbar>=4.'
        case default
           write(*,'(a)')'ERROR: Unspecified...'
           write(unit_error,'(a)')'ERROR: Unspecified...'

@@ -38,7 +38,8 @@ subroutine derivative_f0_rel(is,is_rel)
     use alps_var, only : f0, pp, nperp, npar, vA, ms, writeOut, arrayName
     use alps_var, only : f0_rel, df0_rel,gamma_rel, pparbar_rel,nspec_rel,ngamma,npparbar
     use alps_var, only : writeOut, pi
-    use alps_io,  only : get_unused_unit
+    use alps_io,  only : get_unused_unit, alps_error
+    use alps_var, only : startup_tick, startup_tock, profile_startup
     implicit none
 
 
@@ -117,7 +118,14 @@ subroutine derivative_f0_rel(is,is_rel)
     integer :: unit_f
     !! Unit for file i/o.
 
+    double precision :: phase_start
+    !! Variable for tracking timing of component subroutines.
+
   ! Determine the minimum and maximum values of Gamma and ppar:
+    call startup_tick(phase_start)
+    ! funct_g_rel uses the three interior points centred in [2,npparbar-2].
+    ! Smaller grids cannot support that stencil without undefined boundary data.
+    if (ngamma<2.or.npparbar<4) call alps_error(14)
 	pparbar_min=999999.d0
 	pparbar_max=-999999.d0
 	gamma_min=999999.d0
@@ -179,10 +187,12 @@ subroutine derivative_f0_rel(is,is_rel)
 
 	if(writeOut) write (*,'(a)') 'Polyharmonic spline interpolation on relativistic grid...'
 
+    call startup_tock(3,phase_start)
 	call polyharmonic_spline(grid_coarse,gamma_coarse,pparbar_coarse,n_coarse,gamma_rel,pparbar_rel,&
 			ngamma,npparbar,smoothing,f0_rel,is_rel,nspec_rel)
 
 	! Stay within the subluminal cone:
+    call startup_tick(phase_start)
 	do igamma=0,ngamma
 	 do ipparbar=0,npparbar
 
@@ -209,6 +219,10 @@ subroutine derivative_f0_rel(is,is_rel)
 
 
     write(*,'(a,i3,a, 2es14.4e3)') 'Integration of species', is,':', integrate
+    ! Round-trip precision for baseline diagnostics; no additional integration.
+    if (profile_startup) write(*,'(a,i0,1x,es26.17e3)') 'Relativistic normalization integral ',is,integrate
+    call startup_tock(7,phase_start)
+    call startup_tick(phase_start)
 
 	 	if(writeOut) write (*,'(a)') 'Writing relativistic grid to file...'
         write(fmt,'(a)') '(2es14.4e3,1es14.4e3)'
@@ -224,9 +238,19 @@ subroutine derivative_f0_rel(is,is_rel)
            write(unit_f,*)
 		  enddo
 	 close(unit_f)
+    call startup_tock(8,phase_start)
+    call startup_tick(phase_start)
 
 
    if(writeOut) write (*,'(a)') 'Determining relativistic derivatives...'
+
+        ! Only the outer edges are placeholders, not derivative approximations.
+        ! Physics consumers use igamma=1:ngamma-1 and ipparbar=1:npparbar-1.
+        ! Keep all interior assignments and their arithmetic order unchanged.
+        df0_rel(is_rel,0,:,:) = 0.d0
+        df0_rel(is_rel,ngamma,:,:) = 0.d0
+        df0_rel(is_rel,:,0,:) = 0.d0
+        df0_rel(is_rel,:,npparbar,:) = 0.d0
 
         do igamma = 1, ngamma-1
            do ipparbar = 1, npparbar-1
@@ -268,6 +292,8 @@ subroutine derivative_f0_rel(is,is_rel)
            enddo
         enddo
 
+    call startup_tock(7,phase_start)
+    call startup_tick(phase_start)
 	if(writeOut) write (*,'(a)') 'Writing relativistic derivatives to file...'
 
 	      write(fmt,'(a)') '(2es14.4e3,2es14.4e3)'
@@ -283,6 +309,7 @@ subroutine derivative_f0_rel(is,is_rel)
              write(unit_f,*)
           enddo
           close(unit_f)
+    call startup_tock(8,phase_start)
 
 	if (writeOut) write(*,'(a)') '-=-=-=-=-=-=-=-=-'
 
@@ -299,6 +326,9 @@ subroutine polyharmonic_spline(grid_coarse,gamma_coarse,pparbar_coarse,n_coarse,
 !! [http://cseweb.ucsd.edu/~sjb/eccv_tps.pdf](http://cseweb.ucsd.edu/~sjb/eccv_tps.pdf)
 !! [http://www.univie.ac.at/nuhag-php/bibtex/open_files/po94_M%20J%20D%20Powell%2003%2093.pdf](http://www.univie.ac.at/nuhag-php/bibtex/open_files/po94_M%20J%20D%20Powell%2003%2093.pdf)
 !! [http://vision.ucsd.edu/sites/default/files/fulltext(4).pdf](http://vision.ucsd.edu/sites/default/files/fulltext(4).pdf)
+    use alps_var, only : startup_tick, startup_tock
+    use alps_var, only : unit_error
+    use alps_io, only : alps_error
 	implicit none
 
   double precision, intent(in) :: grid_coarse(n_coarse)
@@ -328,7 +358,7 @@ subroutine polyharmonic_spline(grid_coarse,gamma_coarse,pparbar_coarse,n_coarse,
   double precision, intent(in) :: smoothing
   !! Smoothing parameter for spline interpolation.
 
-  double precision, intent(out) :: f0_rel(nspec_rel,0:ngamma,0:npparbar)
+  double precision, intent(inout) :: f0_rel(nspec_rel,0:ngamma,0:npparbar)
   !! Fine output grid after interpolation.
 
   integer :: i
@@ -361,10 +391,14 @@ subroutine polyharmonic_spline(grid_coarse,gamma_coarse,pparbar_coarse,n_coarse,
   double precision :: r
   !! Distance between coarse and fine grid points.
 
-  double precision :: INFO
+  integer :: INFO
   !! Info flag for [[dgesv]] from LUPACK/BLAS.
 
 
+  double precision :: phase_start
+  !! Variable to tracking timing of individual subroutines.
+
+    call startup_tick(phase_start)
 	grid_vector=0.d0
 	do i=1,n_coarse
 		grid_vector(i)=grid_coarse(i)
@@ -399,7 +433,20 @@ subroutine polyharmonic_spline(grid_coarse,gamma_coarse,pparbar_coarse,n_coarse,
 	enddo
 
 	weight_param=grid_vector
+    call startup_tock(4,phase_start)
+    call startup_tick(phase_start)
 	call dgesv(n_coarse+3,1,fullmatrix,n_coarse+3,permutation_index,weight_param,n_coarse+3,INFO)
+    call startup_tock(5,phase_start)
+    if (INFO<0) then
+       write(*,'(a,i0)') 'Relativistic spline DGESV: invalid argument ', -INFO
+       write(unit_error,'(a,i0)') 'Relativistic spline DGESV: invalid argument ', -INFO
+       call alps_error(12)
+    elseif (INFO>0) then
+       write(*,'(a,i0)') 'Relativistic spline DGESV: singular pivot ', INFO
+       write(unit_error,'(a,i0)') 'Relativistic spline DGESV: singular pivot ', INFO
+       call alps_error(13)
+    endif
+    call startup_tick(phase_start)
 
 	f0_rel(is_rel,:,:)=0.d0
 	do i=0,ngamma
@@ -422,6 +469,7 @@ subroutine polyharmonic_spline(grid_coarse,gamma_coarse,pparbar_coarse,n_coarse,
 
 		enddo
 	enddo
+    call startup_tock(6,phase_start)
 
 end subroutine
 

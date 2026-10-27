@@ -29,12 +29,19 @@ program alps
   use alps_fns,    only : om_scan, om_double_scan
   use alps_com,    only : pass_instructions, pass_distribution
   use alps_analyt, only : determine_param_fit
+  use alps_var,    only : startup_tick, startup_tock, startup_report
   use mpi
   implicit none
 
   integer :: ik
   !! Index for iterating through wavevector scans with [[om_scan(subroutine)]]
   !! or [[om_double_scan(subroutine)]]
+
+  double precision :: startup_start
+  !! Variable for tracking timing.
+  
+  double precision :: phase_start
+  !! Variable for tracking start of new function call.
 
   !Initialize MPI message passing:
   call mpi_init (ierror)
@@ -61,6 +68,8 @@ program alps
 
   !Read parameters:
   if (proc0) call init_param !alps_io
+  ! The optional timer starts after parameter input; includes all VDF setup and MPI distribution.
+  call startup_tick(startup_start)
 
   !Split Problem Amongst Processors.
   !Pass relevant information from readin:
@@ -72,12 +81,16 @@ program alps
      allocate(f0(1:nspec,0:nperp,0:npar)); f0=0.d0
 
      !Read in f0:
+     call startup_tick(phase_start)
      call read_f0 !alps_io
+     call startup_tock(1,phase_start)
 
      !Calculate pperp, ppar derivatives of f0:
      call derivative_f0 !alps_fns
      !Calculate best fit to f0:
+     call startup_tick(phase_start)
      call determine_param_fit !alps_analyt
+     call startup_tock(9,phase_start)
 
      !f0 not needed for dispersion calculation.
      !Deallocate to save space:
@@ -98,6 +111,8 @@ program alps
   call mpi_barrier(mpi_comm_world,ierror)
 
   !Either:
+  call startup_tock(10,startup_start)
+  call startup_report
   !use_map=.true.  :
   !    use a scan over (omega,gamma) to local dispersion solutions:
   !OR
