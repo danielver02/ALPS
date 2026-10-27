@@ -9,6 +9,26 @@ The following namelists and associated input parameters are read in by ALPS from
 ### *&system*  
 General system parameters.
 
+**`profile_startup`**
+Optional logical in `&system`, default `.false.`. 
+When enabled, rank 0 reports elapsed wall time in seconds using `MPI_Wtime`.
+This includes 
+
+- VDF input, 
+- original-grid processing, 
+- relativistic preparation (if applicable), 
+- spline matrix/solve/evaluation, 
+- postprocessing,
+- diagnostic output, 
+- analytic-continuation fitting, and total 
+- VDF startup before the first dispersion calculation. 
+
+Species timings are summed. 
+The total starts after parameter input and includes MPI distribution and harmonic/Bessel setup. 
+Normalization and derivatives are completed before diagnostic output; their time is included in postprocessing.
+Fitting time includes its diagnostic output. 
+These are wall times, not CPU times, and detailed reporting is independent of `writeOut`.
+
 **`kperp`**  
 Initial perpendicular wavevector $k_{\perp} d_{ref}$.
 
@@ -37,12 +57,6 @@ The input file must have $N_{\perp}+1$ values spanning parallel momentum space.
 **`npar`**  
 Parallel momentum space resolution, $N_{\parallel}$.
 The input file must have $N_{\parallel}+1$ values spanning parallel momentum space.
-
-**`ngamma`**  
-Relativistic momentum space resolution, $N_{\Gamma}$.
-
-**`npparbar`**  
-Relativistic parallel momentum space resolution, $N_{\bar{p}_{\parallel}}$.
 
 **`vA`**  
 Reference Alfven velocity, normalized to the speed of light, $v_{A,ref}/c$.
@@ -123,6 +137,63 @@ Number of wavevector scans.
 Must be 1 or larger for `scan_option`=1.  
 Must be set to 2 for `scan_option`=2.  
 
+
+### *&relativistic_params*
+
+Optional settings shared by all relativistic species. ALPS reads this group only
+when any `&spec_*` block sets `relat=T`, after reading all species and before sizing
+fit arrays. The group may appear anywhere in the file; its header is case-insensitive,
+may be indented, and may have assignments on the same line. Only one active block
+is allowed. A present malformed or truncated block is an error, not a request to use defaults.
+
+```fortran
+&relativistic_params
+  ngamma = 500
+  npparbar = 500
+  rel_cache = 'auto'
+  rel_cache_dir = 'distribution/'
+/
+```
+
+The cache is a reusable snapshot of the completed relativistic interpolation. 
+ALPS still reads the original ASCII VDF, but with rel_cache='auto' it first checks whether it has already calculated the transformed grids, normalized distribution, and derivatives for those inputs. 
+These arrays are saved in a binary file, which preserves every floating-point bit without rounding values into ASCII text. 
+The long filename is an automatically generated fingerprint of the VDF contents, interpolation settings, and computational build. 
+Matching inputs can reuse the same file across runs or species; changing relevant inputs produces a different fingerprint. 
+Before loading, ALPS checks compatibility and a checksum to detect damage. 
+If the cache is missing or invalid, ALPS simply calculates the interpolation again and saves a fresh copy. 
+Your original VDF files remain the authoritative inputs, and fitting and dispersion calculations continue normally.
+
+An absent or empty group uses `ngamma=100`, `npparbar=200`, `rel_cache='off'`, and
+`rel_cache_dir='distribution/'`. 
+Partial groups retain defaults for omitted fields.
+When no species is relativistic, the entire group is ignored, including validation.
+
+**`ngamma`**
+Relativistic momentum space resolution, $N_{\Gamma}$.
+Requires `ngamma >= 2` when a relativistic species is present.
+
+**`npparbar`**
+Relativistic parallel momentum space resolution, $N_{\bar{p}_{\parallel}}$.
+Requires `npparbar >= 4` to keep the existing three-point resonance stencil in the interior.
+
+**`rel_cache`**
+Optional `&relativistic_params` character parameter, default `'off'`. Modes are case-insensitive:
+
+- `'off'`: construct the relativistic representation normally, without cache identity or file access.
+- `'auto'`: load a fully validated entry, or construct and save one on a miss.
+- `'refresh'`: construct every relativistic species and atomically replace its entry.
+
+**`rel_cache_dir`**
+Optional `&relativistic_params` character parameter, default `'distribution/'`.
+The directory must already exist.
+Only rank 0 accesses entries.
+Missing/unwritable storage, incompatible entries, and integrity failures fall back to normal calculation. Invalid modes are input errors.
+Existing relativistic diagnostic files are still written, including on cache hits and when `writeOut=.false.`.
+Analytic-continuation fitting is always performed normally.
+
+Entries are identified by numerical VDF contents, coordinates, construction settings, and strict executable/library compatibility, independently of filenames and species
+indices.
 
 ### *&guess_m*  
 Initial guess of complex frequency for $m$th solution.  

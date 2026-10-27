@@ -39,6 +39,7 @@ subroutine derivative_f0
     use alps_var, only : writeOut, pi, relativistic, usebM
     use alps_io,  only : get_unused_unit
     use alps_fns_rel, only : derivative_f0_rel
+    use alps_var, only : startup_tick, startup_tock
     implicit none
 
 
@@ -82,6 +83,10 @@ subroutine derivative_f0
     double precision :: dppar
     !! Inifinitesimal step in parallel momentum.
 
+    double precision :: phase_start
+    !! Variable for tracking timing.
+
+    call startup_tick(phase_start)
     allocate(current_int(0:nspec)); current_int=0.d0
     allocate(density_int(0:nspec)); density_int=0.d0
 
@@ -206,6 +211,7 @@ subroutine derivative_f0
 
     if (writeOut) write(*,'(a)') '-=-=-=-=-=-=-=-=-'
 
+    call startup_tock(2,phase_start)
 	if (writeOut) write (*,'(a)') 'Determine if relativistic calculation necessary'
 	any_relativistic = .FALSE.
 
