@@ -590,13 +590,14 @@ uninstall-am: uninstall-binPROGRAMS
 
 -include $(wildcard $(DEPDIR)/*.d)
 
-# Tell versions [3.59,3.63) of GNU make to not export all variables.
-# Otherwise a system limit (for SysV at least) may be exceeded.
-.NOEXPORT:
-
 # Explicit module ordering, including clean parallel builds.
+ALPS_io.$(OBJEXT) ALPS_com.$(OBJEXT): ALPS_var.$(OBJEXT)
 ALPS_analyt.$(OBJEXT): ALPS_io.$(OBJEXT) ../distribution/distribution_analyt.$(OBJEXT)
 ALPS_NHDS.$(OBJEXT): ALPS_var.$(OBJEXT)
 ALPS_fns_rel.$(OBJEXT): ALPS_rel_cache.$(OBJEXT) ALPS_analyt.$(OBJEXT)
 ALPS_fns.$(OBJEXT): ALPS_io.$(OBJEXT) ALPS_fns_rel.$(OBJEXT) ALPS_NHDS.$(OBJEXT)
 ALPS.$(OBJEXT): ALPS_com.$(OBJEXT) ALPS_fns.$(OBJEXT)
+
+# Tell versions [3.59,3.63) of GNU make to not export all variables.
+# Otherwise a system limit (for SysV at least) may be exceeded.
+.NOEXPORT:
