@@ -290,7 +290,7 @@ subroutine construct_f0_rel(is,is_rel,integrate)
 		write (*,'(a,i3,a,1es14.4e3)') "Minimum Gamma for species",is,":", gamma_min
 		write (*,'(a,i3,a,1es14.4e3)') "Maximum Pparbar: for species",is,":", pparbar_max
 		write (*,'(a,i3,a,1es14.4e3)') "Minimum Pparbar: for species",is,":", pparbar_min
-		write (*,'(a,i3,a,1es14.4e3)') "Usable Maximum Gamma for species",is,":", gamma_max_use
+		!write (*,'(a,i3,a,1es14.4e3)') "Usable Maximum Gamma for species",is,":", gamma_max_use
     endif
 
     ! For now, the relativistic smoothing is set to zero.
@@ -318,7 +318,8 @@ subroutine construct_f0_rel(is,is_rel,integrate)
 
     do igamma = 0,ngamma
 		do ipparbar = 0,npparbar
-			gamma_rel(is_rel,igamma,ipparbar) = gamma_min + ((gamma_max_use - gamma_min)*igamma)/(1.d0*ngamma)
+      ! DV 20261031: Change gamma_max_use to gamma_max to get full range of gamma.
+			gamma_rel(is_rel,igamma,ipparbar) = gamma_min + ((gamma_max - gamma_min)*igamma)/(1.d0*ngamma)
 			pparbar_rel(is_rel,igamma,ipparbar) = pparbar_min + ((pparbar_max - pparbar_min)*ipparbar)/(1.d0*npparbar)
 		enddo
 	enddo
