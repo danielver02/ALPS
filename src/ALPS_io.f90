@@ -172,6 +172,13 @@ contains
        unit=input_unit_no
        call get_indexed_namelist_unit (unit, "spec", is)
        call spec_read(is)
+       ! Polynomial fits currently use original momentum rows, whereas the
+       ! relativistic continuation requires rows at fixed Lorentz factor.
+       if (relativistic(is).and.ACmethod(is)==2) then
+          write(*,'(a,i0,a,i0)') 'ERROR: Species ',is,' selects relat=T with AC_method=',ACmethod(is)
+          write(unit_error,'(a,i0,a,i0)') 'ERROR: Species ',is,' selects relat=T with AC_method=',ACmethod(is)
+          call alps_error(18)
+       endif
        write(*,'(a,i3,a)')'Species ',is,' : '
        write(*,'(a,es14.4e3,a,es14.4e3,a,es14.4e3)')&
             ' ns/nREF = ',ns(is),' | qs/qREF = ',qs(is),' | ms/mREF = ',ms(is)
@@ -1175,6 +1182,13 @@ function input_unit_exist (nml,exist)
        case(17)
           write(*,'(a)') 'ERROR: Cannot read one valid optional &relativistic_params block.'
           write(unit_error,'(a)') 'ERROR: Cannot read one valid optional &relativistic_params block.'
+       case(18)
+          write(*,'(a)') 'ERROR: Relativistic polynomial analytic continuation is unsupported: current coefficients use'
+          write(*,'(a)') '       (pperp,ppar) rows, but relativistic continuation requires (Gamma,pparbar) rows.'
+          write(*,'(a)') '       Relativistic Chebyshev support is under development. Use a supported functional fit.'
+          write(unit_error,'(a)') 'ERROR: Relativistic polynomial analytic continuation is unsupported: current coefficients use'
+          write(unit_error,'(a)') '       (pperp,ppar) rows, but relativistic continuation requires (Gamma,pparbar) rows.'
+          write(unit_error,'(a)') '       Relativistic Chebyshev support is under development. Use a supported functional fit.'
        case default
           write(*,'(a)')'ERROR: Unspecified...'
           write(unit_error,'(a)')'ERROR: Unspecified...'
