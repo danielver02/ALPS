@@ -443,6 +443,9 @@ the code will fully calculate the dispersion relation based on the distribution 
 
 A particular strength is that you can use that distribution for the creation of the f0-table, the Landau-contour integral (analytic continuation), or for both. Sometimes, you may only want to use it for the f0-table and rely on ALPS's internal fitting. If that is the case, simply set `AC_method=1` and define the fits as usual. At other times, you may only want to use the function from `distribution_analyt.f90` as the fit function, but use a different f0-table. In that is the case, point ALPS to your usual f0-table files, but set `AC_method=0`.
 
+**For relativistic cases:** When using `distribution_analyt` for the analytic continuation, the function must be defined in terms of (`gamma_rel`, `pparbar`).
+When using `distribution_analyt` to generate a new distribution via `generate_distribution`, the function can be defined either in terms of (`pperp`, `ppar`) or in terms of (`gamma_rel`, `pparbar`). 
+
 
 ## 7. Running bi-Maxwellian species
 
