@@ -92,7 +92,7 @@
 
             <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
               <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
-                 title=" 0.3% of total for procedures.">22 statements</a>
+                 title=" 0.5% of total for procedures.">31 statements</a>
             </li>
 
         </ul>
@@ -148,7 +148,7 @@
     </div>
     
     <div class="col-md-9" id='text'>
-    <h2>public  function distribution_analyt(is, pperp, ppar)  
+    <h2>public  function distribution_analyt(is, pperp, ppar, call_ID, mass_gd, vA_gd)  
 </h2>
     
 
@@ -168,7 +168,7 @@
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-is~31"></span>
+              <span class="anchor" id="variable-is"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -183,7 +183,7 @@
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-pperp~5"></span>
+              <span class="anchor" id="variable-pperp"></span>
               double precision
             </td>
 <td></td>
@@ -193,12 +193,12 @@
             <td>::</td>
             <td><strong>pperp</strong></td>
             <td>
-                <p>Perpendicular momentum.</p>
+                <p>Perpendicular momentum and Lorentz factor.</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-ppar~6"></span>
+              <span class="anchor" id="variable-ppar"></span>
               double complex
             </td>
 <td></td>
@@ -208,7 +208,52 @@
             <td>::</td>
             <td><strong>ppar</strong></td>
             <td>
-                <p>Parallel momentum.</p>
+                <p>Parallel momentum (non-relativistic and relativistic).</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-call_id"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>call_ID</strong></td>
+            <td>
+                <p>ID to describe where this function is called from. 1 = analytic continuation, 2 = generate_distribution.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mass_gd"></span>
+              double precision,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>mass_gd</strong></td>
+            <td>
+                <p>Mass and Alfven speed when calling from generate_distribution.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-va_gd"></span>
+              double precision,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>vA_gd</strong></td>
+            <td>
+                <p>Mass and Alfven speed when calling from generate_distribution.</p>
             </td>
         </tr>
     </tbody>
