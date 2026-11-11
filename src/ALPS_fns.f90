@@ -1,4 +1,4 @@
-!Copyright (c) 2023, Kristopher G. Klein and Daniel Verscharen
+!Copyright (c) 2026, Kristopher G. Klein and Daniel Verscharen
 !All rights reserved.
 !
 !This source code is licensed under the BSD-style license found in the
@@ -9,10 +9,10 @@
 !I                              A  L  P  S                                     I
 !I                     Arbitrary Linear Plasma Solver                          I
 !I                                                                             I
-!I                              Version 1.0                                    I
+!I                              Version 1.2                                    I
 !I                                                                             I
 !I  Kristopher Klein   (kgklein@arizona.edu)                                   I
-!I  Daniel Verscharen  (d.verscharen@ucl.ac.uk)                                I
+!I  Daniel Verscharen  (daniel.verscharen@rub.de)                              I
 !I                                                                             I
 !===============================================================================
 

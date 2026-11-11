@@ -1,4 +1,4 @@
-!Copyright (c) 2023, Kristopher G. Klein and Daniel Verscharen
+!Copyright (c) 2026, Kristopher G. Klein and Daniel Verscharen
 !All rights reserved.
 !
 !This source code is licensed under the BSD-style license found in the
@@ -9,10 +9,10 @@
 !I                              A  L  P  S                                     I
 !I                     Arbitrary Linear Plasma Solver                          I
 !I                                                                             I
-!I                              Version 1.0                                    I
+!I                              Version 1.2                                    I
 !I                                                                             I
 !I  Kristopher Klein   (kgklein@arizona.edu)                                   I
-!I  Daniel Verscharen  (d.verscharen@ucl.ac.uk)                                I
+!I  Daniel Verscharen  (daniel.verscharen@rub.de)                              I
 !I                                                                             I
 !===============================================================================
 
@@ -277,7 +277,7 @@ program generate_distribution
           case (0) ! use function from distribution_analyt
 
             ppar_C=cmplx(ppar,0.d0,kind(1.d0))
-            f0 = real(distribution_analyt(is,pperp,ppar_C))
+            f0 = real(distribution_analyt(is,pperp,ppar_C,2,ms(is),vA))
 
 	        case (1) ! bi-Maxwellian
         	   f0 =  exp( -(( (ppar-p_drift(is))**2.d0)/&
