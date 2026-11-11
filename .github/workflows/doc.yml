@@ -13,14 +13,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
-    - uses: actions/setup-python@v4
+    - name: Set up Python
+      uses: actions/setup-python@v7
       with:
         python-version: '3.10'
 
+    - name: Verify Python installation
+      run: |
+        python --version
+        python -m pip --version
+
     - name: Install ford
-      run: pip install ford requests==2.31
+      run: python -m pip install ford requests==2.31
 
     - name: Install graphviz
       run: sudo apt install graphviz
