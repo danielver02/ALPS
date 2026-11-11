@@ -337,15 +337,31 @@ contains
      !dBInzdz=besselI(-n-1,z)+1.d0*n*BInz/z
   endif
 
-
-     ! The tensor in Stix's (10-57)
+! The tensor in Stix's (10-57)
+  if (kperp.EQ.0.d0) then
+     if (abs(n).EQ.1) then
+        Y(1,1)=0.5d0*An
+        Y(2,2)=(0.5d0*(n*n))*An
+     else
+        Y(1,1)=0.d0
+        Y(2,2)=0.d0
+     endif
+     Y(1,3)=0.d0    
+     Y(3,1)=0.d0
+  else
      Y(1,1)=1.d0*(n*n)*BInz*An/z
-     Y(1,2)=-uniti*n*(BInz-dBInzdz)*An
      Y(1,3)=kperp*n*BInz*Bn/(Omega*z)
-     Y(2,1)=uniti*n*(BInz-dBInzdz)*An
      Y(2,2)=(1.d0*(n*n)*BInz/z+2.d0*z*BInz-2.d0*z*dBInzdz)*An
-     Y(2,3)=uniti*kperp*(BInz-dBInzdz)*Bn/Omega
      Y(3,1)=kperp*BInz*n*Bn/(Omega*z)
+  endif
+  
+!     Y(1,1)=1.d0*(n*n)*BInz*An/z
+     Y(1,2)=-uniti*n*(BInz-dBInzdz)*An
+!     Y(1,3)=kperp*n*BInz*Bn/(Omega*z)
+     Y(2,1)=uniti*n*(BInz-dBInzdz)*An
+!     Y(2,2)=(1.d0*(n*n)*BInz/z+2.d0*z*BInz-2.d0*z*dBInzdz)*An
+     Y(2,3)=uniti*kperp*(BInz-dBInzdz)*Bn/Omega
+!     Y(3,1)=kperp*BInz*n*Bn/(Omega*z)
      Y(3,2)=-uniti*kperp*(BInz-dBInzdz)*Bn/Omega
      Y(3,3)=2.d0*(x-1.d0*n*Omega)*BInz*Bn/(kz*vtherm*vtherm*bMalphas(j))
 
