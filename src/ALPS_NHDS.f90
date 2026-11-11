@@ -60,7 +60,6 @@ contains
   !! Subroutine that calculates the susceptibility of species j based on NHDS.
   use alps_var, only : bMnmaxs, bMBessel_zeros, bMbetas, bMalphas,bMpdrifts
   use alps_var, only : ms, qs, ns
-  use alps_var, only : kperp_norm
   implicit none
 
   double complex, intent(out) :: chi(3,3)
@@ -194,11 +193,7 @@ contains
   chi(2,3)=Y(2,3)/(ell*ell)
   chi(3,1)=Y(3,1)/(ell*ell)
   chi(3,2)=Y(3,2)/(ell*ell)
-  if (kperp_norm) then
-     chi(3,3)=2.d0*x*vdrift/(ell*ell*kz*vtherm*vtherm*bMalphas(j))+Y(3,3)/(ell*ell)
-  else
-     chi(3,3)=kperp*kperp*2.d0*x*vdrift/(ell*ell*kz*vtherm*vtherm*bMalphas(j))+Y(3,3)/(ell*ell)
-  endif
+  chi(3,3)=2.d0*x*vdrift/(ell*ell*kz*vtherm*vtherm*bMalphas(j))+Y(3,3)/(ell*ell)
 
   n=0
   chi_low(1,1,n)=Y0(1,1)/(ell*ell)
@@ -209,11 +204,7 @@ contains
   chi_low(2,3,n)=Y0(2,3)/(ell*ell)
   chi_low(3,1,n)=Y0(3,1)/(ell*ell)
   chi_low(3,2,n)=Y0(3,2)/(ell*ell)
-  if (kperp_norm) then
-     chi_low(3,3,n)=Y0(3,3)/(ell*ell)+2.d0*x*vdrift/(ell*ell*kz*vtherm*vtherm*bMalphas(j))
-  else
-     chi_low(3,3,n)=Y0(3,3)/(ell*ell)+kperp*kperp*2.d0*x*vdrift/(ell*ell*kz*vtherm*vtherm*bMalphas(j))
-  endif
+  chi_low(3,3,n)=Y0(3,3)/(ell*ell)+2.d0*x*vdrift/(ell*ell*kz*vtherm*vtherm*bMalphas(j))
 
   n=1
   chi_low(1,1,n)=Y1(1,1)/(ell*ell)
@@ -251,7 +242,6 @@ contains
   !! Calculates the Y-tensor according to Stix for a bi-Maxwelling, using the NHDS calculation.
   use alps_var, only : bMbetas, bMalphas,bMpdrifts
   use alps_var, only : ms, qs, ns
-  use alps_var, only : kperp_norm
   implicit none
 
   double complex, parameter ::  uniti=(0.d0,1.d0)
@@ -348,7 +338,6 @@ contains
   endif
 
 
-  if (kperp_norm) then
      ! The tensor in Stix's (10-57)
      Y(1,1)=1.d0*(n*n)*BInz*An/z
      Y(1,2)=-uniti*n*(BInz-dBInzdz)*An
@@ -359,20 +348,8 @@ contains
      Y(3,1)=kperp*BInz*n*Bn/(Omega*z)
      Y(3,2)=-uniti*kperp*(BInz-dBInzdz)*Bn/Omega
      Y(3,3)=2.d0*(x-1.d0*n*Omega)*BInz*Bn/(kz*vtherm*vtherm*bMalphas(j))
-  else
-     ! The tensor in Stix's (10-57), multiplied by kperp^2 d_ref^2
-     Y(1,1)=1.d0*(n*n)*BInz*An/zp
-     Y(1,2)=-uniti*n*(BInz-dBInzdz)*An*kperp*kperp
-     Y(1,3)=kperp*n*BInz*Bn/(Omega*zp)
-     Y(2,1)=uniti*n*(BInz-dBInzdz)*An*kperp*kperp
-     Y(2,2)=(1.d0*(n*n)*BInz/zp+kperp*kperp*2.d0*z*BInz-kperp*kperp*2.d0*z*dBInzdz)*An
-     Y(2,3)=uniti*kperp*kperp*kperp*(BInz-dBInzdz)*Bn/Omega
-     Y(3,1)=kperp*BInz*n*Bn/(Omega*zp)
-     Y(3,2)=-uniti*kperp*kperp*kperp*(BInz-dBInzdz)*Bn/Omega
-     Y(3,3)=kperp*kperp*2.d0*(x-1.d0*n*Omega)*BInz*Bn/(kz*vtherm*vtherm*bMalphas(j))
-  endif
 
-  end subroutine
+   end subroutine calc_ypsilon
 
 
 
@@ -380,7 +357,6 @@ contains
   !! Subroutine that calculates the susceptibility of species j based on the cold-plasma dispersion relation based on the paper Verscharen & Chandran, ApJ 764, 88, 2013.
   use alps_var, only : bMbetas,bMpdrifts
   use alps_var, only : ms, qs, ns
-  use alps_var, only : kperp_norm
   implicit none
 
   double complex, intent(out) :: chi(3,3)
@@ -446,7 +422,6 @@ contains
   dispM=uniti*(1.d0/(ell*ell))*kperp*vdrift*Omega/((x-kz*vdrift)**2-Omega**2)
 
 
-  if (kperp_norm) then
      chi(1,1)=(dispR+dispL)/2.d0
      chi(1,2)=-uniti*(dispR-dispL)/2.d0
      chi(1,3)=dispJ
@@ -456,10 +431,6 @@ contains
      chi(3,1)=dispJ
      chi(3,2)=-dispM
      chi(3,3)=dispP
-  else
-     write(*,*) 'ERROR: check kperp norm for cold plasma distribution!!'
-     stop
-  endif
      
   end subroutine
 

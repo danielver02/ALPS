@@ -49,7 +49,7 @@ contains
     use alps_var, only : runname, foldername, kperp, kpar, nroots, D_prec, D_gap
     use alps_var, only : profile_startup,unit_error
     use alps_var, only : kperp_last, kpar_last, kperp_0, kpar_0
-    use alps_var, only : use_map, writeOut, wroots, nspec, numroots, kperp_norm
+    use alps_var, only : use_map, writeOut, wroots, nspec, numroots
     use alps_var, only : nperp, npar, arrayName, fit_check, param_fit, fit_type, perp_correction
     use alps_var, only : ns, qs, ms, vA, Bessel_zero, numiter
     use alps_var, only : D_threshold, D_tol, positions_principal
@@ -85,7 +85,7 @@ contains
     nameList /system/ &
          kperp, kpar, nspec, nroots, use_map, writeOut, profile_startup,&
          nperp, npar, vA, arrayName, Bessel_zero, &
-         secant_method, numiter, kperp_norm, D_threshold, &
+         secant_method, numiter, D_threshold, &
          D_prec, D_gap, D_tol, positions_principal, Tlim, &
          maxsteps_fit, lambda_initial_fit, lambdafac_fit, epsilon_fit, fit_check, &
          determine_minima, n_resonance_interval, scan_option, n_scan
