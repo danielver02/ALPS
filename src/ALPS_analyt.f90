@@ -1,4 +1,4 @@
-!Copyright (c) 2023, Kristopher G. Klein and Daniel Verscharen
+!Copyright (c) 2026, Kristopher G. Klein and Daniel Verscharen
 !All rights reserved.
 !
 !This source code is licensed under the BSD-style license found in the
@@ -9,10 +9,10 @@
 !I                              A  L  P  S                                     I
 !I                     Arbitrary Linear Plasma Solver                          I
 !I                                                                             I
-!I                              Version 1.0                                    I
+!I                              Version 1.2                                    I
 !I                                                                             I
 !I  Kristopher Klein   (kgklein@arizona.edu)                                   I
-!I  Daniel Verscharen  (d.verscharen@ucl.ac.uk)                                I
+!I  Daniel Verscharen  (daniel.verscharen@rub.de)                              I
 !I                                                                             I
 !===============================================================================
 
@@ -86,7 +86,25 @@ endif
  select case (ACmethod(is))
  case (0)
     ! Use the pre-coded distribution from distribution/distribution_analyt.f90
-    eval_fit=distribution_analyt(is,pp(is,iperp,1,1),ppar_valC)
+    if (relativistic(is)) then
+
+			! Determine your sproc_rel:
+			 is_rel=0
+			 do is_run=1,nspec
+				if (relativistic(is_run)) then
+					is_rel=is_rel+1
+					if (is_run.EQ.is) sproc_rel=is_rel
+				endif
+			 enddo
+
+		eval_fit=distribution_analyt(is,gamma_rel(sproc_rel,iperp,1),ppar_valC,1,0.d0,0.d0)
+
+	else !non-relativistic:
+
+		eval_fit=distribution_analyt(is,pp(is,iperp,1,1),ppar_valC,1,0.d0,0.d0)
+	endif
+
+
     return
 
 
@@ -650,8 +668,8 @@ subroutine determine_param_fit
 				 ! What are the relevant ranges in pparbar:
 				found_lower=.FALSE.
 				found_upper=.FALSE.
-				ipparbar_lower = 1
-				ipparbar_upper = npparbar - 1
+				ipparbar_lower = 0
+				ipparbar_upper = npparbar
 				do ipparbar=1,npparbar-1
 					if((.NOT.found_lower).AND.(f0_rel(sproc_rel,iperp,ipparbar-1).LE.-1.d0).AND.(f0_rel(sproc_rel,iperp,ipparbar).GT.-1.d0)) then
 						ipparbar_lower = ipparbar
@@ -1076,7 +1094,9 @@ subroutine output_fit(qualitytotal)
 
     else
        select case (ACmethod(is))
-       case (1)
+	
+	  case (0,1)
+	
 	  unit_spec=2000+is
 	  write(specwrite,'(i0)') is
 	  open(unit = unit_spec,file = 'distribution/'//trim(runname)//'.fit_result.'//trim(specwrite)//'.out', status = 'replace')
@@ -1100,7 +1120,7 @@ subroutine output_fit(qualitytotal)
 
 		do igamma=0,ngamma
 		 do ipparbar=0,npparbar
-			ppar_comp=pparbar_rel(sproc_rel,igamma,ipparbar)
+			ppar_comp=cmplx(pparbar_rel(sproc_rel,igamma,ipparbar),0.d0,kind=kind(1.d0))
 			if (f0_rel(sproc_rel,igamma,ipparbar).EQ.-1.d0) then
 				write (unit_spec,*) gamma_rel(sproc_rel,igamma,ipparbar),pparbar_rel(sproc_rel,igamma,ipparbar),&
 					"-1.0",	abs(-1.d0-f0_rel(sproc_rel,igamma,ipparbar))
@@ -1119,7 +1139,7 @@ subroutine output_fit(qualitytotal)
              2.d0 * pi * dgamma_rel * dpparbar * (ms(is) / vA)**3
 
         current(is) = current(is) + &
-             (ppar_comp/ms(is))*qs(is)* ns(is)* real(eval_fit(is,igamma,ppar_comp)) * &
+             (real(ppar_comp)/ms(is))*qs(is)* ns(is)* real(eval_fit(is,igamma,ppar_comp)) * &
              2.d0 * pi * dgamma_rel * dpparbar * (ms(is) / vA)**3
 
 			endif
@@ -1133,7 +1153,7 @@ subroutine output_fit(qualitytotal)
 
 		do iperp=0,nperp
 			do ipar=0,npar
-				ppar_comp=pp(is,iperp,ipar,2)
+				ppar_comp=cmplx(pp(is,iperp,ipar,2),0.d0,kind=kind(1.d0))
 				write (unit_spec,*) pp(is,iperp,ipar,1), pp(is,iperp,ipar,2), real(eval_fit(is,iperp,ppar_comp)), &
          abs(real(eval_fit(is,iperp,ppar_comp))-f0(is,iperp,ipar))/f0(is,iperp,ipar)
 
@@ -1175,7 +1195,7 @@ case (2)
      write (*,'(a,i0)') ' Writing GLLS fit result to files: ispec',is
      do iperp=0,nperp
         do ipar=0,npar
-           ppar_comp=pp(is,iperp,ipar,2)
+           ppar_comp=cmplx(pp(is,iperp,ipar,2),0.d0,kind=kind(1.d0))
            if (f0(is,iperp,ipar).gt.0.d0) then
               write (unit_spec,*) pp(is,iperp,ipar,1), pp(is,iperp,ipar,2), &
                    real(eval_fit(is,iperp,ppar_comp)), &
