@@ -1070,6 +1070,8 @@ end function
 double complex function funct_g_rel(sproc_rel,pparbar,igamma,om,nn,mode)
 !! This function returns the function \(g\) from Eq. (3.2) of the code paper for a relativistic calculation.
 	use alps_var,only : ms,qs,kpar,df0_rel,sproc,vA,npparbar,pparbar_rel,pi,f0_rel
+	use, intrinsic :: iso_fortran_env, only : error_unit
+	use, intrinsic :: ieee_arithmetic, only : ieee_is_finite
 	implicit none
 
   integer, intent(in) :: sproc_rel
@@ -1091,10 +1093,13 @@ double complex function funct_g_rel(sproc_rel,pparbar,igamma,om,nn,mode)
   !! Index of the entries in the T-tensor of Eq. (2.10).
 
   integer :: ipparbar_close
-  !! Index of the relativistic parallel momentum closest to the resonance.
+  !! Interpolation center, selected from the left bracket and adjusted for masks.
 
 	integer :: ipparbar
-  !! Index to loop over relativistic parallel momentum.
+  !! Index to check near the estimated left bracket.
+
+  integer :: idx
+  !! Uniform-grid estimate of the left-bracketing index.
 
   double precision :: dpparbar
   !! Infinitesimal step in relativistic parallel momentum.
@@ -1111,19 +1116,44 @@ double complex function funct_g_rel(sproc_rel,pparbar,igamma,om,nn,mode)
 
 	dpparbar = pparbar_rel(sproc_rel,2,2)-pparbar_rel(sproc_rel,2,1)
 
-	ipparbar_close=-2
-	! determine the closest ipar (on the left) to this p_res_real:
-	do ipparbar=0,npparbar-1
-		if ((pparbar_rel(sproc_rel,igamma,ipparbar+1).GT.pparbar).AND.(pparbar_rel(sproc_rel,igamma,ipparbar).LE.pparbar)) then
-			ipparbar_close=ipparbar
-		endif
-	enddo
+  if (.not.ieee_is_finite(pparbar)) then
+     write(error_unit,*) 'funct_g_rel: nonfinite parallel momentum; species, igamma, p:', sproc_rel,igamma,pparbar
+     error stop 'funct_g_rel: invalid parallel momentum'
+  endif
+  if (pparbar.LT.pparbar_rel(sproc_rel,igamma,0).or. &
+      pparbar.GT.pparbar_rel(sproc_rel,igamma,npparbar)) then
+     write(error_unit,*) 'funct_g_rel: momentum outside parallel grid; species, igamma, p, bounds:', &
+          sproc_rel,igamma,pparbar,pparbar_rel(sproc_rel,igamma,0),pparbar_rel(sproc_rel,igamma,npparbar)
+     error stop 'funct_g_rel: invalid parallel momentum'
+  endif
 
+  if (pparbar.EQ.pparbar_rel(sproc_rel,igamma,npparbar)) then
+     ! The endpoint has no half-open bracket; preserve its intended final center.
+     ipparbar_close = npparbar-2
+  else
+     ! Limit the real estimate before FLOOR to keep the integer conversion bounded.
+     idx = floor(max(0.d0,min(dble(npparbar-1), &
+          (pparbar-pparbar_rel(sproc_rel,igamma,0))/dpparbar)))
+     ipparbar_close = -2
+     do ipparbar=max(0,idx-2),min(npparbar-1,idx+2)
+        if ((pparbar_rel(sproc_rel,igamma,ipparbar+1).GT.pparbar).AND. &
+            (pparbar_rel(sproc_rel,igamma,ipparbar).LE.pparbar)) ipparbar_close=ipparbar
+     enddo
+     if (ipparbar_close.EQ.-2) then
+        write(error_unit,*) 'funct_g_rel: no local left bracket; species, igamma, p, estimate:', &
+             sproc_rel,igamma,pparbar,idx
+        error stop 'funct_g_rel: parallel momentum bracket not found'
+     endif
 
-	if (f0_rel(sproc_rel,igamma,ipparbar_close+1).LE.-1.d0) ipparbar_close = ipparbar_close - 1
-	if (f0_rel(sproc_rel,igamma,ipparbar_close-1).LE.-1.d0) ipparbar_close = ipparbar_close + 1
-
-	if (pparbar.EQ.pparbar_rel(sproc_rel,igamma,npparbar)) ipparbar_close = npparbar-2
+     ! Preserve the sequential mask shifts, skipping neighbors outside the array.
+     ! Nested guards are necessary: Fortran need not short-circuit logical tests.
+     if (ipparbar_close+1.GE.0.and.ipparbar_close+1.LE.npparbar) then
+        if (f0_rel(sproc_rel,igamma,ipparbar_close+1).LE.-1.d0) ipparbar_close = ipparbar_close - 1
+     endif
+     if (ipparbar_close-1.GE.0.and.ipparbar_close-1.LE.npparbar) then
+        if (f0_rel(sproc_rel,igamma,ipparbar_close-1).LE.-1.d0) ipparbar_close = ipparbar_close + 1
+     endif
+  endif
 	if (ipparbar_close.GE.(npparbar-1)) ipparbar_close=npparbar-2
 	if (ipparbar_close.LE.1) ipparbar_close=2
 
