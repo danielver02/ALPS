@@ -208,6 +208,9 @@ subroutine construct_f0_rel(is,is_rel,integrate)
     integer :: ipparbar
     !! Index to loop over relativistic parallel momentum.
 
+    integer :: ipparbar_lower, ipparbar_upper
+    !! First and last unmasked grid points in the current Gamma slice.
+
     integer :: iperp
     !! Index for loop over perpendicular momentum.
 
@@ -234,6 +237,9 @@ subroutine construct_f0_rel(is,is_rel,integrate)
 
     double precision :: dpparbar
     !! Infinitesimal step in relativistic parallel momentum.
+
+    double precision :: slice_integral, gamma_weight
+    !! Parallel trapezoidal integral and outer Gamma endpoint weight.
 
     double precision, allocatable, dimension (:) :: grid_coarse
     !! Coarse input grid for relativistic interpolation.
@@ -347,15 +353,37 @@ subroutine construct_f0_rel(is,is_rel,integrate)
 
       dgamma_rel=gamma_rel(is_rel,2,2)-gamma_rel(is_rel,1,2)
       dpparbar=pparbar_rel(is_rel,2,2)-pparbar_rel(is_rel,2,1)
-        do igamma = 0, ngamma
-             do ipparbar = 0, npparbar
-              if(f0_rel(is_rel,igamma,ipparbar).GT.-1.d0) then
-                integrate = integrate + &
-                     gamma_rel(is_rel,igamma,ipparbar) * f0_rel(is_rel,igamma,ipparbar) * &
-                     2.d0 * pi * dgamma_rel * dpparbar * (ms(is) / vA)**3
-                endif
-             enddo
-        enddo
+      do igamma = 0, ngamma
+         ! As in integrate_resU_rel, locate the valid interval separately per slice.
+         ! Include defined outer grid points here: normalization needs no derivatives.
+         ipparbar_lower = npparbar+1
+         ipparbar_upper = -1
+         do ipparbar = 0, npparbar
+            if (f0_rel(is_rel,igamma,ipparbar).GT.-1.d0) then
+               ipparbar_lower = min(ipparbar_lower,ipparbar)
+               ipparbar_upper = ipparbar
+            endif
+         enddo
+
+         ! Empty and single-point intervals have zero width. Do not extend the
+         ! interval to the curved physical boundary or assign masked points weight.
+         slice_integral = 0.d0
+         if (ipparbar_upper.GT.ipparbar_lower) then
+            slice_integral = 0.5d0 * ( &
+                 gamma_rel(is_rel,igamma,ipparbar_lower) * f0_rel(is_rel,igamma,ipparbar_lower) + &
+                 gamma_rel(is_rel,igamma,ipparbar_upper) * f0_rel(is_rel,igamma,ipparbar_upper))
+            do ipparbar = ipparbar_lower+1, ipparbar_upper-1
+               slice_integral = slice_integral + &
+                    gamma_rel(is_rel,igamma,ipparbar) * f0_rel(is_rel,igamma,ipparbar)
+            enddo
+         endif
+
+         ! Unlike susceptibility integration, both outer Gamma slices are defined.
+         gamma_weight = 1.d0
+         if (igamma.EQ.0.or.igamma.EQ.ngamma) gamma_weight = 0.5d0
+         integrate = integrate + gamma_weight * slice_integral * dpparbar
+      enddo
+      integrate = integrate * dgamma_rel * 2.d0 * pi * (ms(is) / vA)**3
 
 
     do igamma=0,ngamma
