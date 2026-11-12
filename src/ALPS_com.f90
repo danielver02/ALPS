@@ -21,8 +21,87 @@ module alps_com
 
   public :: pass_instructions
   public :: pass_distribution
+  public :: pass_rel_cheb_models, rel_cheb_distribution_info
+  integer, private :: rel_cheb_transfers=0,rel_cheb_collectives=0
+  integer(kind=selected_int_kind(18)), private :: rel_cheb_transfer_bytes=0
 
 contains
+
+
+  subroutine pass_rel_cheb_models(status)
+    !! Initialization only: fixed header, allocation agreement, three payload
+    !! broadcasts, and import agreement. No per-row collectives or fitting.
+    use alps_var, only : proc0,ierror
+    use alps_analyt, only : rel_cheb_initialization_status,rel_cheb_collection_info, &
+         rel_cheb_export,rel_cheb_import,release_rel_cheb_rows,CHEB_SUCCESS,CHEB_INVALID_VALUES,CHEB_ALLOCATION_FAILURE
+    use, intrinsic :: iso_fortran_env, only : int64
+    use mpi
+    implicit none
+    integer, intent(out) :: status
+    integer :: header(6),ns,ng,calls,rows,istat,local_status
+    integer, allocatable :: metadata(:,:)
+    double precision, allocatable :: mapping(:,:),coefficients(:,:)
+    integer(int64) :: bytes,nr
+    rel_cheb_transfers=0; rel_cheb_collectives=0; rel_cheb_transfer_bytes=0
+    header=0
+    if(proc0) then
+       header(1)=rel_cheb_initialization_status()
+       call rel_cheb_collection_info(ns,ng,calls,bytes)
+       header(2)=ns; header(3)=ng
+       if(header(1)==CHEB_SUCCESS.and.ns>0) then
+          call rel_cheb_export(metadata,mapping,coefficients,header(1))
+          if(header(1)==CHEB_SUCCESS) header(4:6)=[size(metadata,1),size(mapping,1),size(coefficients,1)]
+       endif
+    endif
+    call mpi_bcast(header,size(header),MPI_INTEGER,0,MPI_COMM_WORLD,ierror)
+    rel_cheb_collectives=1
+    status=header(1)
+    if(status/=CHEB_SUCCESS.or.header(2)==0) then
+       call release_rel_cheb_rows
+       return
+    endif
+    ! Bounds also protect default-INTEGER MPI counts before allocating buffers.
+    nr=int(header(2),int64)*(int(header(3),int64)+1)
+    local_status=CHEB_INVALID_VALUES
+    if(header(2)>0.and.header(3)>=0.and.all(header(4:6)>0).and.nr<=huge(0)) then
+       if(nr*maxval(header(4:6))<=huge(0)) local_status=CHEB_SUCCESS
+    endif
+    rows=int(min(nr,int(huge(0),int64)))
+    if(.not.proc0.and.local_status==CHEB_SUCCESS) then
+       allocate(metadata(header(4),rows),mapping(header(5),rows),coefficients(header(6),rows),stat=istat)
+       if(istat/=0) local_status=CHEB_ALLOCATION_FAILURE
+    endif
+    call mpi_allreduce(local_status,status,1,MPI_INTEGER,MPI_MAX,MPI_COMM_WORLD,ierror)
+    rel_cheb_collectives=rel_cheb_collectives+1
+    if(status/=CHEB_SUCCESS) then
+       call release_rel_cheb_rows; return
+    endif
+    call mpi_bcast(metadata,size(metadata),MPI_INTEGER,0,MPI_COMM_WORLD,ierror)
+    call mpi_bcast(mapping,size(mapping),MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierror)
+    call mpi_bcast(coefficients,size(coefficients),MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierror)
+    rel_cheb_collectives=rel_cheb_collectives+3
+    local_status=CHEB_SUCCESS
+    if(.not.proc0) call rel_cheb_import(header(2),header(3),metadata,mapping,coefficients,local_status)
+    call mpi_allreduce(local_status,status,1,MPI_INTEGER,MPI_MAX,MPI_COMM_WORLD,ierror)
+    rel_cheb_collectives=rel_cheb_collectives+1
+    if(status/=CHEB_SUCCESS) then
+       call release_rel_cheb_rows; return
+    endif
+    rel_cheb_transfers=1
+    rel_cheb_transfer_bytes=int(size(header),int64)*(storage_size(0)/8)+ &
+         int(size(metadata),int64)*(storage_size(0)/8)+ &
+         (int(size(mapping),int64)+size(coefficients))*(storage_size(0.d0)/8)
+  end subroutine pass_rel_cheb_models
+
+
+  subroutine rel_cheb_distribution_info(transfers,collectives,bytes)
+    !! Lightweight initialization diagnostics; reading them performs no MPI.
+    use, intrinsic :: iso_fortran_env, only : int64
+    implicit none
+    integer, intent(out) :: transfers,collectives
+    integer(int64), intent(out) :: bytes
+    transfers=rel_cheb_transfers; collectives=rel_cheb_collectives; bytes=rel_cheb_transfer_bytes
+  end subroutine rel_cheb_distribution_info
 
 
   subroutine pass_instructions
@@ -227,6 +306,15 @@ contains
 
     logical :: any_relativistic
     !!Check if any component relativistic.
+
+    integer :: cheb_status
+
+    call pass_rel_cheb_models(cheb_status)
+    if(cheb_status/=0) then
+       if(proc0) write(*,'(a,i0)') 'ERROR: relativistic Chebyshev initialization/distribution failed; status=',cheb_status
+       call mpi_abort(MPI_COMM_WORLD,cheb_status,ierror)
+       error stop 'relativistic Chebyshev initialization failed'
+    endif
 
     !+ Broadcast derivative array:
     if (writeOut.and.proc0)&

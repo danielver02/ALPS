@@ -38,8 +38,27 @@ module alps_io
   private :: poly_read, relativistic_params_read
   public  :: init_param, read_f0, get_unused_unit, alps_error
   public :: output_time, display_credits, isnancheck
+  public :: alps_continuation_error
 
 contains
+
+
+  subroutine alps_continuation_error(species,row,status,u)
+    !! Legacy continuation callers cannot inspect a status. Abort the whole
+    !! communicator rather than return an unavailable/underflowed value as zero.
+    !! A worker must not access the root-only log unit.
+    use alps_var, only : proc0,unit_error,ierror
+    use mpi
+    implicit none
+    integer, intent(in) :: species,row,status
+    double complex, intent(in) :: u
+    write(*,'(a,3(a,i0),a,2es24.15)') 'ERROR: relativistic Chebyshev continuation:', &
+         ' species=',species,' igamma=',row,' status=',status,' u=',u
+    if(proc0) write(unit_error,'(a,3(a,i0),a,2es24.15)') 'ERROR: relativistic Chebyshev continuation:', &
+         ' species=',species,' igamma=',row,' status=',status,' u=',u
+    call mpi_abort(MPI_COMM_WORLD,max(1,status),ierror)
+    error stop 'relativistic Chebyshev continuation failed'
+  end subroutine alps_continuation_error
 
 
 

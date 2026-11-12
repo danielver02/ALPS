@@ -28,7 +28,7 @@ program alps
   use alps_fns,    only : map_search
   use alps_fns,    only : om_scan, om_double_scan
   use alps_com,    only : pass_instructions, pass_distribution
-  use alps_analyt, only : determine_param_fit
+  use alps_analyt, only : determine_param_fit,initialize_rel_cheb,CHEB_SUCCESS
   use alps_var,    only : startup_tick, startup_tock, startup_report
   use mpi
   implicit none
@@ -36,6 +36,8 @@ program alps
   integer :: ik
   !! Index for iterating through wavevector scans with [[om_scan(subroutine)]]
   !! or [[om_double_scan(subroutine)]]
+
+  integer :: rel_cheb_status
 
   double precision :: startup_start
   !! Variable for tracking timing.
@@ -87,9 +89,12 @@ program alps
 
      !Calculate pperp, ppar derivatives of f0:
      call derivative_f0 !alps_fns
+     ! Conditional root-only setup, covering both constructed and cached VDFs.
+     ! Normal input still rejects relat=T with AC_method=2.
+     call initialize_rel_cheb(rel_cheb_status)
      !Calculate best fit to f0:
      call startup_tick(phase_start)
-     call determine_param_fit !alps_analyt
+     if(rel_cheb_status==CHEB_SUCCESS) call determine_param_fit !alps_analyt
      call startup_tock(9,phase_start)
 
      !f0 not needed for dispersion calculation.

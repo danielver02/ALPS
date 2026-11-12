@@ -67,6 +67,28 @@ module alps_analyt
      integer :: relative_residual_status=CHEB_DIAG_UNAVAILABLE, rms_residual_status=CHEB_DIAG_UNAVAILABLE
   end type cheb_model
 
+  ! Row availability is distinct from the kernel fit status. No unavailable
+  ! row is represented by fabricated coefficients or an implicit zero model.
+  integer, parameter, public :: REL_CHEB_NOT_BUILT=-1, REL_CHEB_NOT_SELECTED=0
+  integer, parameter, public :: REL_CHEB_FITTED=1, REL_CHEB_REDUCED=2
+  integer, parameter, public :: REL_CHEB_NO_GEOMETRY=3, REL_CHEB_ZERO=4
+  integer, parameter, public :: REL_CHEB_INVALID_SAMPLES=5, REL_CHEB_FIT_FAILURE=6
+  type, public :: rel_cheb_row_info
+     integer :: state=REL_CHEB_NOT_BUILT, kernel_status=CHEB_INVALID_MODEL
+     integer :: species=0, packed_species=0, gamma_index=-1
+     integer :: input_samples=0, geometric_samples=0, masked_samples=0, positive_samples=0
+     real(cheb_dp) :: gamma=0.d0
+  end type rel_cheb_row_info
+  type(cheb_model), allocatable, private :: rel_cheb(:,:)
+  type(rel_cheb_row_info), allocatable, private :: rel_cheb_info(:,:)
+  integer, private :: rel_cheb_fit_calls=0
+  integer, private :: rel_cheb_build_calls=0, rel_cheb_setup_status=CHEB_SUCCESS
+  integer(kind=selected_int_kind(18)), private :: rel_cheb_evaluations=0
+  public :: build_rel_cheb_rows, get_rel_cheb_row, release_rel_cheb_rows, rel_cheb_collection_info
+  public :: initialize_rel_cheb, eval_rel_cheb, rel_cheb_initialization_status
+  ! Narrow collection transfer helpers, used only by ALPS_com initialization.
+  public :: rel_cheb_export, rel_cheb_import
+
   public :: cheb_fit, cheb_evaluate, cheb_evaluate_polynomial
   private :: cheb_fit_direct, cheb_polynomial_real, cheb_polynomial_complex
   private :: cheb_reconstruct, cheb_exp_component
@@ -99,6 +121,374 @@ module alps_analyt
   end interface
 
 contains
+
+
+subroutine initialize_rel_cheb(status)
+  !! Rank-0 hook after derivative_f0, common to fresh and cached VDFs.
+  !! Normal input still rejects relativistic method 2. Tests explicitly set
+  !! internal selections before invoking this same hook; no guard is bypassed.
+  use alps_var, only : proc0,relativistic,ACmethod,usebM,poly_order,gamma_rel,pparbar_rel,f0_rel
+  implicit none
+  integer, intent(out) :: status
+  integer, allocatable :: species(:)
+  logical, allocatable :: selected(:)
+  integer :: is,s,ns,istat
+  call release_rel_cheb_rows
+  status=CHEB_SUCCESS
+  setup: block
+     if(.not.proc0) exit setup
+     status=CHEB_INVALID_VALUES
+     if(.not.allocated(relativistic).or..not.allocated(ACmethod).or..not.allocated(usebM)) exit setup
+     ns=size(relativistic)
+     if(size(ACmethod)/=ns.or.size(usebM)/=ns) exit setup
+     status=CHEB_SUCCESS
+     if(.not.any(relativistic.and.ACmethod==2.and..not.usebM)) exit setup
+     status=CHEB_INVALID_VALUES
+     if(.not.allocated(poly_order)) exit setup
+     if(size(poly_order)/=ns) exit setup
+     if(.not.allocated(gamma_rel).or..not.allocated(pparbar_rel).or..not.allocated(f0_rel)) exit setup
+     allocate(species(count(relativistic)),selected(count(relativistic)),stat=istat)
+     if(istat/=0) then
+        status=CHEB_ALLOCATION_FAILURE; exit setup
+     endif
+     s=0
+     do is=1,ns
+        if(.not.relativistic(is)) cycle
+        s=s+1; species(s)=is; selected(s)=ACmethod(is)==2.and..not.usebM(is)
+     enddo
+     call build_rel_cheb_rows(gamma_rel,pparbar_rel,f0_rel,species,poly_order(species),status,selected)
+  end block setup
+  rel_cheb_setup_status=status
+end subroutine initialize_rel_cheb
+
+
+integer function rel_cheb_initialization_status() result(status)
+  implicit none
+  status=rel_cheb_setup_status
+end function rel_cheb_initialization_status
+
+
+subroutine eval_rel_cheb(packed_species,igamma,u,value,status,derivative)
+  !! Hot path: direct reference to stored coefficients, no model copy, fitting,
+  !! allocation, transformed-table access, or communication. Diagnostics use
+  !! get_rel_cheb_row instead. The counter is for lifecycle validation only.
+  use, intrinsic :: ieee_arithmetic, only : ieee_value,ieee_quiet_nan
+  implicit none
+  integer, intent(in) :: packed_species,igamma
+  complex(cheb_dp), intent(in) :: u
+  complex(cheb_dp), intent(out) :: value
+  integer, intent(out) :: status
+  complex(cheb_dp), intent(out), optional :: derivative
+  real(cheb_dp) :: nan
+  rel_cheb_evaluations=rel_cheb_evaluations+1
+  nan=ieee_value(0.d0,ieee_quiet_nan); value=cmplx(nan,nan,cheb_dp)
+  if(present(derivative)) derivative=value
+  status=CHEB_INVALID_MODEL
+  if(.not.allocated(rel_cheb)) return
+  if(packed_species<1.or.packed_species>size(rel_cheb,1)) return
+  if(igamma<0.or.igamma>ubound(rel_cheb,2)) return
+  status=rel_cheb_info(packed_species,igamma)%kernel_status
+  if(rel_cheb_info(packed_species,igamma)%state/=REL_CHEB_FITTED.and. &
+       rel_cheb_info(packed_species,igamma)%state/=REL_CHEB_REDUCED) return
+  call cheb_evaluate(rel_cheb(packed_species,igamma),u,value,status,derivative)
+end subroutine eval_rel_cheb
+
+
+subroutine rel_cheb_export(metadata,mapping,coefficients,status)
+  !! One contiguous column per row, Gamma-major then packed-species order.
+  !! Minimal evaluator metadata: species/state/status/requested/effective/rank/
+  !! sample_count/representation. Mapping: center/scale/Gamma. Two padded
+  !! coefficient blocks hold c(0:Nmax) and d(0:Nmax). No fit diagnostics/workspaces.
+  use, intrinsic :: iso_fortran_env, only : int64
+  implicit none
+  integer, allocatable, intent(out) :: metadata(:,:)
+  real(cheb_dp), allocatable, intent(out) :: mapping(:,:),coefficients(:,:)
+  integer, intent(out) :: status
+  integer :: s,g,row,nmax,rows,istat,n
+  integer(int64) :: nr,nc
+  status=CHEB_INVALID_MODEL
+  if(.not.allocated(rel_cheb)) return
+  nr=int(size(rel_cheb,1),int64)*size(rel_cheb,2)
+  nmax=0
+  do g=0,ubound(rel_cheb,2)
+     do s=1,size(rel_cheb,1)
+        nmax=max(nmax,rel_cheb(s,g)%effective_degree)
+     enddo
+  enddo
+  nc=2_int64*(int(nmax,int64)+1)
+  status=CHEB_ALLOCATION_FAILURE
+  if(nr>huge(0)/8.or.nc>huge(0)) return
+  if(nr*nc>huge(0)) return ! MPI count uses the project's default INTEGER ABI.
+  rows=int(nr)
+  allocate(metadata(8,rows),mapping(3,rows),coefficients(int(nc),rows),stat=istat)
+  if(istat/=0) return
+  coefficients=0.d0; row=0
+  do g=0,ubound(rel_cheb,2)
+     do s=1,size(rel_cheb,1)
+        row=row+1
+        metadata(:,row)=[rel_cheb_info(s,g)%species,rel_cheb_info(s,g)%state, &
+             rel_cheb_info(s,g)%kernel_status,rel_cheb(s,g)%requested_degree, &
+             rel_cheb(s,g)%effective_degree,rel_cheb(s,g)%rank,rel_cheb(s,g)%sample_count, &
+             rel_cheb(s,g)%representation]
+        mapping(:,row)=[rel_cheb(s,g)%center,rel_cheb(s,g)%scale,rel_cheb_info(s,g)%gamma]
+        if(.not.allocated(rel_cheb(s,g)%coefficients)) cycle
+        n=size(rel_cheb(s,g)%coefficients)
+        coefficients(1:n,row)=rel_cheb(s,g)%coefficients
+        n=size(rel_cheb(s,g)%derivative_coefficients)
+        coefficients(nmax+2:nmax+1+n,row)=rel_cheb(s,g)%derivative_coefficients
+     enddo
+  enddo
+  status=CHEB_SUCCESS
+end subroutine rel_cheb_export
+
+
+subroutine rel_cheb_import(nspecies,last_gamma,metadata,mapping,coefficients,status)
+  !! Rebuild local allocatables without fitting. Omitted fit diagnostics are
+  !! explicitly UNAVAILABLE/NaN; omitted sample-selection counts are -1.
+  use, intrinsic :: ieee_arithmetic, only : ieee_value,ieee_quiet_nan
+  use, intrinsic :: iso_fortran_env, only : int64
+  implicit none
+  integer, intent(in) :: nspecies,last_gamma,metadata(:,:)
+  real(cheb_dp), intent(in) :: mapping(:,:),coefficients(:,:)
+  integer, intent(out) :: status
+  integer :: s,g,row,nmax,n,d,istat
+  real(cheb_dp) :: nan
+  call release_rel_cheb_rows
+  status=CHEB_INVALID_VALUES
+  if(nspecies<1.or.last_gamma<0) return
+  if(size(metadata,1)/=8.or.size(mapping,1)/=3) return
+  if(int(nspecies,int64)*(int(last_gamma,int64)+1)/=size(metadata,2)) return
+  if(size(mapping,2)/=size(metadata,2).or.size(coefficients,2)/=size(metadata,2)) return
+  if(mod(size(coefficients,1),2)/=0.or.size(coefficients,1)<2) return
+  nmax=size(coefficients,1)/2-1
+  allocate(rel_cheb(nspecies,0:last_gamma),rel_cheb_info(nspecies,0:last_gamma),stat=istat)
+  status=CHEB_ALLOCATION_FAILURE
+  if(istat/=0) then
+     call release_rel_cheb_rows; return
+  endif
+  nan=ieee_value(0.d0,ieee_quiet_nan); row=0; status=CHEB_INVALID_MODEL
+  do g=0,last_gamma
+     do s=1,nspecies
+        row=row+1
+        rel_cheb_info(s,g)%species=metadata(1,row)
+        rel_cheb_info(s,g)%state=metadata(2,row); rel_cheb_info(s,g)%kernel_status=metadata(3,row)
+        rel_cheb_info(s,g)%packed_species=s; rel_cheb_info(s,g)%gamma_index=g
+        rel_cheb_info(s,g)%gamma=mapping(3,row)
+        rel_cheb_info(s,g)%input_samples=-1; rel_cheb_info(s,g)%geometric_samples=-1
+        rel_cheb_info(s,g)%masked_samples=-1; rel_cheb_info(s,g)%positive_samples=-1
+        rel_cheb(s,g)%requested_degree=metadata(4,row); rel_cheb(s,g)%effective_degree=metadata(5,row)
+        rel_cheb(s,g)%rank=metadata(6,row); rel_cheb(s,g)%sample_count=metadata(7,row)
+        rel_cheb(s,g)%representation=metadata(8,row); rel_cheb(s,g)%fit_status=metadata(3,row)
+        rel_cheb(s,g)%center=mapping(1,row); rel_cheb(s,g)%scale=mapping(2,row)
+        rel_cheb(s,g)%residual_norm=nan; rel_cheb(s,g)%relative_residual=nan; rel_cheb(s,g)%rms_residual=nan
+        rel_cheb(s,g)%svd_tolerance=nan; rel_cheb(s,g)%singular_value_min=nan; rel_cheb(s,g)%singular_value_max=nan
+        if(metadata(1,row)<=0) goto 900
+        if(metadata(1,row)/=metadata(1,s)) goto 900
+        if(s>1) then
+           if(metadata(1,row)<=metadata(1,s-1)) goto 900
+        endif
+        if(metadata(8,row)/=CHEB_LOG10) goto 900
+        select case(metadata(2,row))
+        case(REL_CHEB_FITTED,REL_CHEB_REDUCED)
+           if(metadata(2,row)==REL_CHEB_FITTED.and.metadata(3,row)/=CHEB_SUCCESS) goto 900
+           if(metadata(2,row)==REL_CHEB_REDUCED.and.metadata(3,row)/=CHEB_REDUCED) goto 900
+           d=metadata(5,row)
+           if(d<0.or.d>nmax) goto 900
+           allocate(rel_cheb(s,g)%coefficients(0:d), &
+                rel_cheb(s,g)%derivative_coefficients(0:max(0,d-1)),stat=istat)
+           if(istat/=0) then
+              status=CHEB_ALLOCATION_FAILURE; goto 900
+           endif
+           rel_cheb(s,g)%coefficients=coefficients(1:d+1,row)
+           n=max(1,d)
+           rel_cheb(s,g)%derivative_coefficients=coefficients(nmax+2:nmax+1+n,row)
+           if(.not.cheb_model_valid(rel_cheb(s,g))) goto 900
+        case(REL_CHEB_NO_GEOMETRY)
+           if(metadata(3,row)/=CHEB_NO_SAMPLES) goto 900
+        case(REL_CHEB_ZERO)
+           if(metadata(3,row)/=CHEB_NO_POSITIVE_SAMPLES) goto 900
+        case(REL_CHEB_NOT_SELECTED)
+           if(metadata(3,row)/=CHEB_INVALID_MODEL) goto 900
+        case default
+           goto 900 ! Unexpected root failures must be communicated before payload transfer.
+        end select
+     enddo
+  enddo
+  status=CHEB_SUCCESS
+  return
+900 call release_rel_cheb_rows
+end subroutine rel_cheb_import
+
+
+subroutine build_rel_cheb_rows(gamma,parallel,distribution,species,degrees,status,selected,diagnostic_unit)
+  !! Explicit initialization entry: invoke on rank 0 after derivative_f0 has
+  !! loaded/constructed and normalized the transformed tables. The conditional
+  !! initialization hook remains unreachable through guarded relativistic input.
+  !! species maps packed slots to original species; degrees=poly_order(species).
+  !! selected optionally restricts applicable slots, without changing packing.
+  !! Rebuilding first releases this collection only. Inputs are never modified.
+  !! SUCCESS means construction completed without unexpected row failures;
+  !! expected empty/zero rows still have unavailable models and explicit states.
+  !! Otherwise return the first unexpected kernel error, retain classifications
+  !! for every row, and report each failure. Diagnostics remain in log10 space.
+  use, intrinsic :: ieee_arithmetic, only : ieee_is_finite,ieee_value,ieee_quiet_nan
+  use, intrinsic :: iso_fortran_env, only : error_unit
+  implicit none
+  real(cheb_dp), intent(in) :: gamma(:,0:,0:),parallel(:,0:,0:),distribution(:,0:,0:)
+  integer, intent(in) :: species(:),degrees(:)
+  integer, intent(out) :: status
+  logical, intent(in), optional :: selected(:)
+  integer, intent(in), optional :: diagnostic_unit
+  real(cheb_dp), allocatable :: nodes(:),values(:)
+  integer :: ns,ng,np,s,g,j,n,code,istat,unit
+
+  call release_rel_cheb_rows
+  rel_cheb_build_calls=1
+  status=CHEB_INVALID_VALUES; unit=error_unit
+  if(present(diagnostic_unit)) unit=diagnostic_unit
+  ns=size(distribution,1); ng=ubound(distribution,2); np=ubound(distribution,3)
+  if(any(shape(gamma)/=shape(distribution)).or.any(shape(parallel)/=shape(distribution))) return
+  if(size(species)/=ns.or.size(degrees)/=ns) return
+  if(present(selected)) then
+     if(size(selected)/=ns) return
+  endif
+  if(any(species<=0)) return
+  do s=2,ns
+     if(species(s)<=species(s-1)) return
+  enddo
+  if(ng<0.or.np<0) return
+  allocate(rel_cheb(ns,0:ng),rel_cheb_info(ns,0:ng),nodes(0:np),values(0:np),stat=istat)
+  if(istat/=0) then
+     call release_rel_cheb_rows
+     status=CHEB_ALLOCATION_FAILURE; return
+  endif
+  status=CHEB_SUCCESS
+  do s=1,ns
+     do g=0,ng
+        rel_cheb_info(s,g)%species=species(s)
+        rel_cheb_info(s,g)%packed_species=s; rel_cheb_info(s,g)%gamma_index=g
+        rel_cheb_info(s,g)%input_samples=np+1
+        rel_cheb_info(s,g)%gamma=ieee_value(0.d0,ieee_quiet_nan)
+        rel_cheb(s,g)%representation=CHEB_LOG10
+        rel_cheb(s,g)%requested_degree=degrees(s)
+        if(present(selected)) then
+           if(.not.selected(s)) then
+              rel_cheb_info(s,g)%state=REL_CHEB_NOT_SELECTED
+              cycle
+           endif
+        endif
+        n=0
+        do j=0,np
+           ! Test finiteness before comparing: quiet NaNs must reach the
+           ! kernel's validation, not raise invalid in a sentinel comparison.
+           if(ieee_is_finite(distribution(s,g,j))) then
+              if(distribution(s,g,j)==-1.d0) then
+                 rel_cheb_info(s,g)%masked_samples=rel_cheb_info(s,g)%masked_samples+1
+                 cycle
+              endif
+              if(distribution(s,g,j)>0.d0) &
+                   rel_cheb_info(s,g)%positive_samples=rel_cheb_info(s,g)%positive_samples+1
+           endif
+           nodes(n)=parallel(s,g,j); values(n)=distribution(s,g,j); n=n+1
+        enddo
+        rel_cheb_info(s,g)%geometric_samples=n
+        if(degrees(s)<0) then
+           code=CHEB_INVALID_DEGREE
+        elseif(.not.all(ieee_is_finite(gamma(s,g,:)))) then
+           code=CHEB_INVALID_COORDINATES
+        elseif(any(gamma(s,g,:)<1.d0)) then
+           code=CHEB_INVALID_COORDINATES
+        elseif(any(gamma(s,g,:)/=gamma(s,g,0))) then
+           code=CHEB_INVALID_COORDINATES
+        else
+           rel_cheb_info(s,g)%gamma=gamma(s,g,0)
+           if(n==0) then
+              code=CHEB_NO_SAMPLES
+           else
+              rel_cheb_fit_calls=rel_cheb_fit_calls+1
+              call cheb_fit(nodes(:n-1),values(:n-1),degrees(s),rel_cheb(s,g),code,representation=CHEB_LOG10)
+           endif
+        endif
+        rel_cheb(s,g)%fit_status=code
+        rel_cheb_info(s,g)%kernel_status=code
+        select case(code)
+        case(CHEB_SUCCESS)
+           rel_cheb_info(s,g)%state=REL_CHEB_FITTED
+        case(CHEB_REDUCED)
+           rel_cheb_info(s,g)%state=REL_CHEB_REDUCED
+        case(CHEB_NO_SAMPLES)
+           rel_cheb_info(s,g)%state=REL_CHEB_NO_GEOMETRY
+        case(CHEB_NO_POSITIVE_SAMPLES)
+           rel_cheb_info(s,g)%state=REL_CHEB_ZERO
+        case(CHEB_INVALID_COORDINATES,CHEB_INVALID_VALUES,CHEB_NEGATIVE_SAMPLES,CHEB_INTERIOR_ZERO)
+           rel_cheb_info(s,g)%state=REL_CHEB_INVALID_SAMPLES
+        case default
+           rel_cheb_info(s,g)%state=REL_CHEB_FIT_FAILURE
+        end select
+        if(rel_cheb_info(s,g)%state==REL_CHEB_INVALID_SAMPLES.or. &
+             rel_cheb_info(s,g)%state==REL_CHEB_FIT_FAILURE) then
+           if(status==CHEB_SUCCESS) status=code
+           write(unit,'(a,7(a,i0))') 'Relativistic Chebyshev row failure:', &
+                ' species=',species(s),' packed_species=',s,' igamma=',g,' kernel_status=',code, &
+                ' input=',np+1,' unmasked=',n,' positive=',rel_cheb_info(s,g)%positive_samples
+        endif
+     enddo
+  enddo
+end subroutine build_rel_cheb_rows
+
+
+subroutine get_rel_cheb_row(packed_species,igamma,model,info,status)
+  !! Read-only access by deep copy. Changes to the returned model cannot change
+  !! stored coefficients. Unavailable rows return their kernel status and state;
+  !! absent collections/invalid indices return INVALID_MODEL, NOT_BUILT.
+  implicit none
+  integer, intent(in) :: packed_species,igamma
+  type(cheb_model), intent(out) :: model
+  type(rel_cheb_row_info), intent(out) :: info
+  integer, intent(out) :: status
+  status=CHEB_INVALID_MODEL
+  if(.not.allocated(rel_cheb)) return
+  if(packed_species<1.or.packed_species>size(rel_cheb,1)) return
+  if(igamma<0.or.igamma>ubound(rel_cheb,2)) return
+  model=rel_cheb(packed_species,igamma); info=rel_cheb_info(packed_species,igamma)
+  status=info%kernel_status
+end subroutine get_rel_cheb_row
+
+
+subroutine rel_cheb_collection_info(nspecies,last_gamma,fit_calls,coefficient_bytes,build_calls,evaluations)
+  !! Introspection only; coefficient_bytes excludes derived-type/descriptor
+  !! overhead and counts both value and derivative payloads. No fitting occurs.
+  use, intrinsic :: iso_fortran_env, only : int64
+  implicit none
+  integer, intent(out) :: nspecies,last_gamma,fit_calls
+  integer(int64), intent(out) :: coefficient_bytes
+  integer, intent(out), optional :: build_calls
+  integer(int64), intent(out), optional :: evaluations
+  integer :: s,g
+  nspecies=0; last_gamma=-1; fit_calls=rel_cheb_fit_calls; coefficient_bytes=0_int64
+  if(present(build_calls)) build_calls=rel_cheb_build_calls
+  if(present(evaluations)) evaluations=rel_cheb_evaluations
+  if(.not.allocated(rel_cheb)) return
+  nspecies=size(rel_cheb,1); last_gamma=ubound(rel_cheb,2)
+  do g=0,last_gamma
+     do s=1,nspecies
+        if(allocated(rel_cheb(s,g)%coefficients)) coefficient_bytes=coefficient_bytes+ &
+             int(size(rel_cheb(s,g)%coefficients),int64)*(storage_size(0.d0)/8)
+        if(allocated(rel_cheb(s,g)%derivative_coefficients)) coefficient_bytes=coefficient_bytes+ &
+             int(size(rel_cheb(s,g)%derivative_coefficients),int64)*(storage_size(0.d0)/8)
+     enddo
+  enddo
+end subroutine rel_cheb_collection_info
+
+
+subroutine release_rel_cheb_rows
+  !! Releasing parent arrays also releases all allocatable model components.
+  implicit none
+  if(allocated(rel_cheb)) deallocate(rel_cheb)
+  if(allocated(rel_cheb_info)) deallocate(rel_cheb_info)
+  rel_cheb_fit_calls=0
+  rel_cheb_build_calls=0; rel_cheb_evaluations=0; rel_cheb_setup_status=CHEB_SUCCESS
+end subroutine release_rel_cheb_rows
 
 
 subroutine cheb_fit(u,values,requested_degree,model,status,rcond,representation)
@@ -937,14 +1327,14 @@ end subroutine cheb_complex_multiply
 
 
 
-double complex function eval_fit(is,iperp,ppar_valC,dfpar)
+double complex function eval_fit(is,iperp,ppar_valC,dfpar,status)
   !! This function evaluates the fit to f0 at and the complex parallel
   !! momentum ppar_valC. It requires the fit parameters that will be determined
   !! by the subroutine [[determine_param_fit(subroutine)]].
 
         use alps_var, only : fit_type, pp, param_fit, n_fits, gamma_rel,nspec,relativistic
         use alps_var, only : ACmethod, poly_fit_coeffs, poly_order
-		use alps_io, only : alps_error
+		use alps_io, only : alps_error,alps_continuation_error
 	use alps_distribution_analyt, only : distribution_analyt
 	implicit none
 
@@ -984,6 +1374,24 @@ double complex function eval_fit(is,iperp,ppar_valC,dfpar)
 
 	double complex, intent(out), optional :: dfpar
 	!! Analytic derivative with respect to parallel momentum from polynomial representation. 
+
+integer, intent(out), optional :: status
+integer :: cheb_status
+! For relativistic method 2, iperp is the existing Gamma row and ppar_valC
+! is already u=pparbar. No coordinate transformation or derivative stencil
+! belongs in this adapter. Calls without status fail explicitly on any
+! non-SUCCESS result, including underflow; no silent zero policy is introduced.
+if(present(status)) status=CHEB_SUCCESS
+if(ACmethod(is)==2.and.relativistic(is)) then
+   sproc_rel=count(relativistic(1:is))
+   call eval_rel_cheb(sproc_rel,iperp,ppar_valC,eval_fit,cheb_status,dfpar)
+   if(present(status)) then
+      status=cheb_status
+   elseif(cheb_status/=CHEB_SUCCESS) then
+      call alps_continuation_error(is,iperp,cheb_status,ppar_valC)
+   endif
+   return
+endif
 
 if (present(dfpar)) then
    if (ACmethod(is) /= 2) then
@@ -1442,6 +1850,9 @@ subroutine determine_param_fit
     perp_correction(is,:)=1.d0
 
     		 elseif (ACmethod(is).EQ.2) then
+
+                                ! Relativistic rows were built once by initialize_rel_cheb.
+                                if(relativistic(is)) cycle
 
 			 	write (*,'(a,i2)') ' Using polynomial representation for species ',is
 
