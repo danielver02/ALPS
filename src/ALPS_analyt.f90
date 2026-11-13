@@ -168,7 +168,7 @@ integer function rel_cheb_initialization_status() result(status)
 end function rel_cheb_initialization_status
 
 
-subroutine eval_rel_cheb(packed_species,igamma,u,value,status,derivative)
+subroutine eval_rel_cheb(packed_species,igamma,u,value,status,derivative,value_status,derivative_status)
   !! Hot path: direct reference to stored coefficients, no model copy, fitting,
   !! allocation, transformed-table access, or communication. Diagnostics use
   !! get_rel_cheb_row instead. The counter is for lifecycle validation only.
@@ -179,18 +179,26 @@ subroutine eval_rel_cheb(packed_species,igamma,u,value,status,derivative)
   complex(cheb_dp), intent(out) :: value
   integer, intent(out) :: status
   complex(cheb_dp), intent(out), optional :: derivative
+  integer, intent(out), optional :: value_status,derivative_status
   real(cheb_dp) :: nan
   rel_cheb_evaluations=rel_cheb_evaluations+1
   nan=ieee_value(0.d0,ieee_quiet_nan); value=cmplx(nan,nan,cheb_dp)
   if(present(derivative)) derivative=value
   status=CHEB_INVALID_MODEL
+  if(present(value_status)) value_status=status
+  if(present(derivative_status)) then
+     derivative_status=CHEB_NOT_REQUESTED
+     if(present(derivative)) derivative_status=status
+  endif
   if(.not.allocated(rel_cheb)) return
   if(packed_species<1.or.packed_species>size(rel_cheb,1)) return
   if(igamma<0.or.igamma>ubound(rel_cheb,2)) return
   status=rel_cheb_info(packed_species,igamma)%kernel_status
+  if(present(value_status)) value_status=status
+  if(present(derivative).and.present(derivative_status)) derivative_status=status
   if(rel_cheb_info(packed_species,igamma)%state/=REL_CHEB_FITTED.and. &
        rel_cheb_info(packed_species,igamma)%state/=REL_CHEB_REDUCED) return
-  call cheb_evaluate(rel_cheb(packed_species,igamma),u,value,status,derivative)
+  call cheb_evaluate(rel_cheb(packed_species,igamma),u,value,status,derivative,value_status,derivative_status)
 end subroutine eval_rel_cheb
 
 
@@ -1327,7 +1335,7 @@ end subroutine cheb_complex_multiply
 
 
 
-double complex function eval_fit(is,iperp,ppar_valC,dfpar,status)
+double complex function eval_fit(is,iperp,ppar_valC,dfpar,status,value_status,derivative_status)
   !! This function evaluates the fit to f0 at and the complex parallel
   !! momentum ppar_valC. It requires the fit parameters that will be determined
   !! by the subroutine [[determine_param_fit(subroutine)]].
@@ -1376,15 +1384,23 @@ double complex function eval_fit(is,iperp,ppar_valC,dfpar,status)
 	!! Analytic derivative with respect to parallel momentum from polynomial representation. 
 
 integer, intent(out), optional :: status
+! Per-output reconstruction statuses for the relativistic Chebyshev adapter.
+! The aggregate status and status-less fail-fast policy remain unchanged.
+integer, intent(out), optional :: value_status,derivative_status
 integer :: cheb_status
 ! For relativistic method 2, iperp is the existing Gamma row and ppar_valC
 ! is already u=pparbar. No coordinate transformation or derivative stencil
 ! belongs in this adapter. Calls without status fail explicitly on any
 ! non-SUCCESS result, including underflow; no silent zero policy is introduced.
 if(present(status)) status=CHEB_SUCCESS
+if(present(value_status)) value_status=CHEB_SUCCESS
+if(present(derivative_status)) then
+   derivative_status=CHEB_NOT_REQUESTED
+   if(present(dfpar)) derivative_status=CHEB_SUCCESS
+endif
 if(ACmethod(is)==2.and.relativistic(is)) then
    sproc_rel=count(relativistic(1:is))
-   call eval_rel_cheb(sproc_rel,iperp,ppar_valC,eval_fit,cheb_status,dfpar)
+   call eval_rel_cheb(sproc_rel,iperp,ppar_valC,eval_fit,cheb_status,dfpar,value_status,derivative_status)
    if(present(status)) then
       status=cheb_status
    elseif(cheb_status/=CHEB_SUCCESS) then

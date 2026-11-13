@@ -1214,7 +1214,7 @@ end function funct_g_rel
 
 double complex function landau_integrate_rel(om, nn, mode)
 !! This function evaluates the Landau contour according to Eqs. (3.8) and (3.9) of the code paper for a relativistic calculation.
-	use alps_var, only : ngamma, gamma_rel,pparbar_rel, pi, ms, qs, kpar, sproc, vA
+	use alps_var, only : ngamma, gamma_rel,pparbar_rel, pi, ms, qs, kpar, sproc, vA, ACmethod
 	use alps_analyt, only: eval_fit
 	implicit none
 
@@ -1253,6 +1253,9 @@ double complex function landau_integrate_rel(om, nn, mode)
    double complex :: dfpparbar_C
    !! Derivative of f0 evaluated at resonance.
 
+   double complex :: f0_res_C
+   !! Distribution value returned with its analytic parallel derivative.
+
    double complex :: pparbar_res
    !! Relativistic parallel resonance momentum.
 
@@ -1285,7 +1288,13 @@ double complex function landau_integrate_rel(om, nn, mode)
           dfgamma_C=(eval_fit(sproc,igamma+1,pparbar_res)-eval_fit(sproc,igamma-1,pparbar_res))/(2.d0*dgamma_rel)
       endif
 
-      dfpparbar_C=(eval_fit(sproc,igamma,pparbar_res+dpparbar)-eval_fit(sproc,igamma,pparbar_res-dpparbar))/(2.d0*dpparbar)
+      if (ACmethod(sproc).EQ.2) then
+        ! The row model supplies dF/du at fixed Gamma, u=pparbar, including
+        ! logarithmic reconstruction and coordinate scaling. No extra factor.
+        f0_res_C=eval_fit(sproc,igamma,pparbar_res,dfpar=dfpparbar_C)
+      else
+        dfpparbar_C=(eval_fit(sproc,igamma,pparbar_res+dpparbar)-eval_fit(sproc,igamma,pparbar_res-dpparbar))/(2.d0*dpparbar)
+      endif
 
 			landau_integrate_rel = landau_integrate_rel - h * ( &
 				om*dfgamma_C+(kpar/(vA))*dfpparbar_C) * int_T_res_rel(sproc_rel,nn, igamma,pparbar_res, mode)

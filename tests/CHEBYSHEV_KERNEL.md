@@ -224,6 +224,9 @@ frequency-, wavevector-, harmonic-, or row-dependent communication occurs.
 ```fortran
 call eval_rel_cheb(is_rel, igamma, complex_u, value, status, derivative)
 value = eval_fit(original_species, igamma, complex_u, status=status)
+! Optional trailing outputs on both adapters mirror cheb_evaluate:
+value = eval_fit(original_species, igamma, complex_u, dfpar=derivative, &
+                 status=status, value_status=vs, derivative_status=ds)
 ```
 
 The direct accessor evaluates the private stored model in place: no model copy,
@@ -241,10 +244,34 @@ With an explicit status output, continuation callers receive kernel statuses,
 including unavailable rows and underflow. Without one, any non-SUCCESS result
 uses `alps_continuation_error` to report species/row/status/u and abort the MPI
 communicator. In particular, underflow is not silently accepted by legacy
-continuation callers. The existing `landau_integrate_rel` source, neighboring-row
-evaluations, Gamma/parallel finite differences, resonant numerator, and physical
-support tests are unchanged. Analytic derivatives are available for independent
-checks but are not substituted into production stencils.
+continuation callers. Per-output statuses distinguish value underflow from a
+representable derivative, derivative-only underflow, and derivative overflow
+(`status=CHEB_LOG_DERIVATIVE_FAILURE`, `derivative_status=CHEB_LOG_OVERFLOW`).
+Hard failures publish quiet NaNs. Unavailable rows propagate their kernel status;
+an unrequested derivative has `CHEB_NOT_REQUESTED`.
+
+In Task 3D.2, relativistic method 2 in `landau_integrate_rel` obtains the value
+and analytic physical derivative in a single `eval_fit(...,dfpar=...)` call.
+This derivative is at fixed Gamma with respect to `u=pparbar`; its logarithmic
+chain rule and coordinate scaling are already included. All other methods keep
+their parallel finite differences. The neighboring-row Gamma differences,
+resonant numerator, support gate and integration remain unchanged. The normal
+relativistic method-2 input guard is still active.
+
+Focused integration and paired fixed-frequency checks (scratch files only):
+
+```bash
+bash tests/run_rel_analytic_parallel.sh
+bash tests/run_rel_parallel_susceptibility.sh
+```
+
+The latter instruments copies of the existing Task-3D driver and Landau routine,
+then compares old parallel differences with analytic derivatives on identical
+50x200 transformed tables, on one and four ranks. It verifies Gamma derivatives
+bit-for-bit using their hexadecimal IEEE representations. The staged Task-3D
+driver and historical Task-3D.1 diagnostics are not rewritten. Their old parallel
+stencil queries describe the earlier implementation; the paired runner adapts
+preflight to the actual analytic-derivative query in its scratch driver.
 
 For lifecycle checks, `rel_cheb_collection_info` optionally returns
 `build_calls` and `evaluations` (integer/int64); imported workers have zero
