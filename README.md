@@ -74,6 +74,44 @@ David Stansby and Tuomas Koskela from UCL.
 
 For advice on the installation of the code, please check [`INSTALL.md`](./INSTALL.md)
 
+With MPI Fortran, BLAS and LAPACK installed, the standard build is:
+
+```bash
+./configure
+make -j4                 # plain make / make -j1 also works
+```
+
+For a clean rebuild, use `make clean && make -j4`. Cleaning removes objects,
+executables and compiler-generated `*.mod` / `*.smod` files in the `src/` and
+`distribution/` build directories. It does not recursively remove modules from
+validation or fixture directories. Explicit Fortran module prerequisites order
+both clean parallel builds and incremental rebuilds; manual module compilation
+and `make -B` are unnecessary.
+
+Separate build directories are supported using an **unconfigured** source tree:
+
+```bash
+mkdir /tmp/alps-build
+cd /tmp/alps-build
+/path/to/ALPS/configure
+make -j4
+```
+
+Each build directory owns its objects and module interfaces; no validation or
+source-tree module search path is required. Do not mix compiler-generated
+interfaces from different compilers/builds. Configure may reject an out-of-tree
+build if that source tree is already configured in place; use a fresh source
+copy in that case.
+
+The supplied `configure` and `Makefile.in` files suffice for ordinary builds.
+After changing `Makefile.am`, maintainers must update the affected templates
+with Automake (for example, `automake --foreign src/Makefile distribution/Makefile`)
+and rerun `./configure` or `./config.status` in their build directory. Changes to
+`configure.ac` or Autoconf macros require `autoreconf -fi` followed by configure.
+Make may perform these maintainer refreshes automatically when their inputs are
+newer; repeatedly forcing targets with `-B` also forces configuration rules.
+
+
 
 ##  4. Running the ALPS code
 
