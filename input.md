@@ -247,10 +247,12 @@ Relative mass $m_{j}/m_{ref}$.
 Number of fitted functions for analytical continuation calculation.
 
 **`relat`**  
-Treat $f_{j}$ as non-relativistic or relativistic.
+Treat $f_{j}$ as non-relativistic or relativistic. Analytic bimaxwellian species
+(`use_bM=T`) require `relat=F`.
 
 **`log_fit`**  
-Use linear or $\log_{10}$ fitting routine.
+Use linear or $\log_{10}$ fitting routine. Relativistic numerical Chebyshev
+continuation (`relat=T`, `AC_method=2`) supports only `log_fit=T`.
 
 **`use_bM`**  
 Use actual numerical integration (F) or bi-Maxwellian/cold-plasma proxy via NHDS routines,
@@ -262,6 +264,25 @@ Choose the method for the evaluation of the analytic continuation:
 - 0: Use the function that is defined analytically in distribution/distribution_analyt.f90
 - 1: Use the fit routine as defined in the &ffit_j_k namelist.
 - 2: Use a polynomial basis representation as defined in the &poly_spec_j namelist. This method should only be used if $|\gamma|\ll |\omega_{r}|$.
+
+
+Relativistic numerical method 2 uses native SVD/Clenshaw models at fixed Lorentz
+factor, with `kind=1`, positive requested `order`, and `log_fit=T`. Original
+source samples must be finite and strictly positive on a finite, increasing
+rectangular momentum grid; zeros are rejected before the log-TPS transformation,
+including when caching is enabled. No positive floor is substituted.
+
+These models represent the **completed transformed distribution** on the existing
+Gamma/parallel-momentum grid. Its global natural-log thin-plate spline extends
+beyond the supplied source momentum rectangle at some cone-admissible nodes.
+Those values are TPS extensions, not source observations. ALPS reports source and
+completed bounds, interior/exterior counts, affected Gamma rows and fresh/cache
+origin once per selected species. Counts are recomputed from the actual geometry;
+cache hits verify identity against the current source arrays and coordinates.
+Fit status, degree, rank and residual do not certify source support or accurate
+complex continuation. Numerical range or unavailable-row failures remain explicit.
+Original-grid fit files and fitted-moment totals omit these fixed-Gamma models;
+original VDF moments are unchanged.
 
 
 ### *&ffit_j_k*
@@ -337,11 +358,16 @@ Type of the basis polynomial:
 **`order`**  
 Maximum order of the basis polynomial.
 
-**`log_max`**  
-When using logfit for the polynomial representation, set all output values to zero if the log(fit_function_poly) is greater than this variable.
+Native LOG10 continuation reconstructs the physical distribution using the shared
+Chebyshev kernel. Overflow, underflow and invalid evaluations have explicit
+numerical statuses; there is no adjustable logarithmic suppression threshold.
+The former `log_max` namelist setting is unsupported and must be removed from inputs.
 
 **`derivative_type`**  
-Controls how derivative in Landau integral is performed when using polynomial expansion for the analytic continuation of $f$.
+Controls the **nonrelativistic** parallel derivative in the Landau integral
+when using polynomial continuation. Relativistic method 2 always uses the shared
+analytic derivative with respect to `u=P_parallel/(m_s*c)` at fixed Gamma; its
+Gamma finite-difference stencil remains unchanged.
 
 - 0: Finite Difference Derivative
 - 1: Analytic Derivative of Polynomial Basis Function

@@ -19,6 +19,8 @@
 module alps_com
   implicit none
 
+  public :: pass_nr_cheb_models,nr_cheb_distribution_info,complete_nr_cheb_initialization
+  integer, private :: nr_cheb_transfers=0,nr_cheb_collectives=0
   public :: pass_instructions
   public :: pass_distribution
   public :: pass_rel_cheb_models, rel_cheb_distribution_info
@@ -26,6 +28,90 @@ module alps_com
   integer(kind=selected_int_kind(18)), private :: rel_cheb_transfer_bytes=0
 
 contains
+
+  subroutine complete_nr_cheb_initialization(status)
+    !! All ranks, once after pass_distribution. No fitting on workers.
+    use alps_var, only: nspec
+    use alps_analyt, only: nr_cheb_species_eligible,set_nr_cheb_evaluation,release_nr_cheb,CHEB_SUCCESS
+    integer, intent(out) :: status
+    integer :: s
+    logical :: selected
+    nr_cheb_transfers=0;nr_cheb_collectives=0
+    selected=.false.
+    do s=1,nspec
+      selected=selected.or.nr_cheb_species_eligible(s)
+    enddo
+    status=CHEB_SUCCESS
+    if(.not.selected) then
+      call release_nr_cheb
+      return
+    endif
+    call pass_nr_cheb_models(status)
+    call set_nr_cheb_evaluation(status==CHEB_SUCCESS)
+  end subroutine
+
+  subroutine pass_nr_cheb_models(status)
+    !! Dedicated initialization transfer; never called by frequency evaluation.
+    use alps_var, only: proc0,ierror
+    use alps_analyt, only: nr_cheb_collection_info,nr_cheb_export,nr_cheb_import,release_nr_cheb, &
+         CHEB_SUCCESS,CHEB_INVALID_VALUES,CHEB_ALLOCATION_FAILURE,CHEB_INVALID_MODEL
+    use, intrinsic :: iso_fortran_env, only: int64
+    use mpi
+    integer, intent(out) :: status
+    integer :: header(6),ns,rows,builds,fits,evals,istat,local_status
+    integer, allocatable :: metadata(:,:)
+    double precision, allocatable :: mapping(:,:),coefficients(:,:)
+    integer(int64) :: count
+    nr_cheb_transfers=0;nr_cheb_collectives=0
+    header=0
+    if(proc0) then
+      call nr_cheb_collection_info(ns,rows,builds,fits,evals,header(1))
+      header(2)=ns;header(3)=rows
+      if(ns==0.and.header(1)==CHEB_SUCCESS)header(1)=CHEB_INVALID_MODEL
+      if(header(1)==CHEB_SUCCESS.and.ns>0) then
+        call nr_cheb_export(metadata,mapping,coefficients,header(1))
+        if(header(1)==CHEB_SUCCESS) header(4:6)=[size(metadata,1),size(mapping,1),size(coefficients,1)]
+      endif
+    endif
+    call mpi_bcast(header,6,MPI_INTEGER,0,MPI_COMM_WORLD,ierror)
+    nr_cheb_collectives=1;status=header(1)
+    if(status/=CHEB_SUCCESS.or.header(2)==0) then
+      call release_nr_cheb;return
+    endif
+    count=int(header(2),int64)*header(3)
+    local_status=CHEB_INVALID_VALUES
+    if(header(2)>0.and.header(3)>0.and.all(header(4:6)>0)) then
+      if(count<=huge(0).and.count*int(maxval(header(4:6)),int64)<=huge(0)) local_status=CHEB_SUCCESS
+    endif
+    rows=int(min(count,int(huge(0),int64)))
+    if(.not.proc0.and.local_status==CHEB_SUCCESS) then
+      allocate(metadata(header(4),rows),mapping(header(5),rows),coefficients(header(6),rows),stat=istat)
+      if(istat/=0) local_status=CHEB_ALLOCATION_FAILURE
+    endif
+    call mpi_allreduce(local_status,status,1,MPI_INTEGER,MPI_MAX,MPI_COMM_WORLD,ierror)
+    nr_cheb_collectives=nr_cheb_collectives+1
+    if(status/=CHEB_SUCCESS) then
+      call release_nr_cheb;return
+    endif
+    call mpi_bcast(metadata,size(metadata),MPI_INTEGER,0,MPI_COMM_WORLD,ierror)
+    call mpi_bcast(mapping,size(mapping),MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierror)
+    call mpi_bcast(coefficients,size(coefficients),MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierror)
+    nr_cheb_collectives=nr_cheb_collectives+3
+    local_status=CHEB_SUCCESS
+    if(.not.proc0) call nr_cheb_import(header(2),header(3)-1,metadata,mapping,coefficients,local_status)
+    call mpi_allreduce(local_status,status,1,MPI_INTEGER,MPI_MAX,MPI_COMM_WORLD,ierror)
+    nr_cheb_collectives=nr_cheb_collectives+1
+    if(status/=CHEB_SUCCESS) then
+      call release_nr_cheb;return
+    endif
+    nr_cheb_transfers=1
+  end subroutine
+
+  subroutine nr_cheb_distribution_info(transfers,collectives)
+    integer, intent(out) :: transfers,collectives
+    transfers=nr_cheb_transfers;collectives=nr_cheb_collectives
+  end subroutine
+
 
 
   subroutine pass_rel_cheb_models(status)
@@ -116,8 +202,8 @@ contains
     use alps_var, only : determine_minima, n_resonance_interval, positions_principal, Tlim
     use alps_var, only : n_scan, scan, scan_option, relativistic, logfit, usebM
     use alps_var, only : bMnmaxs, bMBessel_zeros, bMbetas, bMalphas, bMpdrifts
-    use alps_var, only : ACmethod, poly_kind, poly_order, poly_fit_coeffs
-    use alps_var, only : poly_log_max, poly_derivative_type
+    use alps_var, only : ACmethod, poly_kind, poly_order
+    use alps_var, only : poly_derivative_type
     use mpi
     implicit none
 
@@ -196,7 +282,6 @@ contains
        allocate(ACmethod(1:nspec)); ACmethod=1
        allocate(poly_order(1:nspec)); poly_order=0
        allocate(poly_kind(1:nspec)); poly_kind=0
-       allocate(poly_log_max(1:nspec)); poly_log_max=0
        allocate(poly_derivative_type(1:nspec)); poly_derivative_type=0      
 
        allocate(wroots(1:numroots));wroots=cmplx(0.d0,0.d0,kind(1.d0))
@@ -238,8 +323,6 @@ contains
          MPI_INTEGER, 0, MPI_COMM_WORLD, ierror)
     call mpi_bcast(poly_order(:), size(poly_order(:)),&
          MPI_INTEGER, 0, MPI_COMM_WORLD, ierror)
-    call mpi_bcast(poly_log_max(:), size(poly_log_max(:)),&
-         MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierror)
     call mpi_bcast(poly_derivative_type(:), size(poly_order(:)),&
          MPI_INTEGER, 0, MPI_COMM_WORLD, ierror)
     
@@ -270,10 +353,6 @@ contains
        allocate(fit_type(1:nspec,maxval(n_fits)))
        allocate(perp_correction(1:nspec,maxval(n_fits)))
 
-       !Allocate fit coefficients for the polynomial basis here!
-       if (maxval(poly_order(:)).gt.1) then
-          allocate(poly_fit_coeffs(1:nspec,0:nperp,0:maxval(poly_order(:)))); poly_fit_coeffs=0.d0
-       endif
 
     endif
 
@@ -290,7 +369,6 @@ contains
     use alps_var,    only : df0, pp, param_fit, fit_type, perp_correction,proc0, writeOut, ierror
     use alps_var,    only : df0_rel, gamma_rel, pparbar_rel, f0_rel
     use alps_var,    only : relativistic, nspec, ngamma, npparbar
-    use alps_var,    only : poly_fit_coeffs, poly_order
 
     use mpi
     implicit none
@@ -361,10 +439,7 @@ contains
          MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierror)
 
 
-    if (maxval(poly_order(:)).gt.1) then
-       call mpi_bcast(poly_fit_coeffs(:,:,:),  size(poly_fit_coeffs(:,:,:)),&
-            MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierror)
-    endif
+
     
 
     if (writeOut.and.proc0)&

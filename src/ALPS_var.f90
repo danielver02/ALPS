@@ -292,25 +292,11 @@ module alps_var
   !! 1) Use the 'n_fits' functions described with 'fit_type'
   !! 2) Use a polynomial basis representation.
 
-  double precision, dimension(:,:,:), allocatable :: polynomials
-  !! Polynomials of order (0,poly_order) evaluatated at (0,npar) abscissa points,
-  !! (1:nspec,0:npar,0:poly_order)
-  !! poly_order is taken to be the maximum order across all species.
-
-  double precision, dimension(:,:,:), allocatable :: poly_fit_coeffs
-  !! Fit Coefficients for Polynomials from Generarl Linear Least Squares Method
-  !! (1:nspec,0:nperp,0:poly_order)
-  !! poly_order is taken to be the maximum order across all species.
-  !! The fit is taken in one dimension at each perpendicular momentum value.
-  
   integer, dimension(:), allocatable :: poly_kind
   !!Selection of Orthogonal Basis Function, (1:nspec)
   !! 1) Chebyshev Polynomials
   !! Other Polynomials can be added in future releases.
 
-  double precision, dimension(:), allocatable :: poly_log_max
-  !!Limit on the Evaluation of the Polynomial Representation, (1:nspec)
-  
   integer, dimension(:), allocatable :: poly_order
   !! Selection of Maximum Order of Orthogonal Basis Function, (1:nspec)
   
@@ -467,8 +453,8 @@ module alps_var
   public :: secant_method, relativistic, logfit, usebM
   public :: f0_rel,df0_rel,nspec_rel,gamma_rel,pparbar_rel,ngamma,npparbar
   public :: bMnmaxs,bMBessel_zeros,bMbetas,bMalphas,bMpdrifts
-  public :: ACmethod, poly_kind, poly_order, polynomials, poly_fit_coeffs
-  public :: poly_log_max, poly_derivative_type
+  public :: ACmethod, poly_kind, poly_order
+  public :: poly_derivative_type
   public :: profile_startup, startup_seconds, startup_tick 
   public :: startup_tock, startup_report
 

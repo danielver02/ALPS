@@ -21,9 +21,8 @@ module alps_analyt
 	implicit none
 
         public  :: eval_fit, determine_param_fit
-        private :: set_polynomial_basis
         private :: fit_function, output_fit, determine_JT, LM_nonlinear_fit
-        private :: determine_GLLS, factorial
+        private :: factorial
 
   integer, parameter, private :: cheb_dp=kind(1.d0)
   ! Status values belong to the independent numerical kernel only.
@@ -47,6 +46,7 @@ module alps_analyt
 
   type, public :: cheb_model
      !! First-kind series, with full-weight c(0); no species/global state.
+     logical :: coefficients_imported=.false.
      integer :: representation=CHEB_DIRECT
      real(cheb_dp), allocatable :: coefficients(:)       ! 0:effective_degree
      real(cheb_dp), allocatable :: derivative_coefficients(:) ! dP/dx, 0:max(0,degree-1)
@@ -66,6 +66,22 @@ module alps_analyt
      integer :: residual_norm_status=CHEB_DIAG_UNAVAILABLE
      integer :: relative_residual_status=CHEB_DIAG_UNAVAILABLE, rms_residual_status=CHEB_DIAG_UNAVAILABLE
   end type cheb_model
+
+  type(cheb_model), allocatable, private :: nr_cheb(:,:)
+  integer, parameter, public :: NR_FIT_IMPORTED=0,NR_FIT_LEGACY_COMPAT=1,NR_FIT_NATIVE=2
+  integer, parameter, public :: NR_ROW_NOT_SELECTED=0,NR_ROW_FITTED=1,NR_ROW_REDUCED=2
+  integer, parameter, public :: NR_ROW_ZERO=3,NR_ROW_INVALID=4,NR_ROW_FAILED=5
+  type, public :: nr_cheb_row_info
+    integer :: policy=NR_FIT_IMPORTED,state=NR_ROW_NOT_SELECTED,kernel_status=CHEB_INVALID_MODEL
+    real(cheb_dp) :: original_min=0.d0,original_max=0.d0
+  end type
+  type(nr_cheb_row_info), allocatable, private :: nr_info(:,:)
+  integer, private :: nr_build_calls=0,nr_fit_calls=0,nr_evaluations=0,nr_setup_status=CHEB_SUCCESS
+  public :: initialize_nr_cheb_svd,get_nr_cheb_row,nr_cheb_collection_info,nr_cheb_export,nr_cheb_import
+  logical, private :: nr_shared_enabled=.false.
+  public :: cheb_from_coefficients, release_nr_cheb, set_nr_cheb_evaluation, eval_nr_cheb
+  public :: nr_cheb_evaluation_active,nr_cheb_species_eligible,initialize_nr_cheb_production
+  private :: cheb_differentiate
 
   ! Row availability is distinct from the kernel fit status. No unavailable
   ! row is represented by fabricated coefficients or an implicit zero model.
@@ -125,8 +141,7 @@ contains
 
 subroutine initialize_rel_cheb(status)
   !! Rank-0 hook after derivative_f0, common to fresh and cached VDFs.
-  !! Normal input still rejects relativistic method 2. Tests explicitly set
-  !! internal selections before invoking this same hook; no guard is bypassed.
+  !! Supported relativistic method-2 input and validation use this same hook.
   use alps_var, only : proc0,relativistic,ACmethod,usebM,poly_order,gamma_rel,pparbar_rel,f0_rel
   implicit none
   integer, intent(out) :: status
@@ -331,7 +346,7 @@ end subroutine rel_cheb_import
 subroutine build_rel_cheb_rows(gamma,parallel,distribution,species,degrees,status,selected,diagnostic_unit)
   !! Explicit initialization entry: invoke on rank 0 after derivative_f0 has
   !! loaded/constructed and normalized the transformed tables. The conditional
-  !! initialization hook remains unreachable through guarded relativistic input.
+  !! initialization hook is shared by supported production and validation input.
   !! species maps packed slots to original species; degrees=poly_order(species).
   !! selected optionally restricts applicable slots, without changing packing.
   !! Rebuilding first releases this collection only. Inputs are never modified.
@@ -577,6 +592,375 @@ subroutine cheb_fit(u,values,requested_degree,model,status,rcond,representation)
 end subroutine cheb_fit
 
 
+pure subroutine cheb_differentiate(c,d,ok)
+  real(cheb_dp), intent(in) :: c(0:)
+  real(cheb_dp), intent(out) :: d(0:)
+  logical, intent(out) :: ok
+  real(cheb_dp) :: t,y
+  integer :: degree,k
+  degree=size(c)-1;ok=.true.
+     d=0.d0
+     do k=degree-1,1,-1
+        call cheb_multiply(2.d0*dble(k+1),c(k+1),t,ok)
+        if(.not.ok) exit
+        if(k+2<=degree-1) then
+           call cheb_add(t,d(k+2),y,ok)
+           if(.not.ok) exit
+           t=y
+        endif
+        d(k)=t
+     enddo
+     if(degree>=1.and.ok) then
+        d(0)=c(1)
+        if(degree>=3) then
+           call cheb_add(c(1),0.5d0*d(2),y,ok)
+           if(ok) d(0)=y
+        endif
+     endif
+end subroutine cheb_differentiate
+
+subroutine cheb_from_coefficients(coefficients,degree,center,scale,representation,model,status)
+  !! Imported evaluation model: no fit, samples, rank or residuals inferred.
+  use, intrinsic :: ieee_arithmetic
+  real(cheb_dp), intent(in) :: coefficients(0:),center,scale
+  integer, intent(in) :: degree,representation
+  type(cheb_model), intent(out) :: model
+  integer, intent(out) :: status
+  real(cheb_dp) :: nan
+  integer :: istat
+  logical :: ok
+  nan=ieee_value(0.d0,ieee_quiet_nan)
+  model%coefficients_imported=.true.;model%rank=-1;model%initial_rank=-1
+  model%lapack_info=-1;model%sample_count=-1;model%original_sample_count=-1
+  model%retained_sample_count=-1
+  model%requested_degree=degree;model%representation=representation
+  model%svd_tolerance=nan;model%singular_value_min=nan;model%singular_value_max=nan
+  model%residual_norm=nan;model%relative_residual=nan;model%rms_residual=nan
+  status=CHEB_INVALID_DEGREE
+  initialization: block
+    if(degree<0.or.degree==huge(0)) exit initialization
+    if(size(coefficients)/=degree+1) exit initialization
+    status=CHEB_INVALID_REPRESENTATION
+    if(representation/=CHEB_DIRECT.and.representation/=CHEB_LOG10) exit initialization
+    status=CHEB_INVALID_NORMALIZATION
+    if(.not.ieee_is_finite(center).or..not.ieee_is_finite(scale)) exit initialization
+    if(scale<=0.d0) exit initialization
+    status=CHEB_NONFINITE_COEFFICIENTS
+    if(.not.all(ieee_is_finite(coefficients))) exit initialization
+    allocate(model%coefficients(0:degree),model%derivative_coefficients(0:max(0,degree-1)),stat=istat)
+    status=CHEB_ALLOCATION_FAILURE
+    if(istat/=0) exit initialization
+    model%coefficients=coefficients;model%center=center;model%scale=scale
+    call cheb_differentiate(model%coefficients,model%derivative_coefficients,ok)
+    status=CHEB_NONFINITE_COEFFICIENTS
+    if(.not.ok) exit initialization
+    model%effective_degree=degree;status=CHEB_SUCCESS
+  end block initialization
+  model%fit_status=status
+  if(status/=CHEB_SUCCESS) then
+    if(allocated(model%coefficients)) deallocate(model%coefficients)
+    if(allocated(model%derivative_coefficients)) deallocate(model%derivative_coefficients)
+    model%effective_degree=-1
+  endif
+end subroutine
+
+subroutine release_nr_cheb
+  if(allocated(nr_cheb)) deallocate(nr_cheb)
+  if(allocated(nr_info)) deallocate(nr_info)
+  nr_shared_enabled=.false.
+end subroutine
+
+subroutine set_nr_cheb_evaluation(enabled)
+  !! Internal compatibility selection; production activates after model transfer.
+  logical, intent(in) :: enabled
+  nr_shared_enabled=enabled
+end subroutine
+
+logical function nr_cheb_species_eligible(species)
+  use alps_var, only: ACmethod,relativistic,usebM,poly_kind
+  integer, intent(in) :: species
+  nr_cheb_species_eligible=ACmethod(species)==2.and..not.relativistic(species).and. &
+       .not.usebM(species).and.poly_kind(species)==1
+end function
+
+logical function nr_cheb_evaluation_active(species)
+  integer, intent(in) :: species
+  nr_cheb_evaluation_active=nr_shared_enabled.and.nr_cheb_species_eligible(species)
+end function
+
+subroutine initialize_nr_cheb_production(status)
+  !! Root only, after derivative_f0 and before releasing the original VDF.
+  use alps_var, only: proc0,nspec
+  integer, intent(out) :: status
+  integer :: s
+  status=CHEB_SUCCESS
+  if(.not.proc0)return
+  call release_nr_cheb
+  nr_setup_status=CHEB_SUCCESS
+  do s=1,nspec
+    if(nr_cheb_species_eligible(s)) then
+      call initialize_nr_cheb_svd(NR_FIT_NATIVE,status)
+      return
+    endif
+  enddo
+end subroutine
+
+subroutine eval_nr_cheb(species,row,u,value,status,derivative,value_status,derivative_status)
+  use, intrinsic :: ieee_arithmetic, only: ieee_value,ieee_quiet_nan
+  integer, intent(in) :: species,row
+  complex(cheb_dp), intent(in) :: u
+  complex(cheb_dp), intent(out) :: value
+  integer, intent(out) :: status
+  complex(cheb_dp), intent(out), optional :: derivative
+  integer, intent(out), optional :: value_status,derivative_status
+  real(cheb_dp) :: nan
+  nr_evaluations=nr_evaluations+1
+  nan=ieee_value(0.d0,ieee_quiet_nan);value=cmplx(nan,nan,cheb_dp)
+  if(present(derivative)) derivative=value
+  status=CHEB_INVALID_MODEL
+  if(present(value_status)) value_status=status
+  if(present(derivative_status)) then
+    derivative_status=CHEB_NOT_REQUESTED
+    if(present(derivative)) derivative_status=status
+  endif
+  if(.not.allocated(nr_cheb)) return
+  if(species<1.or.species>size(nr_cheb,1)) return
+  if(row<0.or.row>ubound(nr_cheb,2)) return
+  if(allocated(nr_info)) then
+    if(nr_info(species,row)%state/=NR_ROW_FITTED.and.nr_info(species,row)%state/=NR_ROW_REDUCED) then
+      status=nr_info(species,row)%kernel_status
+      if(present(value_status)) value_status=status
+      if(present(derivative).and.present(derivative_status)) derivative_status=status
+      return
+    endif
+  endif
+  call cheb_evaluate(nr_cheb(species,row),u,value,status,derivative,value_status,derivative_status)
+end subroutine
+
+subroutine initialize_nr_cheb_svd(policy,status,rcond)
+  !! Root-only VDF preparation. Expected unavailable/invalid rows are retained
+  !! with their own status; an actual solver/allocation failure fails setup.
+  use alps_var, only: proc0,nspec,nperp,npar,pp,f0,poly_order,poly_kind,ACmethod,relativistic,usebM,logfit
+  use, intrinsic :: ieee_arithmetic
+  integer, intent(in) :: policy
+  integer, intent(out) :: status
+  real(cheb_dp), intent(in), optional :: rcond
+  real(cheb_dp), allocatable :: values(:),nodes(:)
+  real(cheb_dp) :: floor_value,nan,expected,tol,t,difference
+  logical :: safe
+  integer :: s,r,j,code,istat,m
+  status=CHEB_SUCCESS
+  if(.not.proc0) return
+  call release_nr_cheb
+  nr_build_calls=nr_build_calls+1;nr_fit_calls=0
+  nr_setup_status=CHEB_INVALID_VALUES;status=nr_setup_status
+  if(policy/=NR_FIT_LEGACY_COMPAT.and.policy/=NR_FIT_NATIVE) return
+  if(.not.allocated(f0).or..not.allocated(pp)) return
+  m=npar+1
+  if(nspec<1.or.nperp<0.or.npar<0) return
+  allocate(nr_cheb(nspec,0:nperp),nr_info(nspec,0:nperp),nodes(m),values(m),stat=istat)
+  status=CHEB_ALLOCATION_FAILURE
+  if(istat/=0) then
+    nr_setup_status=status;return
+  endif
+  nan=ieee_value(0.d0,ieee_quiet_nan);status=CHEB_SUCCESS
+  do s=1,nspec
+    if(.not.nr_cheb_species_eligible(s)) cycle
+    do r=0,nperp
+      nodes=pp(s,r,:,2);values=f0(s,r,:)
+      nr_info(s,r)%policy=policy
+      nr_info(s,r)%original_min=nan;nr_info(s,r)%original_max=nan
+      if(all(ieee_is_finite(nodes))) then
+        nr_info(s,r)%original_min=minval(nodes);nr_info(s,r)%original_max=maxval(nodes)
+      endif
+      code=CHEB_INVALID_COORDINATES
+      if(.not.all(ieee_is_finite(nodes))) then
+        ! Preserve the original invalid data for reporting; never omit it.
+      elseif(.not.all(ieee_is_finite(values))) then
+        code=CHEB_INVALID_VALUES
+      elseif(any(values<0.d0)) then
+        code=CHEB_NEGATIVE_SAMPLES
+      elseif(poly_kind(s)/=1) then
+        code=CHEB_INVALID_REPRESENTATION
+      else
+        code=CHEB_SUCCESS
+        if(policy==NR_FIT_LEGACY_COMPAT.and.m>1) then
+          ! Solver-only comparisons require the legacy index-derived nodes to
+          ! coincide with actual coordinates. Do not silently fit a new grid.
+          tol=64.d0*epsilon(1.d0)*max(1.d0,maxval(abs(nodes)))
+          if(nodes(m)<=nodes(1)) code=CHEB_INVALID_COORDINATES
+          do j=1,m
+            t=dble(j-1)/dble(m-1)
+            call cheb_add((1.d0-t)*nodes(1),t*nodes(m),expected,safe)
+            if(.not.safe) then
+              code=CHEB_INVALID_COORDINATES;exit
+            endif
+            call cheb_add(nodes(j),-expected,difference,safe)
+            if(.not.safe) then
+              code=CHEB_INVALID_COORDINATES;exit
+            endif
+            if(abs(difference)>tol) code=CHEB_INVALID_COORDINATES
+          enddo
+        endif
+        if(code==CHEB_SUCCESS) then
+          if(policy==NR_FIT_LEGACY_COMPAT.and.logfit(s)) then
+            if(any(values==0.d0)) then
+              floor_value=1.d-42
+              if(any(values>0.d0)) floor_value=.01d0*minval(values,mask=values>0.d0)
+              if(floor_value==0.d0) code=CHEB_INVALID_VALUES
+              where(values==0.d0) values=floor_value
+            endif
+            if(code==CHEB_SUCCESS) then
+              values=log10(values)
+              nr_fit_calls=nr_fit_calls+1
+              call cheb_fit(nodes,values,poly_order(s),nr_cheb(s,r),code,rcond,representation=CHEB_DIRECT)
+              ! This fully fitted series approximates log10(F), not F. Retain
+              ! its genuine SVD/rank/residual diagnostics, all in log space.
+              nr_cheb(s,r)%representation=CHEB_LOG10
+            endif
+          else
+            nr_fit_calls=nr_fit_calls+1
+            if(logfit(s)) then
+              call cheb_fit(nodes,values,poly_order(s),nr_cheb(s,r),code,rcond,representation=CHEB_LOG10)
+            else
+              call cheb_fit(nodes,values,poly_order(s),nr_cheb(s,r),code,rcond,representation=CHEB_DIRECT)
+            endif
+          endif
+        endif
+      endif
+      nr_info(s,r)%kernel_status=code
+      nr_cheb(s,r)%fit_status=code
+      nr_cheb(s,r)%original_sample_count=m
+      if(code/=CHEB_SUCCESS.and.code/=CHEB_REDUCED) then
+        nr_cheb(s,r)%requested_degree=poly_order(s)
+        nr_cheb(s,r)%retained_sample_count=0
+      endif
+      select case(code)
+      case(CHEB_SUCCESS);nr_info(s,r)%state=NR_ROW_FITTED
+      case(CHEB_REDUCED);nr_info(s,r)%state=NR_ROW_REDUCED
+      case(CHEB_NO_POSITIVE_SAMPLES);nr_info(s,r)%state=NR_ROW_ZERO
+      case(CHEB_INVALID_COORDINATES,CHEB_INVALID_VALUES,CHEB_NEGATIVE_SAMPLES,CHEB_INTERIOR_ZERO, &
+           CHEB_INVALID_DEGREE,CHEB_INVALID_REPRESENTATION,CHEB_NO_SAMPLES)
+        nr_info(s,r)%state=NR_ROW_INVALID
+      case default
+        nr_info(s,r)%state=NR_ROW_FAILED
+        if(status==CHEB_SUCCESS) status=code
+        write(*,'(a,4i8)') 'NR Chebyshev fitting failure: species,row,status,samples=',s,r,code,m
+      end select
+    enddo
+  enddo
+  nr_setup_status=status
+end subroutine
+
+subroutine get_nr_cheb_row(species,row,model,info,status)
+  integer, intent(in) :: species,row
+  type(cheb_model), intent(out) :: model
+  type(nr_cheb_row_info), intent(out) :: info
+  integer, intent(out) :: status
+  status=CHEB_INVALID_MODEL
+  if(.not.allocated(nr_cheb).or..not.allocated(nr_info)) return
+  if(species<1.or.species>size(nr_cheb,1)) return
+  if(row<0.or.row>ubound(nr_cheb,2)) return
+  model=nr_cheb(species,row);info=nr_info(species,row)
+  status=info%kernel_status
+end subroutine
+
+subroutine nr_cheb_collection_info(species,rows,builds,fits,evaluations,setup_status)
+  integer, intent(out) :: species,rows,builds,fits,evaluations,setup_status
+  species=0;rows=0
+  if(allocated(nr_cheb)) then
+    species=size(nr_cheb,1);rows=size(nr_cheb,2)
+  endif
+  builds=nr_build_calls;fits=nr_fit_calls;evaluations=nr_evaluations;setup_status=nr_setup_status
+end subroutine
+
+subroutine nr_cheb_export(metadata,mapping,coefficients,status)
+  use, intrinsic :: iso_fortran_env, only: int64
+  integer, allocatable, intent(out) :: metadata(:,:)
+  real(cheb_dp), allocatable, intent(out) :: mapping(:,:),coefficients(:,:)
+  integer, intent(out) :: status
+  integer :: s,r,i,nmax,n,istat
+  integer(int64) :: rows
+  status=CHEB_INVALID_MODEL
+  if(.not.allocated(nr_cheb).or..not.allocated(nr_info)) return
+  rows=int(size(nr_cheb,1),int64)*size(nr_cheb,2)
+  nmax=max(0,maxval(nr_cheb%effective_degree))
+  status=CHEB_ALLOCATION_FAILURE
+  if(rows>huge(0)/17.or.nmax==huge(0)) return
+  if(rows*int(nmax+1,int64)>huge(0)) return
+  allocate(metadata(17,int(rows)),mapping(6,int(rows)),coefficients(nmax+1,int(rows)),stat=istat)
+  if(istat/=0) return
+  coefficients=0.d0;i=0
+  do r=0,ubound(nr_cheb,2)
+    do s=1,size(nr_cheb,1)
+      i=i+1
+      associate(m=>nr_cheb(s,r),info=>nr_info(s,r))
+      metadata(:,i)=[info%policy,info%state,info%kernel_status,m%requested_degree,m%effective_degree, &
+        m%representation,m%rank,m%initial_rank,m%original_sample_count,m%retained_sample_count,m%sample_count, &
+        m%lower_tail_zeros,m%upper_tail_zeros,merge(1,0,m%sample_limited),merge(1,0,m%rank_reduced), &
+        merge(1,0,m%degenerate_interval),m%fit_attempts]
+      mapping(:,i)=[m%center,m%scale,info%original_min,info%original_max,m%retained_min,m%retained_max]
+      if(allocated(m%coefficients)) then
+        n=size(m%coefficients);coefficients(1:n,i)=m%coefficients
+      endif
+      end associate
+    enddo
+  enddo
+  status=CHEB_SUCCESS
+end subroutine
+
+subroutine nr_cheb_import(nspecies,last_row,metadata,mapping,coefficients,status)
+  use, intrinsic :: ieee_arithmetic
+  use, intrinsic :: iso_fortran_env, only: int64
+  integer, intent(in) :: nspecies,last_row,metadata(:,:)
+  real(cheb_dp), intent(in) :: mapping(:,:),coefficients(:,:)
+  integer, intent(out) :: status
+  integer :: s,r,i,d,istat
+  real(cheb_dp) :: nan
+  call release_nr_cheb
+  status=CHEB_INVALID_VALUES
+  if(nspecies<1.or.last_row<0.or.last_row==huge(0)) return
+  if(size(metadata,1)/=17.or.size(mapping,1)/=6.or.size(coefficients,1)<1) return
+  if(int(nspecies,int64)*(int(last_row,int64)+1)/=size(metadata,2)) return
+  if(size(mapping,2)/=size(metadata,2).or.size(coefficients,2)/=size(metadata,2)) return
+  allocate(nr_cheb(nspecies,0:last_row),nr_info(nspecies,0:last_row),stat=istat)
+  status=CHEB_ALLOCATION_FAILURE
+  if(istat/=0) return
+  nan=ieee_value(0.d0,ieee_quiet_nan);i=0
+  do r=0,last_row
+    do s=1,nspecies
+      i=i+1
+      associate(m=>nr_cheb(s,r),info=>nr_info(s,r))
+      info%policy=metadata(1,i);info%state=metadata(2,i);info%kernel_status=metadata(3,i)
+      info%original_min=mapping(3,i);info%original_max=mapping(4,i)
+      status=CHEB_INVALID_MODEL
+      if(info%state<NR_ROW_NOT_SELECTED.or.info%state>NR_ROW_FAILED) exit
+      d=metadata(5,i)
+      if(info%state==NR_ROW_FITTED.or.info%state==NR_ROW_REDUCED) then
+        if(d<0.or.d>=size(coefficients,1).or.metadata(4,i)<d) exit
+        if(info%kernel_status/=CHEB_SUCCESS.and.info%kernel_status/=CHEB_REDUCED) exit
+        call cheb_from_coefficients(coefficients(1:d+1,i),d,mapping(1,i),mapping(2,i),metadata(6,i),m,status)
+        if(status/=CHEB_SUCCESS) exit
+      endif
+      m%center=mapping(1,i);m%scale=mapping(2,i)
+      m%requested_degree=metadata(4,i);m%effective_degree=d;m%representation=metadata(6,i)
+      m%rank=metadata(7,i);m%initial_rank=metadata(8,i);m%original_sample_count=metadata(9,i)
+      m%retained_sample_count=metadata(10,i);m%sample_count=metadata(11,i)
+      m%lower_tail_zeros=metadata(12,i);m%upper_tail_zeros=metadata(13,i)
+      m%sample_limited=metadata(14,i)==1;m%rank_reduced=metadata(15,i)==1
+      m%degenerate_interval=metadata(16,i)==1;m%fit_attempts=metadata(17,i) ! root fit provenance
+      m%retained_min=mapping(5,i);m%retained_max=mapping(6,i);m%fit_status=info%kernel_status
+      m%svd_tolerance=nan;m%singular_value_min=nan;m%singular_value_max=nan
+      m%residual_norm=nan;m%relative_residual=nan;m%rms_residual=nan
+      status=CHEB_SUCCESS
+      end associate
+    enddo
+    if(status/=CHEB_SUCCESS) exit
+  enddo
+  nr_setup_status=status
+  if(status/=CHEB_SUCCESS) call release_nr_cheb
+end subroutine
+
 subroutine cheb_fit_direct(u,values,requested_degree,model,status,rcond)
   !! Unweighted rectangular SVD fit on actual, possibly repeated/unsorted nodes.
   !! The default RCOND is max(number of samples,initial columns)*epsilon.
@@ -594,7 +978,7 @@ subroutine cheb_fit_direct(u,values,requested_degree,model,status,rcond)
   integer, intent(out) :: status
   real(cheb_dp), intent(in), optional :: rcond
   real(cheb_dp), allocatable :: x(:),scaled_values(:),coeff(:)
-  real(cheb_dp) :: lower,upper,value_scale,t,y
+  real(cheb_dp) :: lower,upper,value_scale,t
   integer :: m,degree,i,k,istat,solver_status
   logical :: ok
 
@@ -686,26 +1070,7 @@ subroutine cheb_fit_direct(u,values,requested_degree,model,status,rcond)
      if(.not.ok) then
         status=CHEB_NONFINITE_COEFFICIENTS; exit fitting
      endif
-     ! Differentiate the full-weight-c(0) convention. Form d(0) already halved
-     ! to avoid an unnecessary overflow in 2*c(1), including degree one.
-     model%derivative_coefficients=0.d0
-     do k=degree-1,1,-1
-        call cheb_multiply(2.d0*dble(k+1),model%coefficients(k+1),t,ok)
-        if(.not.ok) exit
-        if(k+2<=degree-1) then
-           call cheb_add(t,model%derivative_coefficients(k+2),y,ok)
-           if(.not.ok) exit
-           t=y
-        endif
-        model%derivative_coefficients(k)=t
-     enddo
-     if(degree>=1.and.ok) then
-        model%derivative_coefficients(0)=model%coefficients(1)
-        if(degree>=3) then
-           call cheb_add(model%coefficients(1),0.5d0*model%derivative_coefficients(2),y,ok)
-           if(ok) model%derivative_coefficients(0)=y
-        endif
-     endif
+     call cheb_differentiate(model%coefficients,model%derivative_coefficients,ok)
      if(.not.ok) then
         status=CHEB_NONFINITE_COEFFICIENTS; exit fitting
      endif
@@ -1184,7 +1549,9 @@ pure logical function cheb_model_valid(model) result(valid)
   if(model%fit_status/=CHEB_SUCCESS.and.model%fit_status/=CHEB_REDUCED) return
   if(degree<0.or.degree>model%requested_degree) return
   if(degree==huge(0)) return
-  if(model%rank/=degree+1.or.model%sample_count<degree+1) return
+  if(.not.model%coefficients_imported) then
+    if(model%rank/=degree+1.or.model%sample_count<degree+1) return
+  endif
   if(.not.allocated(model%coefficients).or..not.allocated(model%derivative_coefficients)) return
   if(lbound(model%coefficients,1)/=0.or.ubound(model%coefficients,1)/=degree) return
   if(lbound(model%derivative_coefficients,1)/=0.or. &
@@ -1341,9 +1708,10 @@ double complex function eval_fit(is,iperp,ppar_valC,dfpar,status,value_status,de
   !! by the subroutine [[determine_param_fit(subroutine)]].
 
         use alps_var, only : fit_type, pp, param_fit, n_fits, gamma_rel,nspec,relativistic
-        use alps_var, only : ACmethod, poly_fit_coeffs, poly_order
+        use alps_var, only : ACmethod, poly_kind
 		use alps_io, only : alps_error,alps_continuation_error
 	use alps_distribution_analyt, only : distribution_analyt
+ use, intrinsic :: ieee_arithmetic, only: ieee_value,ieee_quiet_nan
 	implicit none
 
 
@@ -1405,6 +1773,16 @@ if(ACmethod(is)==2.and.relativistic(is)) then
       status=cheb_status
    elseif(cheb_status/=CHEB_SUCCESS) then
       call alps_continuation_error(is,iperp,cheb_status,ppar_valC)
+   endif
+   return
+endif
+
+if(nr_cheb_evaluation_active(is)) then
+   call eval_nr_cheb(is,iperp,ppar_valC,eval_fit,cheb_status,dfpar,value_status,derivative_status)
+   if(present(status)) then
+      status=cheb_status
+   elseif(cheb_status/=CHEB_SUCCESS) then
+      call alps_continuation_error(is,iperp,cheb_status,ppar_valC,nonrelativistic=.true.)
    endif
    return
 endif
@@ -1530,17 +1908,19 @@ endif
  return
 
 case (2)
-   ! use the orthogonal polynomials of kind described in &poly_is
-   
-   if (present(dfpar)) then
-	  dfpar = (0.d0,0.d0)      
-      eval_fit = fit_function_poly(is,iperp,ppar_valC,poly_order(is),&
-           poly_fit_coeffs(is,iperp,0:poly_order(is)),dfpar=dfpar)
+   ! Native models are the only NR method-2 representation. In particular,
+   ! an inactive/missing collection must never fall back to coefficient data.
+   cheb_status=CHEB_INVALID_MODEL
+   if(poly_kind(is)/=1)cheb_status=CHEB_INVALID_REPRESENTATION
+   eval_fit=cmplx(ieee_value(0.d0,ieee_quiet_nan),ieee_value(0.d0,ieee_quiet_nan),kind(1.d0))
+   if(present(dfpar))dfpar=eval_fit
+   if(present(value_status))value_status=cheb_status
+   if(present(dfpar).and.present(derivative_status))derivative_status=cheb_status
+   if(present(status))then
+      status=cheb_status
    else
-      eval_fit = fit_function_poly(is,iperp,ppar_valC,poly_order(is),&
-           poly_fit_coeffs(is,iperp,0:poly_order(is)))
+      call alps_continuation_error(is,iperp,cheb_status,ppar_valC,nonrelativistic=.true.)
    endif
-   
 end select
 end function eval_fit
 
@@ -1629,152 +2009,12 @@ double complex function fit_function(is,n_params,params,pperp_val,ppar_val)
 	return
 end function fit_function
 
-double complex function fit_function_poly(is,iperp,ppar_val,n_poly,fit_coeffs,dfpar)
-  !! This function evaluates the orthogonal polynomical fit to f0
-  !! at real pperp_val and complex ppar_val,
-  !! with the one-dimensional polynomical coefficient array fit_coeffs is fed into the
-  !! function.
-  !! For the evaluation in ALPS, use [[eval_fit(function)]].
-  use alps_var, only : pp, poly_kind, npar, logfit
-  use alps_var, only : poly_log_max
- implicit none
-
- integer :: n_poly
- !! Maximum Polynomial Order
- 
- integer, intent(in) :: is
- !! Index of species for which [[eval_fit(function)]] is executed.
-
- double precision, intent(in) :: fit_coeffs(0:n_poly)
- !! Array of polynomial coefficients
-
- double complex :: poly_basis(0:n_poly)
- !! Array of polynomial coefficients
-
-  integer :: n
- !! Polynomial Order Index
-
- integer, intent(in) :: iperp
- !! Index of perpendicular momentum at which [[fit_function_poly(function)]] is executed.
-
- double complex :: ppar_val
- !! Complex parallel momentum.
-
- double complex :: ppar_val_tmp
- !! Complex parallel momentum.
-
- double precision :: norm_1, norm_2
- !! Range of p_parallel for rescaling polynomials
-
- double complex, intent(out), optional :: dfpar
- !! Derivative of polynomial representations.
-
- double complex :: poly_basis_deriv(0:n_poly)
- !! Derivatives of the polynomial basis.
- 
- double complex :: poly_deriv
- !! Total Derivative
-
- fit_function_poly=cmplx(0.d0,0.d0,kind(1.d0))
- if (present(dfpar)) dfpar = (0.d0,0.d0)
- poly_deriv = (0.d0,0.d0)
- 
- select case (poly_kind(is))
- case (1)
-    !Chebyshev polynomials range from [-1,1]
-    norm_1=5.d-1*(pp(is,iperp,npar,2)+pp(is,iperp,0,2))
-    norm_2=5.d-1*(pp(is,iperp,npar,2)-pp(is,iperp,0,2))
-    ppar_val_tmp=(ppar_val-norm_1)/norm_2
-
-    if (abs(ppar_val_tmp).gt.1.d0) then !!kgk: should this be .gt. or .ge. ?
-       fit_function_poly=0.d0
-    else
-	!Set n=0
-    n=0
-    poly_basis(n)=cmplx(1.d0,0.d0,kind(1.d0))
-	if (present(dfpar)) &
-		poly_basis_deriv(n) = (0.d0,0.d0)
-    fit_function_poly=fit_function_poly+fit_coeffs(n)*poly_basis(n)
-    
-	!Set n=1
-	n=1
-    poly_basis(n)=ppar_val_tmp
-	if (present(dfpar)) &
-		poly_basis_deriv(n) = (1.d0,0.d0)
-    fit_function_poly=fit_function_poly+fit_coeffs(n)*poly_basis(n)
-
-	!Start Summing Derivatives
-	if (present(dfpar)) &
-		poly_deriv = fit_coeffs(n)
-
-	!Start recursion
-    do n=2,n_poly
-       poly_basis(n) = cmplx(2.d0,0.d0,kind(1.d0)) * &
-			ppar_val_tmp * poly_basis(n-1) - poly_basis(n-2)
-
-       fit_function_poly=fit_function_poly+&
-	   		fit_coeffs(n)*poly_basis(n)
-		if (present(dfpar)) then
-			poly_basis_deriv(n) = cmplx(2.d0,0.d0,kind(1.d0))*poly_basis(n-1) &
-            + cmplx(2.d0,0.d0,kind(1.d0))*ppar_val_tmp*poly_basis_deriv(n-1) &
-            - poly_basis_deriv(n-2)
-	   		poly_deriv = poly_deriv &
-              + fit_coeffs(n)*poly_basis_deriv(n)
-		endif
-    enddo
-    if (logfit(is)) then
-
-       !if (abs(fit_function_poly).gt.20.) then
-       !KGK: how does this impact the 'noise'
-       !if ((real(fit_function_poly).gt.1.).or.(aimag(fit_function_poly).gt.1.)&
-       !     .or.(real(fit_function_poly).lt.-18.).or.(aimag(fit_function_poly).lt.-18.)) then
-
-       !if ((real(fit_function_poly).gt.10.).or.(aimag(fit_function_poly).gt.10.)&
-       !     .or.(real(fit_function_poly).lt.-22.).or.(aimag(fit_function_poly).lt.-22.)) then
-
-       !KGK: Need to investigate the appropriate threshold here for when this functional
-       !representation ceases to work.
-       !if ((real(fit_function_poly).gt.17.).or.(aimag(fit_function_poly).gt.17.)&
-         !if ((real(fit_function_poly).lt.-poly_log_max(is)).or.& !??
-              !(aimag(fit_function_poly).lt.-poly_log_max(is))) then
-
-       !if ((real(fit_function_poly).lt.-poly_log_max(is)).or.& !??
-       !     (aimag(fit_function_poly).lt.-poly_log_max(is)).or.&
-       !     (real(fit_function_poly).gt. poly_log_max(is)).or.& !??
-       !     (aimag(fit_function_poly).gt.poly_log_max(is))) then
-
-       !KGK: 2026-10-12
-       if ((real(fit_function_poly).gt. poly_log_max(is))) then
-       !if ((abs(fit_function_poly).lt.-100.d0).or.(abs(fit_function_poly).gt.100.d0)) then
-       !if ((abs(fit_function_poly).lt.-50.d0).or.(abs(fit_function_poly).gt.50.d0)) then
-       !if (abs(fit_function_poly).gt.poly_log_max(is)) then
-          fit_function_poly=cmplx(0.d0,0.d0,kind(1.d0))
-       else
-          !write(*,*)iproc,is,iperp,ppar_val,ppar_val_tmp,fit_function_poly
-          fit_function_poly=10.d0**(fit_function_poly)
-          !write(*,*)iproc,is,iperp,ppar_val,ppar_val_tmp,fit_function_poly
-       endif
-    endif
-	!Calculate the Actual Derivative
-	if (present(dfpar)) then
-   		if (logfit(is)) then
-      		dfpar = log(10.d0)*fit_function_poly*poly_deriv/norm_2
-   		else
-      		dfpar = poly_deriv/norm_2
-   		endif
-	endif
- endif
-end select
-
- return
-end function fit_function_poly
-
 subroutine determine_param_fit
 	!! This is the fitting routine for the hybrid analytic continuation. It determines
 	!! the full field [[alps_var(module):param_fit(variable)]].
 	use alps_var, only : writeOut, fit_type, param_fit, n_fits, nspec, f0, nperp, npar, logfit, runname
         use alps_var, only : relativistic,npparbar,f0_rel,ngamma, perp_correction, gamma_rel, usebM
-        use alps_var, only : ACmethod, poly_fit_coeffs 
+        use alps_var, only : ACmethod
 	implicit none
 
 	integer :: ifit
@@ -1866,33 +2106,11 @@ subroutine determine_param_fit
     perp_correction(is,:)=1.d0
 
     		 elseif (ACmethod(is).EQ.2) then
+                                ! Fitted exclusively by the separate native/rel
+                                ! initialization hooks while the VDF is available.
+                                cycle
 
-                                ! Relativistic rows were built once by initialize_rel_cheb.
-                                if(relativistic(is)) cycle
-
-			 	write (*,'(a,i2)') ' Using polynomial representation for species ',is
-
-				param_fit(is,:,:,:)=0.d0
-				fit_type(is,:)=1
-                                perp_correction(is,:)=1.d0
-
-                                call set_polynomial_basis(is)
-
-                                call determine_GLLS(is)
-
-                                unit_spec=2500+is
-                                write(specwrite,'(i0)') is
-                                open(unit = unit_spec,file = 'distribution/'&
-                                     //trim(runname)//'.poly_parameters.'//trim(specwrite)&
-                                     //'.out', status = 'replace')
-                                do iperp=0,nperp
-                                   write(unit_spec,*)&
-                                        iperp,poly_fit_coeffs(is,iperp,:)
-                                enddo
-
-                                close(unit_spec)
-
-		 else
+                         else
 		! For all fit types that include a fit parameter for the perpendicular momentum (kappa and Moyal),
 		! we must not fit this parameter when pperp=0. Otherwise, the LM matrix is singular:
 
@@ -2138,166 +2356,6 @@ endif
 end subroutine determine_param_fit
 
 
-subroutine determine_GLLS(is)
-  !! This subroutine evaluates the General Linear Least Squares fit
-  !! to the distribution function for component 'is' using the selected
-  !! polynomial basis functions.
-  use alps_var, only : polynomials, nperp, npar, f0, poly_fit_coeffs, poly_order
-  use alps_var, only : logfit
-  implicit none
-
-  integer :: is
-  !! Index of species.
-
-  integer :: iperp
-  !! Perpendicular index.
-
-  integer :: ipar
-  !! parallel index
-
-  double precision, dimension(:), allocatable :: f0_fit
-
-  double precision :: min_val
-
-  write(*,'(a,i2)')'Determining GLLS Coefficients for Component: ',is
-  
-  allocate(f0_fit(0:npar));f0_fit=0.d0
-  do iperp=0,nperp
-     if (logfit(is)) then
-
-        if (minval(f0(is,iperp,:)) .gt. 0.d0) then
-           f0_fit(:)=log10(f0(is,iperp,:))
-        else
-           ! Get min nonzero value from f0(is,iperp,:) before log10 conversion:
-           if (any(f0(is,iperp,:) > 0.d0)) then
-              min_val = minval(f0(is,iperp,:), mask=(f0(is,iperp,:) > 0.d0))
-           else
-              ! Fallback value if alrel entries are zero; adjust as needed.
-              min_val = 1.0d-40
-           endif
-           
-           ! Copy the slice and replace zeros with 0.01*min_val:
-           f0_fit(:) = f0(is,iperp,:)
-           do ipar = 0, npar
-              if (f0_fit(ipar) == 0.d0) then
-                 f0_fit(ipar) = 0.01d0 * min_val
-              endif
-           enddo
-           
-           do ipar = 0, npar
-              if (f0_fit(ipar) <= 0.0d0) then
-                 print*, 'Non-positive value at index', ipar, f0_fit(ipar)
-              endif
-           enddo
-           f0_fit(:)=log10(f0_fit(:))
-        !else
-        !   f0_fit(:)=log10(f0(is,iperp,:))
-        endif
-     else
-        f0_fit(:)=f0(is,iperp,:)
-     endif
-     call least_squares_fit(polynomials(is,:,:),f0_fit,poly_fit_coeffs(is,iperp,:),poly_order(is))
-  enddo
-  deallocate(f0_fit)
-  
-end subroutine determine_GLLS
-
-subroutine least_squares_fit(AA,BB,coeffs,npoly)
-  !!Solves General Linear Least Squares Normal Equation
-  use alps_var, only : npar
-  implicit none
-
-  integer :: npoly
-  !! Order for polyhedral representation
-  
-  double precision, intent(in) :: BB(0:npar)
-  !! f0(is,iperp,:)
-
-    double precision, intent(out) :: coeffs(0:npoly)
-    !! fit coefficients
-
-    double precision, intent(in) :: AA(0:npar, 0:npoly)
-    !! Polynomial Basis
-   
-    integer, dimension(0:npoly) :: ipiv
-    !!Pivot Indices
-
-    integer :: info
-    !!LAPACK error diagnostics
-
-    double precision :: alpha(0:npoly,0:npoly)
-    !! A^T.A component of General Linear Least Square calculation
-    !! e.g. Eqn 15.4.7 from Numerical Recipies
-    
-    double precision :: beta(0:npoly)
-    !! A^T.b component of General Linear Least Square calculation
-    !! e.g. Eqn 15.4.7 from Numerical Recipies
-
-    alpha=0.d0
-    beta=0.d0
-    
-    ! Calculate (A^T * A) for the normal equation solution
-    call dgemm('T', 'N', npoly+1, npoly+1, npar+1, 1.0d0, AA(0:npar, 0:npoly), &
-         npar+1, AA(0:npar, 0:npoly), npar+1, 0.0d0, alpha(0:npoly, 0:npoly), npoly+1)
-
-    ! Calculate (A^T * B) for the normal equation solution
-    call dgemv('T', npar+1, npoly+1, 1.0d0, AA(0:npar, 0:npoly), &
-         npar+1, BB(0:npar), 1, 0.0d0, beta(0:npoly), 1)
-    
-    ! Solve for the coefficients using the LAPACK routine
-    call dgesv(npoly+1, 1, alpha(0:npoly, 0:npoly), npoly+1, &
-         ipiv(0:npoly), beta(0:npoly), npoly+1, info)
-
-    coeffs(0:npoly)=beta(0:npoly)
-
-    if (info /= 0) then
-        print *, "Error in dgesv:", info
-        stop
-    end if
-  
-end subroutine least_squares_fit
-
-subroutine set_polynomial_basis(is)
-  !! This subroutine evaluates the General Linear Least Squares fit
-  !! to the distribution function for component 'is' using the selected
-  !! polynomial basis functions.
-  use alps_var, only : polynomials, poly_kind, poly_order
-  use alps_var, only : writeOut, npar
-  use alps_io, only : alps_error
-  implicit none
-
-  integer :: is
-  !! Index of species.
-
-  integer :: ipar
-  !! Index of parallel momentum.
-
-  integer :: n
-  !! Polynomial Order
-
-  double precision :: yy
-  !! Argument of Polynomial
-
-  select case (poly_kind(is))
-  case (1) !Chebyshev Polynomial Basis
-     if (writeOut) & 
-          write(*,'(a,i2)')'Constructing Chebyshev Basis for Component ',is
-     
-     polynomials(is,:,0) = 1.0
-     do ipar = 0, npar
-        yy=-1.d0+ipar*(2.d0/npar)
-        polynomials(is,ipar,1) = yy
-        do n = 2, poly_order(is)
-           polynomials(is,ipar,n) = &
-                2.0 * yy * polynomials(is,ipar,n-1) - polynomials(is,ipar,n-2)
-        end do
-     enddo
-  case default
-     call alps_error(10)
-  end select
-  
-end subroutine set_polynomial_basis
-
 subroutine output_fit(qualitytotal)
 	!! This subroutine outputs the fit parameters for iperp=0 to stdout to monitor the fit.
 	use alps_io, only : isnancheck, alps_error
@@ -2307,6 +2365,7 @@ subroutine output_fit(qualitytotal)
         use alps_var, only : ns, qs, ms, bMpdrifts
         use alps_var, only : density_int, current_int, poly_order
 	implicit none
+  logical :: partial_native
 
 	double precision, intent(in) :: qualitytotal
 	!! Quality of the total fit result.
@@ -2378,7 +2437,17 @@ subroutine output_fit(qualitytotal)
 
 	write (*,'(a)') ' Results of the fit for hybrid analytic continuation at iperp = 1:'
 
+ partial_native=.false.
  do is=1,nspec
+if(nr_cheb_species_eligible(is).or.(relativistic(is).and..not.usebM(is).and.ACmethod(is)==2))then
+ partial_native=.true.
+ if(relativistic(is)) then
+ write(*,'(a,i0)') ' Fixed-Gamma SVD rows prepared; inspect with get_rel_cheb_row. Species: ',is
+ else
+ write(*,'(a,i0)')' Native SVD rows prepared; inspect with get_nr_cheb_row. Species: ',is
+ endif
+ cycle
+endif
     select case (ACmethod(is))
     case (1)
        do ifit=1,n_fits(is)
@@ -2413,6 +2482,7 @@ subroutine output_fit(qualitytotal)
 
 	write (*,'(a)') ' Writing fit result to files'
 	do is=1,nspec
+    if(nr_cheb_species_eligible(is).or.(relativistic(is).and..not.usebM(is).and.ACmethod(is)==2)) cycle
 
     if (usebM(is)) then
        charge(is)=ns(is)*qs(is)
@@ -2582,8 +2652,12 @@ end select
 endif
 enddo
 write(*,'(a)')         '-=-=-=-='
+if(.not.partial_native)then
 write(*,'(a, es14.4e3)') ' Total charge density of fit/analytical function:           ', sum(charge(1:nspec))
 write(*,'(a, es14.4e3)') ' Total parallel current density of fit/analytical function: ', sum(current(1:nspec))
+else
+ write(*,'(a)') ' Native SVD rows excluded from legacy fit totals; original VDF moments are unchanged.'
+endif
 write(*,'(a)')         '-=-=-=-=-=-=-=-='
 
 

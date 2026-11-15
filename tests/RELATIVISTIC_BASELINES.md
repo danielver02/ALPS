@@ -1,5 +1,11 @@
 # Relativistic Chebyshev preparation: Tasks 0 and 1
 
+Current R2 status: supported relativistic numerical method 2 is enabled in
+production (`kind=1`, positive order, `log_fit=T`, finite positive source data).
+The guard descriptions in the historical task sections below describe earlier
+repository states. See `input.md` and `validation/run_rel_production.py` for the
+current contract and activation tests.
+
 ## Scope and review boundaries
 
 Audit baseline and current HEAD: `465a8afd7a0cd1fa6900ae6fd409cb417cf1cac4`.
@@ -43,10 +49,10 @@ cases must complete actual `init_param` and retain species selections.
 From the repository root:
 
 ```sh
-bash tests/run_input_validation.sh
-bash tests/run_test_suite.sh --relativistic-baselines --check
-bash tests/run_numerical_baselines.sh --convergence
-ALPS_TEST_NP=8 bash tests/run_numerical_baselines.sh --check
+bash validation/run_input_validation.sh
+bash validation/run_numerical_baselines.sh --check
+bash validation/run_numerical_baselines.sh --convergence
+ALPS_TEST_NP=8 bash validation/run_numerical_baselines.sh --check
 ```
 
 Requirements: Bash, a GNU-compatible MPI Fortran compiler, MPI launcher,
@@ -271,12 +277,12 @@ The review inventory is:
 | Files | Change |
 |---|---|
 | `src/ALPS_io.f90` | Task 0 guard in `init_param` and diagnostic case 18 in `alps_error` |
-| `tests/test_input_validation.f90`, `run_input_validation.sh` | Independent Task 0 input-reader/MPI regression |
-| `tests/relativistic_references.f90`, `test_coordinate_contract.f90` | Test-only analytic functions, coordinate and derivative contracts |
-| `tests/make_baseline_case.f90`, `test_numerical_baselines.f90` | Fortran fixtures and observations of actual production routines |
-| `tests/compare_baselines.f90`, `test_comparison_fixtures.f90` | Numerical regression reader and adversarial input checks |
-| `tests/compare_convergence.f90` | Grid/integration sensitivity report |
-| `tests/run_numerical_baselines.sh`, `run_test_suite.sh` | Isolated source build/run and optional established-suite entry |
+| `validation/test_input_validation.f90`, `run_input_validation.sh` | Independent Task 0 input-reader/MPI regression |
+| `validation/relativistic_references.f90`, `test_coordinate_contract.f90` | Test-only analytic functions, coordinate and derivative contracts |
+| `validation/make_baseline_case.f90`, `test_numerical_baselines.f90` | Fortran fixtures and observations of actual production routines |
+| `validation/compare_baselines.f90`, `test_comparison_fixtures.f90` | Numerical regression reader and adversarial input checks |
+| `validation/compare_convergence.f90` | Grid/integration sensitivity report |
+| `validation/run_numerical_baselines.sh`, `run_test_suite.sh` | Isolated source build/run and optional established-suite entry |
 | `tests/data/relativistic_baselines/` | Four numerical snapshots, convergence results, consumed source/input hashes |
 | `tests/RELATIVISTIC_BASELINES.md` | Reproduction, measured results, and limitations |
 

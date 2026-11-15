@@ -300,6 +300,10 @@ Congratulations! You have found the solutions to the Maxwellian example case for
 >     cd ./tests  
 >     ./run_test_suite.sh
 
+The isolated executable validation programs are in `validation/`; see
+[validation/README.md](validation/README.md) for canonical scratch-build commands.
+Historical inputs and the launchers above remain in `tests/`.
+
 The given test cases cover a range of typical applications, so there should be good starting points for your purposes.
 
 The code also creates additional output files for the heating contributions and for the eigenfunctions of the solutions. The general output format of ALPS is described on our [ALPS Output](output.md) page.

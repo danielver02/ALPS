@@ -56,4 +56,4 @@ jobs:
       run: |
         cd tests
         bash ./run_test.sh
-        pytest
+        pytest ../validation

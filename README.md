@@ -130,3 +130,14 @@ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
 CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+## Validation and historical fixtures
+
+Executable numerical validation drivers and isolated scratch runners live in
+[`validation/`](validation/README.md). For example, run
+`bash validation/run_chebyshev_kernel.sh --matrix` or
+`bash validation/run_nr_zero_return.sh` from the repository root; absolute runner
+paths also work from another directory. Historical inputs, protected outputs and
+baseline datasets remain in `tests/`; scientific reports remain in `audits/`.
+The older `tests/run_test.sh` and `tests/run_test_suite.sh` workflows remain in
+place and expect invocation from `tests/` with existing in-tree binaries.

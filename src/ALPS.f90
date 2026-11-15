@@ -27,8 +27,8 @@ program alps
   use alps_fns,    only : determine_nmax, split_processes, determine_bessel_array
   use alps_fns,    only : map_search
   use alps_fns,    only : om_scan, om_double_scan
-  use alps_com,    only : pass_instructions, pass_distribution
-  use alps_analyt, only : determine_param_fit,initialize_rel_cheb,CHEB_SUCCESS
+  use alps_com,    only : pass_instructions, pass_distribution,complete_nr_cheb_initialization
+  use alps_analyt, only : determine_param_fit,initialize_rel_cheb,initialize_nr_cheb_production,CHEB_SUCCESS
   use alps_var,    only : startup_tick, startup_tock, startup_report
   use mpi
   implicit none
@@ -37,7 +37,7 @@ program alps
   !! Index for iterating through wavevector scans with [[om_scan(subroutine)]]
   !! or [[om_double_scan(subroutine)]]
 
-  integer :: rel_cheb_status
+  integer :: rel_cheb_status,nr_cheb_status
 
   double precision :: startup_start
   !! Variable for tracking timing.
@@ -92,9 +92,10 @@ program alps
      ! Conditional root-only setup, covering both constructed and cached VDFs.
      ! Normal input still rejects relat=T with AC_method=2.
      call initialize_rel_cheb(rel_cheb_status)
+     call initialize_nr_cheb_production(nr_cheb_status)
      !Calculate best fit to f0:
      call startup_tick(phase_start)
-     if(rel_cheb_status==CHEB_SUCCESS) call determine_param_fit !alps_analyt
+     if(rel_cheb_status==CHEB_SUCCESS.and.nr_cheb_status==CHEB_SUCCESS) call determine_param_fit !alps_analyt
      call startup_tock(9,phase_start)
 
      !f0 not needed for dispersion calculation.
@@ -105,6 +106,12 @@ program alps
 
   !Distribute input and derived parameters:
   call pass_distribution ! alps_com
+  call complete_nr_cheb_initialization(nr_cheb_status)
+  if(nr_cheb_status/=CHEB_SUCCESS) then
+    if(proc0)write(*,'(a,i0)') 'ERROR: native NR Chebyshev initialization/transfer failed; status=',nr_cheb_status
+    call mpi_abort(MPI_COMM_WORLD,nr_cheb_status,ierror)
+    error stop 'native NR Chebyshev initialization failed'
+  endif
 
   ! Once we know kperp, we can determine nmax and split the processes.
   ! The following three routines will also be called when kperp changes:

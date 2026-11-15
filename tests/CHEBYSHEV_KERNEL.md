@@ -1,10 +1,16 @@
 # Standalone Chebyshev kernel
 
+Current R2 status: supported relativistic numerical method 2 is enabled in
+production (`kind=1`, positive order, `log_fit=T`, finite positive source data).
+The guard descriptions in the historical task sections below describe earlier
+repository states. See `input.md` and `validation/run_rel_production.py` for the
+current contract and activation tests.
+
 The numerical kernel is in `alps_analyt`; production fitting and evaluation
 continue to use their existing routines. Run its independent Fortran tests with:
 
 ```bash
-bash tests/run_chebyshev_kernel.sh --matrix
+bash validation/run_chebyshev_kernel.sh --matrix
 ```
 
 This builds from current source in temporary directories and tests `-O0` and
@@ -261,8 +267,8 @@ relativistic method-2 input guard is still active.
 Focused integration and paired fixed-frequency checks (scratch files only):
 
 ```bash
-bash tests/run_rel_analytic_parallel.sh
-bash tests/run_rel_parallel_susceptibility.sh
+bash validation/run_rel_analytic_parallel.sh
+bash validation/run_rel_parallel_susceptibility.sh
 ```
 
 The latter instruments copies of the existing Task-3D driver and Landau routine,
@@ -281,9 +287,9 @@ initialization, and reading them performs no communication. They are small
 validation diagnostics, not a profiling subsystem.
 
 ```bash
-bash tests/run_rel_chebyshev_mpi.sh
-bash tests/run_chebyshev_kernel.sh --matrix
-bash tests/run_input_validation.sh
+bash validation/run_rel_chebyshev_mpi.sh
+bash validation/run_chebyshev_kernel.sh --matrix
+bash validation/run_input_validation.sh
 ```
 
 The isolated MPI harness runs with 1/2/4 ranks, synthetic and actual transformed

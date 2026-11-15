@@ -43,7 +43,7 @@ module alps_io
 contains
 
 
-  subroutine alps_continuation_error(species,row,status,u)
+  subroutine alps_continuation_error(species,row,status,u,nonrelativistic)
     !! Legacy continuation callers cannot inspect a status. Abort the whole
     !! communicator rather than return an unavailable/underflowed value as zero.
     !! A worker must not access the root-only log unit.
@@ -52,10 +52,19 @@ contains
     implicit none
     integer, intent(in) :: species,row,status
     double complex, intent(in) :: u
-    write(*,'(a,3(a,i0),a,2es24.15)') 'ERROR: relativistic Chebyshev continuation:', &
-         ' species=',species,' igamma=',row,' status=',status,' u=',u
-    if(proc0) write(unit_error,'(a,3(a,i0),a,2es24.15)') 'ERROR: relativistic Chebyshev continuation:', &
-         ' species=',species,' igamma=',row,' status=',status,' u=',u
+    logical, intent(in), optional :: nonrelativistic
+    character(80) :: label
+    character(8) :: row_label
+    label='ERROR: relativistic Chebyshev continuation:';row_label=' igamma='
+    if(present(nonrelativistic)) then
+       if(nonrelativistic) then
+          label='ERROR: nonrelativistic Chebyshev continuation:';row_label=' iperp='
+       endif
+    endif
+    write(*,'(a,3(a,i0),a,2es24.15)') trim(label), &
+         ' species=',species,trim(row_label),row,' status=',status,' u=',u
+    if(proc0) write(unit_error,'(a,3(a,i0),a,2es24.15)') trim(label), &
+         ' species=',species,trim(row_label),row,' status=',status,' u=',u
     call mpi_abort(MPI_COMM_WORLD,max(1,status),ierror)
     error stop 'relativistic Chebyshev continuation failed'
   end subroutine alps_continuation_error
@@ -76,8 +85,8 @@ contains
     use alps_var, only : scan_option, n_scan, scan, relativistic, logfit, usebM
     use alps_var, only : maxsteps_fit, n_fits, lambda_initial_fit, lambdafac_fit, epsilon_fit
     use alps_var, only : bMnmaxs, bMBessel_zeros, bMbetas, bMalphas, bMpdrifts
-    use alps_var, only : ACmethod, poly_kind, poly_order, polynomials, poly_fit_coeffs
-    use alps_var, only : poly_log_max, secant_method, poly_derivative_type
+    use alps_var, only : ACmethod, poly_kind, poly_order
+    use alps_var, only : secant_method, poly_derivative_type
     implicit none
 
     integer :: ik
@@ -183,7 +192,6 @@ contains
     allocate(ACmethod(1:nspec)); ACmethod = 1
     allocate(poly_kind(1:nspec)); poly_kind = 0
     allocate(poly_order(1:nspec)); poly_order = 0
-    allocate(poly_log_max(1:nspec)); poly_log_max = 0
     allocate(poly_derivative_type(1:nspec)); poly_derivative_type = 0
 
     !READ IN SPECIES PARAMETERS:
@@ -191,13 +199,8 @@ contains
        unit=input_unit_no
        call get_indexed_namelist_unit (unit, "spec", is)
        call spec_read(is)
-       ! Polynomial fits currently use original momentum rows, whereas the
-       ! relativistic continuation requires rows at fixed Lorentz factor.
-       if (relativistic(is).and.ACmethod(is)==2) then
-          write(*,'(a,i0,a,i0)') 'ERROR: Species ',is,' selects relat=T with AC_method=',ACmethod(is)
-          write(unit_error,'(a,i0,a,i0)') 'ERROR: Species ',is,' selects relat=T with AC_method=',ACmethod(is)
-          call alps_error(18)
-       endif
+       if (usebM(is).and.relativistic(is)) &
+            call rel_input_error(is,'use_bM=T with relat=T is unsupported; analytic bimaxwellian species require relat=F.')
        write(*,'(a,i3,a)')'Species ',is,' : '
        write(*,'(a,es14.4e3,a,es14.4e3,a,es14.4e3)')&
             ' ns/nREF = ',ns(is),' | qs/qREF = ',qs(is),' | ms/mREF = ',ms(is)
@@ -291,6 +294,17 @@ contains
           case (2)
              call get_indexed_namelist_unit (unit, "poly_spec", is)
              call poly_read(is)
+             if (relativistic(is)) then
+                if (.not.logfit(is)) then
+                   call rel_input_error(is, &
+                        'relativistic method 2 requires log_fit=T; direct fitting is unsupported.')
+                endif
+
+                if (poly_order(is)<=0) then
+                   call rel_input_error(is, &
+                        'relativistic method 2 requires a positive requested polynomial degree.')
+                endif
+             endif
              select case (poly_kind(is))
              case (1)
                 write(*,'(a,i0,a,i0)')&
@@ -303,8 +317,6 @@ contains
        endif
     enddo
 
-    allocate(polynomials(1:nspec,0:npar,0:maxval(poly_order(:)))); polynomials=0.d0
-    allocate(poly_fit_coeffs(1:nspec,0:nperp,0:maxval(poly_order(:)))); poly_fit_coeffs=0.d0
 
     !Read in selection for scan paramter:
     if (n_scan.gt.0) then
@@ -535,7 +547,7 @@ contains
   subroutine poly_read(is)
     !!Reads in Polynomial Basis Function Parameters
     use alps_var, only : poly_kind, poly_order
-    use alps_var, only : poly_log_max, poly_derivative_type
+    use alps_var, only : poly_derivative_type, unit_error
     implicit none
 
     integer,intent(in) :: is
@@ -548,21 +560,30 @@ contains
     integer :: order
     !! Maximum order of Polynomial
 
-    double precision :: log_max
-    !! Maximum Value of Polynomial Evaluation
+    integer :: read_status
+    character(256) :: read_message
 
     integer :: derivative_type
     !! Kind of derivative for analytic continuation evaluation
 
     nameList /poly_spec/ &
-         kind, order, log_max, derivative_type
+         kind, order, derivative_type
 
    derivative_type=0
    
-    read(unit=unit,nml=poly_spec)
+    read(unit=unit,nml=poly_spec,iostat=read_status,iomsg=read_message)
+    if(read_status/=0) then
+       if(index(read_message,'log_max')>0) then
+          write(*,'(a)') 'ERROR: log_max is no longer supported in &poly_spec.'
+          write(unit_error,'(a)') 'ERROR: log_max is no longer supported in &poly_spec.'
+       else
+          write(*,'(a,i0,2a)') 'ERROR: invalid &poly_spec for species ',is,': ',trim(read_message)
+          write(unit_error,'(a,i0,2a)') 'ERROR: invalid &poly_spec for species ',is,': ',trim(read_message)
+       endif
+       call alps_error(10)
+    endif
     poly_kind(is)=kind
     poly_order(is)=order
-    poly_log_max(is)=log_max
     poly_derivative_type(is)=derivative_type
 
   end subroutine poly_read
@@ -825,9 +846,10 @@ subroutine get_runname(runname,foldername)
   subroutine read_f0
     !! Subroutine for reading in background distribution function
     use alps_var, only : nperp, npar, arrayName, f0, pp, nspec
-    use alps_var, only : writeOut, usebM
+    use alps_var, only : writeOut, usebM,relativistic,ACmethod,unit_error
     implicit none
 
+    integer :: ios
     integer :: ipar
     !Parallel index.
 
@@ -860,18 +882,91 @@ subroutine get_runname(runname,foldername)
 
         write(readname, '(3a,i0,a)') &
              "distribution/",trim(arrayName),'.',is,".array"
-        open (unit=unit, file=trim(readname), status='old', action='read')
+        if (relativistic(is).and.ACmethod(is)==2) then
+           open(unit=unit,file=trim(readname),status='old',action='read',iostat=ios)
+           if(ios/=0) call rel_input_error(is,'cannot open source distribution: '//trim(readname))
+        else
+           open (unit=unit, file=trim(readname), status='old', action='read')
+        endif
 
         do iperp=0,nperp
            do ipar=0,npar
-              read(unit,*) pp(is,iperp,ipar,1),pp(is,iperp,ipar,2),f0(is,iperp,ipar)
+              if(relativistic(is).and.ACmethod(is)==2) then
+                 read(unit,*,iostat=ios) pp(is,iperp,ipar,1),pp(is,iperp,ipar,2),f0(is,iperp,ipar)
+                 if(ios/=0) then
+                    write(*,'(a,2i8)') ' Missing/malformed source sample at (iperp,ipar)=',iperp,ipar
+                    write(unit_error,'(a,2i8)') ' Missing/malformed source sample at (iperp,ipar)=',iperp,ipar
+                    call rel_input_error(is,'missing or malformed source sample.')
+                 endif
+              else
+                 read(unit,*) pp(is,iperp,ipar,1),pp(is,iperp,ipar,2),f0(is,iperp,ipar)
+              endif
            enddo
         enddo
         close(unit)
+        if(relativistic(is).and.ACmethod(is)==2) call validate_rel_source(is)
       endif
      enddo
 
 end subroutine read_f0
+
+
+subroutine rel_input_error(is,message)
+  !! Predictable input failures are distinct from kernel continuation statuses.
+  use alps_var, only : unit_error
+  implicit none
+  integer,intent(in) :: is
+  character(*),intent(in) :: message
+  write(*,'(a,i0,2a)') 'ERROR: relativistic input species ',is,': ',trim(message)
+  write(unit_error,'(a,i0,2a)') 'ERROR: relativistic input species ',is,': ',trim(message)
+  call alps_error(18)
+end subroutine rel_input_error
+
+subroutine validate_rel_source(is)
+  !! Before derivative preparation, TPS logarithms and cache lookup. The cache
+  !! identity includes these exact source arrays, coordinates, mass and vA.
+  use, intrinsic :: ieee_arithmetic, only : ieee_is_finite
+  use alps_var, only : pp,f0,ms,vA,ns,qs,nperp,npar,unit_error
+  implicit none
+  integer,intent(in) :: is
+  integer :: i,j
+  double precision :: tol
+  if(.not.ieee_is_finite(ms(is)).or..not.ieee_is_finite(vA)) &
+       call rel_input_error(is,'mass and vA must be finite.')
+  if(ms(is)<=0.d0.or.vA<=0.d0) call rel_input_error(is,'mass and vA must be positive.')
+  if(.not.ieee_is_finite(ns(is)).or..not.ieee_is_finite(qs(is))) &
+       call rel_input_error(is,'density and charge normalization parameters must be finite.')
+  if(nperp<2.or.npar<2) call rel_input_error(is,'source grid requires nperp>=2 and npar>=2 for original-grid preparation.')
+  do i=0,nperp
+     do j=0,npar
+        if(.not.ieee_is_finite(f0(is,i,j))) then
+           write(*,'(a,2i8)') ' Nonfinite source sample at (iperp,ipar)=',i,j
+           write(unit_error,'(a,2i8)') ' Nonfinite source sample at (iperp,ipar)=',i,j
+           call rel_input_error(is,'nonfinite source distribution sample.')
+        endif
+        if(f0(is,i,j)<=0.d0) then
+           write(*,'(a,2i8,a,es24.15)') ' Source sample (iperp,ipar)=',i,j,' value=',f0(is,i,j)
+           write(unit_error,'(a,2i8,a,es24.15)') ' Source sample (iperp,ipar)=',i,j,' value=',f0(is,i,j)
+           call rel_input_error(is,'source distribution must be strictly positive for log-TPS; no zero floor is applied.')
+        endif
+        if(.not.all(ieee_is_finite(pp(is,i,j,:)))) call rel_input_error(is,'nonfinite source momentum coordinate.')
+     enddo
+  enddo
+  tol=128.d0*epsilon(1.d0)*max(1.d0,maxval(abs(pp(is,:,:,:))))
+  if(minval(pp(is,:,:,1))<0.d0) call rel_input_error(is,'perpendicular source momentum must be nonnegative.')
+  do i=0,nperp
+     if(i>0) then
+        if(pp(is,i,0,1)<=pp(is,i-1,0,1)) call rel_input_error(is,'perpendicular grid must be strictly increasing.')
+     endif
+     do j=0,npar
+        if(abs(pp(is,i,j,1)-pp(is,i,0,1))>tol.or.abs(pp(is,i,j,2)-pp(is,0,j,2))>tol) &
+             call rel_input_error(is,'source coordinates must form a rectangular tensor-product grid.')
+        if(j>0) then
+           if(pp(is,i,j,2)<=pp(is,i,j-1,2)) call rel_input_error(is,'parallel grid must be strictly increasing.')
+        endif
+     enddo
+  enddo
+end subroutine validate_rel_source
 
 
 
@@ -1202,12 +1297,8 @@ function input_unit_exist (nml,exist)
           write(*,'(a)') 'ERROR: Cannot read one valid optional &relativistic_params block.'
           write(unit_error,'(a)') 'ERROR: Cannot read one valid optional &relativistic_params block.'
        case(18)
-          write(*,'(a)') 'ERROR: Relativistic polynomial analytic continuation is unsupported: current coefficients use'
-          write(*,'(a)') '       (pperp,ppar) rows, but relativistic continuation requires (Gamma,pparbar) rows.'
-          write(*,'(a)') '       Relativistic Chebyshev support is under development. Use a supported functional fit.'
-          write(unit_error,'(a)') 'ERROR: Relativistic polynomial analytic continuation is unsupported: current coefficients use'
-          write(unit_error,'(a)') '       (pperp,ppar) rows, but relativistic continuation requires (Gamma,pparbar) rows.'
-          write(unit_error,'(a)') '       Relativistic Chebyshev support is under development. Use a supported functional fit.'
+          write(*,'(a)') 'ERROR: Unsupported or invalid relativistic input; see the species diagnostic above.'
+          write(unit_error,'(a)') 'ERROR: Unsupported or invalid relativistic input; see the species diagnostic above.'
        case default
           write(*,'(a)')'ERROR: Unspecified...'
           write(unit_error,'(a)')'ERROR: Unspecified...'

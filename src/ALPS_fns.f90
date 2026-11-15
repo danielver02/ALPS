@@ -1370,8 +1370,8 @@ end function funct_g
 double complex function landau_integrate(om, nn, mode)
   !! This function evaluates the Landau contour according to Eqs. (3.8) and (3.9) of the code paper.
 	use alps_var, only : nperp, pp, pi, ms, qs, kpar, sproc
-   use alps_var, only : poly_derivative_type
-	use alps_analyt, only: eval_fit
+   use alps_var, only : poly_derivative_type, ACmethod
+	use alps_analyt, only: eval_fit,nr_cheb_evaluation_active
 	implicit none
 
   double complex, intent(in) :: om
@@ -1419,6 +1419,8 @@ double complex function landau_integrate(om, nn, mode)
   double complex :: fperp_f
   !! value of distribution at (iperp-1,p_res)
 
+  logical :: legacy_zero_return, analytic_nr_parallel
+
 	integer :: iperp
 	!! Index of perpendicular momentum.
 
@@ -1430,6 +1432,8 @@ double complex function landau_integrate(om, nn, mode)
 
 	dpperp = pp(sproc, 2, 2, 1) - pp(sproc, 1, 2, 1)
 	dppar = abs(pp(sproc, 2, 2, 2) - pp(sproc, 2, 1, 2))
+  legacy_zero_return=(ACmethod(sproc)==0.or.ACmethod(sproc)==1)
+  analytic_nr_parallel=poly_derivative_type(sproc)==1.and.nr_cheb_evaluation_active(sproc)
 
   ! Landau contour integral:
   ! At iperp=1, we are already missing the part from iperp=0, where we should actually start. Therefore, we use 4 instead of 2 in the trapezoid integration:
@@ -1443,17 +1447,24 @@ double complex function landau_integrate(om, nn, mode)
 
   p_res = (ms(sproc) * (om) - 1.d0*nn * qs(sproc))/kpar
 
+  ! Only initialized native NR Chebyshev analytic derivatives omit these queries.
+  if (.not.analytic_nr_parallel) then ! parallel FD queries
   fpar_i=eval_fit(sproc,iperp,p_res+dppar)
   fpar_f=eval_fit(sproc,iperp,p_res-dppar)
+  endif ! parallel FD queries
 
   fperp_i=eval_fit(sproc,iperp+1,p_res)
   fperp_f=eval_fit(sproc,iperp-1,p_res)
 
+  ! Preserve the method-0/1 zero-return policy. Native method-2 failures are
+  ! handled by eval_fit; successful zeros enter the unchanged derivative stencils.
+  if (legacy_zero_return) then
   if ((abs(fpar_i).eq.0.d0).or.(abs(fpar_f).eq.0.d0)&
        .or.(abs(fperp_i).eq.0.d0).or.(abs(fperp_f).eq.0.d0)) then
      landau_integrate =cmplx(0.d0,0.d0,kind(1.d0))
      return
   endif
+  endif ! legacy zero-return compatibility
 
 
   ! Calculate the derivatives of f0 at the complex p_res:
