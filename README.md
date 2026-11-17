@@ -12,7 +12,7 @@ This is the ALPS code: the Arbitrary Linear Plasma Solver.
 ## Authors
 
 Kristopher Klein   (kgklein@arizona.edu)  
-Daniel Verscharen  (d.verscharen@ucl.ac.uk)
+Daniel Verscharen  (daniel.verscharen@rub.de)
 
 ## Contents
 
@@ -25,9 +25,10 @@ Daniel Verscharen  (d.verscharen@ucl.ac.uk)
 ## 1. What is ALPS?
 
 ALPS is a parallelised numerical code that solves the Vlasov-Maxwell dispersion
-relation in hot (even relativistic) magnetised plasma. ALPS allows for any
-number of particle species with arbitrary gyrotropic background distribution
-functions supporting waves with any direction of propagation with respect to
+relation in hot (even relativistic) magnetised plasma. 
+ALPS allows for any number of particle species with 
+arbitrary gyrotropic background distribution functions 
+supporting waves with any direction of propagation with respect to 
 the background magnetic field.
 
 If you use the code for a science publication,
@@ -55,19 +56,21 @@ If you use the code for a science publication,
 and Bale, S. D.: ALPS: the Arbitrary Linear Plasma Solver, J. Plasma Phys. 84,
 905840403, 2018, doi: 10.1017/S0022377818000739](http://doi.org/10.1017/S0022377818000739)
 
-The documentation of the code can be found on [alps.space](http://alps.space).
+The documentation of the code can be found on [github](https://danielver02.github.io/ALPS/).
 
-Details on updates to the code can be found in:
+Details on recent updates to the code can be found in:
 
 [Klein, K. G. and Verscharen, D.: The Dielectric Response of Plasmas with Arbitrary Gyrotropic Velocity Distributions, Phys. Plasmas 32, 092104, 2025, doi: 10.1063/5.0286477](http://doi.org/10.1063/5.0286477)
 
 ## 2. Acknowledgements
 
-The development of the ALPS code was supported by NASA Grant NNX16AG81G. The code developers appreciate support from the UK Science
+The development of the ALPS code was supported by NASA Grant NNX16AG81G. 
+The code developers appreciate support from the UK Science
 and Technology Facilities Council (STFC) Ernest Rutherford Fellowship ST/P003826/1,
 STFC Consolidated Grants ST/S000240/1 and ST/W001004/1, and the Open Source
 Software Sustainability Funding programme from UCL's Advanced Research Computing
-Centre and UCL's eResearch Domain. We appreciate software engineering support by
+Centre and UCL's eResearch Domain. 
+We appreciate software engineering support by
 David Stansby and Tuomas Koskela from UCL.
 
 ##  3. Installing the ALPS code
@@ -81,45 +84,20 @@ With MPI Fortran, BLAS and LAPACK installed, the standard build is:
 make -j4                 # plain make / make -j1 also works
 ```
 
-For a clean rebuild, use `make clean && make -j4`. Cleaning removes objects,
+For a clean rebuild, use `make clean && make -j4`.
+This cleaning removes objects,
 executables and compiler-generated `*.mod` / `*.smod` files in the `src/` and
-`distribution/` build directories. It does not recursively remove modules from
-validation or fixture directories. Explicit Fortran module prerequisites order
-both clean parallel builds and incremental rebuilds; manual module compilation
-and `make -B` are unnecessary.
-
-Separate build directories are supported using an **unconfigured** source tree:
-
-```bash
-mkdir /tmp/alps-build
-cd /tmp/alps-build
-/path/to/ALPS/configure
-make -j4
-```
-
-Each build directory owns its objects and module interfaces; no validation or
-source-tree module search path is required. Do not mix compiler-generated
-interfaces from different compilers/builds. Configure may reject an out-of-tree
-build if that source tree is already configured in place; use a fresh source
-copy in that case.
-
-The supplied `configure` and `Makefile.in` files suffice for ordinary builds.
-After changing `Makefile.am`, maintainers must update the affected templates
-with Automake (for example, `automake --foreign src/Makefile distribution/Makefile`)
-and rerun `./configure` or `./config.status` in their build directory. Changes to
-`configure.ac` or Autoconf macros require `autoreconf -fi` followed by configure.
-Make may perform these maintainer refreshes automatically when their inputs are
-newer; repeatedly forcing targets with `-B` also forces configuration rules.
-
-
+`distribution/` build directories.
 
 ##  4. Running the ALPS code
 
-ALPS works with input files that specify the plasma and numerical parameters for
-the calculation. We recommend that you start by checking out the provided test
-cases as a guidance for the creation of input files. These test cases are listed
-in the scripts `run_test.sh` and `run_test_suite.sh` in the subfolder `./tests`. All associated input files have
-a name starting with `test_`.
+ALPS works with input files that specify the plasma state 
+and numerical parameters for the calculation.
+We recommend that you start by checking out the provided test
+cases as a guidance for the creation of input files.
+These test cases are listed in the scripts `run_test.sh` 
+and `run_test_suite.sh` in the subfolder `./tests`.
+All associated input files have a name starting with `test_`.
 
 You can execute the ALPS code through the following command:
 
@@ -127,9 +105,9 @@ You can execute the ALPS code through the following command:
 mpirun -np <NP> ./src/ALPS <input_file.in>
 ```
 
-where `<NP>` is the number of processors you want to use. This number must be greater
-than or equal to 4, and it must be an even number. `<input_file.in>` is the input file
-that includes all parameters for your run.
+where `<NP>` is the number of processors you want to use. 
+This number must be greater than or equal to 4, and it must be an even number. 
+`<input_file.in>` is the input file that includes all parameters for your run.
 
 On some systems, depending on the MPI configuration, the oversubscribe flag is
 required. In this case, the above command must be replaced with
@@ -138,7 +116,9 @@ required. In this case, the above command must be replaced with
 mpirun -np <NP> --oversubscribe ./src/ALPS <input_file.in>
 ```
 
-For first-time users, we recommend working through our [ALPS Tutorial](tutorial.md). The key input parameters for ALPS are described on the [ALPS Input](input.md) page. The output format of ALPS is described on the [ALPS Output](output.md) page.
+For first-time users, we recommend working through our [ALPS Tutorial](tutorial.md). 
+The key input parameters for ALPS are described on the [ALPS Input](input.md) page. 
+The output format of ALPS is described on the [ALPS Output](output.md) page.
 
 
 ## 5. License
@@ -174,8 +154,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 Executable numerical validation drivers and isolated scratch runners live in
 [`validation/`](validation/README.md). For example, run
 `bash validation/run_chebyshev_kernel.sh --matrix` or
-`bash validation/run_nr_zero_return.sh` from the repository root; absolute runner
-paths also work from another directory. Historical inputs, protected outputs and
-baseline datasets remain in `tests/`; scientific reports remain in `audits/`.
-The older `tests/run_test.sh` and `tests/run_test_suite.sh` workflows remain in
-place and expect invocation from `tests/` with existing in-tree binaries.
+`bash validation/run_nr_zero_return.sh` from the repository root. 
+Historical inputs, protected outputs and baseline datasets remain in `tests/`
+while scientific reports remain in `audits/`.

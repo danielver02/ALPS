@@ -54,14 +54,6 @@ positions_principal=3
 n_resonance_interval=100
 !Threshold for analytical principal-value integration
 Tlim=0.01d0
-!Max # of fitting iterations
-maxsteps_fit=500
-!Levenberg-Marquardt parameters:
-lambda_initial_fit=1.d0
-lambdafac_fit=10.d0
-epsilon_fit=1.d-8
-!T-> output fit parameters to ASCII in distribution/
-fit_check=T
 !T-> After map_scan, determine minima and refine
 determine_minima=F
 !1: consecutive scans, 2: double scan
@@ -69,6 +61,17 @@ scan_option=1
 !# wavevector scans
 n_scan=1
 /
+
+! Global LM controls (optional; defaults shown).
+&fitting_params
+!Max # of fitting iterations
+maxsteps_fit=500
+!Levenberg-Marquardt parameters:
+lambda_initial_fit=1.d0
+lambdafac_fit=10.d0
+epsilon_fit=1.d-8
+/
+
 
 !Initial guess of complex frequency for first solution
 !Only used when use_map=.false.

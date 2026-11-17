@@ -12,7 +12,7 @@
 !I                              Version 1.0                                    I
 !I                                                                             I
 !I  Kristopher Klein   (kgklein@arizona.edu)                                   I
-!I  Daniel Verscharen  (d.verscharen@ucl.ac.uk)                                I
+!I  Daniel Verscharen  (daniel.verscharen@rub.de)                                I
 !I                                                                             I
 !===============================================================================
 

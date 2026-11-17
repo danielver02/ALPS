@@ -12,7 +12,7 @@
 !I                              Version 1.0                                    I
 !I                                                                             I
 !I  Kristopher Klein   (kgklein@arizona.edu)                                   I
-!I  Daniel Verscharen  (d.verscharen@ucl.ac.uk)                                I
+!I  Daniel Verscharen  (daniel.verscharen@rub.de)                                I
 !I                                                                             I
 !===============================================================================
 
@@ -1370,7 +1370,7 @@ function input_unit_exist (nml,exist)
     write (*,*) "I                       Version 1.0                       I"
     write (*,*) "I                                                         I"
     write (*,*) "I  Kristopher Klein   (kgklein@arizona.edu)               I"
-    write (*,*) "I  Daniel Verscharen  (d.verscharen@ucl.ac.uk)            I"
+    write (*,*) "I  Daniel Verscharen  (daniel.verscharen@rub.de)            I"
     write (*,*) "I                                                         I"
     write (*,*) "==========================================================="
 

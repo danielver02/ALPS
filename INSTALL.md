@@ -1,12 +1,12 @@
 # ALPS: The Arbitrary Linear Plasma Solver
 
-These are the install instructions for the ALPS code: the Arbitrary Linear
-Plasma Solver.
+These are the install instructions for the ALPS code: 
+the Arbitrary Linear Plasma Solver.
 
 ## Authors
 
 Kristopher Klein   (kgklein@arizona.edu)
-Daniel Verscharen  (d.verscharen@ucl.ac.uk)
+Daniel Verscharen  (daniel.verscharen@rub.de)
 
 ## CONTENTS
 
@@ -65,7 +65,8 @@ brew install mpich
 
 ## GETTING THE ALPS CODE
 
-We recommend pulling the latest version of ALPS from GitHub. For this, go to
+We recommend pulling the latest version of ALPS from GitHub. 
+For this, go to
 the directory where you want to install ALPS and execute the following command:
 
 ```
@@ -73,10 +74,9 @@ git clone https://github.com/danielver02/ALPS
 ```
 
 Alternatively, you can also go to the website https://github.com/danielver02/ALPS
-directly and download the source code from there. The advantage of using the git
-command is that you can now contribute to the development of the ALPS code. If
-you make any changes to the code, GitHub will run automatic tests (via workflows)
-to ensure that the changes do not break the code.
+directly and download the source code from there. 
+The advantage of using the git command is that you can now contribute to the development of the ALPS code. 
+If you make any changes to the code, GitHub will run automatic tests (via workflows) to ensure that the changes do not break the code.
 
 ## INSTALLING THE ALPS CODE
 
@@ -107,7 +107,8 @@ If you want to use a different version of the BLAS or LAPACK libraries, you can 
 ## EXECUTION OF TEST RUNS
 
 ALPS comes with a selection of test runs that cycle through various test
-problems. To execute a small set of tests, execute the following shell script:
+problems. 
+To execute a small set of tests, execute the following shell script:
 
 ```
 ./run_test.sh
@@ -116,8 +117,8 @@ problems. To execute a small set of tests, execute the following shell script:
 This script will test the interpolation routine, the routine to generate pre-
 described distribution functions, and a simply fast dispersion relation.
 
-To execute a more complete set of test problems, execute the following shell
-script:
+To execute a more complete set of test problems, 
+execute the following shell script:
 
 ```
 ./run_test_suite.sh
