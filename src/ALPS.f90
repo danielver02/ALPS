@@ -27,8 +27,10 @@ program alps
   use alps_fns,    only : determine_nmax, split_processes, determine_bessel_array
   use alps_fns,    only : map_search
   use alps_fns,    only : om_scan, om_double_scan
-  use alps_com,    only : pass_instructions, pass_distribution,complete_nr_cheb_initialization
-  use alps_analyt, only : determine_param_fit,initialize_rel_cheb,initialize_nr_cheb_production,CHEB_SUCCESS
+  use alps_com,    only : pass_instructions, pass_distribution
+  use alps_com,    only : complete_nr_cheb_initialization
+  use alps_analyt, only : determine_param_fit
+  use alps_analyt, only : initialize_rel_cheb,initialize_nr_cheb_production,CHEB_SUCCESS
   use alps_var,    only : startup_tick, startup_tock, startup_report
   use mpi
   implicit none
@@ -37,7 +39,14 @@ program alps
   !! Index for iterating through wavevector scans with [[om_scan(subroutine)]]
   !! or [[om_double_scan(subroutine)]]
 
-  integer :: rel_cheb_status,nr_cheb_status
+  integer :: rel_cheb_status
+  !! Status returned by relativistic Chebyshev initialization on rank 0.
+  !! CHEB_SUCCESS allows startup fitting to proceed when NR initialization also succeeds.
+
+  integer :: nr_cheb_status
+  !! Status of native nonrelativistic Chebyshev initialization on rank 0,
+  !! then of collective model transfer and activation on all ranks.
+  !! A non-success status after collective initialization aborts the MPI communicator.
 
   double precision :: startup_start
   !! Variable for tracking timing.

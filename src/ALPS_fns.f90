@@ -853,7 +853,9 @@ end function integrate
 
 
 double complex function integrate_res(om,nn,mode)
-  !! This function performs the integration near resonances as described in Section 3.1 of the code paper. It is only called if resonances are present in or near the integration domain.
+   !! This function performs the integration near resonances 
+   !!as described in Section 3.1 of the code paper. 
+   !!It is only called if resonances are present in or near the integration domain.
 	use alps_var, only : nperp,npar,pp,ms,qs,kpar,pi,sproc
 	use alps_var, only : positions_principal,n_resonance_interval, Tlim
 	implicit none
@@ -1368,7 +1370,8 @@ end function funct_g
 
 
 double complex function landau_integrate(om, nn, mode)
-  !! This function evaluates the Landau contour according to Eqs. (3.8) and (3.9) of the code paper.
+   !! This function evaluates the Landau contour 
+   !! according to Eqs. (3.8) and (3.9) of the code paper.
 	use alps_var, only : nperp, pp, pi, ms, qs, kpar, sproc
    use alps_var, only : poly_derivative_type, ACmethod
 	use alps_analyt, only: eval_fit,nr_cheb_evaluation_active
@@ -1419,7 +1422,17 @@ double complex function landau_integrate(om, nn, mode)
   double complex :: fperp_f
   !! value of distribution at (iperp-1,p_res)
 
-  logical :: legacy_zero_return, analytic_nr_parallel
+  logical :: legacy_zero_return
+  !! Preserve the method-0/1 rule that any zero-valued neighboring evaluation
+  !! in the interior derivative stencils returns zero for the entire Landau integral.
+  !! Native method 2 instead propagates evaluation failures explicitly and allows
+  !! successfully evaluated zeros to enter the derivative stencils.
+
+  logical :: analytic_nr_parallel
+  !! True when native nonrelativistic Chebyshev evaluation is active and the
+  !! species selects derivative_type=1. Skip the displaced parallel evaluations
+  !! at p_res +/- dppar because eval_fit supplies the analytic parallel derivative;
+  !! neighboring perpendicular evaluations remain necessary for their finite difference.
 
 	integer :: iperp
 	!! Index of perpendicular momentum.
@@ -1432,8 +1445,10 @@ double complex function landau_integrate(om, nn, mode)
 
 	dpperp = pp(sproc, 2, 2, 1) - pp(sproc, 1, 2, 1)
 	dppar = abs(pp(sproc, 2, 2, 2) - pp(sproc, 2, 1, 2))
-  legacy_zero_return=(ACmethod(sproc)==0.or.ACmethod(sproc)==1)
-  analytic_nr_parallel=poly_derivative_type(sproc)==1.and.nr_cheb_evaluation_active(sproc)
+   legacy_zero_return=&
+      (ACmethod(sproc)==0.or.ACmethod(sproc)==1)
+   analytic_nr_parallel=&
+      poly_derivative_type(sproc)==1.and.nr_cheb_evaluation_active(sproc)
 
   ! Landau contour integral:
   ! At iperp=1, we are already missing the part from iperp=0, where we should actually start. Therefore, we use 4 instead of 2 in the trapezoid integration:

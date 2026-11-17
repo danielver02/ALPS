@@ -35,7 +35,7 @@ module alps_io
   private :: get_runname, get_indexed_namelist_unit
   private :: input_unit_exist, input_unit
   private :: map_read, solution_read, spec_read, scan_read, bM_read
-  private :: poly_read, relativistic_params_read
+  private :: poly_read, relativistic_params_read, fitting_params_read
   public  :: init_param, read_f0, get_unused_unit, alps_error
   public :: output_time, display_credits, isnancheck
   public :: alps_continuation_error
@@ -44,9 +44,17 @@ contains
 
 
   subroutine alps_continuation_error(species,row,status,u,nonrelativistic)
-    !! Legacy continuation callers cannot inspect a status. Abort the whole
-    !! communicator rather than return an unavailable/underflowed value as zero.
-    !! A worker must not access the root-only log unit.
+    !! Report a failed Chebyshev continuation evaluation and terminate all MPI ranks.
+    !! Called by eval_fit when its caller omits the optional status output and the
+    !! evaluator reports a non-success status, such as an unavailable row, invalid
+    !! model, or overflow/underflow while reconstructing the distribution or derivative.
+    !! The diagnostic identifies the species, fitted row, kernel status code, and
+    !! complex parallel coordinate u at which the evaluation failed. By default,
+    !! row is a relativistic Gamma-grid index (igamma); nonrelativistic=.true.
+    !! instead identifies a perpendicular-momentum row (iperp).
+    !! The calling rank writes to stdout. MPI_Abort stops the entire communicator
+    !! so other ranks cannot remain blocked in collectives, and a failed evaluation
+    !! cannot silently enter the dispersion calculation as a zero contribution.
     use alps_var, only : proc0,unit_error,ierror
     use mpi
     implicit none
@@ -78,12 +86,12 @@ contains
     use alps_var, only : profile_startup,unit_error
     use alps_var, only : kperp_last, kpar_last, kperp_0, kpar_0
     use alps_var, only : use_map, writeOut, wroots, nspec, numroots
-    use alps_var, only : nperp, npar, arrayName, fit_check, param_fit, fit_type, perp_correction
+    use alps_var, only : nperp, npar, arrayName, param_fit, fit_type, perp_correction
     use alps_var, only : ns, qs, ms, vA, Bessel_zero, numiter
     use alps_var, only : D_threshold, D_tol, positions_principal
     use alps_var, only : determine_minima, n_resonance_interval, ngamma, Tlim
     use alps_var, only : scan_option, n_scan, scan, relativistic, logfit, usebM
-    use alps_var, only : maxsteps_fit, n_fits, lambda_initial_fit, lambdafac_fit, epsilon_fit
+    use alps_var, only : n_fits
     use alps_var, only : bMnmaxs, bMBessel_zeros, bMbetas, bMalphas, bMpdrifts
     use alps_var, only : ACmethod, poly_kind, poly_order
     use alps_var, only : secant_method, poly_derivative_type
@@ -115,7 +123,6 @@ contains
          nperp, npar, vA, arrayName, Bessel_zero, &
          secant_method, numiter, D_threshold, &
          D_prec, D_gap, D_tol, positions_principal, Tlim, &
-         maxsteps_fit, lambda_initial_fit, lambdafac_fit, epsilon_fit, fit_check, &
          determine_minima, n_resonance_interval, scan_option, n_scan
 
     !Get a unassigned unit number for input/output:
@@ -131,6 +138,8 @@ contains
        write(unit_error,'(a)') 'Cannot read &system: '//trim(read_message)
        call alps_error(16)
     endif
+
+    call fitting_params_read
 
     if (writeOut) &
          write(*,'(2a)') &
@@ -192,6 +201,7 @@ contains
     allocate(ACmethod(1:nspec)); ACmethod = 1
     allocate(poly_kind(1:nspec)); poly_kind = 0
     allocate(poly_order(1:nspec)); poly_order = 0
+    ! Methods 0/1 require finite differences; poly_read sets the method-2 default.
     allocate(poly_derivative_type(1:nspec)); poly_derivative_type = 0
 
     !READ IN SPECIES PARAMETERS:
@@ -334,6 +344,139 @@ contains
   end subroutine init_param
 
 
+
+  subroutine fitting_params_read
+    !! Read optional global LM settings on rank 0.
+    !! No group means module defaults. Missing and malformed groups are distinct; duplicates are errors.
+    !! A quote/comment-aware header scan permits arbitrary record length, placement, case and inline data.
+    use alps_var, only : runname,foldername,unit_error
+    use alps_var, only : maxsteps_fit,lambda_initial_fit,lambdafac_fit,epsilon_fit
+    use iso_fortran_env, only : iostat_end,iostat_eor
+    implicit none
+    integer :: scan_unit
+    !! Private read-only input unit used for header scanning and the subsequent namelist read.
+    integer :: ios
+    !! I/O status for opening, scanning, rewinding, or reading; includes end-of-record and end-of-file.
+    integer :: close_status
+    !! I/O status returned when closing the private input unit.
+    integer :: groups
+    !! Number of matching fitting_params headers outside comments and quoted strings.
+    !! Zero retains defaults; more than one is rejected as a duplicate active group.
+    integer :: token_length
+    !! Full length of the header name being scanned, including characters beyond the token buffer.
+    integer :: code
+    !! ASCII character code used to recognize header-name characters.
+    character :: ch
+    !! Current input character read without advancing to the next record.
+    character :: quote
+    !! Active single- or double-quote delimiter; a blank indicates scanning outside a quoted string.
+    character(32) :: token
+    !! Lowercase header-name buffer following an ampersand; token_length prevents truncated-name matches.
+    character(1024) :: message
+    !! Processor-provided explanation of an input opening, scanning, rewind, or namelist-read failure.
+    logical :: comment
+    !! True after an unquoted exclamation mark, until the end of the current record.
+    logical :: group_open
+    !! Whether a previous namelist header has not yet reached its terminator.
+    logical :: in_name
+    !! True while collecting a namelist header name after an unquoted, uncommented ampersand.
+    namelist /fitting_params/ maxsteps_fit,lambda_initial_fit,lambdafac_fit,epsilon_fit
+
+    open(newunit=scan_unit,file=trim(foldername)//trim(runname)//'.in', &
+         status='old',action='read',iostat=ios,iomsg=message)
+    if(ios/=0) then
+       write(*,'(a)') trim(message)
+       write(unit_error,'(a)') trim(message)
+       call alps_error(19)
+    endif
+    groups=0; quote=' '; comment=.false.; in_name=.false.; token=''; token_length=0
+    group_open=.false.
+    do
+       read(scan_unit,'(a)',advance='no',iostat=ios,iomsg=message) ch
+       if(ios==iostat_eor) then
+          call finish_name
+          comment=.false.
+          cycle
+       endif
+       if(ios/=0) exit
+       if(comment) cycle
+       if(quote/=' ') then
+          if(ch==quote) quote=' '
+          cycle
+       endif
+       if(in_name) then
+          code=iachar(ch)
+          if((code>=iachar('a').and.code<=iachar('z')).or. &
+               (code>=iachar('A').and.code<=iachar('Z')).or. &
+               (code>=iachar('0').and.code<=iachar('9')).or.ch=='_') then
+             token_length=token_length+1
+             if(code>=iachar('A').and.code<=iachar('Z')) ch=achar(code+32)
+             if(token_length<=len(token)) token(token_length:token_length)=ch
+             cycle
+          endif
+          call finish_name
+       endif
+       select case(ch)
+       case('!')
+          comment=.true.
+       case("'",'"')
+          quote=ch
+       case('/')
+          group_open=.false.
+       case('&')
+          in_name=.true.; token=''; token_length=0
+       end select
+    enddo
+    call finish_name
+    if(ios/=iostat_end) then
+       write(*,'(a)') 'Cannot scan fitting parameters: '//trim(message)
+       write(unit_error,'(a)') 'Cannot scan fitting parameters: '//trim(message)
+       close(scan_unit,iostat=close_status)
+       call alps_error(19)
+    endif
+    if(groups>1) then
+       write(*,'(a)') 'Duplicate &fitting_params blocks are not allowed.'
+       write(unit_error,'(a)') 'Duplicate &fitting_params blocks are not allowed.'
+       close(scan_unit,iostat=close_status)
+       call alps_error(19)
+    endif
+    if(groups==1) then
+       rewind(scan_unit,iostat=ios,iomsg=message)
+       if(ios==0) read(scan_unit,nml=fitting_params,iostat=ios,iomsg=message)
+       if(ios/=0) then
+          write(*,'(a)') 'Cannot read &fitting_params: '//trim(message)
+          write(unit_error,'(a)') 'Cannot read &fitting_params: '//trim(message)
+          close(scan_unit,iostat=close_status)
+          call alps_error(19)
+       endif
+    endif
+    close(scan_unit,iostat=close_status)
+    if(close_status/=0) call alps_error(19)
+
+  contains
+    subroutine finish_name
+      !! Count a complete matching header name, then reset the host-associated token-scanning state.
+      if(in_name.and.token_length>=len('fitting_params_')) then
+         if(index(token,'fitting_params_')==1) then
+            write(*,'(a)') 'ERROR: use one global &fitting_params block without a species index.'
+            write(unit_error,'(a)') 'ERROR: use one global &fitting_params block without a species index.'
+            call alps_error(19)
+         endif
+      endif
+      if(in_name.and.token_length==len('fitting_params')) then
+         if(token=='fitting_params') then
+            if(group_open) then
+               write(*,'(a)') 'ERROR: &fitting_params must appear between complete namelist blocks.'
+               write(unit_error,'(a)') 'ERROR: &fitting_params must appear between complete namelist blocks.'
+               call alps_error(19)
+            endif
+            groups=groups+1
+         endif
+      endif
+      if(in_name) group_open=(token/='end')
+      in_name=.false.; token=''; token_length=0
+    end subroutine
+  end subroutine fitting_params_read
 
   subroutine relativistic_params_read
     !! Read the optional shared relativistic group, only after any relativistic species is identified.
@@ -569,7 +712,7 @@ contains
     nameList /poly_spec/ &
          kind, order, derivative_type
 
-   derivative_type=0
+   derivative_type=1
    
     read(unit=unit,nml=poly_spec,iostat=read_status,iomsg=read_message)
     if(read_status/=0) then
@@ -1293,12 +1436,18 @@ function input_unit_exist (nml,exist)
        case(16)
           write(*,'(a)') 'ERROR: Invalid &system. Move ngamma, npparbar, rel_cache and rel_cache_dir to &relativistic_params.'
           write(unit_error,'(a)') 'Move ngamma, npparbar, rel_cache and rel_cache_dir to &relativistic_params.'
+          write(*,'(a)') 'Move maxsteps_fit, lambda_initial_fit, lambdafac_fit, and epsilon_fit to &fitting_params.'
+          write(unit_error,'(a)') &
+               'Move maxsteps_fit, lambda_initial_fit, lambdafac_fit, and epsilon_fit to &fitting_params.'
        case(17)
           write(*,'(a)') 'ERROR: Cannot read one valid optional &relativistic_params block.'
           write(unit_error,'(a)') 'ERROR: Cannot read one valid optional &relativistic_params block.'
        case(18)
           write(*,'(a)') 'ERROR: Unsupported or invalid relativistic input; see the species diagnostic above.'
           write(unit_error,'(a)') 'ERROR: Unsupported or invalid relativistic input; see the species diagnostic above.'
+       case(19)
+          write(*,'(a)') 'ERROR: Cannot read one valid optional global &fitting_params block.'
+          write(unit_error,'(a)') 'ERROR: Cannot read one valid optional global &fitting_params block.'
        case default
           write(*,'(a)')'ERROR: Unspecified...'
           write(unit_error,'(a)')'ERROR: Unspecified...'
