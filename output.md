@@ -21,8 +21,8 @@ The data is ordered in columns as
 5. Im $[|\mathcal{D}|]$  
 
 The *&maps_1* namelist in *filename*.in determines the structure of *filename*.map.  
-The range of $\omega_{\textrm{r}}/\Omega_{ref}$ is from `omi` to `omi` with `nr` steps. Logorithmic or linear spacing is selected with `loggridw`.
-The range of $\gamma_{\textrm{r}}/\Omega_{ref}$ is from `gami` to `gami` with `ni` steps. Logorithmic or linear spacing is selected with `loggridg`.
+The range of $\omega_{\textrm{r}}/\Omega_{ref}$ is from `omi` to `omf` with `nr` steps. Logorithmic or linear spacing is selected with `loggridw`.
+The range of $\gamma_{\textrm{r}}/\Omega_{ref}$ is from `gami` to `gamf` with `ni` steps. Logorithmic or linear spacing is selected with `loggridg`.
 
 ## *filename*.roots
 
@@ -53,7 +53,7 @@ The data is ordered as
 
 Example python quick plotting routines are found in the plotter/example/ subdirectory.
 
-See the *&scan_input* namelist description in the Quick Guide for details on determining the kind of wavevector scan.  
+See the *&scan_input* namelist description in the Quick Start Guide for details on determining the kind of wavevector scan.  
 This same data structure is preserved for the output from `om_double_scan`.
 
 ## *filename*.eigen_*scan_type_l*.root_m

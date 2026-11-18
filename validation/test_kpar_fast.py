@@ -1,6 +1,7 @@
 import numpy as np
 import pytest
 import os
+from pathlib import Path
 
 def read_roots(path=".", filename="test_kpar_fast.scan_kpara_1.root_1"):
 
@@ -19,8 +20,9 @@ def test_check_outputs(filename):
     in the parameter list.
     '''
 
-    path = "../solution"
-    ref_path = "."
+    repo = Path(__file__).resolve().parents[1]
+    path = repo / "solution"
+    ref_path = repo / "tests"
 
     ref_data = read_roots(ref_path, filename)
     test_data = read_roots(path, filename)

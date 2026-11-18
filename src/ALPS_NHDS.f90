@@ -12,7 +12,7 @@
 !I                              Version 1.0                                    I
 !I                                                                             I
 !I  Kristopher Klein   (kgklein@arizona.edu)                                   I
-!I  Daniel Verscharen  (d.verscharen@ucl.ac.uk)                                I
+!I  Daniel Verscharen  (daniel.verscharen@rub.de)                                I
 !I                                                                             I
 !===============================================================================
 
@@ -27,7 +27,7 @@ module alps_nhds
 contains
 
   ! This file is part of NHDS
-  ! Copyright (C) 2024 Daniel Verscharen (d.verscharen@ucl.ac.uk)
+  ! Copyright (C) 2024 Daniel Verscharen (daniel.verscharen@rub.de)
   !All rights reserved.
   !
   !Redistribution and use in source and binary forms, with or without

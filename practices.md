@@ -1,7 +1,8 @@
 #ALPS Best Practices
 
 ##Momentum Space Resolution
-If the input distribution is symmetric and resonances occur close to ppar=0, it is sometimes useful to work with an odd number of `npar` steps (e.g., `npar=401` instead of `npar=400`). This centres the distribution not right on one grid point, so that the code can evaluate the resonance integral more safely.
+If the input distribution is symmetric and resonances occur close to ppar=0, it is sometimes useful to work with an odd number of `npar` steps (e.g., `npar=401` instead of `npar=400`). 
+This centres the distribution not right on one grid point, so that the code can evaluate the resonance integral more safely.
 
 ###Convergence Tests
 In general, there is no clear rule that prescribes the optimal resolution of the f0-table. Therefore, it is good practice to run convergence tests with different numbers of `nperp` and `npar`. When the ALPS results do not depend on a further increase in the numbers `nperp` and `npar` anymore, then a numerically suitable resolution has been found. This point is particularly important regarding `npar`.
@@ -29,6 +30,7 @@ The initial guess for the real frequency is then Doppler-shifted by `kpar` multi
 
 ##Relativistic Caveats
 For relativistic calculations with `AC_method=1`, it is generally *not* recommended to use `fit_type_in=3`. This fit type is only useful when Jüttner-like f0-tables are used, but without a relativistic treatment of the dispersion relation. For all other cases, it is recommended to use `fit_type_in=4` or `fit_type_in=5`, depending on whether the distribution depends on pparbar or not (i.e., when anisotropies are to be accounted for).
+`AC_method=2` has now been implemented for relativistic cases, and may be a better approach for VDFs with significant departures from an analytic functional form.
 
 When the error message `ERROR: Resonance integration covers entire subluminal cone.` appears, this means that a resonance occurs at a low gamma value, where not sufficient pparbar points are defined. This error can be resolved in multiple ways. For once, a reduction in `ngamma` lowers the resolution of the gamma-grid, leading to fewer gamma-steps with low pparbar. In addition, an increase in `npparbar` increases the number of points in pparbar-space and thus the number of steps over which the code can treat the resonances appropriately. A combination of both steps (lowering `ngamma`, increasing `npparbar`) often resolves this error. If not, it may help to reduce `positions_principal`.
 

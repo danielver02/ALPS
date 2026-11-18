@@ -1,7 +1,18 @@
-! Native relativistic cache support. No interpolation, MPI, or fitting dependencies.
+! Hashing and binary-file support for reusing prepared relativistic distribution grids.
+! Cache identity and integrity checks are separate from the numerical construction
+! of those grids; neither module depends on interpolation, MPI, or fitting routines.
 module alps_cache_sha256
-  !! Incremental SHA-256, using unsigned 32-bit values held in int64 containers.
-  !! All additions fit int64; masking implements modulo 2**32 without signed overflow.
+  !! SHA-256 hashing used by the relativistic cache to identify construction inputs
+  !! and compatible builds, and to check the integrity of stored cache entries.
+  !! Hashes the supplied bytes without interpreting their numerical or text content.
+  !! sha256_state supports init, repeated update calls, and finish, allowing arrays
+  !! and files to be hashed in chunks without buffering the entire input. The
+  !! sha256 and sha256_file helpers hash a character string or a file, respectively;
+  !! completed digests contain 64 lowercase hexadecimal characters.
+  !! SHA-256 operates on unsigned 32-bit words. This implementation stores each
+  !! word in an int64 container so intermediate compression sums remain in range,
+  !! then masks to the low 32 bits to implement arithmetic modulo 2**32 without
+  !! relying on signed-integer overflow. Only intrinsic Fortran facilities are used.
   use iso_fortran_env, only : int64
   implicit none
   private

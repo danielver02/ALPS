@@ -12,7 +12,7 @@
 !I                              Version 1.0                                    I
 !I                                                                             I
 !I  Kristopher Klein   (kgklein@arizona.edu)                                   I
-!I  Daniel Verscharen  (d.verscharen@ucl.ac.uk)                                I
+!I  Daniel Verscharen  (daniel.verscharen@rub.de)                                I
 !I                                                                             I
 !===============================================================================
 
@@ -91,9 +91,57 @@ subroutine derivative_f0_rel(is,is_rel)
           if(.not.saved) write(*,'(a)') 'WARNING: relativistic cache not saved: '//trim(reason)
        endif
     endif
+    call report_rel_source_support(is,is_rel,hit)
     call write_rel_diagnostics(is,is_rel,integrate)
     call startup_tock(14,total_start)
 end subroutine derivative_f0_rel
+
+subroutine report_rel_source_support(is,is_rel,cache_hit)
+    !! Read-only geometry: successful fitting does not establish source support.
+    !! A cache hit has already validated identity against the current pp/f0,
+    !! mass, vA, grid settings and build; no TPS recomputation is needed.
+    use alps_var, only : pp,ms,vA,gamma_rel,pparbar_rel,ACmethod,proc0
+    implicit none
+    integer,intent(in) :: is,is_rel
+    logical,intent(in) :: cache_hit
+    integer :: i,j,total,inside,exterior,first,last
+    double precision :: bounds(4),g,u,r2,pperp,ppar,tol,percent
+    character(5) :: origin
+    if(.not.proc0) return
+    if(.not.allocated(ACmethod)) return ! Standalone transformation tests have no species selection.
+    if(is<lbound(ACmethod,1).or.is>ubound(ACmethod,1)) return
+    if(ACmethod(is)/=2) return
+    bounds=[minval(pp(is,:,:,1)),maxval(pp(is,:,:,1)),minval(pp(is,:,:,2)),maxval(pp(is,:,:,2))]
+    total=0;inside=0;exterior=0;first=-1;last=-1
+    do i=0,ubound(gamma_rel,2)
+       do j=0,ubound(gamma_rel,3)
+          g=gamma_rel(is_rel,i,j);u=pparbar_rel(is_rel,i,j)
+          if(g*g-1.d0<u*u) cycle ! Same cone exclusion as construction.
+          r2=max(0.d0,g*g-1.d0-u*u)
+          pperp=(ms(is)/vA)*sqrt(r2);ppar=(ms(is)/vA)*u
+          tol=128.d0*epsilon(1.d0)*max(1.d0,maxval(abs(bounds)),abs(pperp),abs(ppar))
+          total=total+1
+          if(pperp>=bounds(1)-tol.and.pperp<=bounds(2)+tol.and. &
+               ppar>=bounds(3)-tol.and.ppar<=bounds(4)+tol) then
+             inside=inside+1
+          else
+             exterior=exterior+1
+             if(first<0) first=i
+             last=i
+          endif
+       enddo
+    enddo
+    origin='fresh';if(cache_hit) origin='cache'
+    percent=0.d0;if(total>0) percent=100.d0*exterior/total
+    write(*,'(a,i0,2a)') 'REL_SOURCE_SUPPORT species=',is,' origin=',trim(origin)
+    write(*,'(a,4es24.15)') ' source_bounds pperp_min,max ppar_min,max=',bounds
+    write(*,'(a,4es24.15)') ' completed_bounds Gamma_min,max u_min,max=', &
+         minval(gamma_rel(is_rel,:,:)),maxval(gamma_rel(is_rel,:,:)), &
+         minval(pparbar_rel(is_rel,:,:)),maxval(pparbar_rel(is_rel,:,:))
+    write(*,'(a,i0,a,i0,a,i0,a,f12.6,a,i0,a,i0)') ' cone_nodes=',total,' inside=',inside, &
+         ' exterior=',exterior,' exterior_percent=',percent,' first_Gamma_row=',first,' last_Gamma_row=',last
+    write(*,'(a)') ' Models represent the completed log-TPS table, including extension outside the supplied source domain.'
+end subroutine report_rel_source_support
 
 subroutine write_rel_diagnostics(is,is_rel,integrate)
     !! Write completed arrays without normalizing or otherwise modifying them.
@@ -1214,7 +1262,7 @@ end function funct_g_rel
 
 double complex function landau_integrate_rel(om, nn, mode)
 !! This function evaluates the Landau contour according to Eqs. (3.8) and (3.9) of the code paper for a relativistic calculation.
-	use alps_var, only : ngamma, gamma_rel,pparbar_rel, pi, ms, qs, kpar, sproc, vA
+	use alps_var, only : ngamma, gamma_rel,pparbar_rel, pi, ms, qs, kpar, sproc, vA, ACmethod
 	use alps_analyt, only: eval_fit
 	implicit none
 
@@ -1253,6 +1301,9 @@ double complex function landau_integrate_rel(om, nn, mode)
    double complex :: dfpparbar_C
    !! Derivative of f0 evaluated at resonance.
 
+   double complex :: f0_res_C
+   !! Distribution value returned with its analytic parallel derivative.
+
    double complex :: pparbar_res
    !! Relativistic parallel resonance momentum.
 
@@ -1285,7 +1336,13 @@ double complex function landau_integrate_rel(om, nn, mode)
           dfgamma_C=(eval_fit(sproc,igamma+1,pparbar_res)-eval_fit(sproc,igamma-1,pparbar_res))/(2.d0*dgamma_rel)
       endif
 
-      dfpparbar_C=(eval_fit(sproc,igamma,pparbar_res+dpparbar)-eval_fit(sproc,igamma,pparbar_res-dpparbar))/(2.d0*dpparbar)
+      if (ACmethod(sproc).EQ.2) then
+        ! The row model supplies dF/du at fixed Gamma, u=pparbar, including
+        ! logarithmic reconstruction and coordinate scaling. No extra factor.
+        f0_res_C=eval_fit(sproc,igamma,pparbar_res,dfpar=dfpparbar_C)
+      else
+        dfpparbar_C=(eval_fit(sproc,igamma,pparbar_res+dpparbar)-eval_fit(sproc,igamma,pparbar_res-dpparbar))/(2.d0*dpparbar)
+      endif
 
 			landau_integrate_rel = landau_integrate_rel - h * ( &
 				om*dfgamma_C+(kpar/(vA))*dfpparbar_C) * int_T_res_rel(sproc_rel,nn, igamma,pparbar_res, mode)

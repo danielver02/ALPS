@@ -2,7 +2,7 @@
 project: ALPS
 project_github: https://github.com/danielver02/ALPS
 author: Kristopher Klein, Daniel Verscharen
-email: kgklein@arizona.edu, d.verscharen@ucl.ac.uk
+email: kgklein@arizona.edu, daniel.verscharen@rub.de
 srd_dir: src
 page_dir: docs
 output_dir: docs_out

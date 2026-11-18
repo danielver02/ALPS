@@ -1,11 +1,12 @@
 # ALPS Tutorial
 
-This is a tutorial for ALPS. It will guide you through the setting up of some basic input files, the running of the code, and the basic output. For more details, we refer to the [ALPS Input](input.md) page, the [ALPS Output](output.md) page, and the [ALPS Documentation](http://alps.space).
+This is a tutorial for ALPS. 
+It will guide you through the setting up of some basic input files, the running of the code, and the basic output. For more details, we refer to the [ALPS Input](input.md) page, the [ALPS Output](output.md) page, and the [ALPS Documentation](http://alps.space).
 
 ## Authors
 
 Kristopher Klein   (kgklein@arizona.edu)  
-Daniel Verscharen  (d.verscharen@ucl.ac.uk)
+Daniel Verscharen  (daniel.verscharen@rub.de)
 
 ## Contents
 
@@ -31,13 +32,16 @@ and
 
 [Klein, K. G. and Verscharen, D.: The Dielectric Response of Plasmas with Arbitrary Gyrotropic Velocity Distributions, Phys. Plasmas 32, 092104, 2025, doi: 10.1063/5.0286477](http://doi.org/10.1063/5.0286477)
 
-You don't need to go through all details, but it is certainly helpful to know what ALPS does and doesn't calculate. The 2018 paper also explains the numerical techniques used in the code, and the [ALPS Documentation](http://alps.space) often refers explicitly to equations and sections in the code paper. We also recommend checking the [Readme](index.md) file.
+You don't need to go through all details, but it is certainly helpful to know what ALPS does and doesn't calculate. 
+The 2018 paper also explains the numerical techniques used in the code, and the [ALPS Documentation](https://danielver02.github.io/ALPS/index.html) often refers explicitly to equations and sections in the code paper. We also recommend checking the [Readme](index.md) file.
 
 For a listing of recommendations when using ALPS, see the [ALPS Best Practices](practices.md) page.
 
 ## 2. Installing ALPS
 
-This tutorial assumes that you have a working copy of ALPS on your computer, including all the required dependencies. You can find the installation guide [here](INSTALL.md). Make sure you have a version of ALPS that compiled completely without error messages after typing
+This tutorial assumes that you have a working copy of ALPS on your computer, including all the required dependencies. 
+You can find the installation guide [here](INSTALL.md). 
+Make sure you have a version of ALPS that compiled completely without error messages after typing
 
 >     ./configure  
 >     make
@@ -299,6 +303,10 @@ Congratulations! You have found the solutions to the Maxwellian example case for
 
 >     cd ./tests  
 >     ./run_test_suite.sh
+
+The isolated executable validation programs are in `validation/`; see
+[validation/README.md](validation/README.md) for canonical scratch-build commands.
+Historical inputs and the launchers above remain in `tests/`.
 
 The given test cases cover a range of typical applications, so there should be good starting points for your purposes.
 

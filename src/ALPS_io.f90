@@ -12,7 +12,7 @@
 !I                              Version 1.0                                    I
 !I                                                                             I
 !I  Kristopher Klein   (kgklein@arizona.edu)                                   I
-!I  Daniel Verscharen  (d.verscharen@ucl.ac.uk)                                I
+!I  Daniel Verscharen  (daniel.verscharen@rub.de)                                I
 !I                                                                             I
 !===============================================================================
 
@@ -35,11 +35,47 @@ module alps_io
   private :: get_runname, get_indexed_namelist_unit
   private :: input_unit_exist, input_unit
   private :: map_read, solution_read, spec_read, scan_read, bM_read
-  private :: poly_read, relativistic_params_read
+  private :: poly_read, relativistic_params_read, fitting_params_read
   public  :: init_param, read_f0, get_unused_unit, alps_error
   public :: output_time, display_credits, isnancheck
+  public :: alps_continuation_error
 
 contains
+
+
+  subroutine alps_continuation_error(species,row,status,u,nonrelativistic)
+    !! Report a failed Chebyshev continuation evaluation and terminate all MPI ranks.
+    !! Called by eval_fit when its caller omits the optional status output and the
+    !! evaluator reports a non-success status, such as an unavailable row, invalid
+    !! model, or overflow/underflow while reconstructing the distribution or derivative.
+    !! The diagnostic identifies the species, fitted row, kernel status code, and
+    !! complex parallel coordinate u at which the evaluation failed. By default,
+    !! row is a relativistic Gamma-grid index (igamma); nonrelativistic=.true.
+    !! instead identifies a perpendicular-momentum row (iperp).
+    !! The calling rank writes to stdout. MPI_Abort stops the entire communicator
+    !! so other ranks cannot remain blocked in collectives, and a failed evaluation
+    !! cannot silently enter the dispersion calculation as a zero contribution.
+    use alps_var, only : proc0,unit_error,ierror
+    use mpi
+    implicit none
+    integer, intent(in) :: species,row,status
+    double complex, intent(in) :: u
+    logical, intent(in), optional :: nonrelativistic
+    character(80) :: label
+    character(8) :: row_label
+    label='ERROR: relativistic Chebyshev continuation:';row_label=' igamma='
+    if(present(nonrelativistic)) then
+       if(nonrelativistic) then
+          label='ERROR: nonrelativistic Chebyshev continuation:';row_label=' iperp='
+       endif
+    endif
+    write(*,'(a,3(a,i0),a,2es24.15)') trim(label), &
+         ' species=',species,trim(row_label),row,' status=',status,' u=',u
+    if(proc0) write(unit_error,'(a,3(a,i0),a,2es24.15)') trim(label), &
+         ' species=',species,trim(row_label),row,' status=',status,' u=',u
+    call mpi_abort(MPI_COMM_WORLD,max(1,status),ierror)
+    error stop 'relativistic Chebyshev continuation failed'
+  end subroutine alps_continuation_error
 
 
 
@@ -50,15 +86,15 @@ contains
     use alps_var, only : profile_startup,unit_error
     use alps_var, only : kperp_last, kpar_last, kperp_0, kpar_0
     use alps_var, only : use_map, writeOut, wroots, nspec, numroots
-    use alps_var, only : nperp, npar, arrayName, fit_check, param_fit, fit_type, perp_correction
+    use alps_var, only : nperp, npar, arrayName, param_fit, fit_type, perp_correction
     use alps_var, only : ns, qs, ms, vA, Bessel_zero, numiter
     use alps_var, only : D_threshold, D_tol, positions_principal
     use alps_var, only : determine_minima, n_resonance_interval, ngamma, Tlim
     use alps_var, only : scan_option, n_scan, scan, relativistic, logfit, usebM
-    use alps_var, only : maxsteps_fit, n_fits, lambda_initial_fit, lambdafac_fit, epsilon_fit
+    use alps_var, only : n_fits
     use alps_var, only : bMnmaxs, bMBessel_zeros, bMbetas, bMalphas, bMpdrifts
-    use alps_var, only : ACmethod, poly_kind, poly_order, polynomials, poly_fit_coeffs
-    use alps_var, only : poly_log_max, secant_method, poly_derivative_type
+    use alps_var, only : ACmethod, poly_kind, poly_order
+    use alps_var, only : secant_method, poly_derivative_type
     implicit none
 
     integer :: ik
@@ -87,7 +123,6 @@ contains
          nperp, npar, vA, arrayName, Bessel_zero, &
          secant_method, numiter, D_threshold, &
          D_prec, D_gap, D_tol, positions_principal, Tlim, &
-         maxsteps_fit, lambda_initial_fit, lambdafac_fit, epsilon_fit, fit_check, &
          determine_minima, n_resonance_interval, scan_option, n_scan
 
     !Get a unassigned unit number for input/output:
@@ -103,6 +138,8 @@ contains
        write(unit_error,'(a)') 'Cannot read &system: '//trim(read_message)
        call alps_error(16)
     endif
+
+    call fitting_params_read
 
     if (writeOut) &
          write(*,'(2a)') &
@@ -164,7 +201,7 @@ contains
     allocate(ACmethod(1:nspec)); ACmethod = 1
     allocate(poly_kind(1:nspec)); poly_kind = 0
     allocate(poly_order(1:nspec)); poly_order = 0
-    allocate(poly_log_max(1:nspec)); poly_log_max = 0
+    ! Methods 0/1 require finite differences; poly_read sets the method-2 default.
     allocate(poly_derivative_type(1:nspec)); poly_derivative_type = 0
 
     !READ IN SPECIES PARAMETERS:
@@ -172,6 +209,8 @@ contains
        unit=input_unit_no
        call get_indexed_namelist_unit (unit, "spec", is)
        call spec_read(is)
+       if (usebM(is).and.relativistic(is)) &
+            call rel_input_error(is,'use_bM=T with relat=T is unsupported; analytic bimaxwellian species require relat=F.')
        write(*,'(a,i3,a)')'Species ',is,' : '
        write(*,'(a,es14.4e3,a,es14.4e3,a,es14.4e3)')&
             ' ns/nREF = ',ns(is),' | qs/qREF = ',qs(is),' | ms/mREF = ',ms(is)
@@ -265,6 +304,17 @@ contains
           case (2)
              call get_indexed_namelist_unit (unit, "poly_spec", is)
              call poly_read(is)
+             if (relativistic(is)) then
+                if (.not.logfit(is)) then
+                   call rel_input_error(is, &
+                        'relativistic method 2 requires log_fit=T; direct fitting is unsupported.')
+                endif
+
+                if (poly_order(is)<=0) then
+                   call rel_input_error(is, &
+                        'relativistic method 2 requires a positive requested polynomial degree.')
+                endif
+             endif
              select case (poly_kind(is))
              case (1)
                 write(*,'(a,i0,a,i0)')&
@@ -277,8 +327,6 @@ contains
        endif
     enddo
 
-    allocate(polynomials(1:nspec,0:npar,0:maxval(poly_order(:)))); polynomials=0.d0
-    allocate(poly_fit_coeffs(1:nspec,0:nperp,0:maxval(poly_order(:)))); poly_fit_coeffs=0.d0
 
     !Read in selection for scan paramter:
     if (n_scan.gt.0) then
@@ -296,6 +344,139 @@ contains
   end subroutine init_param
 
 
+
+  subroutine fitting_params_read
+    !! Read optional global LM settings on rank 0.
+    !! No group means module defaults. Missing and malformed groups are distinct; duplicates are errors.
+    !! A quote/comment-aware header scan permits arbitrary record length, placement, case and inline data.
+    use alps_var, only : runname,foldername,unit_error
+    use alps_var, only : maxsteps_fit,lambda_initial_fit,lambdafac_fit,epsilon_fit
+    use iso_fortran_env, only : iostat_end,iostat_eor
+    implicit none
+    integer :: scan_unit
+    !! Private read-only input unit used for header scanning and the subsequent namelist read.
+    integer :: ios
+    !! I/O status for opening, scanning, rewinding, or reading; includes end-of-record and end-of-file.
+    integer :: close_status
+    !! I/O status returned when closing the private input unit.
+    integer :: groups
+    !! Number of matching fitting_params headers outside comments and quoted strings.
+    !! Zero retains defaults; more than one is rejected as a duplicate active group.
+    integer :: token_length
+    !! Full length of the header name being scanned, including characters beyond the token buffer.
+    integer :: code
+    !! ASCII character code used to recognize header-name characters.
+    character :: ch
+    !! Current input character read without advancing to the next record.
+    character :: quote
+    !! Active single- or double-quote delimiter; a blank indicates scanning outside a quoted string.
+    character(32) :: token
+    !! Lowercase header-name buffer following an ampersand; token_length prevents truncated-name matches.
+    character(1024) :: message
+    !! Processor-provided explanation of an input opening, scanning, rewind, or namelist-read failure.
+    logical :: comment
+    !! True after an unquoted exclamation mark, until the end of the current record.
+    logical :: group_open
+    !! Whether a previous namelist header has not yet reached its terminator.
+    logical :: in_name
+    !! True while collecting a namelist header name after an unquoted, uncommented ampersand.
+    namelist /fitting_params/ maxsteps_fit,lambda_initial_fit,lambdafac_fit,epsilon_fit
+
+    open(newunit=scan_unit,file=trim(foldername)//trim(runname)//'.in', &
+         status='old',action='read',iostat=ios,iomsg=message)
+    if(ios/=0) then
+       write(*,'(a)') trim(message)
+       write(unit_error,'(a)') trim(message)
+       call alps_error(19)
+    endif
+    groups=0; quote=' '; comment=.false.; in_name=.false.; token=''; token_length=0
+    group_open=.false.
+    do
+       read(scan_unit,'(a)',advance='no',iostat=ios,iomsg=message) ch
+       if(ios==iostat_eor) then
+          call finish_name
+          comment=.false.
+          cycle
+       endif
+       if(ios/=0) exit
+       if(comment) cycle
+       if(quote/=' ') then
+          if(ch==quote) quote=' '
+          cycle
+       endif
+       if(in_name) then
+          code=iachar(ch)
+          if((code>=iachar('a').and.code<=iachar('z')).or. &
+               (code>=iachar('A').and.code<=iachar('Z')).or. &
+               (code>=iachar('0').and.code<=iachar('9')).or.ch=='_') then
+             token_length=token_length+1
+             if(code>=iachar('A').and.code<=iachar('Z')) ch=achar(code+32)
+             if(token_length<=len(token)) token(token_length:token_length)=ch
+             cycle
+          endif
+          call finish_name
+       endif
+       select case(ch)
+       case('!')
+          comment=.true.
+       case("'",'"')
+          quote=ch
+       case('/')
+          group_open=.false.
+       case('&')
+          in_name=.true.; token=''; token_length=0
+       end select
+    enddo
+    call finish_name
+    if(ios/=iostat_end) then
+       write(*,'(a)') 'Cannot scan fitting parameters: '//trim(message)
+       write(unit_error,'(a)') 'Cannot scan fitting parameters: '//trim(message)
+       close(scan_unit,iostat=close_status)
+       call alps_error(19)
+    endif
+    if(groups>1) then
+       write(*,'(a)') 'Duplicate &fitting_params blocks are not allowed.'
+       write(unit_error,'(a)') 'Duplicate &fitting_params blocks are not allowed.'
+       close(scan_unit,iostat=close_status)
+       call alps_error(19)
+    endif
+    if(groups==1) then
+       rewind(scan_unit,iostat=ios,iomsg=message)
+       if(ios==0) read(scan_unit,nml=fitting_params,iostat=ios,iomsg=message)
+       if(ios/=0) then
+          write(*,'(a)') 'Cannot read &fitting_params: '//trim(message)
+          write(unit_error,'(a)') 'Cannot read &fitting_params: '//trim(message)
+          close(scan_unit,iostat=close_status)
+          call alps_error(19)
+       endif
+    endif
+    close(scan_unit,iostat=close_status)
+    if(close_status/=0) call alps_error(19)
+
+  contains
+    subroutine finish_name
+      !! Count a complete matching header name, then reset the host-associated token-scanning state.
+      if(in_name.and.token_length>=len('fitting_params_')) then
+         if(index(token,'fitting_params_')==1) then
+            write(*,'(a)') 'ERROR: use one global &fitting_params block without a species index.'
+            write(unit_error,'(a)') 'ERROR: use one global &fitting_params block without a species index.'
+            call alps_error(19)
+         endif
+      endif
+      if(in_name.and.token_length==len('fitting_params')) then
+         if(token=='fitting_params') then
+            if(group_open) then
+               write(*,'(a)') 'ERROR: &fitting_params must appear between complete namelist blocks.'
+               write(unit_error,'(a)') 'ERROR: &fitting_params must appear between complete namelist blocks.'
+               call alps_error(19)
+            endif
+            groups=groups+1
+         endif
+      endif
+      if(in_name) group_open=(token/='end')
+      in_name=.false.; token=''; token_length=0
+    end subroutine
+  end subroutine fitting_params_read
 
   subroutine relativistic_params_read
     !! Read the optional shared relativistic group, only after any relativistic species is identified.
@@ -509,7 +690,7 @@ contains
   subroutine poly_read(is)
     !!Reads in Polynomial Basis Function Parameters
     use alps_var, only : poly_kind, poly_order
-    use alps_var, only : poly_log_max, poly_derivative_type
+    use alps_var, only : poly_derivative_type, unit_error
     implicit none
 
     integer,intent(in) :: is
@@ -522,21 +703,30 @@ contains
     integer :: order
     !! Maximum order of Polynomial
 
-    double precision :: log_max
-    !! Maximum Value of Polynomial Evaluation
+    integer :: read_status
+    character(256) :: read_message
 
     integer :: derivative_type
     !! Kind of derivative for analytic continuation evaluation
 
     nameList /poly_spec/ &
-         kind, order, log_max, derivative_type
+         kind, order, derivative_type
 
-   derivative_type=0
+   derivative_type=1
    
-    read(unit=unit,nml=poly_spec)
+    read(unit=unit,nml=poly_spec,iostat=read_status,iomsg=read_message)
+    if(read_status/=0) then
+       if(index(read_message,'log_max')>0) then
+          write(*,'(a)') 'ERROR: log_max is no longer supported in &poly_spec.'
+          write(unit_error,'(a)') 'ERROR: log_max is no longer supported in &poly_spec.'
+       else
+          write(*,'(a,i0,2a)') 'ERROR: invalid &poly_spec for species ',is,': ',trim(read_message)
+          write(unit_error,'(a,i0,2a)') 'ERROR: invalid &poly_spec for species ',is,': ',trim(read_message)
+       endif
+       call alps_error(10)
+    endif
     poly_kind(is)=kind
     poly_order(is)=order
-    poly_log_max(is)=log_max
     poly_derivative_type(is)=derivative_type
 
   end subroutine poly_read
@@ -799,9 +989,10 @@ subroutine get_runname(runname,foldername)
   subroutine read_f0
     !! Subroutine for reading in background distribution function
     use alps_var, only : nperp, npar, arrayName, f0, pp, nspec
-    use alps_var, only : writeOut, usebM
+    use alps_var, only : writeOut, usebM,relativistic,ACmethod,unit_error
     implicit none
 
+    integer :: ios
     integer :: ipar
     !Parallel index.
 
@@ -834,18 +1025,91 @@ subroutine get_runname(runname,foldername)
 
         write(readname, '(3a,i0,a)') &
              "distribution/",trim(arrayName),'.',is,".array"
-        open (unit=unit, file=trim(readname), status='old', action='read')
+        if (relativistic(is).and.ACmethod(is)==2) then
+           open(unit=unit,file=trim(readname),status='old',action='read',iostat=ios)
+           if(ios/=0) call rel_input_error(is,'cannot open source distribution: '//trim(readname))
+        else
+           open (unit=unit, file=trim(readname), status='old', action='read')
+        endif
 
         do iperp=0,nperp
            do ipar=0,npar
-              read(unit,*) pp(is,iperp,ipar,1),pp(is,iperp,ipar,2),f0(is,iperp,ipar)
+              if(relativistic(is).and.ACmethod(is)==2) then
+                 read(unit,*,iostat=ios) pp(is,iperp,ipar,1),pp(is,iperp,ipar,2),f0(is,iperp,ipar)
+                 if(ios/=0) then
+                    write(*,'(a,2i8)') ' Missing/malformed source sample at (iperp,ipar)=',iperp,ipar
+                    write(unit_error,'(a,2i8)') ' Missing/malformed source sample at (iperp,ipar)=',iperp,ipar
+                    call rel_input_error(is,'missing or malformed source sample.')
+                 endif
+              else
+                 read(unit,*) pp(is,iperp,ipar,1),pp(is,iperp,ipar,2),f0(is,iperp,ipar)
+              endif
            enddo
         enddo
         close(unit)
+        if(relativistic(is).and.ACmethod(is)==2) call validate_rel_source(is)
       endif
      enddo
 
 end subroutine read_f0
+
+
+subroutine rel_input_error(is,message)
+  !! Predictable input failures are distinct from kernel continuation statuses.
+  use alps_var, only : unit_error
+  implicit none
+  integer,intent(in) :: is
+  character(*),intent(in) :: message
+  write(*,'(a,i0,2a)') 'ERROR: relativistic input species ',is,': ',trim(message)
+  write(unit_error,'(a,i0,2a)') 'ERROR: relativistic input species ',is,': ',trim(message)
+  call alps_error(18)
+end subroutine rel_input_error
+
+subroutine validate_rel_source(is)
+  !! Before derivative preparation, TPS logarithms and cache lookup. The cache
+  !! identity includes these exact source arrays, coordinates, mass and vA.
+  use, intrinsic :: ieee_arithmetic, only : ieee_is_finite
+  use alps_var, only : pp,f0,ms,vA,ns,qs,nperp,npar,unit_error
+  implicit none
+  integer,intent(in) :: is
+  integer :: i,j
+  double precision :: tol
+  if(.not.ieee_is_finite(ms(is)).or..not.ieee_is_finite(vA)) &
+       call rel_input_error(is,'mass and vA must be finite.')
+  if(ms(is)<=0.d0.or.vA<=0.d0) call rel_input_error(is,'mass and vA must be positive.')
+  if(.not.ieee_is_finite(ns(is)).or..not.ieee_is_finite(qs(is))) &
+       call rel_input_error(is,'density and charge normalization parameters must be finite.')
+  if(nperp<2.or.npar<2) call rel_input_error(is,'source grid requires nperp>=2 and npar>=2 for original-grid preparation.')
+  do i=0,nperp
+     do j=0,npar
+        if(.not.ieee_is_finite(f0(is,i,j))) then
+           write(*,'(a,2i8)') ' Nonfinite source sample at (iperp,ipar)=',i,j
+           write(unit_error,'(a,2i8)') ' Nonfinite source sample at (iperp,ipar)=',i,j
+           call rel_input_error(is,'nonfinite source distribution sample.')
+        endif
+        if(f0(is,i,j)<=0.d0) then
+           write(*,'(a,2i8,a,es24.15)') ' Source sample (iperp,ipar)=',i,j,' value=',f0(is,i,j)
+           write(unit_error,'(a,2i8,a,es24.15)') ' Source sample (iperp,ipar)=',i,j,' value=',f0(is,i,j)
+           call rel_input_error(is,'source distribution must be strictly positive for log-TPS; no zero floor is applied.')
+        endif
+        if(.not.all(ieee_is_finite(pp(is,i,j,:)))) call rel_input_error(is,'nonfinite source momentum coordinate.')
+     enddo
+  enddo
+  tol=128.d0*epsilon(1.d0)*max(1.d0,maxval(abs(pp(is,:,:,:))))
+  if(minval(pp(is,:,:,1))<0.d0) call rel_input_error(is,'perpendicular source momentum must be nonnegative.')
+  do i=0,nperp
+     if(i>0) then
+        if(pp(is,i,0,1)<=pp(is,i-1,0,1)) call rel_input_error(is,'perpendicular grid must be strictly increasing.')
+     endif
+     do j=0,npar
+        if(abs(pp(is,i,j,1)-pp(is,i,0,1))>tol.or.abs(pp(is,i,j,2)-pp(is,0,j,2))>tol) &
+             call rel_input_error(is,'source coordinates must form a rectangular tensor-product grid.')
+        if(j>0) then
+           if(pp(is,i,j,2)<=pp(is,i,j-1,2)) call rel_input_error(is,'parallel grid must be strictly increasing.')
+        endif
+     enddo
+  enddo
+end subroutine validate_rel_source
 
 
 
@@ -1172,9 +1436,18 @@ function input_unit_exist (nml,exist)
        case(16)
           write(*,'(a)') 'ERROR: Invalid &system. Move ngamma, npparbar, rel_cache and rel_cache_dir to &relativistic_params.'
           write(unit_error,'(a)') 'Move ngamma, npparbar, rel_cache and rel_cache_dir to &relativistic_params.'
+          write(*,'(a)') 'Move maxsteps_fit, lambda_initial_fit, lambdafac_fit, and epsilon_fit to &fitting_params.'
+          write(unit_error,'(a)') &
+               'Move maxsteps_fit, lambda_initial_fit, lambdafac_fit, and epsilon_fit to &fitting_params.'
        case(17)
           write(*,'(a)') 'ERROR: Cannot read one valid optional &relativistic_params block.'
           write(unit_error,'(a)') 'ERROR: Cannot read one valid optional &relativistic_params block.'
+       case(18)
+          write(*,'(a)') 'ERROR: Unsupported or invalid relativistic input; see the species diagnostic above.'
+          write(unit_error,'(a)') 'ERROR: Unsupported or invalid relativistic input; see the species diagnostic above.'
+       case(19)
+          write(*,'(a)') 'ERROR: Cannot read one valid optional global &fitting_params block.'
+          write(unit_error,'(a)') 'ERROR: Cannot read one valid optional global &fitting_params block.'
        case default
           write(*,'(a)')'ERROR: Unspecified...'
           write(unit_error,'(a)')'ERROR: Unspecified...'
@@ -1246,7 +1519,7 @@ function input_unit_exist (nml,exist)
     write (*,*) "I                       Version 1.0                       I"
     write (*,*) "I                                                         I"
     write (*,*) "I  Kristopher Klein   (kgklein@arizona.edu)               I"
-    write (*,*) "I  Daniel Verscharen  (d.verscharen@ucl.ac.uk)            I"
+    write (*,*) "I  Daniel Verscharen  (daniel.verscharen@rub.de)            I"
     write (*,*) "I                                                         I"
     write (*,*) "==========================================================="
 

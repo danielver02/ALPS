@@ -12,7 +12,7 @@ This is the ALPS code: the Arbitrary Linear Plasma Solver.
 ## Authors
 
 Kristopher Klein   (kgklein@arizona.edu)  
-Daniel Verscharen  (d.verscharen@ucl.ac.uk)
+Daniel Verscharen  (daniel.verscharen@rub.de)
 
 ## Contents
 
@@ -25,9 +25,10 @@ Daniel Verscharen  (d.verscharen@ucl.ac.uk)
 ## 1. What is ALPS?
 
 ALPS is a parallelised numerical code that solves the Vlasov-Maxwell dispersion
-relation in hot (even relativistic) magnetised plasma. ALPS allows for any
-number of particle species with arbitrary gyrotropic background distribution
-functions supporting waves with any direction of propagation with respect to
+relation in hot (even relativistic) magnetised plasma. 
+ALPS allows for any number of particle species with 
+arbitrary gyrotropic background distribution functions 
+supporting waves with any direction of propagation with respect to 
 the background magnetic field.
 
 If you use the code for a science publication,
@@ -55,33 +56,48 @@ If you use the code for a science publication,
 and Bale, S. D.: ALPS: the Arbitrary Linear Plasma Solver, J. Plasma Phys. 84,
 905840403, 2018, doi: 10.1017/S0022377818000739](http://doi.org/10.1017/S0022377818000739)
 
-The documentation of the code can be found on [alps.space](http://alps.space).
+The documentation of the code can be found on [github](https://danielver02.github.io/ALPS/).
 
-Details on updates to the code can be found in:
+Details on recent updates to the code can be found in:
 
 [Klein, K. G. and Verscharen, D.: The Dielectric Response of Plasmas with Arbitrary Gyrotropic Velocity Distributions, Phys. Plasmas 32, 092104, 2025, doi: 10.1063/5.0286477](http://doi.org/10.1063/5.0286477)
 
 ## 2. Acknowledgements
 
-The development of the ALPS code was supported by NASA Grant NNX16AG81G. The code developers appreciate support from the UK Science
+The development of the ALPS code was supported by NASA Grant NNX16AG81G. 
+The code developers appreciate support from the UK Science
 and Technology Facilities Council (STFC) Ernest Rutherford Fellowship ST/P003826/1,
 STFC Consolidated Grants ST/S000240/1 and ST/W001004/1, and the Open Source
 Software Sustainability Funding programme from UCL's Advanced Research Computing
-Centre and UCL's eResearch Domain. We appreciate software engineering support by
+Centre and UCL's eResearch Domain. 
+We appreciate software engineering support by
 David Stansby and Tuomas Koskela from UCL.
 
 ##  3. Installing the ALPS code
 
 For advice on the installation of the code, please check [`INSTALL.md`](./INSTALL.md)
 
+With MPI Fortran, BLAS and LAPACK installed, the standard build is:
+
+```bash
+./configure
+make -j4                 # plain make / make -j1 also works
+```
+
+For a clean rebuild, use `make clean && make -j4`.
+This cleaning removes objects,
+executables and compiler-generated `*.mod` / `*.smod` files in the `src/` and
+`distribution/` build directories.
 
 ##  4. Running the ALPS code
 
-ALPS works with input files that specify the plasma and numerical parameters for
-the calculation. We recommend that you start by checking out the provided test
-cases as a guidance for the creation of input files. These test cases are listed
-in the scripts `run_test.sh` and `run_test_suite.sh` in the subfolder `./tests`. All associated input files have
-a name starting with `test_`.
+ALPS works with input files that specify the plasma state 
+and numerical parameters for the calculation.
+We recommend that you start by checking out the provided test
+cases as a guidance for the creation of input files.
+These test cases are listed in the scripts `run_test.sh` 
+and `run_test_suite.sh` in the subfolder `./tests`.
+All associated input files have a name starting with `test_`.
 
 You can execute the ALPS code through the following command:
 
@@ -89,9 +105,9 @@ You can execute the ALPS code through the following command:
 mpirun -np <NP> ./src/ALPS <input_file.in>
 ```
 
-where `<NP>` is the number of processors you want to use. This number must be greater
-than or equal to 4, and it must be an even number. `<input_file.in>` is the input file
-that includes all parameters for your run.
+where `<NP>` is the number of processors you want to use. 
+This number must be greater than or equal to 4, and it must be an even number. 
+`<input_file.in>` is the input file that includes all parameters for your run.
 
 On some systems, depending on the MPI configuration, the oversubscribe flag is
 required. In this case, the above command must be replaced with
@@ -100,7 +116,9 @@ required. In this case, the above command must be replaced with
 mpirun -np <NP> --oversubscribe ./src/ALPS <input_file.in>
 ```
 
-For first-time users, we recommend working through our [ALPS Tutorial](tutorial.md). The key input parameters for ALPS are described on the [ALPS Input](input.md) page. The output format of ALPS is described on the [ALPS Output](output.md) page.
+For first-time users, we recommend working through our [ALPS Tutorial](tutorial.md). 
+The key input parameters for ALPS are described on the [ALPS Input](input.md) page. 
+The output format of ALPS is described on the [ALPS Output](output.md) page.
 
 
 ## 5. License
@@ -130,3 +148,12 @@ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
 CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+## Validation and historical fixtures
+
+Executable numerical validation drivers and isolated scratch runners live in
+[`validation/`](validation/README.md). For example, run
+`bash validation/run_chebyshev_kernel.sh --matrix` or
+`bash validation/run_nr_zero_return.sh` from the repository root. 
+Historical inputs, protected outputs and baseline datasets remain in `tests/`
+while scientific reports remain in `audits/`.

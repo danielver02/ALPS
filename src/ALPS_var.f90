@@ -12,7 +12,7 @@
 !I                              Version 1.0                                    I
 !I                                                                             I
 !I  Kristopher Klein   (kgklein@arizona.edu)                                   I
-!I  Daniel Verscharen  (d.verscharen@ucl.ac.uk)                                I
+!I  Daniel Verscharen  (daniel.verscharen@rub.de)                                I
 !I                                                                             I
 !===============================================================================
 
@@ -58,9 +58,11 @@ module alps_var
   character(16) :: rel_cache = 'off'
   !! Relativistic cache mode: off (default), auto, or refresh; used only on rank 0.
   !! Set in the optional `&relativistic_params` group, read only for relativistic runs.
+
   character(1024) :: rel_cache_dir = 'distribution/'
   !! Existing directory for native content-addressed cache entries and temporary files.
   !! Shared by relativistic species; configured only through `&relativistic_params`.
+  
   public :: rel_cache,rel_cache_dir
 
   double precision :: startup_seconds(14) = 0.d0
@@ -181,7 +183,7 @@ module alps_var
 
   double precision :: Tlim=0.01d0
   !! Threshold for analytical principal-value integration for
-  !! evaluating Eqn 3.6 and 3.7, \(t_{\textrm{lim}}\).
+  !! evaluating Verscharen et al 2018 Eqn 3.6 and 3.7, \(t_{\textrm{lim}}\).
 
   integer :: sproc
   !! The species number on which this process is working.
@@ -196,7 +198,7 @@ module alps_var
   !! Maximum number of iterations in secant method.
   
   double precision :: D_threshold=1.d-5
-  !! Minimum threshold for secant method.
+  !! Minimum threshold for secant methods 0 and 2.
 
   double precision :: D_prec=1.d-5
   !! Size of bounding region for secant method.
@@ -292,32 +294,18 @@ module alps_var
   !! 1) Use the 'n_fits' functions described with 'fit_type'
   !! 2) Use a polynomial basis representation.
 
-  double precision, dimension(:,:,:), allocatable :: polynomials
-  !! Polynomials of order (0,poly_order) evaluatated at (0,npar) abscissa points,
-  !! (1:nspec,0:npar,0:poly_order)
-  !! poly_order is taken to be the maximum order across all species.
-
-  double precision, dimension(:,:,:), allocatable :: poly_fit_coeffs
-  !! Fit Coefficients for Polynomials from Generarl Linear Least Squares Method
-  !! (1:nspec,0:nperp,0:poly_order)
-  !! poly_order is taken to be the maximum order across all species.
-  !! The fit is taken in one dimension at each perpendicular momentum value.
-  
   integer, dimension(:), allocatable :: poly_kind
   !!Selection of Orthogonal Basis Function, (1:nspec)
   !! 1) Chebyshev Polynomials
   !! Other Polynomials can be added in future releases.
 
-  double precision, dimension(:), allocatable :: poly_log_max
-  !!Limit on the Evaluation of the Polynomial Representation, (1:nspec)
-  
   integer, dimension(:), allocatable :: poly_order
   !! Selection of Maximum Order of Orthogonal Basis Function, (1:nspec)
   
   integer, dimension(:), allocatable :: poly_derivative_type
   !! Selection of derivative type for Orthogonal Basis Function, (1:nspec)
   !! 0: Finite Difference
-  !! 1: Analytic Evaluation
+  !! 1: Analytic Evaluation (default)
 
   !Fit Parameters for Hybrid-Analytical Continuation Method:
   integer, dimension(:), allocatable :: n_fits
@@ -351,9 +339,6 @@ module alps_var
   double precision, dimension(:,:), allocatable :: perp_correction
   !!This parameter, \(y\) in Eqn. B1, compensates for the strong
   !! \(p_\perp\) dependence of \(u_1\), making the fit more reliable.
-
-  logical :: fit_check=.true.
-  !!If true, output fitted functions to ASCII file for each species.
 
   logical :: determine_minima=.true.
   !!If true, after map search, determine minima and refine solutions.
@@ -459,7 +444,7 @@ module alps_var
   public :: ns, qs, ms, vA, pi, Bessel_zero,sproc
   public :: ni, nr, positions_principal, Tlim
   public :: n_fits, maxsteps_fit,  lambda_initial_fit, lambdafac_fit, epsilon_fit
-  public :: param_fit, fit_check, fit_type, perp_correction
+  public :: param_fit, fit_type, perp_correction
   public :: nroots, nroots_max, numroots
   public :: determine_minima, n_resonance_interval
   public :: unit_error, scan_option, n_scan, scan
@@ -467,8 +452,8 @@ module alps_var
   public :: secant_method, relativistic, logfit, usebM
   public :: f0_rel,df0_rel,nspec_rel,gamma_rel,pparbar_rel,ngamma,npparbar
   public :: bMnmaxs,bMBessel_zeros,bMbetas,bMalphas,bMpdrifts
-  public :: ACmethod, poly_kind, poly_order, polynomials, poly_fit_coeffs
-  public :: poly_log_max, poly_derivative_type
+  public :: ACmethod, poly_kind, poly_order
+  public :: poly_derivative_type
   public :: profile_startup, startup_seconds, startup_tick 
   public :: startup_tock, startup_report
 
