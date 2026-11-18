@@ -92,7 +92,7 @@
 
             <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
               <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
-                 title="16.4% of total for modules and submodules.">1060 statements</a>
+                 title="13.2% of total for modules and submodules.">1113 statements</a>
             </li>
 
         </ul>
@@ -164,6 +164,7 @@
       <div id="subs-0" class="collapse">
         <div class="list-group list-group-flush">
             <a class="list-group-item" href="../module/alps_fns_rel.html#proc-derivative_f0_rel">derivative_f0_rel</a>
+            <a class="list-group-item" href="../module/alps_fns_rel.html#proc-report_rel_source_support">report_rel_source_support</a>
             <a class="list-group-item" href="../module/alps_fns_rel.html#proc-write_rel_diagnostics">write_rel_diagnostics</a>
             <a class="list-group-item" href="../module/alps_fns_rel.html#proc-write_completed_rel">write_completed_rel</a>
             <a class="list-group-item" href="../module/alps_fns_rel.html#proc-construct_f0_rel">construct_f0_rel</a>
@@ -529,7 +530,7 @@ modules which it uses.
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-igamma~5"></span>
+              <span class="anchor" id="variable-igamma~7"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -634,7 +635,7 @@ modules which it uses.
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-igamma~6"></span>
+              <span class="anchor" id="variable-igamma~8"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -739,7 +740,7 @@ modules which it uses.
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-igamma~7"></span>
+              <span class="anchor" id="variable-igamma~9"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -994,7 +995,7 @@ modules which it uses.
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-igamma~10"></span>
+              <span class="anchor" id="variable-igamma~12"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -1084,7 +1085,7 @@ modules which it uses.
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-igamma~11"></span>
+              <span class="anchor" id="variable-igamma~13"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -1189,7 +1190,7 @@ modules which it uses.
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-igamma~12"></span>
+              <span class="anchor" id="variable-igamma~14"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -1264,7 +1265,7 @@ modules which it uses.
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-k~7"></span>
+              <span class="anchor" id="variable-k~11"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -1553,11 +1554,13 @@ series of Chebyshev polynomials is used for 0</p>
   </div>
 
               <div class="card">
-    <div class="card-header codesum"><span class="anchor" id="proc-write_rel_diagnostics"></span> <h3>public  subroutine <a href='../proc/write_rel_diagnostics.html'>write_rel_diagnostics</a>(is, is_rel, integrate)  
+    <div class="card-header codesum"><span class="anchor" id="proc-report_rel_source_support"></span> <h3>public  subroutine <a href='../proc/report_rel_source_support.html'>report_rel_source_support</a>(is, is_rel, cache_hit)  
 </h3></div>
     <div class="card-body">
           
-  <p>Write completed arrays without normalizing or otherwise modifying them.</p>
+  <p>Read-only geometry: successful fitting does not establish source support.
+A cache hit has already validated identity against the current pp/f0,
+mass, vA, grid settings and build; no TPS recomputation is needed.</p>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
@@ -1582,12 +1585,82 @@ series of Chebyshev polynomials is used for 0</p>
             <td>::</td>
             <td><strong>is</strong></td>
             <td>
-<p>Original species index used in diagnostic filenames and printed messages.</p>
+
             </td>
         </tr>
         <tr>
             <td>
               <span class="anchor" id="variable-is_rel~9"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>is_rel</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-cache_hit"></span>
+              logical,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>cache_hit</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-write_rel_diagnostics"></span> <h3>public  subroutine <a href='../proc/write_rel_diagnostics.html'>write_rel_diagnostics</a>(is, is_rel, integrate)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>Write completed arrays without normalizing or otherwise modifying them.</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-is~29"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>is</strong></td>
+            <td>
+<p>Original species index used in diagnostic filenames and printed messages.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-is_rel~10"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -1642,7 +1715,7 @@ series of Chebyshev polynomials is used for 0</p>
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-is~29"></span>
+              <span class="anchor" id="variable-is~30"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -1687,7 +1760,7 @@ series of Chebyshev polynomials is used for 0</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-distribution~4"></span>
+              <span class="anchor" id="variable-distribution~5"></span>
               double precision,
             </td>
 <td>intent(in)</td>
@@ -1758,7 +1831,7 @@ Bounds are (0:ngamma,0:npparbar,1:2), including the defined zero outer edges.</p
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-is~30"></span>
+              <span class="anchor" id="variable-is~31"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -1773,7 +1846,7 @@ Bounds are (0:ngamma,0:npparbar,1:2), including the defined zero outer edges.</p
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-is_rel~10"></span>
+              <span class="anchor" id="variable-is_rel~11"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -1984,7 +2057,7 @@ We use these resources:
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-is_rel~11"></span>
+              <span class="anchor" id="variable-is_rel~12"></span>
               integer
             </td>
 <td></td>
@@ -2079,7 +2152,7 @@ We use these resources:
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-z~9"></span>
+              <span class="anchor" id="variable-z~11"></span>
               double complex,
             </td>
 <td>intent(in)</td>

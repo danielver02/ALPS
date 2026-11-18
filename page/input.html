@@ -142,10 +142,7 @@ This includes </p>
 <li>VDF startup before the first dispersion calculation. </li>
 </ul>
 <p>Species timings are summed. 
-The total starts after parameter input and includes MPI distribution and harmonic/Bessel setup. 
-Normalization and derivatives are completed before diagnostic output; their time is included in postprocessing.
-Fitting time includes its diagnostic output. 
-These are wall times, not CPU times, and detailed reporting is independent of <code>writeOut</code>.</p>
+Detailed reporting is independent of <code>writeOut</code>.</p>
 <p><strong><code>kperp</code></strong><br>
 Initial perpendicular wavevector $k_{\perp} d_{ref}$.</p>
 <p><strong><code>kpar</code></strong><br>
@@ -169,27 +166,24 @@ The input file must have $N_{\perp}+1$ values spanning parallel momentum space.<
 Parallel momentum space resolution, $N_{\parallel}$.
 The input file must have $N_{\parallel}+1$ values spanning parallel momentum space.</p>
 <p><strong><code>vA</code></strong><br>
-Reference Alfven velocity, normalized to the speed of light, $v_{A,ref}/c$.</p>
+Alfven velocity using the mass density of the reference species, 
+normalized to the speed of light, $v_{A,ref}/c$.</p>
 <p><strong><code>arrayName</code></strong><br>
 Name of input array, located in 'distribution' folder.</p>
 <p><strong><code>Bessel_zero</code></strong><br>
 Maximum amplitude of Bessel function to determine <code>nmax</code>.</p>
 <p><strong><code>secant_method</code></strong><br>
-Selection for root finding method.
-0: secant method from NHDS
-1: rtsec method from PLUME
-2: Improved secant method to reduce oscillations around solutions.</p>
+Selection for root finding method.</p>
+<ul>
+<li>0: <em>secant method from NHDS.</em> Uses full secant steps and declares convergence when the <strong>magnitude of the dispersion determinant</strong> falls below <code>D_threshold</code>.</li>
+<li>1: <em>rtsec method from PLUME.</em> Applies half of each calculated secant step and stops when the calculated <strong>step magnitude</strong> falls below <code>D_tol</code>, or the determinant is exactly zero.</li>
+<li>2: <em>Secant method with oscillation control (default):</em> Adds adaptive damping, caps steps at 10% of the current frequency magnitude, and switches to a regularized finite-difference Newton step after repeated detections of revisited frequencies; convergence uses <code>D_threshold</code>.</li>
+</ul>
+<p>All three use <code>D_prec</code> to construct a second initial frequency and <code>numiter</code> to limit iterations.</p>
 <p><strong><code>numiter</code></strong><br>
 Maximum number of iterations in secant method.</p>
-<p><strong><code>kperp_norm</code></strong> <br>
-Choice of:  </p>
-<ul>
-<li>True: Follow's Stix (10-57) normalization convention.  </li>
-<li>False: Multiplies Stix (10-57) by $k_{\perp}^2 d_{ref}^2$.</li>
-</ul>
-<p>Depending on the user's choice of normalization, <code>D_threshold</code> needs to be adjusted to account for additional factors of $k_{\perp}^6 d_{ref}^6$.</p>
 <p><strong><code>D_threshold</code></strong><br>
-Minimum threshold for secant method.</p>
+Minimum threshold for secant methods 0 and 2.</p>
 <p><strong><code>D_prec</code></strong><br>
 Size of bounding region for secant method.</p>
 <p><strong><code>D_gap</code></strong><br>
@@ -198,22 +192,12 @@ Size of allowable difference between roots.</p>
 Tolerance for secant method = 1, rtsec.</p>
 <p><strong><code>positions_principal</code></strong><br>
 Number of parallel momentum steps distant from the resonant momentum
-included in the numerical calculation of Eqn 3.5, $M_{I}$.</p>
+included in the numerical calculation of Verscharen et al 2018, Eqn 3.5, $M_{I}$.</p>
 <p><strong><code>n_resonance_interval</code></strong><br>
 How many steps should be used to integrate around the resonance,
-$M_{P}$, used for integrating near poles (see section 3.1).</p>
+$M_{P}$, used for integrating near poles (see section 3.1 of Verscharen et al 2018).</p>
 <p><strong><code>Tlim</code></strong><br>
 Threshold for analytical principal-value integration, $t_{\mathrm{lim}}$.</p>
-<p><strong><code>maxsteps_fit</code></strong><br>
-Maximum number of fitting iterations.</p>
-<p><strong><code>lambda_initial_fit</code></strong><br>
-Inital Levenberg-Marquardt damping parameter.</p>
-<p><strong><code>lambdafac_fit</code></strong><br>
-Adjustment factor for Levenberg-Marquardt damping parameter.</p>
-<p><strong><code>epsilon_fit</code></strong><br>
-Convergence for Levenberg-Marquardt fit.</p>
-<p><strong><code>fit_check</code></strong><br>
-If true, output fitted functions for each species to file in distribution directory.</p>
 <p><strong><code>determine_minima</code></strong><br>
 If true, after map search, determine minima and refine solutions.</p>
 <p><strong><code>scan_option</code></strong><br>
@@ -227,12 +211,35 @@ Number of wavevector scans.<br>
 0 turns off wavevector scans.<br>
 Must be 1 or larger for <code>scan_option</code>=1.<br>
 Must be set to 2 for <code>scan_option</code>=2.  </p>
+<h3><em>&amp;fitting_params</em></h3>
+<p>Optional global Levenberg–Marquardt (LM) settings shared by all numerical species using <code>AC_method=1</code>, 
+for both nonrelativistic and relativistic cases. 
+Omission of the full list or individual keys retains the defaults below.</p>
+<div class="codehilite"><pre><span></span><code><span class="p">&amp;</span><span class="n">fitting_params</span>
+<span class="w">    </span><span class="n">maxsteps_fit</span><span class="w">       </span><span class="o">=</span><span class="w"> </span><span class="mi">500</span>
+<span class="w">    </span><span class="n">lambda_initial_fit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.d0</span>
+<span class="w">    </span><span class="n">lambdafac_fit</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="mf">1.d1</span>
+<span class="w">    </span><span class="n">epsilon_fit</span><span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="mf">1.d-8</span>
+<span class="o">/</span>
+</code></pre></div>
+
+<p><strong><code>maxsteps_fit</code></strong> (integer): 
+maximum LM fitting iterations.</p>
+<p><strong><code>lambda_initial_fit</code></strong> (double precision): 
+initial LM damping parameter.</p>
+<p><strong><code>lambdafac_fit</code></strong> (double precision): 
+damping multiplier when a trial increases the sum of squared residuals, and divisor otherwise.</p>
+<p><strong><code>epsilon_fit</code></strong> (double precision): 
+convergence threshold for the absolute change in the sum of squared residuals, not the residual itself.</p>
+<p>LM parameter files are written during fitting; fit-result diagnostics are
+controlled by <code>writeOut</code>.</p>
+<p>Methods 0 and 2 do not require this name list. 
+Method 2 uses <code>&amp;poly_spec_j</code>; mixed method-1
+and method-2 species use their respective configurations independently.</p>
 <h3><em>&amp;relativistic_params</em></h3>
-<p>Optional settings shared by all relativistic species. ALPS reads this group only
-when any <code>&amp;spec_*</code> block sets <code>relat=T</code>, after reading all species and before sizing
-fit arrays. The group may appear anywhere in the file; its header is case-insensitive,
-may be indented, and may have assignments on the same line. Only one active block
-is allowed. A present malformed or truncated block is an error, not a request to use defaults.</p>
+<p>Settings shared by all relativistic species. 
+ALPS reads this group when any <code>&amp;spec_*</code> block sets <code>relat=T</code>, 
+after reading all species and before sizing fit arrays. </p>
 <div class="codehilite"><pre><span></span><code><span class="p">&amp;</span><span class="n">relativistic_params</span>
 <span class="w">  </span><span class="n">ngamma</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">500</span>
 <span class="w">  </span><span class="n">npparbar</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">500</span>
@@ -248,7 +255,7 @@ The long filename is an automatically generated fingerprint of the VDF contents,
 Matching inputs can reuse the same file across runs or species; changing relevant inputs produces a different fingerprint. 
 Before loading, ALPS checks compatibility and a checksum to detect damage. 
 If the cache is missing or invalid, ALPS simply calculates the interpolation again and saves a fresh copy. 
-Your original VDF files remain the authoritative inputs, and fitting and dispersion calculations continue normally.</p>
+The original VDF files remain the authoritative inputs, and fitting and dispersion calculations continue normally.</p>
 <p>An absent or empty group uses <code>ngamma=100</code>, <code>npparbar=200</code>, <code>rel_cache='off'</code>, and
 <code>rel_cache_dir='distribution/'</code>. 
 Partial groups retain defaults for omitted fields.
@@ -314,21 +321,44 @@ Relative charge $q_{j}/q_{ref}$.</p>
 <p><strong><code>mm</code></strong><br>
 Relative mass $m_{j}/m_{ref}$.</p>
 <p><strong><code>ff</code></strong><br>
-Number of fitted functions for analytical continuation calculation.</p>
+Number of fitted functions for analytical continuation calculation, 
+when using <code>AC_method</code>=1.</p>
 <p><strong><code>relat</code></strong><br>
-Treat $f_{j}$ as non-relativistic or relativistic.</p>
+Treat $f_{j}$ as non-relativistic or relativistic. 
+Analytic bimaxwellian species (<code>use_bM=T</code>) require <code>relat=F</code>.</p>
 <p><strong><code>log_fit</code></strong><br>
-Use linear or $\log_{10}$ fitting routine.</p>
+Use linear or $\log_{10}$ fitting routine. 
+Relativistic numerical Chebyshev
+continuation (<code>relat=T</code>, <code>AC_method=2</code>) supports only <code>log_fit=T</code>.</p>
 <p><strong><code>use_bM</code></strong><br>
-Use actual numerical integration (F) or bi-Maxwellian/cold-plasma proxy via NHDS routines,
+Use actual numerical integration (F) or 
+bi-Maxwellian/cold-plasma proxy via NHDS routines (T),
 with parameters read in from &amp;bM_spec_j namelist.</p>
 <p><strong><code>AC_method</code></strong><br>
 Choose the method for the evaluation of the analytic continuation:</p>
 <ul>
 <li>0: Use the function that is defined analytically in distribution/distribution_analyt.f90</li>
 <li>1: Use the fit routine as defined in the &amp;ffit_j_k namelist.</li>
-<li>2: Use a polynomial basis representation as defined in the &amp;poly_spec_j namelist. This method should only be used if $|\gamma|\ll |\omega_{r}|$.</li>
+<li>2: Use a polynomial basis representation as defined in the &amp;poly_spec_j namelist. 
+<em>The limits of this analytic continuation for 
+$|\gamma|\gtsrim |\omega_{r}|$ are being investigated</em>.</li>
 </ul>
+<p>Relativistic numerical method 2 uses native SVD/Clenshaw models at fixed Lorentz factor, with <code>kind=1</code>, positive requested <code>order</code>, and <code>log_fit=T</code>. 
+Original source samples must be finite and strictly positive on a finite, increasing
+rectangular momentum grid.
+Zeros are rejected before the log-TPS transformation,
+including when caching is enabled. 
+No positive floor is substituted.</p>
+<p>These models represent the <strong>completed transformed distribution</strong> on the existing Gamma/parallel-momentum grid. Its global natural-log thin-plate spline extends
+beyond the supplied source momentum rectangle at some cone-admissible nodes.
+Those values are TPS extensions, not source observations. ALPS reports source and
+completed bounds, interior/exterior counts, affected Gamma rows and fresh/cache
+origin once per selected species. Counts are recomputed from the actual geometry;
+cache hits verify identity against the current source arrays and coordinates.
+Fit status, degree, rank and residual do not certify source support or accurate
+complex continuation. Numerical range or unavailable-row failures remain explicit.
+Original-grid fit files and fitted-moment totals omit these fixed-Gamma models;
+original VDF moments are unchanged.</p>
 <h3><em>&amp;ffit_j_k</em></h3>
 <p>Initial Fit Values for species $j$, function $k$.</p>
 <p><strong><code>fit_type_in</code></strong><br>
@@ -400,14 +430,22 @@ Type of the basis polynomial:</p>
 </ul>
 <p><strong><code>order</code></strong><br>
 Maximum order of the basis polynomial.</p>
-<p><strong><code>log_max</code></strong><br>
-When using logfit for the polynomial representation, set all output values to zero if the log(fit_function_poly) is greater than this variable.</p>
+<p>Native LOG10 continuation reconstructs the physical distribution using the shared
+Chebyshev kernel. Overflow, underflow and invalid evaluations have explicit
+numerical statuses; there is no adjustable logarithmic suppression threshold.
+The former <code>log_max</code> namelist setting is unsupported and must be removed from inputs.</p>
 <p><strong><code>derivative_type</code></strong><br>
-Controls how derivative in Landau integral is performed when using polynomial expansion for the analytic continuation of $f$.</p>
+Controls the <strong>nonrelativistic</strong> parallel derivative in the Landau integral
+when using polynomial continuation. 
+Relativistic AC method 2 always uses the shared
+analytic derivative with respect to <code>u=P_parallel/(m_s*c)</code> at fixed Gamma; its
+Gamma finite-difference stencil remains unchanged.</p>
 <ul>
 <li>0: Finite Difference Derivative</li>
-<li>1: Analytic Derivative of Polynomial Basis Function</li>
+<li>1: Analytic Derivative of Polynomial Basis Function (default)</li>
 </ul>
+<p>Omitting <code>derivative_type</code> in <code>&amp;poly_spec_j</code> selects <code>1</code> for that species.
+Set <code>derivative_type=0</code> explicitly to use the finite-difference derivative.</p>
 <h3><em>&amp;scan_input_l</em></h3>
 <p>Inputs for scanning parameter space for $l$th scan.  </p>
 <p><strong><code>scan_type</code></strong><br>

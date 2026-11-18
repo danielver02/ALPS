@@ -122,10 +122,11 @@
 
     <div class="col-9" id='text'>
       <h1>ALPS Tutorial</h1>
-<p>This is a tutorial for ALPS. It will guide you through the setting up of some basic input files, the running of the code, and the basic output. For more details, we refer to the <a href="input.html">ALPS Input</a> page, the <a href="output.html">ALPS Output</a> page, and the <a href="http://alps.space">ALPS Documentation</a>.</p>
+<p>This is a tutorial for ALPS. 
+It will guide you through the setting up of some basic input files, the running of the code, and the basic output. For more details, we refer to the <a href="input.html">ALPS Input</a> page, the <a href="output.html">ALPS Output</a> page, and the <a href="http://alps.space">ALPS Documentation</a>.</p>
 <h2>Authors</h2>
 <p>Kristopher Klein   (kgklein@arizona.edu)<br>
-Daniel Verscharen  (d.verscharen@ucl.ac.uk)</p>
+Daniel Verscharen  (daniel.verscharen@rub.de)</p>
 <h2>Contents</h2>
 <ol>
 <li>Before getting started</li>
@@ -144,10 +145,13 @@ and Bale, S. D.: ALPS: the Arbitrary Linear Plasma Solver, J. Plasma Phys. 84,
 905840403, 2018, doi: 10.1017/S0022377818000739</a></p>
 <p>and</p>
 <p><a href="http://doi.org/10.1063/5.0286477">Klein, K. G. and Verscharen, D.: The Dielectric Response of Plasmas with Arbitrary Gyrotropic Velocity Distributions, Phys. Plasmas 32, 092104, 2025, doi: 10.1063/5.0286477</a></p>
-<p>You don't need to go through all details, but it is certainly helpful to know what ALPS does and doesn't calculate. The 2018 paper also explains the numerical techniques used in the code, and the <a href="http://alps.space">ALPS Documentation</a> often refers explicitly to equations and sections in the code paper. We also recommend checking the <a href="index.html">Readme</a> file.</p>
+<p>You don't need to go through all details, but it is certainly helpful to know what ALPS does and doesn't calculate. 
+The 2018 paper also explains the numerical techniques used in the code, and the <a href="https://danielver02.github.io/ALPS/index.html">ALPS Documentation</a> often refers explicitly to equations and sections in the code paper. We also recommend checking the <a href="index.html">Readme</a> file.</p>
 <p>For a listing of recommendations when using ALPS, see the <a href="practices.html">ALPS Best Practices</a> page.</p>
 <h2>2. Installing ALPS</h2>
-<p>This tutorial assumes that you have a working copy of ALPS on your computer, including all the required dependencies. You can find the installation guide <a href="INSTALL.html">here</a>. Make sure you have a version of ALPS that compiled completely without error messages after typing</p>
+<p>This tutorial assumes that you have a working copy of ALPS on your computer, including all the required dependencies. 
+You can find the installation guide <a href="INSTALL.html">here</a>. 
+Make sure you have a version of ALPS that compiled completely without error messages after typing</p>
 <blockquote>
 <div class="codehilite"><pre><span></span><code>./configure  
 make
@@ -384,6 +388,9 @@ kperp:    1.0000E-003 kpar:    1.1144E-001
 </code></pre></div>
 
 </blockquote>
+<p>The isolated executable validation programs are in <code>validation/</code>; see
+<a href="validation/README.html">validation/README.md</a> for canonical scratch-build commands.
+Historical inputs and the launchers above remain in <code>tests/</code>.</p>
 <p>The given test cases cover a range of typical applications, so there should be good starting points for your purposes.</p>
 <p>The code also creates additional output files for the heating contributions and for the eigenfunctions of the solutions. The general output format of ALPS is described on our <a href="output.html">ALPS Output</a> page.</p>
 <h2>5. Interpolation of input distributions</h2>

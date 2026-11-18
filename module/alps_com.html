@@ -92,7 +92,7 @@
 
             <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
               <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
-                 title=" 3.0% of total for modules and submodules.">193 statements</a>
+                 title=" 4.2% of total for modules and submodules.">351 statements</a>
             </li>
 
         </ul>
@@ -121,7 +121,22 @@
         <div id="sidebar">
       <h3>Contents</h3>
   
-  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#vars-0"
+         aria-expanded="false" aria-controls="vars-0">
+         <h4 class="card-header bg-primary text-white">Variables</h4>
+      </a>
+      <div id="vars-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../module/alps_com.html#variable-nr_cheb_transfers">nr_cheb_transfers</a>
+            <a class="list-group-item" href="../module/alps_com.html#variable-nr_cheb_collectives">nr_cheb_collectives</a>
+            <a class="list-group-item" href="../module/alps_com.html#variable-rel_cheb_transfers">rel_cheb_transfers</a>
+            <a class="list-group-item" href="../module/alps_com.html#variable-rel_cheb_collectives">rel_cheb_collectives</a>
+            <a class="list-group-item" href="../module/alps_com.html#variable-rel_cheb_transfer_bytes">rel_cheb_transfer_bytes</a>
+        </div>
+      </div>
+    </div>
+
   
   
   
@@ -139,6 +154,11 @@
       </a>
       <div id="subs-0" class="collapse">
         <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../module/alps_com.html#proc-complete_nr_cheb_initialization">complete_nr_cheb_initialization</a>
+            <a class="list-group-item" href="../module/alps_com.html#proc-pass_nr_cheb_models">pass_nr_cheb_models</a>
+            <a class="list-group-item" href="../module/alps_com.html#proc-nr_cheb_distribution_info">nr_cheb_distribution_info</a>
+            <a class="list-group-item" href="../module/alps_com.html#proc-pass_rel_cheb_models">pass_rel_cheb_models</a>
+            <a class="list-group-item" href="../module/alps_com.html#proc-rel_cheb_distribution_info">rel_cheb_distribution_info</a>
             <a class="list-group-item" href="../module/alps_com.html#proc-pass_instructions">pass_instructions</a>
             <a class="list-group-item" href="../module/alps_com.html#proc-pass_distribution">pass_distribution</a>
         </div>
@@ -278,6 +298,108 @@ modules which it uses.
       <br>
 
 
+        <section>
+          <h2>Variables</h2>
+            <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Visibility</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+<th></th><th scope="col">Initial</th>        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nr_cheb_transfers"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nr_cheb_transfers</strong></td>
+<td> =</td>
+                <td>0</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nr_cheb_collectives"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nr_cheb_collectives</strong></td>
+<td> =</td>
+                <td>0</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-rel_cheb_transfers"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>rel_cheb_transfers</strong></td>
+<td> =</td>
+                <td>0</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-rel_cheb_collectives"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>rel_cheb_collectives</strong></td>
+<td> =</td>
+                <td>0</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-rel_cheb_transfer_bytes"></span>
+              integer(kind=selected_int_kind(18)),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>rel_cheb_transfer_bytes</strong></td>
+<td> =</td>
+                <td>0</td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+        </section>
+        <br>
 
 
 
@@ -286,6 +408,252 @@ modules which it uses.
 
         <section>
           <h2>Subroutines</h2>
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-complete_nr_cheb_initialization"></span> <h3>public  subroutine <a href='../proc/complete_nr_cheb_initialization.html'>complete_nr_cheb_initialization</a>(status)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>All ranks, once after pass_distribution. No fitting on workers.</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-status~2"></span>
+              integer,
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>status</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-pass_nr_cheb_models"></span> <h3>public  subroutine <a href='../proc/pass_nr_cheb_models.html'>pass_nr_cheb_models</a>(status)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>Dedicated initialization transfer; never called by frequency evaluation.</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-status~3"></span>
+              integer,
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>status</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-nr_cheb_distribution_info"></span> <h3>public  subroutine <a href='../proc/nr_cheb_distribution_info.html'>nr_cheb_distribution_info</a>(transfers, collectives)  
+</h3></div>
+    <div class="card-body">
+          
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-transfers"></span>
+              integer,
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>transfers</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-collectives"></span>
+              integer,
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>collectives</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-pass_rel_cheb_models"></span> <h3>public  subroutine <a href='../proc/pass_rel_cheb_models.html'>pass_rel_cheb_models</a>(status)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>Initialization only: fixed header, allocation agreement, three payload
+broadcasts, and import agreement. No per-row collectives or fitting.</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-status~4"></span>
+              integer,
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>status</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-rel_cheb_distribution_info"></span> <h3>public  subroutine <a href='../proc/rel_cheb_distribution_info.html'>rel_cheb_distribution_info</a>(transfers, collectives, bytes)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>Lightweight initialization diagnostics; reading them performs no MPI.</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-transfers~2"></span>
+              integer,
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>transfers</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-collectives~2"></span>
+              integer,
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>collectives</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-bytes~2"></span>
+              integer(kind=int64),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>bytes</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+    </div>
+  </div>
+
               <div class="card">
     <div class="card-header codesum"><span class="anchor" id="proc-pass_instructions"></span> <h3>public  subroutine <a href='../proc/pass_instructions.html'>pass_instructions</a>()  
 </h3></div>

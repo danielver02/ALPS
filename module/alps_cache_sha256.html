@@ -92,7 +92,7 @@
 
             <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
               <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
-                 title=" 2.1% of total for modules and submodules.">138 statements</a>
+                 title=" 1.6% of total for modules and submodules.">138 statements</a>
             </li>
 
         </ul>
@@ -197,8 +197,17 @@
     </div>
 
     <div class="col-md-9" id='text'>
-      <p>Incremental SHA-256, using unsigned 32-bit values held in int64 containers.
-All additions fit int64; masking implements modulo 2**32 without signed overflow.</p>
+      <p>SHA-256 hashing used by the relativistic cache to identify construction inputs
+and compatible builds, and to check the integrity of stored cache entries.
+Hashes the supplied bytes without interpreting their numerical or text content.
+sha256_state supports init, repeated update calls, and finish, allowing arrays
+and files to be hashed in chunks without buffering the entire input. The
+sha256 and sha256_file helpers hash a character string or a file, respectively;
+completed digests contain 64 lowercase hexadecimal characters.
+SHA-256 operates on unsigned 32-bit words. This implementation stores each
+word in an int64 container so intermediate compression sums remain in range,
+then masks to the low 32 bits to implement arithmetic modulo 2**32 without
+relying on signed-integer overflow. Only intrinsic Fortran facilities are used.</p>
 <br>          <div class="card mb-4">
       <h3 class="card-header card-title bg-light">Uses</h3>
       <div class="card-body">
@@ -532,7 +541,7 @@ parameter
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-h"></span>
+              <span class="anchor" id="variable-h~2"></span>
               integer(kind=int64),
             </td>
               <td>private</td>
@@ -549,7 +558,7 @@ parameter
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-bytes"></span>
+              <span class="anchor" id="variable-bytes~3"></span>
               integer(kind=int64),
             </td>
               <td>private</td>
@@ -652,7 +661,7 @@ parameter
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-x"></span>
+              <span class="anchor" id="variable-x~10"></span>
               integer(kind=int64),
             </td>
 <td>intent(in)</td>
@@ -667,7 +676,7 @@ parameter
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-n"></span>
+              <span class="anchor" id="variable-n~12"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -987,7 +996,7 @@ parameter
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-ok"></span>
+              <span class="anchor" id="variable-ok~15"></span>
               logical,
             </td>
 <td>intent(out)</td>

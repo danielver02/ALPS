@@ -128,7 +128,7 @@
 <img src="./qrcode_alps_github.png" alt="drawing" width="200"/></p>
 <h2>Authors</h2>
 <p>Kristopher Klein   (kgklein@arizona.edu)<br>
-Daniel Verscharen  (d.verscharen@ucl.ac.uk)</p>
+Daniel Verscharen  (daniel.verscharen@rub.de)</p>
 <h2>Contents</h2>
 <ol>
 <li>What is ALPS?</li>
@@ -139,9 +139,10 @@ Daniel Verscharen  (d.verscharen@ucl.ac.uk)</p>
 </ol>
 <h2>1. What is ALPS?</h2>
 <p>ALPS is a parallelised numerical code that solves the Vlasov-Maxwell dispersion
-relation in hot (even relativistic) magnetised plasma. ALPS allows for any
-number of particle species with arbitrary gyrotropic background distribution
-functions supporting waves with any direction of propagation with respect to
+relation in hot (even relativistic) magnetised plasma. 
+ALPS allows for any number of particle species with 
+arbitrary gyrotropic background distribution functions 
+supporting waves with any direction of propagation with respect to 
 the background magnetic field.</p>
 <p>If you use the code for a science publication,</p>
 <ol>
@@ -169,37 +170,52 @@ the background magnetic field.</p>
 <p><a href="http://doi.org/10.1017/S0022377818000739">Verscharen, D., Klein, K. G., Chandran, B. D. G., Stevens, M. L., Salem, C. S.,
 and Bale, S. D.: ALPS: the Arbitrary Linear Plasma Solver, J. Plasma Phys. 84,
 905840403, 2018, doi: 10.1017/S0022377818000739</a></p>
-<p>The documentation of the code can be found on <a href="http://alps.space">alps.space</a>.</p>
-<p>Details on updates to the code can be found in:</p>
+<p>The documentation of the code can be found on <a href="https://danielver02.github.io/ALPS/">github</a>.</p>
+<p>Details on recent updates to the code can be found in:</p>
 <p><a href="http://doi.org/10.1063/5.0286477">Klein, K. G. and Verscharen, D.: The Dielectric Response of Plasmas with Arbitrary Gyrotropic Velocity Distributions, Phys. Plasmas 32, 092104, 2025, doi: 10.1063/5.0286477</a></p>
 <h2>2. Acknowledgements</h2>
-<p>The development of the ALPS code was supported by NASA Grant NNX16AG81G. The code developers appreciate support from the UK Science
+<p>The development of the ALPS code was supported by NASA Grant NNX16AG81G. 
+The code developers appreciate support from the UK Science
 and Technology Facilities Council (STFC) Ernest Rutherford Fellowship ST/P003826/1,
 STFC Consolidated Grants ST/S000240/1 and ST/W001004/1, and the Open Source
 Software Sustainability Funding programme from UCL's Advanced Research Computing
-Centre and UCL's eResearch Domain. We appreciate software engineering support by
+Centre and UCL's eResearch Domain. 
+We appreciate software engineering support by
 David Stansby and Tuomas Koskela from UCL.</p>
 <h2>3. Installing the ALPS code</h2>
 <p>For advice on the installation of the code, please check <a href="./INSTALL.html"><code>INSTALL.md</code></a></p>
+<p>With MPI Fortran, BLAS and LAPACK installed, the standard build is:</p>
+<div class="codehilite"><pre><span></span><code>./configure
+make<span class="w"> </span>-j4<span class="w">                 </span><span class="c1"># plain make / make -j1 also works</span>
+</code></pre></div>
+
+<p>For a clean rebuild, use <code>make clean &amp;&amp; make -j4</code>.
+This cleaning removes objects,
+executables and compiler-generated <code>*.mod</code> / <code>*.smod</code> files in the <code>src/</code> and
+<code>distribution/</code> build directories.</p>
 <h2>4. Running the ALPS code</h2>
-<p>ALPS works with input files that specify the plasma and numerical parameters for
-the calculation. We recommend that you start by checking out the provided test
-cases as a guidance for the creation of input files. These test cases are listed
-in the scripts <code>run_test.sh</code> and <code>run_test_suite.sh</code> in the subfolder <code>./tests</code>. All associated input files have
-a name starting with <code>test_</code>.</p>
+<p>ALPS works with input files that specify the plasma state 
+and numerical parameters for the calculation.
+We recommend that you start by checking out the provided test
+cases as a guidance for the creation of input files.
+These test cases are listed in the scripts <code>run_test.sh</code> 
+and <code>run_test_suite.sh</code> in the subfolder <code>./tests</code>.
+All associated input files have a name starting with <code>test_</code>.</p>
 <p>You can execute the ALPS code through the following command:</p>
 <div class="codehilite"><pre><span></span><code>mpirun -np &lt;NP&gt; ./src/ALPS &lt;input_file.in&gt;
 </code></pre></div>
 
-<p>where <code>&lt;NP&gt;</code> is the number of processors you want to use. This number must be greater
-than or equal to 4, and it must be an even number. <code>&lt;input_file.in&gt;</code> is the input file
-that includes all parameters for your run.</p>
+<p>where <code>&lt;NP&gt;</code> is the number of processors you want to use. 
+This number must be greater than or equal to 4, and it must be an even number. 
+<code>&lt;input_file.in&gt;</code> is the input file that includes all parameters for your run.</p>
 <p>On some systems, depending on the MPI configuration, the oversubscribe flag is
 required. In this case, the above command must be replaced with</p>
 <div class="codehilite"><pre><span></span><code>mpirun -np &lt;NP&gt; --oversubscribe ./src/ALPS &lt;input_file.in&gt;
 </code></pre></div>
 
-<p>For first-time users, we recommend working through our <a href="tutorial.html">ALPS Tutorial</a>. The key input parameters for ALPS are described on the <a href="input.html">ALPS Input</a> page. The output format of ALPS is described on the <a href="output.html">ALPS Output</a> page.</p>
+<p>For first-time users, we recommend working through our <a href="tutorial.html">ALPS Tutorial</a>. 
+The key input parameters for ALPS are described on the <a href="input.html">ALPS Input</a> page. 
+The output format of ALPS is described on the <a href="output.html">ALPS Output</a> page.</p>
 <h2>5. License</h2>
 <p>BSD 2-Clause License</p>
 <p>Copyright (c) 2023, Kristopher G. Klein and Daniel Verscharen
@@ -227,6 +243,13 @@ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
 CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
+<h2>Validation and historical fixtures</h2>
+<p>Executable numerical validation drivers and isolated scratch runners live in
+<a href="validation/README.html"><code>validation/</code></a>. For example, run
+<code>bash validation/run_chebyshev_kernel.sh --matrix</code> or
+<code>bash validation/run_nr_zero_return.sh</code> from the repository root. 
+Historical inputs, protected outputs and baseline datasets remain in <code>tests/</code>
+while scientific reports remain in <code>audits/</code>.</p>
     </div>
   </div>
       <hr>

@@ -1,0 +1,1233 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="Documentation for ALPS">
+    <meta name="author" content="Kristopher Klein, Daniel Verscharen" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>cheb_multiply &ndash; ALPS</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">ALPS </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="../page/index.html">Readme</a></li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/namelists.html">Namelists</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/programs.html">Programs</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>cheb_multiply
+      <small>Subroutine</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.3% of total for procedures.">23 statements</a>
+            </li>
+
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../module/alps_analyt.html'>alps_analyt</a></li>
+            <li class="breadcrumb-item active" aria-current="page">cheb_multiply</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+    <h2>private pure subroutine cheb_multiply(a, b, value, ok)  
+</h2>
+        <div class="card mb-4">
+      <h3 class="card-header card-title bg-light">Uses</h3>
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <ul class="list-inline">
+                  <li class="list-inline-item"><a href='http://fortranwiki.org/fortran/show/ieee_arithmetic'>ieee_arithmetic</a></li>
+              </ul>
+            </li>
+            <li class="list-group-item">
+              <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 14.1.2 (0)
+ -->
+<!-- Title: proc~~cheb_multiply~~UsesGraph Pages: 1 -->
+<svg id="proccheb_multiplyUsesGraph" width="225pt" height="32pt"
+ viewBox="0.00 0.00 225.00 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~cheb_multiply~~UsesGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 28.27)">
+<title>proc~~cheb_multiply~~UsesGraph</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-28.27 220.54,-28.27 220.54,4 -4,4"/>
+<!-- proc~cheb_multiply -->
+<g id="proc~~cheb_multiply~~UsesGraph_node1" class="node">
+<title>proc~cheb_multiply</title>
+<polygon fill="none" stroke="black" points="216.54,-24.27 130.77,-24.27 130.77,0 216.54,0 216.54,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="173.66" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50">cheb_multiply</text>
+</g>
+<!-- ieee_arithmetic -->
+<g id="proc~~cheb_multiply~~UsesGraph_node2" class="node">
+<title>ieee_arithmetic</title>
+<g id="a_proc~~cheb_multiply~~UsesGraph_node2"><a xlink:href="http://fortranwiki.org/fortran/show/ieee_arithmetic" xlink:title="ieee_arithmetic">
+<polygon fill="#337ab7" stroke="#337ab7" points="94.77,-24.27 0,-24.27 0,0 94.77,0 94.77,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="47.38" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">ieee_arithmetic</text>
+</a>
+</g>
+</g>
+<!-- proc~cheb_multiply&#45;&gt;ieee_arithmetic -->
+<g id="proc~~cheb_multiply~~UsesGraph_edge1" class="edge">
+<title>proc~cheb_multiply&#45;&gt;ieee_arithmetic</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M130.58,-12.13C122.83,-12.13 114.61,-12.13 106.48,-12.13"/>
+<polygon fill="#000000" stroke="#000000" points="106.63,-8.64 96.63,-12.14 106.63,-15.64 106.63,-8.64"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#UsesGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="UsesGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 14.1.2 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="511pt" height="32pt"
+ viewBox="0.00 0.00 511.00 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28.27)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-28.27 506.88,-28.27 506.88,4 -4,4"/>
+<!-- Module -->
+<g id="node1" class="node">
+<title>Module</title>
+<polygon fill="#337ab7" stroke="#337ab7" points="54,-24.27 0,-24.27 0,0 54,0 54,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="27" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Module</text>
+</g>
+<!-- Submodule -->
+<g id="node2" class="node">
+<title>Submodule</title>
+<polygon fill="#5bc0de" stroke="#5bc0de" points="144.13,-24.27 71.87,-24.27 71.87,0 144.13,0 144.13,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="108" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Submodule</text>
+</g>
+<!-- Subroutine -->
+<g id="node3" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="231.63,-24.27 162.37,-24.27 162.37,0 231.63,0 231.63,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="197" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node4" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="306.26,-24.27 249.74,-24.27 249.74,0 306.26,0 306.26,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="278" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Program -->
+<g id="node5" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="381.26,-24.27 324.74,-24.27 324.74,0 381.26,0 381.26,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="353" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node6" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="502.88,-24.27 399.12,-24.27 399.12,0 502.88,0 502.88,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="451" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a submodule to the (sub)module which it is
+descended from. Dashed arrows point from a module or program unit to 
+modules which it uses.
+</p>
+ </div>
+            </div>
+          </div>
+        </div>
+            </li>
+        </ul>
+      </div>
+    </div>
+
+
+    <p>Test the rounded product in a unit-size binade before multiplying large
+operands. Power-of-radix scaling preserves rounding at the overflow end;
+no potentially upward-rounded H/abs(b) threshold is used.</p>
+
+
+    <h3>Arguments</h3>
+        <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-a~4"></span>
+              real(kind=cheb_dp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>a</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-b~5"></span>
+              real(kind=cheb_dp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>b</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-value~13"></span>
+              real(kind=cheb_dp),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>value</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ok~11"></span>
+              logical,
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>ok</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <br>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Called by</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 14.1.2 (0)
+ -->
+<!-- Title: proc~~cheb_multiply~~CalledByGraph Pages: 1 -->
+<svg id="proccheb_multiplyCalledByGraph" width="641pt" height="108pt"
+ viewBox="0.00 0.00 641.00 108.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~cheb_multiply~~CalledByGraph" class="graph" transform="scale(0.266495 0.266495) rotate(0) translate(4 402.22)">
+<title>proc~~cheb_multiply~~CalledByGraph</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-402.22 2401.3,-402.22 2401.3,4 -4,4"/>
+<!-- proc~cheb_multiply -->
+<g id="proc~~cheb_multiply~~CalledByGraph_node1" class="node">
+<title>proc~cheb_multiply</title>
+<polygon fill="none" stroke="black" points="2397.3,-105.83 2311.53,-105.83 2311.53,-81.56 2397.3,-81.56 2397.3,-105.83"/>
+<text xml:space="preserve" text-anchor="middle" x="2354.41" y="-90.1" font-family="Helvetica,sans-Serif" font-size="10.50">cheb_multiply</text>
+</g>
+<!-- proc~cheb_complex_multiply -->
+<g id="proc~~cheb_multiply~~CalledByGraph_node2" class="node">
+<title>proc~cheb_complex_multiply</title>
+<g id="a_proc~~cheb_multiply~~CalledByGraph_node2"><a xlink:href="../proc/cheb_complex_multiply.html" xlink:title="cheb_complex_multiply">
+<polygon fill="#d9534f" stroke="#d9534f" points="2275.53,-145.83 2139.51,-145.83 2139.51,-121.56 2275.53,-121.56 2275.53,-145.83"/>
+<text xml:space="preserve" text-anchor="middle" x="2207.52" y="-130.1" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">cheb_complex_multiply</text>
+</a>
+</g>
+</g>
+<!-- proc~cheb_complex_multiply&#45;&gt;proc~cheb_multiply -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge1" class="edge">
+<title>proc~cheb_complex_multiply&#45;&gt;proc~cheb_multiply</title>
+<path fill="none" stroke="#000000" d="M2253.97,-121.15C2268.66,-117.1 2285.08,-112.56 2300.28,-108.37"/>
+<polygon fill="#000000" stroke="#000000" points="2300.92,-111.82 2309.63,-105.79 2299.06,-105.07 2300.92,-111.82"/>
+</g>
+<!-- proc~cheb_differentiate -->
+<g id="proc~~cheb_multiply~~CalledByGraph_node3" class="node">
+<title>proc~cheb_differentiate</title>
+<g id="a_proc~~cheb_multiply~~CalledByGraph_node3"><a xlink:href="../proc/cheb_differentiate.html" xlink:title="cheb_differentiate">
+<polygon fill="#d9534f" stroke="#d9534f" points="1942.37,-26.83 1834.1,-26.83 1834.1,-2.56 1942.37,-2.56 1942.37,-26.83"/>
+<text xml:space="preserve" text-anchor="middle" x="1888.23" y="-11.1" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">cheb_differentiate</text>
+</a>
+</g>
+</g>
+<!-- proc~cheb_differentiate&#45;&gt;proc~cheb_multiply -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge2" class="edge">
+<title>proc~cheb_differentiate&#45;&gt;proc~cheb_multiply</title>
+<path fill="none" stroke="#000000" d="M1942.79,-7.22C2019.29,1.29 2163.02,9.07 2275.53,-32.7 2298.41,-41.19 2319.89,-59.06 2334.47,-73.27"/>
+<polygon fill="#000000" stroke="#000000" points="2331.64,-75.38 2341.16,-80.04 2336.62,-70.46 2331.64,-75.38"/>
+</g>
+<!-- proc~cheb_fit_direct -->
+<g id="proc~~cheb_multiply~~CalledByGraph_node4" class="node">
+<title>proc~cheb_fit_direct</title>
+<g id="a_proc~~cheb_multiply~~CalledByGraph_node4"><a xlink:href="../proc/cheb_fit_direct.html" xlink:title="cheb_fit_direct">
+<polygon fill="#d9534f" stroke="#d9534f" points="1750.47,-102.83 1661.7,-102.83 1661.7,-78.56 1750.47,-78.56 1750.47,-102.83"/>
+<text xml:space="preserve" text-anchor="middle" x="1706.09" y="-87.1" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">cheb_fit_direct</text>
+</a>
+</g>
+</g>
+<!-- proc~cheb_fit_direct&#45;&gt;proc~cheb_multiply -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge3" class="edge">
+<title>proc~cheb_fit_direct&#45;&gt;proc~cheb_multiply</title>
+<path fill="none" stroke="#000000" d="M1750.75,-90.9C1865.42,-91.43 2174.89,-92.87 2299.92,-93.45"/>
+<polygon fill="#000000" stroke="#000000" points="2299.55,-96.95 2309.57,-93.5 2299.59,-89.95 2299.55,-96.95"/>
+</g>
+<!-- proc~cheb_fit_direct&#45;&gt;proc~cheb_differentiate -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge8" class="edge">
+<title>proc~cheb_fit_direct&#45;&gt;proc~cheb_differentiate</title>
+<path fill="none" stroke="#000000" d="M1732.23,-78.15C1753.29,-67.83 1784.28,-53.11 1811.97,-41.7 1820.83,-38.05 1830.38,-34.41 1839.6,-31.03"/>
+<polygon fill="#000000" stroke="#000000" points="1840.58,-34.4 1848.8,-27.72 1838.2,-27.82 1840.58,-34.4"/>
+</g>
+<!-- proc~cheb_svd -->
+<g id="proc~~cheb_multiply~~CalledByGraph_node6" class="node">
+<title>proc~cheb_svd</title>
+<g id="a_proc~~cheb_multiply~~CalledByGraph_node6"><a xlink:href="../proc/cheb_svd.html" xlink:title="cheb_svd">
+<polygon fill="#d9534f" stroke="#d9534f" points="2238.03,-65.83 2177.01,-65.83 2177.01,-41.56 2238.03,-41.56 2238.03,-65.83"/>
+<text xml:space="preserve" text-anchor="middle" x="2207.52" y="-50.1" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">cheb_svd</text>
+</a>
+</g>
+</g>
+<!-- proc~cheb_fit_direct&#45;&gt;proc~cheb_svd -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge12" class="edge">
+<title>proc~cheb_fit_direct&#45;&gt;proc~cheb_svd</title>
+<path fill="none" stroke="#000000" d="M1750.94,-85.72C1769.72,-83.68 1791.9,-81.41 1811.97,-79.7 1940.9,-68.69 2093.89,-59.8 2165.59,-55.87"/>
+<polygon fill="#000000" stroke="#000000" points="2165.49,-59.38 2175.28,-55.35 2165.11,-52.39 2165.49,-59.38"/>
+</g>
+<!-- proc~cheb_residual_diagnostics -->
+<g id="proc~~cheb_multiply~~CalledByGraph_node15" class="node">
+<title>proc~cheb_residual_diagnostics</title>
+<g id="a_proc~~cheb_multiply~~CalledByGraph_node15"><a xlink:href="../proc/cheb_residual_diagnostics.html" xlink:title="cheb_residual_diagnostics">
+<polygon fill="#d9534f" stroke="#d9534f" points="1963.37,-145.83 1813.1,-145.83 1813.1,-121.56 1963.37,-121.56 1963.37,-145.83"/>
+<text xml:space="preserve" text-anchor="middle" x="1888.23" y="-130.1" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">cheb_residual_diagnostics</text>
+</a>
+</g>
+</g>
+<!-- proc~cheb_fit_direct&#45;&gt;proc~cheb_residual_diagnostics -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge27" class="edge">
+<title>proc~cheb_fit_direct&#45;&gt;proc~cheb_residual_diagnostics</title>
+<path fill="none" stroke="#000000" d="M1750.69,-101.11C1772.45,-106.3 1799.18,-112.68 1823.21,-118.42"/>
+<polygon fill="#000000" stroke="#000000" points="1822.38,-121.82 1832.92,-120.73 1824,-115.01 1822.38,-121.82"/>
+</g>
+<!-- proc~cheb_reconstruct -->
+<g id="proc~~cheb_multiply~~CalledByGraph_node5" class="node">
+<title>proc~cheb_reconstruct</title>
+<g id="a_proc~~cheb_multiply~~CalledByGraph_node5"><a xlink:href="../proc/cheb_reconstruct.html" xlink:title="cheb_reconstruct">
+<polygon fill="#d9534f" stroke="#d9534f" points="2103.51,-187.83 2000.49,-187.83 2000.49,-163.56 2103.51,-163.56 2103.51,-187.83"/>
+<text xml:space="preserve" text-anchor="middle" x="2052" y="-172.1" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">cheb_reconstruct</text>
+</a>
+</g>
+</g>
+<!-- proc~cheb_reconstruct&#45;&gt;proc~cheb_multiply -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge4" class="edge">
+<title>proc~cheb_reconstruct&#45;&gt;proc~cheb_multiply</title>
+<path fill="none" stroke="#000000" d="M2103.94,-178.88C2150.31,-179.95 2219.84,-176.9 2275.53,-154.7 2298.07,-145.72 2319.45,-128.07 2334.09,-114.06"/>
+<polygon fill="#000000" stroke="#000000" points="2336.18,-116.92 2340.81,-107.39 2331.25,-111.95 2336.18,-116.92"/>
+</g>
+<!-- proc~cheb_reconstruct&#45;&gt;proc~cheb_complex_multiply -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge7" class="edge">
+<title>proc~cheb_reconstruct&#45;&gt;proc~cheb_complex_multiply</title>
+<path fill="none" stroke="#000000" d="M2099.06,-163.1C2115,-158.74 2133.05,-153.8 2149.75,-149.23"/>
+<polygon fill="#000000" stroke="#000000" points="2150.31,-152.71 2159.03,-146.69 2148.46,-145.95 2150.31,-152.71"/>
+</g>
+<!-- proc~cheb_svd&#45;&gt;proc~cheb_multiply -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge5" class="edge">
+<title>proc~cheb_svd&#45;&gt;proc~cheb_multiply</title>
+<path fill="none" stroke="#000000" d="M2238.19,-61.89C2256.02,-66.81 2279.23,-73.22 2300.14,-78.99"/>
+<polygon fill="#000000" stroke="#000000" points="2299.12,-82.34 2309.69,-81.63 2300.98,-75.59 2299.12,-82.34"/>
+</g>
+<!-- proc~cheb_clenshaw -->
+<g id="proc~~cheb_multiply~~CalledByGraph_node7" class="node">
+<title>proc~cheb_clenshaw</title>
+<g id="a_proc~~cheb_multiply~~CalledByGraph_node7"><a xlink:href="../proc/cheb_clenshaw.html" xlink:title="cheb_clenshaw">
+<polygon fill="#d9534f" stroke="#d9534f" points="2098.26,-145.83 2005.74,-145.83 2005.74,-121.56 2098.26,-121.56 2098.26,-145.83"/>
+<text xml:space="preserve" text-anchor="middle" x="2052" y="-130.1" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">cheb_clenshaw</text>
+</a>
+</g>
+</g>
+<!-- proc~cheb_clenshaw&#45;&gt;proc~cheb_complex_multiply -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge6" class="edge">
+<title>proc~cheb_clenshaw&#45;&gt;proc~cheb_complex_multiply</title>
+<path fill="none" stroke="#000000" d="M2098.65,-133.7C2107.89,-133.7 2117.87,-133.7 2127.88,-133.7"/>
+<polygon fill="#000000" stroke="#000000" points="2127.66,-137.2 2137.66,-133.7 2127.66,-130.2 2127.66,-137.2"/>
+</g>
+<!-- proc~cheb_evaluate_complex -->
+<g id="proc~~cheb_multiply~~CalledByGraph_node8" class="node">
+<title>proc~cheb_evaluate_complex</title>
+<g id="a_proc~~cheb_multiply~~CalledByGraph_node8"><a xlink:href="../proc/cheb_evaluate_complex.html" xlink:title="cheb_evaluate_complex">
+<polygon fill="#d9534f" stroke="#d9534f" points="1775.97,-227.83 1636.2,-227.83 1636.2,-203.56 1775.97,-203.56 1775.97,-227.83"/>
+<text xml:space="preserve" text-anchor="middle" x="1706.09" y="-212.1" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">cheb_evaluate_complex</text>
+</a>
+</g>
+</g>
+<!-- proc~cheb_evaluate_complex&#45;&gt;proc~cheb_reconstruct -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge11" class="edge">
+<title>proc~cheb_evaluate_complex&#45;&gt;proc~cheb_reconstruct</title>
+<path fill="none" stroke="#000000" d="M1776.27,-213.68C1828.29,-211.41 1901.19,-206.65 1964.49,-196.7 1974.25,-195.16 1984.53,-193.09 1994.47,-190.83"/>
+<polygon fill="#000000" stroke="#000000" points="1995.09,-194.28 2004.01,-188.58 1993.48,-187.47 1995.09,-194.28"/>
+</g>
+<!-- proc~cheb_polynomial_complex -->
+<g id="proc~~cheb_multiply~~CalledByGraph_node14" class="node">
+<title>proc~cheb_polynomial_complex</title>
+<g id="a_proc~~cheb_multiply~~CalledByGraph_node14"><a xlink:href="../proc/cheb_polynomial_complex.html" xlink:title="cheb_polynomial_complex">
+<polygon fill="#d9534f" stroke="#d9534f" points="1964.49,-187.83 1811.97,-187.83 1811.97,-163.56 1964.49,-163.56 1964.49,-187.83"/>
+<text xml:space="preserve" text-anchor="middle" x="1888.23" y="-172.1" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">cheb_polynomial_complex</text>
+</a>
+</g>
+</g>
+<!-- proc~cheb_evaluate_complex&#45;&gt;proc~cheb_polynomial_complex -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge24" class="edge">
+<title>proc~cheb_evaluate_complex&#45;&gt;proc~cheb_polynomial_complex</title>
+<path fill="none" stroke="#000000" d="M1763.59,-203.15C1781.36,-199.21 1801.17,-194.81 1819.63,-190.71"/>
+<polygon fill="#000000" stroke="#000000" points="1820.14,-194.18 1829.14,-188.6 1818.62,-187.35 1820.14,-194.18"/>
+</g>
+<!-- proc~cheb_fit -->
+<g id="proc~~cheb_multiply~~CalledByGraph_node9" class="node">
+<title>proc~cheb_fit</title>
+<g id="a_proc~~cheb_multiply~~CalledByGraph_node9"><a xlink:href="../proc/cheb_fit.html" xlink:title="cheb_fit">
+<polygon fill="#d9534f" stroke="#d9534f" points="517.05,-102.83 463.05,-102.83 463.05,-78.56 517.05,-78.56 517.05,-102.83"/>
+<text xml:space="preserve" text-anchor="middle" x="490.05" y="-87.1" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">cheb_fit</text>
+</a>
+</g>
+</g>
+<!-- proc~cheb_fit&#45;&gt;proc~cheb_fit_direct -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge10" class="edge">
+<title>proc~cheb_fit&#45;&gt;proc~cheb_fit_direct</title>
+<path fill="none" stroke="#000000" d="M517.27,-90.7C563.7,-90.7 663.41,-90.7 747.59,-90.7 747.59,-90.7 747.59,-90.7 1363.8,-90.7 1464.9,-90.7 1582.84,-90.7 1650.27,-90.7"/>
+<polygon fill="#000000" stroke="#000000" points="1649.93,-94.2 1659.93,-90.7 1649.93,-87.2 1649.93,-94.2"/>
+</g>
+<!-- proc~cheb_from_coefficients -->
+<g id="proc~~cheb_multiply~~CalledByGraph_node10" class="node">
+<title>proc~cheb_from_coefficients</title>
+<g id="a_proc~~cheb_multiply~~CalledByGraph_node10"><a xlink:href="../proc/cheb_from_coefficients.html" xlink:title="cheb_from_coefficients">
+<polygon fill="#d9534f" stroke="#d9534f" points="1590.45,-26.83 1455.93,-26.83 1455.93,-2.56 1590.45,-2.56 1590.45,-26.83"/>
+<text xml:space="preserve" text-anchor="middle" x="1523.19" y="-11.1" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">cheb_from_coefficients</text>
+</a>
+</g>
+</g>
+<!-- proc~cheb_from_coefficients&#45;&gt;proc~cheb_differentiate -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge9" class="edge">
+<title>proc~cheb_from_coefficients&#45;&gt;proc~cheb_differentiate</title>
+<path fill="none" stroke="#000000" d="M1590.78,-14.7C1656.72,-14.7 1757.05,-14.7 1822.38,-14.7"/>
+<polygon fill="#000000" stroke="#000000" points="1822.24,-18.2 1832.24,-14.7 1822.24,-11.2 1822.24,-18.2"/>
+</g>
+<!-- interface~cheb_evaluate -->
+<g id="proc~~cheb_multiply~~CalledByGraph_node11" class="node">
+<title>interface~cheb_evaluate</title>
+<g id="a_proc~~cheb_multiply~~CalledByGraph_node11"><a xlink:href="../interface/cheb_evaluate.html" xlink:title="cheb_evaluate">
+<polygon fill="#a7506f" stroke="#a7506f" points="1407.56,-207.83 1318.04,-207.83 1318.04,-183.56 1407.56,-183.56 1407.56,-207.83"/>
+<text xml:space="preserve" text-anchor="middle" x="1362.8" y="-192.1" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">cheb_evaluate</text>
+</a>
+</g>
+</g>
+<!-- interface~cheb_evaluate&#45;&gt;proc~cheb_evaluate_complex -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge16" class="edge">
+<title>interface~cheb_evaluate&#45;&gt;proc~cheb_evaluate_complex</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1407.98,-207.12C1420.26,-209.81 1433.67,-212.3 1446.18,-213.7 1505.67,-220.36 1573.33,-220.63 1624.57,-219.36"/>
+<polygon fill="#000000" stroke="#000000" points="1624.48,-222.86 1634.38,-219.08 1624.29,-215.86 1624.48,-222.86"/>
+</g>
+<!-- proc~cheb_evaluate_real -->
+<g id="proc~~cheb_multiply~~CalledByGraph_node13" class="node">
+<title>proc~cheb_evaluate_real</title>
+<g id="a_proc~~cheb_multiply~~CalledByGraph_node13"><a xlink:href="../proc/cheb_evaluate_real.html" xlink:title="cheb_evaluate_real">
+<polygon fill="#d9534f" stroke="#d9534f" points="1580.7,-204.83 1465.68,-204.83 1465.68,-180.56 1580.7,-180.56 1580.7,-204.83"/>
+<text xml:space="preserve" text-anchor="middle" x="1523.19" y="-189.1" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">cheb_evaluate_real</text>
+</a>
+</g>
+</g>
+<!-- interface~cheb_evaluate&#45;&gt;proc~cheb_evaluate_real -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge23" class="edge">
+<title>interface~cheb_evaluate&#45;&gt;proc~cheb_evaluate_real</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1407.92,-194.86C1422.21,-194.59 1438.41,-194.29 1454.02,-193.99"/>
+<polygon fill="#000000" stroke="#000000" points="1453.81,-197.49 1463.74,-193.81 1453.68,-190.5 1453.81,-197.49"/>
+</g>
+<!-- proc~build_rel_cheb_rows -->
+<g id="proc~~cheb_multiply~~CalledByGraph_node12" class="node">
+<title>proc~build_rel_cheb_rows</title>
+<g id="a_proc~~cheb_multiply~~CalledByGraph_node12"><a xlink:href="../proc/build_rel_cheb_rows.html" xlink:title="build_rel_cheb_rows">
+<polygon fill="#d9534f" stroke="#d9534f" points="414.17,-108.83 296.9,-108.83 296.9,-84.56 414.17,-84.56 414.17,-108.83"/>
+<text xml:space="preserve" text-anchor="middle" x="355.53" y="-93.1" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">build_rel_cheb_rows</text>
+</a>
+</g>
+</g>
+<!-- proc~build_rel_cheb_rows&#45;&gt;proc~cheb_fit -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge17" class="edge">
+<title>proc~build_rel_cheb_rows&#45;&gt;proc~cheb_fit</title>
+<path fill="none" stroke="#000000" d="M414.66,-94.07C427.15,-93.5 440.03,-92.92 451.49,-92.4"/>
+<polygon fill="#000000" stroke="#000000" points="451.5,-95.9 461.33,-91.95 451.18,-88.91 451.5,-95.9"/>
+</g>
+<!-- proc~cheb_evaluate_real&#45;&gt;proc~cheb_evaluate_complex -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge15" class="edge">
+<title>proc~cheb_evaluate_real&#45;&gt;proc~cheb_evaluate_complex</title>
+<path fill="none" stroke="#000000" d="M1580.93,-199.91C1594.8,-201.68 1609.91,-203.6 1624.65,-205.47"/>
+<polygon fill="#000000" stroke="#000000" points="1623.97,-208.91 1634.33,-206.7 1624.85,-201.97 1623.97,-208.91"/>
+</g>
+<!-- proc~cheb_polynomial_complex&#45;&gt;proc~cheb_clenshaw -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge13" class="edge">
+<title>proc~cheb_polynomial_complex&#45;&gt;proc~cheb_clenshaw</title>
+<path fill="none" stroke="#000000" d="M1937.77,-163.1C1955.58,-158.47 1975.89,-153.2 1994.35,-148.41"/>
+<polygon fill="#000000" stroke="#000000" points="1995,-151.85 2003.8,-145.95 1993.24,-145.08 1995,-151.85"/>
+</g>
+<!-- proc~cheb_residual_diagnostics&#45;&gt;proc~cheb_clenshaw -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge14" class="edge">
+<title>proc~cheb_residual_diagnostics&#45;&gt;proc~cheb_clenshaw</title>
+<path fill="none" stroke="#000000" d="M1963.49,-133.7C1973.75,-133.7 1984.17,-133.7 1994.05,-133.7"/>
+<polygon fill="#000000" stroke="#000000" points="1993.87,-137.2 2003.87,-133.7 1993.87,-130.2 1993.87,-137.2"/>
+</g>
+<!-- proc~initialize_nr_cheb_svd -->
+<g id="proc~~cheb_multiply~~CalledByGraph_node16" class="node">
+<title>proc~initialize_nr_cheb_svd</title>
+<g id="a_proc~~cheb_multiply~~CalledByGraph_node16"><a xlink:href="../proc/initialize_nr_cheb_svd.html" xlink:title="initialize_nr_cheb_svd">
+<polygon fill="#d9534f" stroke="#d9534f" points="419.04,-66.83 292.02,-66.83 292.02,-42.56 419.04,-42.56 419.04,-66.83"/>
+<text xml:space="preserve" text-anchor="middle" x="355.53" y="-51.1" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">initialize_nr_cheb_svd</text>
+</a>
+</g>
+</g>
+<!-- proc~initialize_nr_cheb_svd&#45;&gt;proc~cheb_fit -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge18" class="edge">
+<title>proc~initialize_nr_cheb_svd&#45;&gt;proc~cheb_fit</title>
+<path fill="none" stroke="#000000" d="M402.88,-67.29C418.82,-71.62 436.45,-76.41 451.6,-80.52"/>
+<polygon fill="#000000" stroke="#000000" points="450.59,-83.88 461.16,-83.12 452.43,-77.12 450.59,-83.88"/>
+</g>
+<!-- proc~nr_cheb_import -->
+<g id="proc~~cheb_multiply~~CalledByGraph_node17" class="node">
+<title>proc~nr_cheb_import</title>
+<g id="a_proc~~cheb_multiply~~CalledByGraph_node17"><a xlink:href="../proc/nr_cheb_import.html" xlink:title="nr_cheb_import">
+<polygon fill="#d9534f" stroke="#d9534f" points="1410.18,-26.83 1315.41,-26.83 1315.41,-2.56 1410.18,-2.56 1410.18,-26.83"/>
+<text xml:space="preserve" text-anchor="middle" x="1362.8" y="-11.1" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nr_cheb_import</text>
+</a>
+</g>
+</g>
+<!-- proc~nr_cheb_import&#45;&gt;proc~cheb_from_coefficients -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge19" class="edge">
+<title>proc~nr_cheb_import&#45;&gt;proc~cheb_from_coefficients</title>
+<path fill="none" stroke="#000000" d="M1410.46,-14.7C1421.07,-14.7 1432.62,-14.7 1444.14,-14.7"/>
+<polygon fill="#000000" stroke="#000000" points="1444.1,-18.2 1454.1,-14.7 1444.1,-11.2 1444.1,-18.2"/>
+</g>
+<!-- interface~cheb_evaluate_polynomial -->
+<g id="proc~~cheb_multiply~~CalledByGraph_node18" class="node">
+<title>interface~cheb_evaluate_polynomial</title>
+<g id="a_proc~~cheb_multiply~~CalledByGraph_node18"><a xlink:href="../interface/cheb_evaluate_polynomial.html" xlink:title="cheb_evaluate_polynomial">
+<polygon fill="#a7506f" stroke="#a7506f" points="1600.2,-157.83 1446.18,-157.83 1446.18,-133.56 1600.2,-133.56 1600.2,-157.83"/>
+<text xml:space="preserve" text-anchor="middle" x="1523.19" y="-142.1" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">cheb_evaluate_polynomial</text>
+</a>
+</g>
+</g>
+<!-- interface~cheb_evaluate_polynomial&#45;&gt;proc~cheb_polynomial_complex -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge26" class="edge">
+<title>interface~cheb_evaluate_polynomial&#45;&gt;proc~cheb_polynomial_complex</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1600.69,-153.44C1612.57,-154.58 1624.71,-155.7 1636.2,-156.7 1690.72,-161.44 1751.96,-166.09 1800.31,-169.6"/>
+<polygon fill="#000000" stroke="#000000" points="1799.94,-173.08 1810.16,-170.31 1800.44,-166.1 1799.94,-173.08"/>
+</g>
+<!-- proc~cheb_polynomial_real -->
+<g id="proc~~cheb_multiply~~CalledByGraph_node19" class="node">
+<title>proc~cheb_polynomial_real</title>
+<g id="a_proc~~cheb_multiply~~CalledByGraph_node19"><a xlink:href="../proc/cheb_polynomial_real.html" xlink:title="cheb_polynomial_real">
+<polygon fill="#d9534f" stroke="#d9534f" points="1769.97,-147.83 1642.2,-147.83 1642.2,-123.56 1769.97,-123.56 1769.97,-147.83"/>
+<text xml:space="preserve" text-anchor="middle" x="1706.09" y="-132.1" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">cheb_polynomial_real</text>
+</a>
+</g>
+</g>
+<!-- interface~cheb_evaluate_polynomial&#45;&gt;proc~cheb_polynomial_real -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge30" class="edge">
+<title>interface~cheb_evaluate_polynomial&#45;&gt;proc~cheb_polynomial_real</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1600.64,-141.47C1610.49,-140.93 1620.55,-140.37 1630.37,-139.83"/>
+<polygon fill="#000000" stroke="#000000" points="1630.44,-143.33 1640.23,-139.28 1630.05,-136.34 1630.44,-143.33"/>
+</g>
+<!-- proc~cheb_polynomial_real&#45;&gt;proc~cheb_polynomial_complex -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge25" class="edge">
+<title>proc~cheb_polynomial_real&#45;&gt;proc~cheb_polynomial_complex</title>
+<path fill="none" stroke="#000000" d="M1763.59,-148.25C1781.36,-152.19 1801.17,-156.59 1819.63,-160.69"/>
+<polygon fill="#000000" stroke="#000000" points="1818.62,-164.05 1829.14,-162.8 1820.14,-157.22 1818.62,-164.05"/>
+</g>
+<!-- proc~eval_nr_cheb -->
+<g id="proc~~cheb_multiply~~CalledByGraph_node20" class="node">
+<title>proc~eval_nr_cheb</title>
+<g id="a_proc~~cheb_multiply~~CalledByGraph_node20"><a xlink:href="../proc/eval_nr_cheb.html" xlink:title="eval_nr_cheb">
+<polygon fill="#d9534f" stroke="#d9534f" points="1278.29,-227.83 1196.27,-227.83 1196.27,-203.56 1278.29,-203.56 1278.29,-227.83"/>
+<text xml:space="preserve" text-anchor="middle" x="1237.28" y="-212.1" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">eval_nr_cheb</text>
+</a>
+</g>
+</g>
+<!-- proc~eval_nr_cheb&#45;&gt;interface~cheb_evaluate -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge20" class="edge">
+<title>proc~eval_nr_cheb&#45;&gt;interface~cheb_evaluate</title>
+<path fill="none" stroke="#000000" d="M1278.72,-209.15C1287.62,-207.71 1297.2,-206.16 1306.58,-204.64"/>
+<polygon fill="#000000" stroke="#000000" points="1307.04,-208.11 1316.36,-203.06 1305.92,-201.2 1307.04,-208.11"/>
+</g>
+<!-- proc~eval_rel_cheb -->
+<g id="proc~~cheb_multiply~~CalledByGraph_node21" class="node">
+<title>proc~eval_rel_cheb</title>
+<g id="a_proc~~cheb_multiply~~CalledByGraph_node21"><a xlink:href="../proc/eval_rel_cheb.html" xlink:title="eval_rel_cheb">
+<polygon fill="#d9534f" stroke="#d9534f" points="1279.41,-185.83 1195.14,-185.83 1195.14,-161.56 1279.41,-161.56 1279.41,-185.83"/>
+<text xml:space="preserve" text-anchor="middle" x="1237.28" y="-170.1" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">eval_rel_cheb</text>
+</a>
+</g>
+</g>
+<!-- proc~eval_rel_cheb&#45;&gt;interface~cheb_evaluate -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge21" class="edge">
+<title>proc~eval_rel_cheb&#45;&gt;interface~cheb_evaluate</title>
+<path fill="none" stroke="#000000" d="M1279.75,-181.09C1288.32,-182.61 1297.48,-184.24 1306.46,-185.84"/>
+<polygon fill="#000000" stroke="#000000" points="1305.73,-189.27 1316.19,-187.58 1306.96,-182.38 1305.73,-189.27"/>
+</g>
+<!-- proc~initialize_nr_cheb_production -->
+<g id="proc~~cheb_multiply~~CalledByGraph_node22" class="node">
+<title>proc~initialize_nr_cheb_production</title>
+<g id="a_proc~~cheb_multiply~~CalledByGraph_node22"><a xlink:href="../proc/initialize_nr_cheb_production.html" xlink:title="initialize_nr_cheb_production">
+<polygon fill="#d9534f" stroke="#d9534f" points="256.02,-83.83 90,-83.83 90,-59.56 256.02,-59.56 256.02,-83.83"/>
+<text xml:space="preserve" text-anchor="middle" x="173.01" y="-68.1" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">initialize_nr_cheb_production</text>
+</a>
+</g>
+</g>
+<!-- proc~initialize_nr_cheb_production&#45;&gt;proc~initialize_nr_cheb_svd -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge28" class="edge">
+<title>proc~initialize_nr_cheb_production&#45;&gt;proc~initialize_nr_cheb_svd</title>
+<path fill="none" stroke="#000000" d="M256.35,-63.95C264.34,-63.19 272.42,-62.43 280.33,-61.69"/>
+<polygon fill="#000000" stroke="#000000" points="280.64,-65.17 290.27,-60.75 279.98,-58.2 280.64,-65.17"/>
+</g>
+<!-- proc~initialize_rel_cheb -->
+<g id="proc~~cheb_multiply~~CalledByGraph_node23" class="node">
+<title>proc~initialize_rel_cheb</title>
+<g id="a_proc~~cheb_multiply~~CalledByGraph_node23"><a xlink:href="../proc/initialize_rel_cheb.html" xlink:title="initialize_rel_cheb">
+<polygon fill="#d9534f" stroke="#d9534f" points="226.02,-125.83 120,-125.83 120,-101.56 226.02,-101.56 226.02,-125.83"/>
+<text xml:space="preserve" text-anchor="middle" x="173.01" y="-110.1" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">initialize_rel_cheb</text>
+</a>
+</g>
+</g>
+<!-- proc~initialize_rel_cheb&#45;&gt;proc~build_rel_cheb_rows -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge22" class="edge">
+<title>proc~initialize_rel_cheb&#45;&gt;proc~build_rel_cheb_rows</title>
+<path fill="none" stroke="#000000" d="M226.22,-108.78C244.59,-107.05 265.53,-105.08 285.09,-103.24"/>
+<polygon fill="#000000" stroke="#000000" points="285.28,-106.74 294.91,-102.31 284.63,-99.77 285.28,-106.74"/>
+</g>
+<!-- proc~pass_nr_cheb_models -->
+<g id="proc~~cheb_multiply~~CalledByGraph_node24" class="node">
+<title>proc~pass_nr_cheb_models</title>
+<g id="a_proc~~cheb_multiply~~CalledByGraph_node24"><a xlink:href="../proc/pass_nr_cheb_models.html" xlink:title="pass_nr_cheb_models">
+<polygon fill="#d9534f" stroke="#d9534f" points="1159.14,-26.83 1031.37,-26.83 1031.37,-2.56 1159.14,-2.56 1159.14,-26.83"/>
+<text xml:space="preserve" text-anchor="middle" x="1095.26" y="-11.1" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">pass_nr_cheb_models</text>
+</a>
+</g>
+</g>
+<!-- proc~pass_nr_cheb_models&#45;&gt;proc~nr_cheb_import -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge29" class="edge">
+<title>proc~pass_nr_cheb_models&#45;&gt;proc~nr_cheb_import</title>
+<path fill="none" stroke="#000000" d="M1159.52,-14.7C1203.36,-14.7 1261.28,-14.7 1303.91,-14.7"/>
+<polygon fill="#000000" stroke="#000000" points="1303.71,-18.2 1313.71,-14.7 1303.71,-11.2 1303.71,-18.2"/>
+</g>
+<!-- proc~complete_nr_cheb_initialization -->
+<g id="proc~~cheb_multiply~~CalledByGraph_node25" class="node">
+<title>proc~complete_nr_cheb_initialization</title>
+<g id="a_proc~~cheb_multiply~~CalledByGraph_node25"><a xlink:href="../proc/complete_nr_cheb_initialization.html" xlink:title="complete_nr_cheb_initialization">
+<polygon fill="#d9534f" stroke="#d9534f" points="838.35,-26.83 658.83,-26.83 658.83,-2.56 838.35,-2.56 838.35,-26.83"/>
+<text xml:space="preserve" text-anchor="middle" x="748.59" y="-11.1" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">complete_nr_cheb_initialization</text>
+</a>
+</g>
+</g>
+<!-- proc~complete_nr_cheb_initialization&#45;&gt;proc~pass_nr_cheb_models -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge35" class="edge">
+<title>proc~complete_nr_cheb_initialization&#45;&gt;proc~pass_nr_cheb_models</title>
+<path fill="none" stroke="#000000" d="M838.8,-14.7C894.92,-14.7 966.5,-14.7 1019.61,-14.7"/>
+<polygon fill="#000000" stroke="#000000" points="1019.47,-18.2 1029.47,-14.7 1019.47,-11.2 1019.47,-18.2"/>
+</g>
+<!-- proc~eval_fit -->
+<g id="proc~~cheb_multiply~~CalledByGraph_node26" class="node">
+<title>proc~eval_fit</title>
+<g id="a_proc~~cheb_multiply~~CalledByGraph_node26"><a xlink:href="../proc/eval_fit.html" xlink:title="eval_fit">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1122.26,-188.83 1068.26,-188.83 1068.26,-164.56 1122.26,-164.56 1122.26,-188.83"/>
+<text xml:space="preserve" text-anchor="middle" x="1095.26" y="-173.1" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">eval_fit</text>
+</a>
+</g>
+</g>
+<!-- proc~eval_fit&#45;&gt;proc~eval_nr_cheb -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge31" class="edge">
+<title>proc~eval_fit&#45;&gt;proc~eval_nr_cheb</title>
+<path fill="none" stroke="#000000" d="M1122.59,-184.03C1140.2,-188.94 1163.94,-195.55 1185.18,-201.47"/>
+<polygon fill="#000000" stroke="#000000" points="1183.98,-204.77 1194.55,-204.08 1185.85,-198.02 1183.98,-204.77"/>
+</g>
+<!-- proc~eval_fit&#45;&gt;proc~eval_rel_cheb -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge32" class="edge">
+<title>proc~eval_fit&#45;&gt;proc~eval_rel_cheb</title>
+<path fill="none" stroke="#000000" d="M1122.59,-176.13C1139.7,-175.77 1162.61,-175.28 1183.38,-174.83"/>
+<polygon fill="#000000" stroke="#000000" points="1183.21,-178.34 1193.13,-174.62 1183.06,-171.34 1183.21,-178.34"/>
+</g>
+<!-- program~alps -->
+<g id="proc~~cheb_multiply~~CalledByGraph_node27" class="node">
+<title>program~alps</title>
+<g id="a_proc~~cheb_multiply~~CalledByGraph_node27"><a xlink:href="../program/alps.html" xlink:title="alps">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="54,-195.83 0,-195.83 0,-171.56 54,-171.56 54,-195.83"/>
+<text xml:space="preserve" text-anchor="middle" x="27" y="-180.1" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">alps</text>
+</a>
+</g>
+</g>
+<!-- program~alps&#45;&gt;proc~initialize_nr_cheb_production -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge33" class="edge">
+<title>program~alps&#45;&gt;proc~initialize_nr_cheb_production</title>
+<path fill="none" stroke="#000000" d="M32.98,-171.27C41.56,-151.49 61.05,-113.01 90,-92.7 91.61,-91.57 93.28,-90.5 95,-89.48"/>
+<polygon fill="#000000" stroke="#000000" points="96.56,-92.62 103.9,-84.97 93.39,-86.37 96.56,-92.62"/>
+</g>
+<!-- program~alps&#45;&gt;proc~initialize_rel_cheb -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge34" class="edge">
+<title>program~alps&#45;&gt;proc~initialize_rel_cheb</title>
+<path fill="none" stroke="#000000" d="M44.43,-171.22C56.56,-162.42 73.71,-150.81 90,-142.7 99.33,-138.05 109.59,-133.8 119.61,-130.07"/>
+<polygon fill="#000000" stroke="#000000" points="120.66,-133.41 128.89,-126.75 118.3,-126.82 120.66,-133.41"/>
+</g>
+<!-- program~alps&#45;&gt;proc~complete_nr_cheb_initialization -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge36" class="edge">
+<title>program~alps&#45;&gt;proc~complete_nr_cheb_initialization</title>
+<path fill="none" stroke="#000000" d="M29.78,-171.33C34.36,-144.46 49.18,-80.77 90,-50.7 185.53,19.68 235.88,-14.7 354.53,-14.7 354.53,-14.7 354.53,-14.7 491.05,-14.7 542.48,-14.7 599.71,-14.7 647.05,-14.7"/>
+<polygon fill="#000000" stroke="#000000" points="647.03,-18.2 657.03,-14.7 647.03,-11.2 647.03,-18.2"/>
+</g>
+<!-- proc~determine_param_fit -->
+<g id="proc~~cheb_multiply~~CalledByGraph_node31" class="node">
+<title>proc~determine_param_fit</title>
+<g id="a_proc~~cheb_multiply~~CalledByGraph_node31"><a xlink:href="../proc/determine_param_fit.html" xlink:title="determine_param_fit">
+<polygon fill="#d9534f" stroke="#d9534f" points="234.65,-175.83 111.38,-175.83 111.38,-151.56 234.65,-151.56 234.65,-175.83"/>
+<text xml:space="preserve" text-anchor="middle" x="173.01" y="-160.1" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">determine_param_fit</text>
+</a>
+</g>
+</g>
+<!-- program~alps&#45;&gt;proc~determine_param_fit -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge43" class="edge">
+<title>program~alps&#45;&gt;proc~determine_param_fit</title>
+<path fill="none" stroke="#000000" d="M54.41,-180.03C67.34,-178.23 83.61,-175.98 99.88,-173.72"/>
+<polygon fill="#000000" stroke="#000000" points="100.18,-177.21 109.61,-172.37 99.22,-170.27 100.18,-177.21"/>
+</g>
+<!-- proc~map_search -->
+<g id="proc~~cheb_multiply~~CalledByGraph_node35" class="node">
+<title>proc~map_search</title>
+<g id="a_proc~~cheb_multiply~~CalledByGraph_node35"><a xlink:href="../proc/map_search.html" xlink:title="map_search">
+<polygon fill="#d9534f" stroke="#d9534f" points="211.02,-342.83 135,-342.83 135,-318.56 211.02,-318.56 211.02,-342.83"/>
+<text xml:space="preserve" text-anchor="middle" x="173.01" y="-327.1" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">map_search</text>
+</a>
+</g>
+</g>
+<!-- program~alps&#45;&gt;proc~map_search -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge54" class="edge">
+<title>program~alps&#45;&gt;proc~map_search</title>
+<path fill="none" stroke="#000000" d="M31.06,-196.21C37.63,-220.49 55.38,-274.18 90,-303.7 99.61,-311.89 111.77,-317.61 123.76,-321.61"/>
+<polygon fill="#000000" stroke="#000000" points="122.62,-324.92 133.2,-324.38 124.6,-318.2 122.62,-324.92"/>
+</g>
+<!-- proc~om_double_scan -->
+<g id="proc~~cheb_multiply~~CalledByGraph_node36" class="node">
+<title>proc~om_double_scan</title>
+<g id="a_proc~~cheb_multiply~~CalledByGraph_node36"><a xlink:href="../proc/om_double_scan.html" xlink:title="om_double_scan">
+<polygon fill="#d9534f" stroke="#d9534f" points="405.92,-221.83 305.15,-221.83 305.15,-197.56 405.92,-197.56 405.92,-221.83"/>
+<text xml:space="preserve" text-anchor="middle" x="355.53" y="-206.1" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">om_double_scan</text>
+</a>
+</g>
+</g>
+<!-- program~alps&#45;&gt;proc~om_double_scan -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge55" class="edge">
+<title>program~alps&#45;&gt;proc~om_double_scan</title>
+<path fill="none" stroke="#000000" d="M54.44,-185.8C106.18,-189.92 221.98,-199.14 293.65,-204.85"/>
+<polygon fill="#000000" stroke="#000000" points="293,-208.31 303.25,-205.62 293.56,-201.33 293,-208.31"/>
+</g>
+<!-- proc~om_scan -->
+<g id="proc~~cheb_multiply~~CalledByGraph_node37" class="node">
+<title>proc~om_scan</title>
+<g id="a_proc~~cheb_multiply~~CalledByGraph_node37"><a xlink:href="../proc/om_scan.html" xlink:title="om_scan">
+<polygon fill="#d9534f" stroke="#d9534f" points="384.92,-263.83 326.15,-263.83 326.15,-239.56 384.92,-239.56 384.92,-263.83"/>
+<text xml:space="preserve" text-anchor="middle" x="355.53" y="-248.1" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">om_scan</text>
+</a>
+</g>
+</g>
+<!-- program~alps&#45;&gt;proc~om_scan -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge56" class="edge">
+<title>program~alps&#45;&gt;proc~om_scan</title>
+<path fill="none" stroke="#000000" d="M54.4,-195.85C65.25,-200.44 78.04,-205.36 90,-208.7 167.96,-230.46 262.11,-242.5 314.45,-247.99"/>
+<polygon fill="#000000" stroke="#000000" points="314.09,-251.47 324.39,-249 314.79,-244.5 314.09,-251.47"/>
+</g>
+<!-- proc~refine_guess -->
+<g id="proc~~cheb_multiply~~CalledByGraph_node38" class="node">
+<title>proc~refine_guess</title>
+<g id="a_proc~~cheb_multiply~~CalledByGraph_node38"><a xlink:href="../proc/refine_guess.html" xlink:title="refine_guess">
+<polygon fill="#d9534f" stroke="#d9534f" points="394.67,-342.83 316.4,-342.83 316.4,-318.56 394.67,-318.56 394.67,-342.83"/>
+<text xml:space="preserve" text-anchor="middle" x="355.53" y="-327.1" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">refine_guess</text>
+</a>
+</g>
+</g>
+<!-- program~alps&#45;&gt;proc~refine_guess -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge58" class="edge">
+<title>program~alps&#45;&gt;proc~refine_guess</title>
+<path fill="none" stroke="#000000" d="M39.24,-196.19C50.89,-208.48 70.14,-227.06 90,-238.7 159.66,-279.53 250.25,-306.1 305.31,-319.73"/>
+<polygon fill="#000000" stroke="#000000" points="304.15,-323.05 314.7,-322.01 305.8,-316.25 304.15,-323.05"/>
+</g>
+<!-- proc~landau_integrate -->
+<g id="proc~~cheb_multiply~~CalledByGraph_node28" class="node">
+<title>proc~landau_integrate</title>
+<g id="a_proc~~cheb_multiply~~CalledByGraph_node28"><a xlink:href="../proc/landau_integrate.html" xlink:title="landau_integrate">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="986,-230.83 883.73,-230.83 883.73,-206.56 986,-206.56 986,-230.83"/>
+<text xml:space="preserve" text-anchor="middle" x="934.86" y="-215.1" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">landau_integrate</text>
+</a>
+</g>
+</g>
+<!-- proc~landau_integrate&#45;&gt;proc~eval_fit -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge37" class="edge">
+<title>proc~landau_integrate&#45;&gt;proc~eval_fit</title>
+<path fill="none" stroke="#000000" d="M983.38,-206.1C1006.97,-199.84 1035.05,-192.4 1057.05,-186.56"/>
+<polygon fill="#000000" stroke="#000000" points="1057.71,-190.01 1066.48,-184.06 1055.92,-183.24 1057.71,-190.01"/>
+</g>
+<!-- proc~landau_integrate_rel -->
+<g id="proc~~cheb_multiply~~CalledByGraph_node29" class="node">
+<title>proc~landau_integrate_rel</title>
+<g id="a_proc~~cheb_multiply~~CalledByGraph_node29"><a xlink:href="../proc/landau_integrate_rel.html" xlink:title="landau_integrate_rel">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="995.37,-188.83 874.35,-188.83 874.35,-164.56 995.37,-164.56 995.37,-188.83"/>
+<text xml:space="preserve" text-anchor="middle" x="934.86" y="-173.1" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">landau_integrate_rel</text>
+</a>
+</g>
+</g>
+<!-- proc~landau_integrate_rel&#45;&gt;proc~eval_fit -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge38" class="edge">
+<title>proc~landau_integrate_rel&#45;&gt;proc~eval_fit</title>
+<path fill="none" stroke="#000000" d="M995.74,-176.7C1016.15,-176.7 1038.38,-176.7 1056.55,-176.7"/>
+<polygon fill="#000000" stroke="#000000" points="1056.34,-180.2 1066.34,-176.7 1056.34,-173.2 1056.34,-180.2"/>
+</g>
+<!-- proc~output_fit -->
+<g id="proc~~cheb_multiply~~CalledByGraph_node30" class="node">
+<title>proc~output_fit</title>
+<g id="a_proc~~cheb_multiply~~CalledByGraph_node30"><a xlink:href="../proc/output_fit.html" xlink:title="output_fit">
+<polygon fill="#d9534f" stroke="#d9534f" points="622.83,-146.83 561.06,-146.83 561.06,-122.56 622.83,-122.56 622.83,-146.83"/>
+<text xml:space="preserve" text-anchor="middle" x="591.95" y="-131.1" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">output_fit</text>
+</a>
+</g>
+</g>
+<!-- proc~output_fit&#45;&gt;proc~eval_fit -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge39" class="edge">
+<title>proc~output_fit&#45;&gt;proc~eval_fit</title>
+<path fill="none" stroke="#000000" d="M623.13,-134.66C690.31,-134.92 857.16,-137.53 995.37,-155.7 1015.88,-158.39 1038.46,-163.06 1056.87,-167.31"/>
+<polygon fill="#000000" stroke="#000000" points="1056,-170.7 1066.54,-169.6 1057.61,-163.89 1056,-170.7"/>
+</g>
+<!-- proc~determine_param_fit&#45;&gt;proc~output_fit -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge42" class="edge">
+<title>proc~determine_param_fit&#45;&gt;proc~output_fit</title>
+<path fill="none" stroke="#000000" d="M235.08,-159.45C321.18,-153.46 475.94,-142.7 549.69,-137.57"/>
+<polygon fill="#000000" stroke="#000000" points="549.57,-141.09 559.3,-136.9 549.08,-134.1 549.57,-141.09"/>
+</g>
+<!-- proc~full_integrate -->
+<g id="proc~~cheb_multiply~~CalledByGraph_node32" class="node">
+<title>proc~full_integrate</title>
+<g id="a_proc~~cheb_multiply~~CalledByGraph_node32"><a xlink:href="../proc/full_integrate.html" xlink:title="full_integrate">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="789.6,-230.83 707.58,-230.83 707.58,-206.56 789.6,-206.56 789.6,-230.83"/>
+<text xml:space="preserve" text-anchor="middle" x="748.59" y="-215.1" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">full_integrate</text>
+</a>
+</g>
+</g>
+<!-- proc~full_integrate&#45;&gt;proc~landau_integrate -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge40" class="edge">
+<title>proc~full_integrate&#45;&gt;proc~landau_integrate</title>
+<path fill="none" stroke="#000000" d="M790.03,-218.7C814.04,-218.7 844.97,-218.7 872,-218.7"/>
+<polygon fill="#000000" stroke="#000000" points="871.79,-222.2 881.79,-218.7 871.79,-215.2 871.79,-222.2"/>
+</g>
+<!-- proc~full_integrate&#45;&gt;proc~landau_integrate_rel -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge41" class="edge">
+<title>proc~full_integrate&#45;&gt;proc~landau_integrate_rel</title>
+<path fill="none" stroke="#000000" d="M790.03,-209.48C812.74,-204.31 841.65,-197.72 867.58,-191.81"/>
+<polygon fill="#000000" stroke="#000000" points="868.04,-195.29 877.01,-189.66 866.48,-188.47 868.04,-195.29"/>
+</g>
+<!-- proc~disp -->
+<g id="proc~~cheb_multiply~~CalledByGraph_node33" class="node">
+<title>proc~disp</title>
+<g id="a_proc~~cheb_multiply~~CalledByGraph_node33"><a xlink:href="../proc/disp.html" xlink:title="disp">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="618.95,-282.83 564.95,-282.83 564.95,-258.56 618.95,-258.56 618.95,-282.83"/>
+<text xml:space="preserve" text-anchor="middle" x="591.95" y="-267.1" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">disp</text>
+</a>
+</g>
+</g>
+<!-- proc~disp&#45;&gt;proc~full_integrate -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge44" class="edge">
+<title>proc~disp&#45;&gt;proc~full_integrate</title>
+<path fill="none" stroke="#000000" d="M619.18,-261.88C641.14,-254.49 673.06,-243.76 699.58,-234.84"/>
+<polygon fill="#000000" stroke="#000000" points="700.4,-238.26 708.76,-231.76 698.17,-231.63 700.4,-238.26"/>
+</g>
+<!-- proc~calc_eigen -->
+<g id="proc~~cheb_multiply~~CalledByGraph_node34" class="node">
+<title>proc~calc_eigen</title>
+<g id="a_proc~~cheb_multiply~~CalledByGraph_node34"><a xlink:href="../proc/calc_eigen.html" xlink:title="calc_eigen">
+<polygon fill="#d9534f" stroke="#d9534f" points="524.31,-222.83 455.79,-222.83 455.79,-198.56 524.31,-198.56 524.31,-222.83"/>
+<text xml:space="preserve" text-anchor="middle" x="490.05" y="-207.1" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">calc_eigen</text>
+</a>
+</g>
+</g>
+<!-- proc~calc_eigen&#45;&gt;proc~disp -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge45" class="edge">
+<title>proc~calc_eigen&#45;&gt;proc~disp</title>
+<path fill="none" stroke="#000000" d="M511.75,-223.13C525.72,-231.52 544.4,-242.74 560.11,-252.18"/>
+<polygon fill="#000000" stroke="#000000" points="558.26,-255.15 568.63,-257.3 561.86,-249.15 558.26,-255.15"/>
+</g>
+<!-- proc~map_search&#45;&gt;proc~disp -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge46" class="edge">
+<title>proc~map_search&#45;&gt;proc~disp</title>
+<path fill="none" stroke="#000000" d="M199.29,-343.22C259.78,-371.26 415.9,-432.14 525.06,-372.7 555.75,-355.99 574.32,-318.16 583.6,-293.56"/>
+<polygon fill="#000000" stroke="#000000" points="586.79,-295.03 586.81,-284.43 580.19,-292.7 586.79,-295.03"/>
+</g>
+<!-- proc~map_search&#45;&gt;proc~refine_guess -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge57" class="edge">
+<title>proc~map_search&#45;&gt;proc~refine_guess</title>
+<path fill="none" stroke="#000000" d="M211.41,-330.7C238.4,-330.7 275.12,-330.7 304.61,-330.7"/>
+<polygon fill="#000000" stroke="#000000" points="304.42,-334.2 314.41,-330.7 304.41,-327.2 304.42,-334.2"/>
+</g>
+<!-- proc~om_double_scan&#45;&gt;proc~disp -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge47" class="edge">
+<title>proc~om_double_scan&#45;&gt;proc~disp</title>
+<path fill="none" stroke="#000000" d="M385.5,-197.16C420.35,-184.06 479.83,-168.18 525.06,-189.7 550.34,-201.72 569.09,-228.71 579.99,-248.23"/>
+<polygon fill="#000000" stroke="#000000" points="576.77,-249.62 584.53,-256.83 582.96,-246.36 576.77,-249.62"/>
+</g>
+<!-- proc~om_double_scan&#45;&gt;proc~calc_eigen -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge52" class="edge">
+<title>proc~om_double_scan&#45;&gt;proc~calc_eigen</title>
+<path fill="none" stroke="#000000" d="M406.25,-210.07C418.72,-210.17 432.02,-210.27 444.23,-210.36"/>
+<polygon fill="#000000" stroke="#000000" points="444.01,-213.86 454.03,-210.43 444.06,-206.86 444.01,-213.86"/>
+</g>
+<!-- proc~secant -->
+<g id="proc~~cheb_multiply~~CalledByGraph_node39" class="node">
+<title>proc~secant</title>
+<g id="a_proc~~cheb_multiply~~CalledByGraph_node39"><a xlink:href="../proc/secant.html" xlink:title="secant">
+<polygon fill="#d9534f" stroke="#d9534f" points="517.05,-344.83 463.05,-344.83 463.05,-320.56 517.05,-320.56 517.05,-344.83"/>
+<text xml:space="preserve" text-anchor="middle" x="490.05" y="-329.1" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">secant</text>
+</a>
+</g>
+</g>
+<!-- proc~om_double_scan&#45;&gt;proc~secant -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge59" class="edge">
+<title>proc~om_double_scan&#45;&gt;proc~secant</title>
+<path fill="none" stroke="#000000" d="M406.16,-221.91C410.83,-224.33 415.23,-227.23 419.04,-230.7 448.18,-257.21 429.12,-282.03 455.04,-311.7 455.38,-312.09 455.73,-312.48 456.09,-312.86"/>
+<polygon fill="#000000" stroke="#000000" points="453.56,-315.3 463.44,-319.15 458.12,-309.99 453.56,-315.3"/>
+</g>
+<!-- proc~secant_osc -->
+<g id="proc~~cheb_multiply~~CalledByGraph_node40" class="node">
+<title>proc~secant_osc</title>
+<g id="a_proc~~cheb_multiply~~CalledByGraph_node40"><a xlink:href="../proc/secant_osc.html" xlink:title="secant_osc">
+<polygon fill="#d9534f" stroke="#d9534f" points="525.06,-302.83 455.04,-302.83 455.04,-278.56 525.06,-278.56 525.06,-302.83"/>
+<text xml:space="preserve" text-anchor="middle" x="490.05" y="-287.1" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">secant_osc</text>
+</a>
+</g>
+</g>
+<!-- proc~om_double_scan&#45;&gt;proc~secant_osc -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge62" class="edge">
+<title>proc~om_double_scan&#45;&gt;proc~secant_osc</title>
+<path fill="none" stroke="#000000" d="M401.17,-222.33C407.34,-224.75 413.46,-227.53 419.04,-230.7 438,-241.46 456.59,-257.75 469.85,-270.64"/>
+<polygon fill="#000000" stroke="#000000" points="467.13,-272.87 476.67,-277.46 472.08,-267.91 467.13,-272.87"/>
+</g>
+<!-- proc~om_scan&#45;&gt;proc~disp -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge48" class="edge">
+<title>proc~om_scan&#45;&gt;proc~disp</title>
+<path fill="none" stroke="#000000" d="M385.27,-254.03C427.45,-257.45 506.16,-263.83 553.03,-267.63"/>
+<polygon fill="#000000" stroke="#000000" points="552.74,-271.11 562.99,-268.43 553.3,-264.14 552.74,-271.11"/>
+</g>
+<!-- proc~om_scan&#45;&gt;proc~calc_eigen -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge53" class="edge">
+<title>proc~om_scan&#45;&gt;proc~calc_eigen</title>
+<path fill="none" stroke="#000000" d="M385.28,-242.8C402.67,-237.42 425.2,-230.45 444.82,-224.38"/>
+<polygon fill="#000000" stroke="#000000" points="445.71,-227.77 454.23,-221.47 443.64,-221.08 445.71,-227.77"/>
+</g>
+<!-- proc~om_scan&#45;&gt;proc~secant -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge60" class="edge">
+<title>proc~om_scan&#45;&gt;proc~secant</title>
+<path fill="none" stroke="#000000" d="M376.95,-264.18C398.77,-277.52 433.61,-298.81 458.66,-314.12"/>
+<polygon fill="#000000" stroke="#000000" points="456.74,-317.05 467.1,-319.28 460.39,-311.08 456.74,-317.05"/>
+</g>
+<!-- proc~om_scan&#45;&gt;proc~secant_osc -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge63" class="edge">
+<title>proc~om_scan&#45;&gt;proc~secant_osc</title>
+<path fill="none" stroke="#000000" d="M385.28,-260.16C402.34,-265.18 424.34,-271.65 443.68,-277.35"/>
+<polygon fill="#000000" stroke="#000000" points="442.68,-280.7 453.26,-280.17 444.66,-273.99 442.68,-280.7"/>
+</g>
+<!-- proc~refine_guess&#45;&gt;proc~disp -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge49" class="edge">
+<title>proc~refine_guess&#45;&gt;proc~disp</title>
+<path fill="none" stroke="#000000" d="M383.38,-343.27C417.91,-357.5 478.92,-375.98 525.06,-353.7 550.78,-341.28 569.54,-313.4 580.31,-293.38"/>
+<polygon fill="#000000" stroke="#000000" points="583.38,-295.06 584.79,-284.56 577.14,-291.89 583.38,-295.06"/>
+</g>
+<!-- proc~refine_guess&#45;&gt;proc~secant -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge61" class="edge">
+<title>proc~refine_guess&#45;&gt;proc~secant</title>
+<path fill="none" stroke="#000000" d="M394.86,-331.28C412.58,-331.55 433.57,-331.86 451.23,-332.13"/>
+<polygon fill="#000000" stroke="#000000" points="451,-335.63 461.05,-332.28 451.11,-328.63 451,-335.63"/>
+</g>
+<!-- proc~refine_guess&#45;&gt;proc~secant_osc -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge64" class="edge">
+<title>proc~refine_guess&#45;&gt;proc~secant_osc</title>
+<path fill="none" stroke="#000000" d="M394.86,-319.13C410.26,-314.48 428.13,-309.09 444.14,-304.26"/>
+<polygon fill="#000000" stroke="#000000" points="444.86,-307.69 453.42,-301.45 442.84,-300.99 444.86,-307.69"/>
+</g>
+<!-- proc~secant&#45;&gt;proc~disp -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge50" class="edge">
+<title>proc~secant&#45;&gt;proc~disp</title>
+<path fill="none" stroke="#000000" d="M511.2,-320.27C515.76,-317.46 520.58,-314.48 525.06,-311.7 536.93,-304.34 549.98,-296.22 561.32,-289.16"/>
+<polygon fill="#000000" stroke="#000000" points="562.85,-292.34 569.49,-284.08 559.15,-286.39 562.85,-292.34"/>
+</g>
+<!-- proc~secant_osc&#45;&gt;proc~disp -->
+<g id="proc~~cheb_multiply~~CalledByGraph_edge51" class="edge">
+<title>proc~secant_osc&#45;&gt;proc~disp</title>
+<path fill="none" stroke="#000000" d="M525.43,-283.82C534.48,-282 544.28,-280.04 553.48,-278.2"/>
+<polygon fill="#000000" stroke="#000000" points="554.11,-281.64 563.23,-276.25 552.73,-274.78 554.11,-281.64"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var panproccheb_multiplyCalledByGraph = svgPanZoom('#proccheb_multiplyCalledByGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CalledByGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CalledByGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 14.1.2 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 28.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.873868 0.873868) rotate(0) translate(4 28.27)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-28.27 729.52,-28.27 729.52,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="69.27,-24.27 0,-24.27 0,0 69.27,0 69.27,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="34.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="143.89,-24.27 87.38,-24.27 87.38,0 143.89,0 143.89,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="115.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="221.39,-24.27 161.88,-24.27 161.88,0 221.39,0 221.39,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="191.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="368.27,-24.27 239,-24.27 239,0 368.27,0 368.27,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="303.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="529.39,-24.27 385.88,-24.27 385.88,0 529.39,0 529.39,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="457.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="603.89,-24.27 547.38,-24.27 547.38,0 603.89,0 603.89,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="575.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="725.52,-24.27 621.75,-24.27 621.75,0 725.52,0 725.52,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="673.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+
+
+    
+    
+
+    
+    
+
+
+
+    
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              ALPS
+ was developed by Kristopher Klein, Daniel Verscharen<br>              &copy; 2026 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+            </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>

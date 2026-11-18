@@ -139,8 +139,8 @@ This file is generated from the <em>map_search</em> subroutine in ALPS_fns.f90, 
 4. Re $[|\mathcal{D}|]$<br>
 5. Im $[|\mathcal{D}|]$  </p>
 <p>The <em>&amp;maps_1</em> namelist in <em>filename</em>.in determines the structure of <em>filename</em>.map.<br>
-The range of $\omega_{\textrm{r}}/\Omega_{ref}$ is from <code>omi</code> to <code>omi</code> with <code>nr</code> steps. Logorithmic or linear spacing is selected with <code>loggridw</code>.
-The range of $\gamma_{\textrm{r}}/\Omega_{ref}$ is from <code>gami</code> to <code>gami</code> with <code>ni</code> steps. Logorithmic or linear spacing is selected with <code>loggridg</code>.</p>
+The range of $\omega_{\textrm{r}}/\Omega_{ref}$ is from <code>omi</code> to <code>omf</code> with <code>nr</code> steps. Logorithmic or linear spacing is selected with <code>loggridw</code>.
+The range of $\gamma_{\textrm{r}}/\Omega_{ref}$ is from <code>gami</code> to <code>gamf</code> with <code>ni</code> steps. Logorithmic or linear spacing is selected with <code>loggridg</code>.</p>
 <h2><em>filename</em>.roots</h2>
 <p>Identified solutions to the dispersion relation $|\mathcal{D}|  =0$, calculated using <em>refine_guess</em> in ALPS_fns.f90 when <code>determine_minima</code> is set to true.  </p>
 <p>The data is ordered as<br>
@@ -162,7 +162,7 @@ in the <em>&amp;scan_input_l</em> namelist.</p>
 3. $\omega_{\textrm{r}}/\Omega_{ref}$ <br>
 4. $\gamma/\Omega_{ref}$   </p>
 <p>Example python quick plotting routines are found in the plotter/example/ subdirectory.</p>
-<p>See the <em>&amp;scan_input</em> namelist description in the Quick Guide for details on determining the kind of wavevector scan.<br>
+<p>See the <em>&amp;scan_input</em> namelist description in the Quick Start Guide for details on determining the kind of wavevector scan.<br>
 This same data structure is preserved for the output from <code>om_double_scan</code>.</p>
 <h2><em>filename</em>.eigen_<em>scan_type_l</em>.root_m</h2>
 <p>The eigenfunctions associated with solution <em>m</em> calculated from <code>om_scan</code> when <code>eigen</code> is set to .true.
