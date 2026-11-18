@@ -1911,6 +1911,7 @@ case (2)
    ! Native models are the only NR method-2 representation. In particular,
    ! an inactive/missing collection must never fall back to coefficient data.
    cheb_status=CHEB_INVALID_MODEL
+   ! We intend to add other functional forms later.
    if(poly_kind(is)/=1)cheb_status=CHEB_INVALID_REPRESENTATION
    eval_fit=cmplx(ieee_value(0.d0,ieee_quiet_nan),ieee_value(0.d0,ieee_quiet_nan),kind(1.d0))
    if(present(dfpar))dfpar=eval_fit
