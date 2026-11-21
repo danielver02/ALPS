@@ -4,6 +4,8 @@ module alps_nyquist_driver
   use alps_nyquist_growth
   use alps_var, only: proc0, kperp,kpar,vA,nspec,ns,qs,ms,usebM,relativistic, &
        bMbetas,bMalphas,bMpdrifts,runname,foldername,unit_error,nproc,n_scan,scan,scan_option
+  use alps_var, only: nperp,npar,arrayName,pp,f0,ACmethod,poly_kind,poly_order,poly_derivative_type,logfit, &
+       positions_principal,n_resonance_interval,Tlim,Bessel_zero,nmax,density_int,current_int
   use alps_fns, only: disp,scan_wavevector,update_scan_wavevector
   use mpi
   use, intrinsic :: ieee_arithmetic, only: ieee_is_finite,ieee_value,ieee_quiet_nan
@@ -11,6 +13,7 @@ module alps_nyquist_driver
   private
   public :: read_nyquist, run_nyquist, run_nyquist_scan
   public :: nyq_scan_coordinates
+  public :: validate_nyquist_vdf
   type :: nyq_point_result
     type(nyq_result) :: initial
     type(nyq_growth_result) :: growth
@@ -33,7 +36,9 @@ module alps_nyquist_driver
 contains
   subroutine read_nyquist
     ! Rank 0 only, after ordinary species input. No per-frequency initialization.
-    integer :: u,ios,code
+    integer :: u,ios,code,s
+    logical :: exists
+    character(1024) :: source
     character(512) :: message
     ! Explicit real-frequency/upper bounds are mandatory; zero is a valid supplied real bound.
     nyq_omega_min=ieee_value(0._nyq_dp,ieee_quiet_nan)
@@ -68,14 +73,61 @@ contains
         call input_error('Nyquist line/plane scans require rectangle geometry.')
     if (.not.all(ieee_is_finite([kperp,kpar,vA]))) call input_error('Wavevector and vA must be finite.')
     if (kpar==0.or.vA<=0) call input_error('A2 requires kpar /= 0 and vA > 0.')
-    ! Physical interpretation is validated only for the warm analytic backend in A2.
-    if (.not.all(usebM).or.any(relativistic)) call input_error('A2 requires use_bM=T, relat=F for all species.')
+    if(any(relativistic)) call input_error('Nyquist requires relat=F for all species.')
+    if(scan_option/=3.and..not.all(usebM)) &
+        call input_error('Nyquist options 4/5 require warm analytic species; numerical VDFs are option 3 only.')
     if (.not.all(ieee_is_finite(ns)).or..not.all(ieee_is_finite(qs)).or. &
-        .not.all(ieee_is_finite(ms)).or..not.all(ieee_is_finite(bMbetas)).or. &
-        .not.all(ieee_is_finite(bMalphas)).or..not.all(ieee_is_finite(bMpdrifts))) &
+        .not.all(ieee_is_finite(ms))) &
         call input_error('Species parameters must be finite.')
-    if (any(ns<=0).or.any(ms<=0).or.any(qs==0).or.any(bMbetas<=0).or.any(bMalphas<=0)) &
-        call input_error('A2 requires positive densities, masses, beta, anisotropy and nonzero charges.')
+    if(any(ns<=0).or.any(ms<=0).or.any(qs==0)) &
+        call input_error('Nyquist requires positive densities/masses and nonzero charges.')
+    do s=1,nspec
+      if(usebM(s)) then
+        if(.not.all(ieee_is_finite([bMbetas(s),bMalphas(s),bMpdrifts(s)]))) &
+            call input_error('Analytic species parameters must be finite.')
+        if(bMbetas(s)<=0.or.bMalphas(s)<=0) call input_error('Nyquist requires warm analytic beta/anisotropy > 0.')
+      else
+        if(nyq_find_max_growth) call input_error('C1 numerical-VDF validation requires nyq_find_max_growth=F.')
+        if(nperp<4.or.npar<4) call input_error('Numerical Nyquist requires nperp,npar >= 4.')
+        if(ACmethod(s)<0.or.ACmethod(s)>2) call input_error('Unsupported numerical continuation method.')
+        if(ACmethod(s)==2) then
+          if(poly_kind(s)/=1.or.poly_order(s)<1) call input_error('Numerical method 2 requires valid Chebyshev input.')
+        endif
+        if(.not.all(ieee_is_finite([Tlim,Bessel_zero]))) call input_error('Numerical integration controls must be finite.')
+        if(Tlim<0.or.Bessel_zero<=0.or.Bessel_zero>=1.or.positions_principal<1.or.n_resonance_interval<1) &
+            call input_error('Invalid numerical resonance/Bessel controls.')
+        write(source,'(3a,i0,a)') 'distribution/',trim(arrayName),'.',s,'.array'
+        inquire(file=trim(source),exist=exists)
+        if(.not.exists) call input_error('Missing numerical VDF: '//trim(source))
+      endif
+    enddo
+  end subroutine
+
+  subroutine validate_nyquist_vdf
+    ! Rank 0, immediately after the existing reader and before differentiation.
+    ! Validate the uniform rectangular grids assumed by the existing integrator.
+    integer :: s,i,j
+    real(nyq_dp) :: dx,dy,tol(2)
+    if(scan_option/=3) return
+    do s=1,nspec
+      if(usebM(s)) cycle
+      if(.not.all(ieee_is_finite(f0(s,:,:))).or..not.all(ieee_is_finite(pp(s,:,:,:)))) &
+          call input_error('Numerical VDF samples and coordinates must be finite.')
+      if(any(f0(s,:,:)<0)) call input_error('Numerical VDF samples must be nonnegative.')
+      if(.not.any(f0(s,:,:)>0)) call input_error('Numerical VDF must contain positive samples.')
+      if(ACmethod(s)/=0.and.logfit(s).and.any(f0(s,:,:)<=0)) &
+          call input_error('Log continuation requires strictly positive VDF samples.')
+      dx=pp(s,1,0,1)-pp(s,0,0,1); dy=pp(s,0,1,2)-pp(s,0,0,2)
+      if(dx<=0.or.dy<=0.or.pp(s,0,0,1)<0) call input_error('Numerical momentum axes must increase; pperp >= 0.')
+      tol=1.e-8_nyq_dp*[maxval(abs(pp(s,:,:,1))),maxval(abs(pp(s,:,:,2)))]
+      do i=0,nperp
+        do j=0,npar
+          if(abs(pp(s,i,j,1)-(pp(s,0,0,1)+i*dx))>tol(1).or. &
+              abs(pp(s,i,j,2)-(pp(s,0,0,2)+j*dy))>tol(2)) &
+              call input_error('Numerical Nyquist requires a uniform rectangular momentum grid.')
+        enddo
+      enddo
+    enddo
   end subroutine
 
   subroutine input_error(message)
@@ -226,8 +278,28 @@ contains
       write(unit=out,iostat=output_status,err=990,fmt='(a,es24.16)') 'vA_over_c=',vA
       write(unit=out,iostat=output_status,err=990,fmt='(a,i0)') 'mpi_ranks=',nproc
       do s=1,nspec
-        write(unit=out,iostat=output_status,err=990,fmt='(a,i0,a,6(es24.16,1x))') 'species_',s,'_n_q_m_beta_alpha_drift=', &
-             ns(s),qs(s),ms(s),bMbetas(s),bMalphas(s),bMpdrifts(s)
+        if(usebM(s)) then
+          write(unit=out,iostat=output_status,err=990,fmt='(a,i0,a,6(es24.16,1x))') &
+               'species_',s,'_n_q_m_beta_alpha_drift=',ns(s),qs(s),ms(s),bMbetas(s),bMalphas(s),bMpdrifts(s)
+          write(out,'(a,i0,a)',iostat=output_status,err=990) 'species_',s,'_response=analytic_bimaxwellian'
+        else
+          write(out,'(a,i0,a,3(es24.16,1x))',iostat=output_status,err=990) &
+              'species_',s,'_n_q_m=',ns(s),qs(s),ms(s)
+          write(out,'(a,i0,a)',iostat=output_status,err=990) 'species_',s,'_response=numerical_VDF_validation'
+          write(out,'(a,i0,3a,i0,a)',iostat=output_status,err=990) 'species_',s,'_vdf_source=distribution/', &
+              trim(arrayName),'.',s,'.array'
+          write(out,'(a,i0,a,2(i0,1x))',iostat=output_status,err=990) 'species_',s,'_grid_intervals=',nperp,npar
+          write(out,'(a,i0,a,4(es24.16,1x))',iostat=output_status,err=990) 'species_',s,'_momentum_bounds=', &
+              minval(pp(s,:,:,1)),maxval(pp(s,:,:,1)),minval(pp(s,:,:,2)),maxval(pp(s,:,:,2))
+          write(out,'(a,i0,a,4(i0,1x),l1)',iostat=output_status,err=990) &
+              'species_',s,'_AC_kind_order_derivative_log=',ACmethod(s),poly_kind(s),poly_order(s),poly_derivative_type(s),logfit(s)
+          write(out,'(a,i0,a,i0,2(1x,es24.16),2(1x,i0))',iostat=output_status,err=990) &
+              'species_',s,'_harmonic_limit_Tlim_Bessel_window_subintervals=',nmax(s),Tlim,Bessel_zero, &
+              positions_principal,n_resonance_interval
+          write(out,'(a,i0,a,2(es24.16,1x))',iostat=output_status,err=990) &
+              'species_',s,'_density_integral_current=',density_int(s),current_int(s)
+        endif
+        write(out,'(a,i0,a,l1)',iostat=output_status,err=990) 'species_',s,'_relativistic=',relativistic(s)
       enddo
       write(unit=out,iostat=output_status,err=990,fmt='(a,a)') 'geometry=',trim(nyq_geometry)
       write(unit=out,iostat=output_status,err=990,fmt='(a,4(es24.16,1x))') 'omega_min_max_gamma_min_max=', &
@@ -266,8 +338,13 @@ contains
       endif
       if (result%integer_accepted) then
         write(unit=out,iostat=output_status,err=990,fmt='(a,i0)') 'accepted_winding=',result%winding
+        if(all(usebM)) then
         write(unit=out,iostat=output_status,err=990,fmt='(a)') &
             'interpretation=roots within stated finite rectangle (warm analytic response, no upper poles)'
+        else
+          write(out,'(a)',iostat=output_status,err=990) &
+              'interpretation=accepted numerical boundary winding; physical root count requires VDF/continuity convergence'
+        endif
       else
         write(unit=out,iostat=output_status,err=990,fmt='(a)') 'accepted_winding=NONE'
       endif

@@ -13,6 +13,7 @@ ordered_subpage: INSTALL.md
                  input.md
                  output.md
                  practices.md
+		 nyquist.md
                  citingpapers.md
 display: public
          protected

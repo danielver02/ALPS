@@ -32,7 +32,7 @@ program alps
   use alps_analyt, only : determine_param_fit
   use alps_analyt, only : initialize_rel_cheb,initialize_nr_cheb_production,CHEB_SUCCESS
   use alps_var,    only : startup_tick, startup_tock, startup_report
-  use alps_nyquist_driver, only : read_nyquist, run_nyquist, run_nyquist_scan
+  use alps_nyquist_driver, only : read_nyquist, run_nyquist, run_nyquist_scan, validate_nyquist_vdf
   use mpi
   implicit none
 
@@ -101,6 +101,7 @@ program alps
      !Read in f0:
      call startup_tick(phase_start)
      call read_f0 !alps_io
+     if(scan_option==3) call validate_nyquist_vdf
      call startup_tock(1,phase_start)
 
      !Calculate pperp, ppar derivatives of f0:
