@@ -2278,6 +2278,75 @@ double complex function rtsec(func,xin,in,iflag)
    end function rtsec
 
 
+! Shared coordinate arithmetic, extracted unchanged from om_scan.
+subroutine scan_wavevector(ik,it,kperp_last,kpar_last,theta_0,k_0,Deltakstep)
+  use ALPS_var, only: scan,kperp,kpar
+  implicit none
+  integer, intent(in) :: ik,it
+  double precision, intent(in) :: kperp_last,kpar_last,theta_0,k_0
+  double precision, intent(out) :: Deltakstep
+  double precision :: theta_1,k_tmp
+     !Scan through wavevector space:
+     select case(scan(ik)%type_s)
+     case (0) ! k_0 to k_1
+        if (scan(ik)%log_scan) then
+           kperp=10.d0**(log10(kperp_last)+scan(ik)%diff*it)
+           kpar=10.d0**(log10(kpar_last)+scan(ik)%diff2*it)
+        else
+           kperp=kperp_last+scan(ik)%diff*it
+           kpar= kpar_last +scan(ik)%diff2*it
+        endif
+        Deltakstep=0.d0 ! to avoid having to calculate the gradients in 2 dimensions.
+     case (1) ! theta_0 to theta_1
+        if (scan(ik)%log_scan) then
+           theta_1=10.d0**(log10(theta_0)+scan(ik)%diff*it)
+        else
+           theta_1=theta_0+scan(ik)%diff*it
+        endif
+        kperp=k_0*sin(theta_1)
+        kpar=k_0*cos(theta_1)
+        Deltakstep=theta_1-theta_0
+     case (2) ! |k_0| to |k_1| @ constant theta
+        if (scan(ik)%log_scan) then
+           k_tmp=10.d0**(log10(k_0)+scan(ik)%diff*it)
+           kperp=k_tmp*sin(theta_0)
+           kpar=k_tmp*cos(theta_0)
+        else
+           k_tmp=(k_0)+scan(ik)%diff*it
+           kperp=k_tmp*sin(theta_0)
+           kpar=k_tmp*cos(theta_0)
+        endif
+        Deltakstep=sqrt(kperp**2+kpar**2)-sqrt(kperp_last**2+kpar_last**2)
+     case (3) ! kperp scan
+        if (scan(ik)%log_scan) then
+           kperp=10.d0**(log10(kperp_last)+scan(ik)%diff*it)
+        else
+           kperp=kperp_last+scan(ik)%diff*it
+        endif
+        Deltakstep=kperp-kperp_last
+     case (4) ! kpar scan
+        if (scan(ik)%log_scan) then
+           kpar=10.d0**(log10(kpar_last)+scan(ik)%diff*it)
+        else
+           kpar=kpar_last+scan(ik)%diff*it
+        endif
+        Deltakstep=kpar-kpar_last
+     end select
+
+end subroutine scan_wavevector
+
+subroutine update_scan_wavevector(rebuild)
+  ! Preserve the existing harmonic decomposition and worker Bessel allocation.
+  use ALPS_var, only: proc0
+  implicit none
+  logical, intent(in) :: rebuild
+  if(rebuild) then
+     call determine_nmax
+     call split_processes
+     if(.not.proc0) call determine_bessel_array
+  endif
+end subroutine update_scan_wavevector
+
 subroutine om_scan(ik)
   !! This subroutine scans solutions along a single prescribed path in wavevector space.
   use ALPS_var, only : proc0, nroots, runname, ierror, wroots, scan, sproc
@@ -2498,59 +2567,12 @@ subroutine om_scan(ik)
 
 
   do it = 1, nt
-     !Scan through wavevector space:
-     select case(scan(ik)%type_s)
-     case (0) ! k_0 to k_1
-        if (scan(ik)%log_scan) then
-           kperp=10.d0**(log10(kperp_last)+scan(ik)%diff*it)
-           kpar=10.d0**(log10(kpar_last)+scan(ik)%diff2*it)
-        else
-           kperp=kperp_last+scan(ik)%diff*it
-           kpar= kpar_last +scan(ik)%diff2*it
-        endif
-        Deltakstep=0.d0 ! to avoid having to calculate the gradients in 2 dimensions.
-     case (1) ! theta_0 to theta_1
-        if (scan(ik)%log_scan) then
-           theta_1=10.d0**(log10(theta_0)+scan(ik)%diff*it)
-        else
-           theta_1=theta_0+scan(ik)%diff*it
-        endif
-        kperp=k_0*sin(theta_1)
-        kpar=k_0*cos(theta_1)
-        Deltakstep=theta_1-theta_0
-     case (2) ! |k_0| to |k_1| @ constant theta
-        if (scan(ik)%log_scan) then
-           k_tmp=10.d0**(log10(k_0)+scan(ik)%diff*it)
-           kperp=k_tmp*sin(theta_0)
-           kpar=k_tmp*cos(theta_0)
-        else
-           k_tmp=(k_0)+scan(ik)%diff*it
-           kperp=k_tmp*sin(theta_0)
-           kpar=k_tmp*cos(theta_0)
-        endif
-        Deltakstep=sqrt(kperp**2+kpar**2)-sqrt(kperp_last**2+kpar_last**2)
-     case (3) ! kperp scan
-        if (scan(ik)%log_scan) then
-           kperp=10.d0**(log10(kperp_last)+scan(ik)%diff*it)
-        else
-           kperp=kperp_last+scan(ik)%diff*it
-        endif
-        Deltakstep=kperp-kperp_last
-     case (4) ! kpar scan
-        if (scan(ik)%log_scan) then
-           kpar=10.d0**(log10(kpar_last)+scan(ik)%diff*it)
-        else
-           kpar=kpar_last+scan(ik)%diff*it
-        endif
-        Deltakstep=kpar-kpar_last
-     end select
+     call scan_wavevector(ik,it,kperp_last,kpar_last,theta_0,k_0,Deltakstep)
 
      if (scan(ik)%type_s.ne.4) then
 
        ! Scan types with varying kperp require a re-call of split_processes:
-        call determine_nmax
-        call split_processes
-        if(.NOT.(sproc.EQ.0)) call determine_bessel_array
+        call update_scan_wavevector(.true.)
 
      endif
 

@@ -21,6 +21,9 @@ ALPS_SOURCES = \
     ALPS_NHDS.f90 \
     ALPS_fns_rel.f90 \
     ALPS_fns.f90 \
+    ALPS_nyquist.f90 \
+    ALPS_nyquist_growth.f90 \
+    ALPS_nyquist_driver.f90 \
     ALPS.f90 
     
 
@@ -46,4 +49,6 @@ ALPS_com.$(OBJEXT): ALPS_var.$(OBJEXT) ALPS_analyt.$(OBJEXT)
 ALPS_NHDS.$(OBJEXT): ALPS_var.$(OBJEXT)
 ALPS_fns_rel.$(OBJEXT): ALPS_var.$(OBJEXT) ALPS_io.$(OBJEXT) ALPS_rel_cache.$(OBJEXT) ALPS_analyt.$(OBJEXT)
 ALPS_fns.$(OBJEXT): ALPS_var.$(OBJEXT) ALPS_io.$(OBJEXT) ALPS_analyt.$(OBJEXT) ALPS_fns_rel.$(OBJEXT) ALPS_NHDS.$(OBJEXT)
-ALPS.$(OBJEXT): ALPS_var.$(OBJEXT) ALPS_io.$(OBJEXT) ALPS_analyt.$(OBJEXT) ALPS_com.$(OBJEXT) ALPS_fns.$(OBJEXT)
+ALPS_nyquist_growth.$(OBJEXT): ALPS_nyquist.$(OBJEXT)
+ALPS_nyquist_driver.$(OBJEXT): ALPS_nyquist.$(OBJEXT) ALPS_nyquist_growth.$(OBJEXT) ALPS_var.$(OBJEXT) ALPS_io.$(OBJEXT) ALPS_fns.$(OBJEXT)
+ALPS.$(OBJEXT): ALPS_var.$(OBJEXT) ALPS_io.$(OBJEXT) ALPS_analyt.$(OBJEXT) ALPS_com.$(OBJEXT) ALPS_fns.$(OBJEXT) ALPS_nyquist_driver.$(OBJEXT)

@@ -17,7 +17,7 @@
 !===============================================================================
 
 program alps
-  use alps_var,    only : nproc, iproc, ierror, proc0,sproc
+  use alps_var,    only : nproc, iproc, ierror, proc0
   use alps_var,    only : use_map, unit_error, scan_option
   use alps_var,    only : writeOut, f0, nperp, npar, nspec,n_scan
   use alps_io,     only : init_param, read_f0, get_unused_unit
@@ -32,6 +32,7 @@ program alps
   use alps_analyt, only : determine_param_fit
   use alps_analyt, only : initialize_rel_cheb,initialize_nr_cheb_production,CHEB_SUCCESS
   use alps_var,    only : startup_tick, startup_tock, startup_report
+  use alps_nyquist_driver, only : read_nyquist, run_nyquist, run_nyquist_scan
   use mpi
   implicit none
 
@@ -48,10 +49,13 @@ program alps
   !! then of collective model transfer and activation on all ranks.
   !! A non-success status after collective initialization aborts the MPI communicator.
 
+  integer :: operation_status=0
+
   double precision :: startup_start
   !! Variable for tracking timing.
   
   double precision :: phase_start
+  double precision :: nyquist_initialization_start
   !! Variable for tracking start of new function call.
 
   !Initialize MPI message passing:
@@ -79,6 +83,9 @@ program alps
 
   !Read parameters:
   if (proc0) call init_param !alps_io
+  call mpi_bcast(scan_option,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierror)
+  nyquist_initialization_start=MPI_Wtime()
+  if ((scan_option==3.or.scan_option==4.or.scan_option==5).and.proc0) call read_nyquist
   ! The optional timer starts after parameter input; includes all VDF setup and MPI distribution.
   call startup_tick(startup_start)
 
@@ -127,13 +134,20 @@ program alps
   call determine_nmax ! alps_fns
   call split_processes ! alps_fns
   ! All processes determine their Bessel function array:
-  if(.NOT.(sproc.EQ.0)) call determine_bessel_array ! alps_fns
+  if (.not.proc0) call determine_bessel_array ! alps_fns
 
   call mpi_barrier(mpi_comm_world,ierror)
 
   !Either:
   call startup_tock(10,startup_start)
   call startup_report
+  if (scan_option==3) then
+     call run_nyquist(operation_status)
+     goto 900
+  else if (scan_option==4.or.scan_option==5) then
+     call run_nyquist_scan(operation_status,MPI_Wtime()-nyquist_initialization_start)
+     goto 900
+  endif
   !use_map=.true.  :
   !    use a scan over (omega,gamma) to local dispersion solutions:
   !OR
@@ -171,13 +185,21 @@ program alps
 
 
   !Finalize MPI message passing
+900 continue
   call mpi_finalize (ierror)
   if (proc0) then
      write(*,'(a)')'Finishing ALPS==================================='
      write(*,'(a)') "Time:"
      call output_time
      write(*,'(a)')'================================================'
-     write(unit_error,'(a)')'Run completed without fatal error.'
+     if (operation_status==0) then
+        write(unit_error,'(a)')'Run completed without fatal error.'
+     else
+        write(unit_error,'(a)')'Operation failed; see diagnostic status.'
+     endif
      close(unit_error)
   endif
+  ! Only rank 0 reports the process error after flushing final diagnostics.
+  ! A worker's earlier nonzero exit can make the MPI launcher kill rank 0 here.
+  if (proc0.and.operation_status/=0) stop 1
 end program alps

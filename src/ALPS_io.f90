@@ -139,6 +139,21 @@ contains
        call alps_error(16)
     endif
 
+    if (scan_option==3) then
+       ! No root/map/scan instructions are consumed by a single-wavevector operation.
+       nroots=0; use_map=.false.; n_scan=0
+    else if (scan_option==4.or.scan_option==5) then
+       nroots=0; use_map=.false.
+       if(scan_option==5.and.n_scan/=2) then
+          write(*,'(a)') 'ERROR: scan_option=5 requires n_scan=2.'
+          call alps_error(20)
+       endif
+       if(n_scan<1) then
+          write(*,'(a)') 'ERROR: scan_option=4 requires n_scan >= 1.'
+          call alps_error(20)
+       endif
+    endif
+
     call fitting_params_read
 
     if (writeOut) &
@@ -153,7 +168,9 @@ contains
     allocate(wroots(1:numroots));wroots=cmplx(0.d0,0.d0,kind(1.d0))
 
     !Read in map scan parameters:
-    if (use_map) then
+    if (scan_option==3.or.scan_option==4.or.scan_option==5) then
+       ! Nyquist parameters are read by the separate driver after species input.
+    else if (use_map) then
        if (writeOut) &
             write(*,'(a)') 'MAP ROUTINE'
        ik = 1
@@ -338,6 +355,12 @@ contains
           call scan_read(ip)
           close(unit)
        enddo
+       if(scan_option==5) then
+          if(scan(1)%type_s==scan(2)%type_s) then
+             write(*,'(a)') 'ERROR: Nyquist plane requires two different scan types.'
+             call alps_error(20)
+          endif
+       endif
        write(*,'(a)')'-=-=-=-=-=-=-=-=-'
     endif
     close(unit)
@@ -774,7 +797,8 @@ contains
     !!Reads in wavevector scan parameters.
     !!Defines [[scanner(type)]], which controls the
     !!behavior of the wavevector scan.
-  use alps_var, only : scan,kperp_last,kpar_last
+  use alps_var, only : scan,kperp_last,kpar_last,scan_option
+  use, intrinsic :: ieee_arithmetic, only: ieee_is_finite,ieee_value,ieee_quiet_nan
   implicit none
 
   integer, intent(in) :: is
@@ -810,10 +834,49 @@ contains
   double precision :: k_0
   !!\(\sqrt{k_\perp^2+k_\parallel^2}\)
 
+  integer :: scan_ios
+
   nameList /scan_input/ &
        scan_type,swi,swf,swlog,ns,nres,&
        heating,eigen
-  read (unit=unit,nml=scan_input)
+  if(scan_option==4.or.scan_option==5) then
+     ! Defaults/validation are confined to the new operation; legacy readers retain behavior.
+     scan_type=-1; ns=0; nres=1; swi=0; swf=ieee_value(0.d0,ieee_quiet_nan)
+     swlog=.false.; heating=.false.; eigen=.false.
+     scan(is)%diff2=0
+  endif
+  read (unit=unit,nml=scan_input,iostat=scan_ios)
+  if(scan_ios/=0) then
+     write(*,'(a,i0)') 'ERROR: cannot read scan_input_',is
+     call alps_error(20)
+  endif
+  if(scan_option==4.or.scan_option==5) then
+     if(scan_type<0.or.scan_type>4.or.ns<1.or.nres<1) then
+        write(*,'(a)') 'ERROR: Nyquist scan requires scan_type=0..4 and ns,nres >= 1.'
+        call alps_error(20)
+     endif
+     if(ns>huge(ns)/nres) call alps_error(20)
+     if(scan_option==5.and.scan_type==0) then
+        write(*,'(a)') 'ERROR: Nyquist plane does not support scan_type=0.'
+        call alps_error(20)
+     endif
+     if(.not.all(ieee_is_finite([swi,swf,kperp_last,kpar_last]))) call alps_error(20)
+     if(kperp_last<0.or.kpar_last==0) call alps_error(20)
+     if(swlog) then
+        select case(scan_type)
+        case(0)
+           if(min(swi,swf,kperp_last,kpar_last)<=0) call alps_error(20)
+        case(1)
+           if(swf<=0.or.atan(kperp_last/kpar_last)<=0) call alps_error(20)
+        case(2)
+           if(swf<=0) call alps_error(20)
+        case(3)
+           if(min(swf,kperp_last)<=0) call alps_error(20)
+        case(4)
+           if(min(swf,kpar_last)<=0) call alps_error(20)
+        end select
+     endif
+  endif
 
   scan(is)%range_i =swi
   scan(is)%range_f =swf
@@ -873,6 +936,12 @@ contains
      endif
      kpar_last=k_0*cos(theta_0)
      kperp_last=k_0*sin(theta_0)
+     if(scan_option==4.or.scan_option==5) then
+        ! The following segment starts at the requested magnitude endpoint.
+        ! Leave the historical option-1/2 bookkeeping untouched.
+        kpar_last=swf*cos(theta_0)
+        kperp_last=swf*sin(theta_0)
+     endif
   case(3)
      !Scan of kperp; kpar constant:
      write(*,'(a,i0,a,es14.4e3,a,es14.4e3)')&
@@ -1448,6 +1517,10 @@ function input_unit_exist (nml,exist)
        case(19)
           write(*,'(a)') 'ERROR: Cannot read one valid optional global &fitting_params block.'
           write(unit_error,'(a)') 'ERROR: Cannot read one valid optional global &fitting_params block.'
+       case(20)
+          write(*,'(a)') 'ERROR: Invalid wavevector path; check n_scan, scan_input_N, counts and finite spacing endpoints.'
+          write(unit_error,'(a)') &
+               'ERROR: Invalid wavevector path; check n_scan, scan_input_N, counts and finite spacing endpoints.'
        case default
           write(*,'(a)')'ERROR: Unspecified...'
           write(unit_error,'(a)')'ERROR: Unspecified...'
