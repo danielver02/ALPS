@@ -101,7 +101,7 @@ program alps
      !Read in f0:
      call startup_tick(phase_start)
      call read_f0 !alps_io
-     if(scan_option==3) call validate_nyquist_vdf
+     if(scan_option>=3.and.scan_option<=5) call validate_nyquist_vdf
      call startup_tock(1,phase_start)
 
      !Calculate pperp, ppar derivatives of f0:

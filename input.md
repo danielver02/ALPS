@@ -92,6 +92,13 @@ Tolerance for secant method = 1, rtsec.
 **`positions_principal`**  
 Number of parallel momentum steps distant from the resonant momentum
 included in the numerical calculation of Verscharen et al 2018, Eqn 3.5, $M_{I}$.
+The corrected nonrelativistic integrator uses a continuously moving symmetric
+core with half-width `max(2,positions_principal)*delta_p_parallel`. The two-cell
+minimum keeps the background interpolation stencil away from a real resonant
+node, including when `positions_principal=1`. The default value 3 is unchanged;
+the window and stencil indices remain bounded by the usable momentum grid;
+the relativistic integrator is unchanged. See [NYQUIST_C2B_RESULTS.md](NYQUIST_C2B_RESULTS.md)
+for the interpolation and quadrature validation.
 
 **`n_resonance_interval`**  
 How many steps should be used to integrate around the resonance,
@@ -134,15 +141,18 @@ The parameters and defaults are listed below. For contour methods, growth-rate
 bracketing, scan geometry, output formats, and limitations, see
 [Nyquist Stability Analysis](nyquist.md).
 
-Option 3 also accepts nonrelativistic numerical VDFs (`use_bM=F`, `relat=F`)
-and mixed analytic/numerical species for initial C1 validation. Use the normal
+Options 3/4/5 also accept nonrelativistic numerical VDFs (`use_bM=F`, `relat=F`)
+and mixed analytic/numerical species. Use the normal
 `distribution/<arrayName>.<species>.array` input and continuation settings;
 `bM_*` parameters apply only to analytic species. Numerical species require a
 finite, nonnegative, uniform rectangular grid (`nperp,npar>=4`; strictly positive
 samples for methods 1/2 when `log_fit=T`). Density/mass must be positive and charge nonzero for
 every species. Relativistic and cold analytic Nyquist responses remain unsupported.
-Options 4/5 and maximum-growth searches remain restricted to warm analytic
-bi-Maxwellians. For numerical option 3 set `nyq_find_max_growth=F`.
+Maximum-growth searches remain restricted to warm analytic bi-Maxwellians.
+For numerical species set `nyq_find_max_growth=F` in every Nyquist mode.
+Rounded coordinate files are checked against their written decimal precision;
+accepted uniform coordinates are canonicalized in memory before derivatives/fits,
+without changing VDF values. See [numerical grid handling](nyquist.md#numerical-vdf-calculations-and-scans).
 The numerical winding describes the computed boundary trajectory; physical root
 counting requires momentum-grid, support and integration-continuity validation.
 
@@ -187,9 +197,10 @@ of sampling controls or implementation:
 | `log_magnitude_limit` | 1.5 |
 | `local_ratio` | 0.05 |
 
-For `scan_option=3`–`5`, warm analytic bi-Maxwellians are the validated
-Nyquist backend in this source version; nonrelativistic numerical-VDF and cold
-cases require separate validation. A rectangle requires `nyq_gamma_max`;
+For `scan_option=3`–`5`, warm analytic bi-Maxwellians and the existing nonrelativistic
+numerical-VDF response are supported; numerical physical interpretation requires
+grid/support/integration-convergence validation. Cold cases remain unsupported.
+A rectangle requires `nyq_gamma_max`;
 `nyq_find_max_growth=T` requires a rectangle. The `solution/` directory must exist.
 
 ### *&fitting_params*

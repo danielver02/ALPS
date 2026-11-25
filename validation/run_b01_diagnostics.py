@@ -6,7 +6,7 @@ out=pathlib.Path(sys.argv[1]).resolve();assert not out.is_relative_to(repo)
 out.mkdir();(out/'source').mkdir();(out/'build').mkdir()
 for p in (repo/'src').glob('*.f90'):shutil.copy2(p,out/'source'/p.name)
 shutil.copy2(repo/'distribution/distribution_analyt.f90',out/'source')
-names=['ALPS_rel_cache','ALPS_var','distribution_analyt','ALPS_io','ALPS_analyt','ALPS_com','ALPS_NHDS','ALPS_fns_rel','ALPS_fns']
+names=['ALPS_rel_cache','ALPS_var','distribution_analyt','ALPS_io','ALPS_analyt','ALPS_com','ALPS_NHDS','ALPS_fns_rel','ALPS_fns','ALPS_nyquist','ALPS_nyquist_growth','ALPS_nyquist_driver']
 env=os.environ.copy();env.update(OPENBLAS_NUM_THREADS='1',OMP_NUM_THREADS='1')
 rows=[]
 for opt in ['-O0','-O4']:

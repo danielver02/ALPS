@@ -22,11 +22,13 @@ module alps_fns
 
   private :: int_T, int_T_res, integrate
   private :: integrate_res, landau_integrate, resU
+  private :: funct_g_node, integrate_cell_part
 
   public :: derivative_f0, disp, determine_bessel_array
   public :: determine_nmax, split_processes, secant, map_search
 
   public :: om_scan, om_double_scan
+  public :: funct_g, funct_g_legacy
 
 contains
 
@@ -878,14 +880,8 @@ double complex function integrate_res(om,nn,mode)
   integer :: iperp
   !! Index to loop over perpendicular momentum.
 
-  integer :: ntiny
-  !! Small steps for integration near pole according to Eq. (3.5).
-
-	integer :: lowerlimit
-  !! Index of lower limit for integration according to Eq. (3.5).
-
-  integer :: upperlimit
-  !! Index of upper limit for integration according to Eq. (3.5).
+  integer :: leftcell,rightcell
+  !! Cells containing the continuously moving core endpoints.
 
   double precision :: dpperp
   !! Inifinitesimal step in perpendicular momentum.
@@ -908,8 +904,8 @@ double complex function integrate_res(om,nn,mode)
   double precision :: ppar
   !! Parallel momentum.
 
-  double precision :: correction
-  !! Correction factor for finite size of interval \(\delta\).
+  double precision :: leftend,rightend
+  !! Physical endpoints of the symmetric core.
 
 	double complex :: p_res
   !! Resonance momentum.
@@ -1004,34 +1000,37 @@ if (ipar_res < 1 .or. ipar_res > npar-2) ipar_res = 0
 		return
 	endif
 
-	! positions_principal defines how close we can go to ipar_res with the "normal" integration.
-	! the following part is the normal function "integrate" on the left and on the right of ipar_res:
-	! left:
-	lowerlimit=ipar_res-positions_principal
-	integrate_norm = integrate(om, nn, mode, 1, lowerlimit)
-
-
-	! right:
-	if(abs(real(p_res)-pp(sproc,2,ipar_res,2)).LT.(0.5d0*dppar)) then
-		upperlimit=ipar_res+positions_principal+1
-	else
-		upperlimit=ipar_res+positions_principal+2
-	endif
-	integrate_norm = integrate_norm + integrate(om, nn, mode, upperlimit, npar-1)
-
-
-
+  ! Continuous core width and matching full/partial-cell tail quadrature.
+  ! A fractional tail uses both cell nodes. Keep those nodes outside the
+  ! resonance, including real frequencies and roundoff-sized P=1 fragments.
+  ! The existing default P=3 is unchanged.
+  capDelta=max(2,positions_principal)*dppar
+  capDelta=min(capDelta,real(p_res)-pp(sproc,2,1,2), &
+    pp(sproc,2,npar-1,2)-real(p_res))
+  leftend=real(p_res)-capDelta
+  rightend=real(p_res)+capDelta
+  leftcell=max(1,min(npar-2,floor((leftend-pp(sproc,2,0,2))/dppar)))
+  rightcell=max(1,min(npar-2,floor((rightend-pp(sproc,2,0,2))/dppar)))
+  if(leftend.LT.pp(sproc,2,leftcell,2).AND.leftcell.GT.1)leftcell=leftcell-1
+  if(leftend.GT.pp(sproc,2,leftcell+1,2).AND.leftcell.LT.npar-2)leftcell=leftcell+1
+  if(rightend.LT.pp(sproc,2,rightcell,2).AND.rightcell.GT.1)rightcell=rightcell-1
+  if(rightend.GT.pp(sproc,2,rightcell+1,2).AND.rightcell.LT.npar-2)rightcell=rightcell+1
+  if(leftcell.GT.1)integrate_norm=integrate(om,nn,mode,1,leftcell)
+  integrate_norm=integrate_norm+integrate_cell_part(om,nn,mode,leftcell, &
+    pp(sproc,2,leftcell,2),leftend)
+  integrate_norm=integrate_norm+integrate_cell_part(om,nn,mode,rightcell, &
+    rightend,pp(sproc,2,rightcell+1,2))
+  if(rightcell+1.LT.npar-1)integrate_norm=integrate_norm+ &
+    integrate(om,nn,mode,rightcell+1,npar-1)
 	! The following part includes the analytic switch described in Section 3.1 of the code paper
 	! We call the function that needs to be integrated WITHOUT the resonance part funct_g.
 	! We linearize this function. Now we can calculate the even part of the integration.
-	! We set Delta so that it starts at ipar_res-positions_principal. In that way, there is only
-	! a tiny rest left on the right side that needs to be integrated.
+  ! Delta is constant; the two outer tails include all fractional cells.
 	! split the range between the resonance and the upper limit into n_resonance_interval steps:
 
 	denomR=real(p_res)
 	denomI=aimag(p_res)
 
-	capDelta=real(p_res)-pp(sproc,1,ipar_res-positions_principal,2)
 	smdelta=capDelta/(1.d0*n_resonance_interval)
 
 
@@ -1183,70 +1182,6 @@ if (ipar_res < 1 .or. ipar_res > npar-2) ipar_res = 0
 
 
 
-	! Calculate tiny rest left between the point real(p_res)+capDelta and the position
-	! pp(sproc,2,upperlimit,2). We split this interval into steps of roughly size smdelta:
-	ntiny=int((pp(sproc,2,upperlimit,2)-real(p_res)-capDelta)/smdelta)
-
-! This integration performs Eq. (3.2) directly on the tiny rest interval.
-	if (ntiny.GT.0) then
-
-		! Correct for the fact that smdelta is not exactly the step width in the tiny-rest integration:
-		correction=((pp(sproc,2,upperlimit,2)-real(p_res)-capDelta)/(1.d0*ntiny))/smdelta
-
-
-		ppar=real(p_res)+capDelta
-
-		integrate_res=integrate_res + &
-		 2.d0 * correction*(funct_g(ppar,1,om,nn,mode)/(ppar-denomR-ii*denomI))
-
-		integrate_res=integrate_res + &
-		correction*(funct_g(ppar,nperp-1,om,nn,mode)/(ppar-denomR-ii*denomI))
-
-
-		ppar=real(p_res)+capDelta+correction*smdelta*ntiny
-
-		integrate_res=integrate_res + &
-		2.d0 * correction*(funct_g(ppar,1,om,nn,mode)/(ppar-denomR-ii*denomI))
-
-		integrate_res=integrate_res + &
-		correction*(funct_g(ppar,nperp-1,om,nn,mode)/(ppar-denomR-ii*denomI))
-
-
-		do iperp=2,nperp-2
-			do ipar=1,ntiny-1
-				ppar=real(p_res)+capDelta+correction*smdelta*ipar
-
-				integrate_res=integrate_res + 4.d0*&
-				correction*(funct_g(ppar,iperp,om,nn,mode)/(ppar-denomR-ii*denomI))
-			enddo
-
-
-			ppar=real(p_res)+capDelta
-
-			integrate_res=integrate_res + 2.d0*&
-			correction*(funct_g(ppar,iperp,om,nn,mode)/(ppar-denomR-ii*denomI))
-
-
-			ppar=real(p_res)+capDelta+correction*smdelta*ntiny
-
-			integrate_res=integrate_res + 2.d0*&
-			correction*(funct_g(ppar,iperp,om,nn,mode)/(ppar-denomR-ii*denomI))
-
-		enddo
-
-		do ipar=1,ntiny-1
-			ppar=real(p_res)+capDelta+correction*smdelta*ipar
-
-			integrate_res=integrate_res + 2.d0 * 2.d0*&
-			correction*(funct_g(ppar,1,om,nn,mode)/(ppar-denomR-ii*denomI))
-
-			integrate_res=integrate_res + 2.d0*&
-			correction*(funct_g(ppar,nperp-1,om,nn,mode)/(ppar-denomR-ii*denomI))
-		enddo
-
-	endif
-
-
 	integrate_res = 2.d0 * pi * integrate_res * smdelta * dpperp * 0.25d0
 	integrate_res = integrate_res + integrate_norm
 
@@ -1255,9 +1190,87 @@ if (ipar_res < 1 .or. ipar_res > npar-2) ipar_res = 0
 end function integrate_res
 
 
+double complex function integrate_cell_part(om,nn,mode,j,lo,hi)
+  !! Primitive of the same nodal integrand used by the background trapezoid.
+  !! Splitting or reassigning a cell therefore preserves its quadrature exactly.
+  use alps_var,only:pp,nperp,sproc,pi
+  implicit none
+  double complex,intent(in)::om
+  integer,intent(in)::nn,mode,j
+  double precision,intent(in)::lo,hi
+  integer::i
+  double precision::h,tlo,thi,tmid,weight,dpperp
+  double complex::fl,fr
+  integrate_cell_part=cmplx(0.d0,0.d0,kind(1.d0))
+  if(hi.LE.lo)return
+  h=pp(sproc,2,j+1,2)-pp(sproc,2,j,2)
+  tlo=(lo-pp(sproc,2,j,2))/h
+  thi=(hi-pp(sproc,2,j,2))/h
+  ! Use the physical width at the end, not a difference of rounded fractions:
+  ! distinct positive endpoints can have identical tlo and thi on a nonbinary grid.
+  tmid=0.5d0*tlo+0.5d0*thi
+  do i=1,nperp-1
+    weight=1.d0
+    if(i.EQ.nperp-1)weight=0.5d0
+    ! The first usable perpendicular node retains its existing doubled half-weight.
+    fl=resU(om,nn,i,j)*int_T(nn,i,j,mode)
+    fr=resU(om,nn,i,j+1)*int_T(nn,i,j+1,mode)
+    integrate_cell_part=integrate_cell_part+weight*((1.d0-tmid)*fl+tmid*fr)
+  enddo
+  dpperp=pp(sproc,2,2,1)-pp(sproc,1,2,1)
+  integrate_cell_part=2.d0*pi*dpperp*(hi-lo)*integrate_cell_part
+end function integrate_cell_part
+
+
 
 
 double complex function funct_g(ppar_real,iperp,om,nn,mode)
+  !! Continuous, nodally exact interpolation of the complete complex numerator.
+  !! Outside the usable nodes, extrapolate the nearest usable cell (no new stencil).
+  use alps_var, only: npar,pp,sproc
+  implicit none
+  double precision, intent(in) :: ppar_real
+  integer, intent(in) :: iperp,nn,mode
+  double complex, intent(in) :: om
+  integer :: j
+  double precision :: h,t
+  double complex :: gleft,gright
+
+  h=pp(sproc,iperp,2,2)-pp(sproc,iperp,1,2)
+  ! Test bounds before FLOOR, including for a far-outside extrapolation request.
+  if (ppar_real.LE.pp(sproc,iperp,1,2)) then
+    j=1
+  else if (ppar_real.GE.pp(sproc,iperp,npar-1,2)) then
+    j=npar-2
+  else
+    j=max(1,min(npar-2,floor((ppar_real-pp(sproc,iperp,0,2))/h)))
+    ! Correct the uniform-grid prediction against the actual stored nodes.
+    if (ppar_real.LT.pp(sproc,iperp,j,2).AND.j.GT.1) j=j-1
+    if (ppar_real.GE.pp(sproc,iperp,j+1,2).AND.j.LT.npar-2) j=j+1
+  endif
+  t=(ppar_real-pp(sproc,iperp,j,2))/ &
+    (pp(sproc,iperp,j+1,2)-pp(sproc,iperp,j,2))
+  gleft=funct_g_node(j,iperp,om,nn,mode)
+  gright=funct_g_node(j+1,iperp,om,nn,mode)
+  funct_g=(1.d0-t)*gleft+t*gright
+end function funct_g
+
+
+double complex function funct_g_node(j,iperp,om,nn,mode)
+  !! Original nodal numerator, before division by the resonant denominator.
+  use alps_var,only: pp,ms,qs,kpar,df0,sproc
+  implicit none
+  integer,intent(in)::j,iperp,nn,mode
+  double complex,intent(in)::om
+  funct_g_node=-qs(sproc) * &
+    (om*df0(sproc,iperp,j,1)+(kpar/ms(sproc))* &
+    (pp(sproc,iperp,j,1)*df0(sproc,iperp,j,2)- &
+     pp(sproc,iperp,j,2)*df0(sproc,iperp,j,1)))*int_T(nn,iperp,j,mode)/kpar
+end function funct_g_node
+
+
+double complex function funct_g_legacy(ppar_real,iperp,om,nn,mode)
+  !! Pre-C2b nearest-node reconstruction, retained unchanged for validation.
   !! This function returns the function \(g\) from Eq. (3.2) of the code paper.
 	use alps_var,only : npar,pp,ms,qs,kpar,df0,sproc
 	implicit none
@@ -1358,12 +1371,12 @@ double complex function funct_g(ppar_real,iperp,om,nn,mode)
 		   pp(sproc, iperp, ipar_close-1, 2) * df0(sproc, iperp, ipar_close-1, 1) ) ) * &
 		   int_T(nn,iperp,ipar_close-1,mode)/kpar
 
-	funct_g = integrand+ &
+	funct_g_legacy = integrand+ &
 		0.5d0*((integrandplus-integrandminus)/dppar) * (ppar_real - pp(sproc,iperp,ipar_close,2))
 
 	return
 
-end function funct_g
+end function funct_g_legacy
 
 
 
@@ -1576,7 +1589,7 @@ double complex function int_ee(om)
 	int_ee = int_ee + &
 		   2.d0 * pp(sproc, 1, 1, 2) *&
 		   (df0(sproc, 1, 1, 2)*pp(sproc, 1, 1, 1) - &
-		   pp(sproc, 1, 1, 1)*df0(sproc, 1, 1, 1))
+		   pp(sproc, 1, 1, 2)*df0(sproc, 1, 1, 1))
 
 
 	int_ee = int_ee + &

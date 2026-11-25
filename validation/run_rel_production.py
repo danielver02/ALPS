@@ -16,7 +16,7 @@ assert s.count(marker)==1;s=s.replace(marker,'    if(proc0) call r2_tensor(om,di
 marker='     tmpDisp=disp(wroots(iw))';assert s.count(marker)==1
 s=s.replace(marker,marker+'\n     call r2_root_record(wroots(iw),tmpDisp,iflag)');p.write_text(s)
 flags=['-O2','-g','-fcheck=bounds','-fbacktrace','-ffree-line-length-none','-ffpe-trap=invalid,zero,overflow']
-names=['ALPS_rel_cache','ALPS_var','distribution_analyt','ALPS_io','ALPS_analyt','ALPS_com','ALPS_NHDS','ALPS_fns_rel','ALPS_fns','rel_production_diagnostics']
+names=['ALPS_rel_cache','ALPS_var','distribution_analyt','ALPS_io','ALPS_analyt','ALPS_com','ALPS_NHDS','ALPS_fns_rel','ALPS_fns','ALPS_nyquist','ALPS_nyquist_growth','ALPS_nyquist_driver','rel_production_diagnostics']
 for n in names:subprocess.run(['mpifort',*flags,'-c',str(root/'source'/(n+'.f90'))],cwd=root/'build',check=True)
 subprocess.run(['mpifort',*flags,'-o','ALPS',*[n+'.o'for n in names],str(root/'source/ALPS.f90'),'-llapack','-lblas'],cwd=root/'build',check=True)
 subprocess.run(['mpifort',*flags,'-o','make_case',str(root/'source/make_rel_susceptibility_case.f90')],cwd=root/'build',check=True)

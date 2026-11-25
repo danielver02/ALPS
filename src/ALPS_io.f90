@@ -39,6 +39,7 @@ module alps_io
   public  :: init_param, read_f0, get_unused_unit, alps_error
   public :: output_time, display_credits, isnancheck
   public :: alps_continuation_error
+  public :: canonicalize_nyquist_grid,decimal_coordinate_radius,fit_rounded_axis
 
 contains
 
@@ -1598,5 +1599,247 @@ function input_unit_exist (nml,exist)
 
 
   end subroutine display_credits
+
+  subroutine decimal_coordinate_radius(token,radius,status)
+    ! Decimal serialization quantum: one half unit in the last written place.
+    ! Integers have exact integer semantics; unsupported spellings are rejected.
+    use,intrinsic::ieee_arithmetic,only:ieee_is_finite
+    implicit none
+    character(*),intent(in)::token
+    real(8),intent(out)::radius
+    integer,intent(out)::status
+    character(:),allocatable::s,mant
+    integer::i,e,d,exponent_value,ios,n,start
+    s=trim(adjustl(token));status=1;radius=0;exponent_value=0
+    n=len(s);if(n==0)return
+    e=scan(s,'eEdD');mant=s
+    if(e>0)then
+      if(e==n)return
+      read(s(e+1:),*,iostat=ios)exponent_value
+      if(ios/=0)return
+      mant=s(:e-1)
+    endif
+    d=index(mant,'.');start=1
+    if(len(mant)==0)return
+    if(mant(1:1)=='+'.or.mant(1:1)=='-')start=2
+    if(len(mant)<start)return
+    do i=start,len(mant)
+      if(i==d)cycle
+      if(mant(i:i)<'0'.or.mant(i:i)>'9')return
+    enddo
+    if(d>0)then
+      if(len(mant)==1.or.(len(mant)==2.and.start==2))return
+      exponent_value=exponent_value-(len(mant)-d)
+      if(exponent_value>300.or.exponent_value< -300)return
+      radius=.5d0*10.d0**exponent_value
+    elseif(e>0)then
+      if(exponent_value>300.or.exponent_value< -300)return
+      radius=.5d0*10.d0**exponent_value
+    endif
+    if(.not.ieee_is_finite(radius))return
+    status=0
+  end subroutine
+
+  subroutine fit_rounded_axis(x,lower,upper,nonnegative,canonical,step,residual,unchanged,status,reason)
+    ! An affine model must intersect EVERY supplied decimal rounding interval.
+    ! Pairwise interval inequalities give a feasible slope interval, then intercept.
+    ! No least-squares residual inflation is used to make an infeasible grid pass.
+    use,intrinsic::ieee_arithmetic,only:ieee_is_finite
+    implicit none
+    real(8),intent(in)::x(0:),lower(0:),upper(0:)
+    logical,intent(in)::nonnegative
+    real(8),intent(out)::canonical(0:),step,residual
+    logical,intent(out)::unchanged
+    integer,intent(out)::status
+    character(*),intent(out)::reason
+    integer::n,i,j
+    real(8)::centre,mean,b,a,den,lo,hi,alo,ahi,fp,zlo,zhi
+    n=ubound(x,1);status=1;reason='invalid axis';unchanged=.false.;step=0;residual=0
+    if(n<1.or..not.all(ieee_is_finite(x)))return
+    if(any(x(1:)<=x(:n-1)))then
+      reason='axis is not strictly increasing';return
+    endif
+    if(nonnegative.and.x(0)<0)then
+      reason='negative perpendicular momentum';return
+    endif
+    fp=32*epsilon(1.d0)*max(maxval(abs(x)),tiny(1.d0))
+    centre=.5d0*n;mean=sum(x)/(n+1);den=0;b=0
+    do i=0,n
+      den=den+(i-centre)**2;b=b+(i-centre)*(x(i)-mean)
+    enddo
+    b=b/den;a=mean-b*centre
+    do i=0,n
+      canonical(i)=a+i*b
+    enddo
+    residual=maxval(abs(x-canonical));step=b
+    ! Preserve already uniform high-precision input bits and hence legacy science.
+    if(residual<=fp.and.all(x>=lower-fp).and.all(x<=upper+fp))then
+      canonical=x;unchanged=.true.;status=0;reason='uniform to floating-point roundoff';return
+    endif
+    if(any(lower>upper))then
+      reason='inconsistent rectangular coordinate intervals';return
+    endif
+    lo=0;hi=huge(1.d0)
+    do i=0,n-1
+      do j=i+1,n
+        lo=max(lo,(lower(j)-upper(i))/(j-i))
+        hi=min(hi,(upper(j)-lower(i))/(j-i))
+      enddo
+    enddo
+    ! Nonnegative origin is a feasibility constraint on spacing, not a
+    ! post-fit rejection of one otherwise arbitrary least-squares candidate.
+    if(nonnegative)then
+      if(upper(0)<0)then
+        reason='no nonnegative perpendicular origin';return
+      endif
+      do i=1,n
+        hi=min(hi,upper(i)/i)
+      enddo
+    endif
+    if(hi<=0.or.lo>hi)then
+      reason='no positive affine spacing fits all rounding intervals';return
+    endif
+    b=max(lo,min(hi,b));alo=-huge(1.d0);ahi=huge(1.d0)
+    do i=0,n
+      alo=max(alo,lower(i)-i*b);ahi=min(ahi,upper(i)-i*b)
+    enddo
+    if(nonnegative)alo=max(0.d0,alo)
+    if(alo>ahi)then
+      reason='no affine origin fits all rounding intervals';return
+    endif
+    a=max(alo,min(ahi,a))
+    ! Preserve a written zero perpendicular origin when a feasible line permits it.
+    if(nonnegative.and.x(0)==0.and.lower(0)<=0.and.upper(0)>=0)then
+      zlo=0;zhi=huge(1.d0)
+      do i=1,n
+        zlo=max(zlo,lower(i)/i);zhi=min(zhi,upper(i)/i)
+      enddo
+      if(zlo<=zhi.and.zhi>0)then
+        a=0;b=max(zlo,min(zhi,b))
+      endif
+    endif
+    do i=0,n
+      canonical(i)=a+i*b
+    enddo
+    step=b;residual=maxval(abs(x-canonical))
+    if(any(canonical<lower-fp).or.any(canonical>upper+fp))then
+      reason='canonical coordinate exceeds a rounding interval';return
+    endif
+    status=0;reason='decimal rounding model accepted'
+  end subroutine
+
+  subroutine canonicalize_nyquist_grid(species)
+    ! Rank zero only, before derivative_f0 and all continuation initialization.
+    ! Re-read coordinate TOKENS for their precision, never alter any VDF value.
+    use alps_var,only:pp,nperp,npar,arrayName,unit_error
+    use,intrinsic::ieee_arithmetic,only:ieee_is_finite
+    implicit none
+    integer,intent(in)::species
+    integer::u,ios,i,j,d,n,code,k,beg,finish,idx
+    real(8),allocatable::x(:),lower(:),upper(:),canon(:),radius_grid(:,:)
+    real(8)::r(2),value(2),fp,step,residual,maxradius(2),local_error,max_error,local_bound
+    logical::unchanged
+    character(1024)::source,line,token(3)
+    character(160)::reason
+    write(source,'(3a,i0,a)')'distribution/',trim(arrayName),'.',species,'.array'
+    do d=1,2
+      n=nperp;if(d==2)n=npar
+      allocate(x(0:n),lower(0:n),upper(0:n),canon(0:n),radius_grid(0:nperp,0:npar))
+      lower=-huge(1.d0);upper=huge(1.d0);maxradius=0
+      if(d==1)x=pp(species,:,0,1)
+      if(d==2)x=pp(species,0,:,2)
+      open(newunit=u,file=trim(source),status='old',action='read',iostat=ios)
+      if(ios/=0)call grid_error('cannot reopen VDF coordinate tokens')
+      do i=0,nperp
+      do j=0,npar
+        ! Ordinary array format: one record per node, three whitespace/comma fields.
+        do
+          read(u,'(a)',iostat=ios)line
+          if(ios/=0)call grid_error('missing coordinate record')
+          if(len_trim(line)>0)exit
+        enddo
+        beg=1
+        do k=1,3
+          do while(beg<=len_trim(line))
+            if(index(' ,'//achar(9),line(beg:beg))==0)exit
+            beg=beg+1
+          enddo
+          finish=beg
+          do while(finish<=len_trim(line))
+            if(index(' ,'//achar(9),line(finish:finish))>0)exit
+            finish=finish+1
+          enddo
+          if(finish==beg)call grid_error('expected three fields in a VDF record')
+          token(k)=line(beg:finish-1);beg=finish+1
+        enddo
+        read(token(d),*,iostat=ios)value(d)
+        if(ios/=0)call grid_error('invalid coordinate token')
+        if(value(d)/=pp(species,i,j,d))call grid_error('coordinate token/read mismatch')
+        call decimal_coordinate_radius(trim(token(d)),r(d),code)
+        if(code/=0)call grid_error('unsupported decimal coordinate spelling or exponent')
+        fp=32*epsilon(1.d0)*max(abs(value(d)),maxval(abs(x)),tiny(1.d0))
+        idx=i;if(d==2)idx=j
+        lower(idx)=max(lower(idx),value(d)-r(d)-fp)
+        upper(idx)=min(upper(idx),value(d)+r(d)+fp)
+        maxradius(d)=max(maxradius(d),r(d));radius_grid(i,j)=r(d)
+        if(i>0.and.d==1)then
+          if(pp(species,i,j,d)<=pp(species,i-1,j,d))call grid_error('nonmonotonic perpendicular row')
+        endif
+        if(j>0.and.d==2)then
+          if(pp(species,i,j,d)<=pp(species,i,j-1,d))call grid_error('nonmonotonic parallel row')
+        endif
+      enddo
+      enddo
+      close(u)
+      ! Rectangular intersections are checked even on the high-precision fast path.
+      if(any(lower>upper))call grid_error('inconsistent rectangular coordinates')
+      call fit_rounded_axis(x,lower,upper,d==1,canon,step,residual,unchanged,code,reason)
+      write(*,'(a,i0,a,i0,a,3es24.16,a,l1)')'NYQUIST_GRID species=',species,' axis=',d, &
+        ' spacing/max_axis_residual/max_decimal_radius=',step,residual,maxradius(d),' unchanged=',unchanged
+      if(code/=0)call grid_error(trim(reason))
+      ! Every coordinate and local increment must satisfy its own rounding bound.
+      fp=32*epsilon(1.d0)*max(maxval(abs(x)),tiny(1.d0));max_error=0;local_error=0
+      do i=0,nperp
+      do j=0,npar
+        idx=i;if(d==2)idx=j
+        max_error=max(max_error,abs(pp(species,i,j,d)-canon(idx)))
+        if(abs(pp(species,i,j,d)-canon(idx))>radius_grid(i,j)+2*fp) &
+          call grid_error('coordinate residual exceeds its decimal rounding bound')
+        if(d==1.and.i>0)then
+          local_bound=radius_grid(i,j)+radius_grid(i-1,j)+2*fp
+          local_error=max(local_error,abs(pp(species,i,j,d)-pp(species,i-1,j,d)-step))
+          if(abs(pp(species,i,j,d)-pp(species,i-1,j,d)-step)>local_bound) &
+            call grid_error('perpendicular increment exceeds summed rounding bounds')
+        endif
+        if(d==2.and.j>0)then
+          local_bound=radius_grid(i,j)+radius_grid(i,j-1)+2*fp
+          local_error=max(local_error,abs(pp(species,i,j,d)-pp(species,i,j-1,d)-step))
+          if(abs(pp(species,i,j,d)-pp(species,i,j-1,d)-step)>local_bound) &
+            call grid_error('parallel increment exceeds summed rounding bounds')
+        endif
+      enddo
+      enddo
+      write(*,'(a,3es24.16)')'NYQUIST_GRID max_all_coordinate/max_local_step_residual/fp_allowance=', &
+        max_error,local_error,fp
+      do i=0,nperp
+      do j=0,npar
+        if(d==1)pp(species,i,j,1)=canon(i)
+        if(d==2)pp(species,i,j,2)=canon(j)
+      enddo
+      enddo
+      write(*,'(a,a)')'NYQUIST_GRID ',trim(reason)
+      deallocate(x,lower,upper,canon,radius_grid)
+    enddo
+  contains
+    subroutine grid_error(message)
+      use mpi
+      character(*),intent(in)::message
+      integer::ierr
+      write(*,'(a,i0,a,i0,2a)')'ERROR: numerical grid species=',species,' axis=',d,': ',trim(message)
+      write(unit_error,'(a)')trim(message)
+      call mpi_abort(MPI_COMM_WORLD,31,ierr)
+      error stop 'Invalid numerical Nyquist grid'
+    end subroutine
+  end subroutine
 
 end module alps_io

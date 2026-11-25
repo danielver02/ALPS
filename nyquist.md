@@ -36,9 +36,9 @@ The two scan types must differ and both must be in 1–4 (type 0 is unsupported)
 Required for `scan_option=3`, `4` or `5`. All species require `relat=F`, positive
 density/mass, nonzero charge, finite applicable parameters, `vA>0`, and `kpar /= 0`.
 Analytic species (`use_bM=T`) require positive beta and anisotropy and finite
-drift. Option 3 additionally accepts numerical species (`use_bM=F`) and mixed
-equilibria through the existing numerical susceptibility (C1 validation).
-Options 4/5 and maximum-growth searches continue to require warm analytic species.
+drift. Options 3/4/5 also accept nonrelativistic numerical species (`use_bM=F`)
+and mixed equilibria through the existing production numerical susceptibility.
+Maximum-growth searches continue to require warm analytic species.
 Cold analytic and relativistic Nyquist responses remain unsupported; existing
 root/scan physics is unchanged.
 Create the usual `solution/` directory before running.
@@ -101,9 +101,9 @@ handling. Unresolved never means stable.
 Complete example inputs are in `tests/data/nyquist/`. Build and regression
 instructions and measured limitations are in `NYQUIST_A2_RESULTS.md`.
 
-### Numerical-VDF single-wavevector validation (C1)
+### Numerical-VDF calculations and scans
 
-Use `scan_option=3`, the normal numerical species inputs and VDF files, and
+Use `scan_option=3`, `4` or `5`, the normal numerical species inputs and VDF files, and
 `nyq_find_max_growth=F`. No numerical-VDF flag or separate susceptibility is used.
 The equilibrium is read, differentiated, fitted and transferred once through the
 ordinary startup. Harmonic assignments and worker Bessel arrays are initialized
@@ -117,6 +117,26 @@ its supplied analytic-continuation semantics. The VDF cannot be identically zero
 Integration/resonance controls
 retain their ordinary meaning. No new numerical integration, differentiation,
 analytic continuation or determinant normalization is introduced.
+
+For these Nyquist modes, coordinate validation occurs before derivatives and fits.
+Each written decimal coordinate defines a rounding interval of half a unit in its
+last recorded decimal place, with a small IEEE arithmetic allowance. A common
+positive-spacing affine axis must fit every coordinate interval, repeated row,
+endpoint and local increment. Genuinely nonuniform or nonmonotonic grids are
+rejected. Accepted rounded axes are replaced **in memory only** by that uniform
+model; VDF values and indices are untouched. Already uniform high-precision axes
+retain their stored coordinate bits. Canonical coordinates are used for all
+derivatives, continuation fits and harmonic/Bessel initialization and broadcast
+to every rank. `NYQUIST_GRID` startup diagnostics report the inferred spacing,
+residual and serialization bound. This is not VDF interpolation or normalization.
+
+Numerical scans retain the existing harmonic-based MPI decomposition, initialize
+the equilibrium once, rebuild harmonic assignments/Bessel arrays when `kperp`
+changes, and use fresh per-wavevector determinant caches. Pure `kpar` changes
+retain the Bessel arrays. Exact `kperp=0` is supported by the existing parallel
+tensor limits. Numerical-VDF winding remains subject to representation and
+integration-continuity validation; enabling scans does not certify every measured
+distribution as a physical analytic dispersion function.
 
 The summary identifies each species as `analytic_bimaxwellian` or
 `numerical_VDF_validation`. Analytic physical fields are retained. Numerical
@@ -138,6 +158,26 @@ susceptibility. Check momentum resolution and support independently and inspect
 the resonance-treatment transitions before interpreting a numerical winding as
 a physical root inventory. C1 deliberately leaves those integration routines
 unchanged.
+
+The subsequent [C2b correction](NYQUIST_C2B_RESULTS.md) uses continuous nodal
+interpolation and consistent fractional-cell quadrature in the nonrelativistic
+numerical response. It applies to ordinary numerical-VDF roots as well as
+Nyquist evaluations; finite-grid numerical results can change. The original
+interpolation remains callable as `funct_g_legacy` for validation. Run
+`bash validation/run_nyquist_c2b.sh` for the correction-specific tests. The
+`Tlim` finite-window mismatch and the legacy support-edge fallback remain
+limitations; interior continuity does not establish global holomorphy.
+
+The [C2c method study](NYQUIST_C2C_DESIGN.md) compares an exact finite-window
+linear core with a fixed-cell Cauchy prototype in isolated validation builds.
+Production remains C2b; no new selector is available. The study identifies
+static tensor-cancellation and damped-residue consistency requirements before
+adopting a replacement. Reproduction instructions and measured data are in
+`validation/c2c/` and `tests/data/nyquist_c2c/`.
+For the reference cyclotron case, the corrected coarse 32×64 grid has computed
+winding 3, while the 64×128 and 96×192 matched trajectories approach the
+analytic winding 2. The coarse value is a numerical convergence warning, not a
+physical third-mode identification; see the C2b report and adaptive checks.
 
 #### Maximum-growth estimation with closed strips
 
@@ -365,8 +405,8 @@ All output directories must exist. New validation:
 ### Nyquist wavevector planes (`scan_option=5`)
 
 Use `n_scan=2`, the existing `&scan_input_1` and `&scan_input_2` groups, and the
-same `&nyquist` controls as options 3/4. Warm nonrelativistic analytic species and
-rectangle frequency geometry remain required. No new plasma backend or MPI
+same `&nyquist` controls as options 3/4. Nonrelativistic warm analytic and/or
+numerical species and rectangle frequency geometry are required. No new plasma backend or MPI
 decomposition is introduced. For example, with the complete mirror species
 parameters in `tests/data/nyquist_plane/mirror_plane.in`:
 

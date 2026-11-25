@@ -6,7 +6,9 @@ module alps_nyquist_driver
        bMbetas,bMalphas,bMpdrifts,runname,foldername,unit_error,nproc,n_scan,scan,scan_option
   use alps_var, only: nperp,npar,arrayName,pp,f0,ACmethod,poly_kind,poly_order,poly_derivative_type,logfit, &
        positions_principal,n_resonance_interval,Tlim,Bessel_zero,nmax,density_int,current_int
+  use alps_var, only: iproc,sproc,nlim,writeOut
   use alps_fns, only: disp,scan_wavevector,update_scan_wavevector
+  use alps_io, only: canonicalize_nyquist_grid
   use mpi
   use, intrinsic :: ieee_arithmetic, only: ieee_is_finite,ieee_value,ieee_quiet_nan
   implicit none
@@ -74,8 +76,6 @@ contains
     if (.not.all(ieee_is_finite([kperp,kpar,vA]))) call input_error('Wavevector and vA must be finite.')
     if (kpar==0.or.vA<=0) call input_error('A2 requires kpar /= 0 and vA > 0.')
     if(any(relativistic)) call input_error('Nyquist requires relat=F for all species.')
-    if(scan_option/=3.and..not.all(usebM)) &
-        call input_error('Nyquist options 4/5 require warm analytic species; numerical VDFs are option 3 only.')
     if (.not.all(ieee_is_finite(ns)).or..not.all(ieee_is_finite(qs)).or. &
         .not.all(ieee_is_finite(ms))) &
         call input_error('Species parameters must be finite.')
@@ -106,9 +106,8 @@ contains
   subroutine validate_nyquist_vdf
     ! Rank 0, immediately after the existing reader and before differentiation.
     ! Validate the uniform rectangular grids assumed by the existing integrator.
-    integer :: s,i,j
-    real(nyq_dp) :: dx,dy,tol(2)
-    if(scan_option/=3) return
+    integer :: s
+    if(scan_option<3.or.scan_option>5) return
     do s=1,nspec
       if(usebM(s)) cycle
       if(.not.all(ieee_is_finite(f0(s,:,:))).or..not.all(ieee_is_finite(pp(s,:,:,:)))) &
@@ -117,16 +116,7 @@ contains
       if(.not.any(f0(s,:,:)>0)) call input_error('Numerical VDF must contain positive samples.')
       if(ACmethod(s)/=0.and.logfit(s).and.any(f0(s,:,:)<=0)) &
           call input_error('Log continuation requires strictly positive VDF samples.')
-      dx=pp(s,1,0,1)-pp(s,0,0,1); dy=pp(s,0,1,2)-pp(s,0,0,2)
-      if(dx<=0.or.dy<=0.or.pp(s,0,0,1)<0) call input_error('Numerical momentum axes must increase; pperp >= 0.')
-      tol=1.e-8_nyq_dp*[maxval(abs(pp(s,:,:,1))),maxval(abs(pp(s,:,:,2)))]
-      do i=0,nperp
-        do j=0,npar
-          if(abs(pp(s,i,j,1)-(pp(s,0,0,1)+i*dx))>tol(1).or. &
-              abs(pp(s,i,j,2)-(pp(s,0,0,2)+j*dy))>tol(2)) &
-              call input_error('Numerical Nyquist requires a uniform rectangular momentum grid.')
-        enddo
-      enddo
+      call canonicalize_nyquist_grid(s)
     enddo
   end subroutine
 
@@ -159,6 +149,14 @@ contains
     cache=nyq_raw_cache() ! Never carry values into a later operation/wavevector.
     cache_active=nyq_find_max_growth
     normalized=trim(nyq_geometry)=='horizontal'.or.nyq_normalize_rectangle
+    if(writeOut.and..not.all(usebM)) then
+      if(proc0) then
+        write(*,'(a)') 'NYQUIST_WORKER rank=0 coordinator'
+      else
+        write(*,'(a,i0,a,i0,a,2(i0,1x),a,i0)') 'NYQUIST_WORKER rank=',iproc, &
+          ' species=',sproc,' harmonics=',nlim,' nmax=',nmax(sproc)
+      endif
+    endif
     call mpi_barrier(MPI_COMM_WORLD,ierr)
     started=MPI_Wtime()
     if (proc0) then
@@ -185,6 +183,8 @@ contains
     elapsed=MPI_Wtime()-started
     call mpi_allreduce(local_calls,min_calls,1,MPI_INTEGER,MPI_MIN,MPI_COMM_WORLD,ierr)
     call mpi_allreduce(local_calls,max_calls,1,MPI_INTEGER,MPI_MAX,MPI_COMM_WORLD,ierr)
+    if(writeOut.and..not.all(usebM)) &
+      write(*,'(a,i0,a,i0)') 'NYQUIST_CALLS rank=',iproc,' physical=',local_calls
     call mpi_allreduce(elapsed,wall_seconds,1,MPI_DOUBLE_PRECISION,MPI_MAX,MPI_COMM_WORLD,ierr)
     if (proc0) then
       basename='solution/'//trim(runname)//'.nyquist'
@@ -658,6 +658,12 @@ contains
       write(out,'(a,l1,a,es25.16e3)',iostat=code) '# normalized_determinant=',nyq_normalize_rectangle,' vA/c=',vA
       if(code/=0) return
       do species=1,nspec
+        if(.not.usebM(species)) then
+          write(out,'(a,i0,a,3(es25.16e3,1x))',iostat=code) &
+              '# species_',species,' numerical_VDF n q m=',ns(species),qs(species),ms(species)
+          if(code/=0) return
+          cycle
+        endif
         write(out,'(a,i0,a,6(es25.16e3,1x))',iostat=code) '# species_',species,' n q m beta alpha drift=', &
             ns(species),qs(species),ms(species),bMbetas(species),bMalphas(species),bMpdrifts(species)
         if(code/=0) return
